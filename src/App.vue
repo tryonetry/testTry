@@ -1,0 +1,74 @@
+<template>
+<a-locale-provider :locale="zh_CN">
+  <div id="app">
+    <router-view></router-view>
+  </div>
+</a-locale-provider>
+</template>
+
+<script>
+import zh_CN from 'ant-design-vue/lib/locale-provider/zh_CN';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
+moment.locale('zh-cn');
+export default {
+  data() {
+    return {
+      zh_CN,
+    }
+  },
+  name: "app",
+  created(){
+    this.getTreeData();
+    this.getCompanyData();
+  },
+  methods:{
+    getTreeData() {
+      /***
+       * 功能：获取tree数据
+       */
+      this.$http.fetchGet("informationPool@getParentId.action", {})
+      .then(res => {
+        if(Number(res.code) === 0){
+          this.getNewTreeData(res.data);
+        }
+      });
+    },
+    getNewTreeData(dataArr) {
+      /***
+       * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
+       */
+      dataArr.forEach(el => {
+        el.title = el.name;
+        el.key = el.id;
+        el.value = el.id;
+        delete el.name;
+        delete el.id;
+        if (el.children) {
+          this.getNewTreeData(el.children);
+        }
+      });
+      this.$store.dispatch("getinfoPollTreeData", dataArr);
+    },
+
+    // 获取公司数据
+    getCompanyData(){
+
+      this.$http.fetchGet("companyInfo@getCompanyList.action", {})
+      .then(res => {
+        if(Number(res.code) === 0){
+          this.$store.dispatch("updateCompanyData", res.data);
+        }
+      });
+    }
+
+  },
+  components: {
+  }
+};
+</script>
+
+<style scoped>
+
+</style>
