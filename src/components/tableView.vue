@@ -222,6 +222,7 @@ export default {
     onSelectAll(selected, selectedRows, changeRows) {
       //table全选
       console.log(selected, selectedRows, changeRows);
+      this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
     changeTableData() {
       //更新table
