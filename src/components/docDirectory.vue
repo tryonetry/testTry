@@ -86,7 +86,7 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
     name:'DocDirectory',
     // 需要父组件传userId
-    props:["userId"],
+    props:["userId","ramdomKey"],
     components:{
         draggable,
         swiper,
@@ -278,9 +278,9 @@ export default {
     },
     
     watch: {
-        userId:{
-            handler:function(newVal){
-                this.getUerDirectory(newVal);
+        ramdomKey:{
+            handler:function(){
+                this.getUerDirectory(this.userId);
                 this.currentList = [];
                 this.selectedKeys = [];
                 this.expandedKeys = [];

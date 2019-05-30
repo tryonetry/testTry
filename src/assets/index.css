@@ -258,3 +258,16 @@ input{
   margin-bottom: -17px;
   padding-bottom: 0px;
 }
+.ant-modal-body{
+  border-radius: 4px;
+}
+
+/* 上传材料时的上传文件列表样式 */
+
+.ant-upload-list{
+  display: flex;
+  flex-wrap: wrap;
+}
+.ant-upload-list-item{
+  width: 33.3%;
+}

@@ -143,35 +143,35 @@ export default {
                         title: "单位名称",
                         dataIndex: "companyName",
                         key: "companyName",
-                        //width: 60,
+                        width: 350,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系人",
                         dataIndex: "companyContact",
                         key: "companyContact",
-                        //width: 60,
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系电话",
                         dataIndex: "contactPhone",
                         key: "contactPhone",
-                        //width: 60,
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "统一社会信用代码",
                         dataIndex: "businessLicense",
                         key: "businessLicense",
-                        //width: 60,
+                        width: 400,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "立户日期",
                         dataIndex: "registrationDate",
                         key: "registrationDate",
-                        //width: 60,
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {

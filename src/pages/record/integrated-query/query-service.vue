@@ -138,49 +138,49 @@ export default {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
-                        //width: 60,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "身份证号",
                         dataIndex: "a0184",
                         key: "a0184",
-                        //width: 60,
+                        width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "手机号码",
                         dataIndex: "a3707c",
                         key: "a3707c",
-                        //width: 60,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "存档编号",
                         dataIndex: "a3714",
                         key: "a3714",
-                        //width: 60,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "单位名称",
                         dataIndex: "a0888",
                         key: "a0888",
-                        //width: 60,
+                        width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "单位编号",
                         dataIndex: "companyNumber",
                         key: "companyNumber",
-                        //width: 60,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "档案位置编号",
                         dataIndex: "shelvesNo",
                         key: "shelvesNo",
-                        //width: 60,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {

@@ -2,6 +2,33 @@
 <template>
     <div class="editDocOuter" @click='resetAllState'>
 
+        <!-- 上传弹框 为了结局todolist的问题存在  更改导致数据问题-->
+        <a-modal
+            centered 
+            :visible="modalState"
+            :width ="1200"
+            @ok="editHandleOk"
+            @cancel="handleCancel"
+            :maskClosable='false'
+        >
+            <div slot="title" class="titleSlot">
+                <p>请选择所需上传的<span>{{listDirectory && listDirectory[currentIndex] && listDirectory[currentIndex].name}}</span></p>
+            </div>
+
+            <div class="uploadContainer">
+                <div class="uploadHeader">
+                    <a-upload-dragger name="file" :multiple="true"  :fileList="currentFileList" :beforeUpload="beforeUpload">
+                        <p class="ant-upload-drag-icon">
+                            <a-icon type="inbox" />
+                        </p>
+                        <p class="ant-upload-text">点击或拖拽选择材料</p>
+                    </a-upload-dragger>
+                </div>
+                
+            </div>
+        </a-modal>
+
+
         <!-- 左侧选择档案目录类型 -->
         <div class="left">
             <ul v-if="!!listDirectory && listDirectory.length>0">
@@ -21,8 +48,8 @@
             <div class="materialHead">
                 <ul>
                     <li>序 号</li>
-                    <li>材料名称</li>
-                    <li>材料生成日期</li>
+                    <li>材料名称<i class="required">*</i></li>
+                    <li>材料生成日期<i class="required">*</i></li>
                     <li>页 数</li>
                     <li>备 注</li>
                     <li>操 作</li>
@@ -47,13 +74,15 @@
                             />
                             <span v-else>{{row.e01z117a}}</span>
                         </li>
-                        <li>{{row.e01z114}}</li>
+                        <li>{{row.e01z114 ? row.e01z114 : 0}}</li>
                         <li @click.stop="bundleClick(index,'tip',$event)">
                             <input v-if='row.inEdit && row.inEdit.tip' type="text" v-model="row.e01z121"/>
                             <span v-else>{{row.e01z121}}</span>
                         </li>
                         <li class="actions">
-                            <span class="primaryBtnColor">上传材料</span>
+
+                            <span @click="modalOpen(row.e01z100,index,row.inUpload)" :class="!row.inUpload ? 'primaryBtnColor':'canNotUsedBtnColor'">上传材料</span>
+                            
                             <a-popconfirm
                                 title="确定删除吗?"
                                 okText="确定"
@@ -97,8 +126,16 @@ export default {
             watcherState:Math.random(),
             listDirectory:[],
             currentIndex:0,
+            currentListId:void 0,
+            currentListIndex:0,
             userData:null,
             initEditState:{name:false,date:false,tip:false},
+            // 弹框状态
+            modalState:false,
+            currentFileList:[],
+
+            // 当前条数据正确
+            currentRowRight:true,
         };
     },
 
@@ -107,11 +144,14 @@ export default {
         tempEmptyObj:function(){
             let tempEmptyObj = null;
             if(this.listDirectory && this.listDirectory.length > 0){
+                console.log(this.listDirectory[0])
                 tempEmptyObj = {...this.listDirectory[0].dataArr[0]};
             }
             for(let key in tempEmptyObj){
                 tempEmptyObj[key] = '';
             }
+            tempEmptyObj.inEdit = this.initEditState;
+            tempEmptyObj.inUpload = false;
             return tempEmptyObj;
         }
     },
@@ -163,6 +203,7 @@ export default {
                     // item is an object
                     if(item){
                         item.inEdit = _this.initEditState ;
+                        item.inUpload = false;
                     }
                 });
                 _this.listDirectory.push(tempObj);
@@ -182,7 +223,8 @@ export default {
                 }
 
             })
-            .catch(()=>{
+            .catch((err)=>{
+                // console.log(err)
                 _this.alertTip('抱歉,网络错误了,请稍后重试',3,false);
             })
         },
@@ -210,9 +252,10 @@ export default {
         // 添加新的材料
         addNewMaterial(){
             if(this.listDirectory && this.listDirectory[this.currentIndex] && this.listDirectory[this.currentIndex].dataArr){
-                this.listDirectory[this.currentIndex].dataArr.push({...this.tempEmptyObj})
+                // 添加一条数据
+                this.listDirectory[this.currentIndex].dataArr.push({...this.tempEmptyObj});
             }else{
-                this.alertTip('抱歉,网络错误了,请稍后重试',2,false);
+                this.alertTip('抱歉,网络错误了,请稍后重试',3,false);
             }
         },
         // 删除材料
@@ -226,8 +269,145 @@ export default {
         },
         dateChange(args,item){
             item.e01z117a = args[1];
-        }
-        
+        },
+
+        //上传图片
+        modalOpen(catalogId,index,inUpload){
+            if(inUpload) return;
+            let {listDirectory,currentIndex,userId} = this;
+            this.currentFileList = [];
+            if(!userId || !listDirectory || listDirectory.length <= 0 || !listDirectory[currentIndex].name){
+                this.$message.warning('抱歉,当前选择的信息有误!');
+                return ;
+            }
+            this.modalState = true;
+            this.currentListId = catalogId ? catalogId : "";
+            this.currentListIndex = index;
+        },
+
+        //handleCancel 关闭modal
+        handleCancel(){
+            this.modalState = false;
+        },
+        // 图片选择
+        beforeUpload(file) {
+            this.currentFileList = [...this.currentFileList, file];
+            return false;
+        },
+
+        //递归上传
+        uploadOneByOne(fileArr){
+            const _this = this;
+            let { listDirectory,currentIndex,userId } = this;
+            let data = {
+                file:fileArr[0],
+                personId:_this.userId,
+                catalogName:listDirectory[currentIndex].name,
+                catalogId:_this.currentListId,
+                // currentPageNum:_this.listDirectory[currentIndex].dataArr[this.currentListIndex].e01z114,
+            }
+
+            let updatedFileName = '';
+
+            if(fileArr[0]){
+                updatedFileName = fileArr[0].name;
+            }
+
+            _this.listDirectory[currentIndex].dataArr[this.currentListIndex].inUpload = true;
+            this.$http.fetchPost('digitalArchives@upload.action',data,{headers:{'Content-Type':'multipart/form-data'}})
+                .then(res => {
+                    _this.listDirectory[currentIndex].dataArr[this.currentListIndex].inUpload = false;
+                    if(Number(res.code)  === 0){
+                        _this.currentListId = res.catalogId;
+                        let pageNum = _this.listDirectory[currentIndex].dataArr[this.currentListIndex].e01z114;
+                        pageNum = pageNum ? pageNum : 0;
+                        _this.listDirectory[currentIndex].dataArr[this.currentListIndex].e01z114 = Number(pageNum) + 1;
+                        _this.listDirectory[currentIndex].dataArr[this.currentListIndex].e01z100 = res.catalogId;
+                        // 减少 fileArr 长度
+                        fileArr.shift();
+                        _this.$message.success(`${updatedFileName}上传成功.`);
+                        // console.log(fileArr);
+                        // 继续上传
+                        if(fileArr.length > 0){
+                            _this.uploadOneByOne(fileArr);
+                        }
+
+                    }else{
+                        _this.$message.error(`抱歉,${updatedFileName}上传失败.`);
+                    }
+                })
+                .catch(err => {
+                    _this.listDirectory[currentIndex].dataArr[this.currentListIndex].inUpload = false;
+                    _this.listDirectory = [..._this.listDirectory];
+                    // console.log(_this.listDirectory[currentIndex].dataArr[this.currentListIndex].inUpload)
+                    _this.$message.error(`抱歉,${updatedFileName}上传失败.`);
+                })
+        },
+
+        //确认上传
+        editHandleOk(){
+            this.uploadOneByOne([...this.currentFileList]);
+            this.handleCancel();
+        },
+
+        // 判断当欠条数据是否正确
+        judgeRowIsRight(data){
+            let isRight = true;
+            if(!data.e01z111a && String(data.e01z111a) !== '0'){
+                isRight = false;
+            }else if(!data.e01z117a){
+                isRight = false;
+            }
+            return isRight;
+        },
+
+        // getFinishData
+        getFinishData(){
+            // 判断数据正确性
+            // 处理数据为后台所需的数据
+            const _this = this;
+            let newArrData = [];
+
+            this.currentRowRight = true;
+            [...this.listDirectory].forEach((item,index)=>{
+                // if(_this.currentRowRight) 保证上一条判断的数据正确的情况下判断下一条数据
+                if(_this.currentRowRight){
+
+                    [...item.dataArr].forEach((row,i)=>{
+
+                        if(_this.currentRowRight){
+                            if(!_this.judgeRowIsRight(row)){
+                                // 定位到第几个中
+                                _this.currentIndex = index;
+                                _this.currentRowRight = false;
+                                // 提示
+                                _this.alertTip('请确保必填字段不为空(材料名称、材料生成日期等)',3,false);
+                            }
+                            // else if(row.e01z100){
+                            //     _this.currentIndex = index;
+                            //     _this.currentRowRight = false;
+                            //     _this.alertTip('请上传材料相对应的材料后保存',3,false);
+                            // }
+                            else{
+                                row.e01z114 = row.e01z114 ? row.e01z114 : '';
+                                row.e01z121 = row.e01z121 ? row.e01z121 : '';
+                                row.e01z100 = row.e01z100 ? row.e01z100 : '';
+                                row.e01z111b = item.name;
+                                row.personId = _this.userId;
+                                delete row.inEdit;
+                                delete row.inUpload;
+                                // console.log(row);
+                                newArrData.push({...row});
+                            }
+                        }
+                        
+                    })
+
+                }
+
+            });
+            return [...newArrData];
+        }        
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
@@ -261,6 +441,8 @@ export default {
 
 <style scoped>
 .editDocOuter{
+    min-height: 400px;
+    max-height: 400px;
     display: flex;
     /* position: relative; */
 }
@@ -269,9 +451,9 @@ export default {
 }
 .bundleContainer{
     width: 100%;
-    position: absolute;
+    /* position: absolute;
     top:0;
-    left: 0;
+    left: 0; */
 }
 .left{
     width: 20%;
@@ -314,6 +496,10 @@ export default {
 .right .materialHead{
     background: #fafafa;
     border-top: 1px solid #e8e8e8;
+}
+.right .materialHead .required{
+    color: red;
+    margin-left: 10px;
 }
 .right .materialHead li{
     font-size: 16px;
@@ -385,5 +571,18 @@ export default {
     border-top: none;
     cursor: pointer;
     /* margin-top: 20px; */
+}
+
+.uploadContainer{
+    background: #ffffff;
+    height: 400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px;
+}
+.titleSlot p span{
+    margin-left: 5px;
+    color: #2d8cf0;
 }
 </style>

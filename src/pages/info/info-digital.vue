@@ -28,7 +28,7 @@
           <span>{{currentData && currentData.name}}</span>
         </div>
         <!-- 档案目录 -->
-        <DocDirectory :userId="currentData && currentData.key"></DocDirectory>
+        <DocDirectory :userId="currentData && currentData.key" :ramdomKey="editRadomKey"></DocDirectory>
       </a-modal>
     </div>
 
@@ -51,7 +51,7 @@
           <span>{{currentData && currentData.name}}</span>
         </div>
         <!-- 编辑档案 -->
-        <EditDocDirectory :userId="currentData && currentData.key" :ramdomKey="editRadomKey"></EditDocDirectory>
+        <EditDocDirectory :userId="currentData && currentData.key" :ramdomKey="editRadomKey" ref="EditDocDirectory"></EditDocDirectory>
       </a-modal>
     </div>
 
@@ -210,7 +210,21 @@ export default {
       this.directoryModalState = false;
     },
     editHandleOk(){
-
+      const _this = this;
+      let finalData = this.$refs['EditDocDirectory'].getFinishData();
+      this.$http.fetchPost('digitalArchives@addCatalog.action',{arrs:JSON.stringify(finalData)})
+          .then(res => {
+              console.log(res);
+              if(Number(res.code) === 0){
+                _this.$message.success('保存成功!');
+                _this.handleCancel();
+              }else{
+                _this.$message.error('保存失败,请重试');
+              }
+          })
+          .catch(err => {
+             _this.$message.error('抱歉,网络错误,请稍后重试');
+          })
     },
     
     // 点击档案编辑
