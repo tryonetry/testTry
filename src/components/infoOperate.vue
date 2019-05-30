@@ -962,7 +962,7 @@
         </div>
       </a-tab-pane>
       <a-tab-pane class="tabView" tab="人员档案目录" key="2" v-if="operateStatusVal == 2">
-        <DocDirectory :userId="currRowDataId"></DocDirectory>
+        <DocDirectory :userId="currRowDataId" :ramdomKey='ramdomKey'></DocDirectory>
       </a-tab-pane>
     </a-tabs>
    
@@ -1002,7 +1002,7 @@ function getBase64(img, callback) {
 }
 export default {
   name: "InfoOperate",
-  props: ["operateStatusVal", "currRowDataId", "addSelectTreeNode"],
+  props: ["operateStatusVal", "currRowDataId", "addSelectTreeNode",'ramdomKey'],
   components: {
     DocDirectory,
     TableFromSearch

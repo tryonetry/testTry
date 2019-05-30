@@ -2,12 +2,8 @@
 <template>
     <div class="outer">
 
-        <div class="bundleContainer">
-            <MsgTip :msgTip="msgTip" :msgIndex="msgIndex" :watcherState="watcherState" :closeState="closeState"></MsgTip>
-        </div>
-
         <!-- 左侧树 -->
-        <div class="left"  @click="changeIndex()">
+        <div class="left"  @click="changeIndex(null,false,null)">
             <a-directory-tree
                 :treeData="treeData"
                 :defaultExpandedKeys="defaultExpandedKeys"
@@ -21,6 +17,9 @@
 
         <!-- 右侧列表 -->
         <div class="right">
+            <div class="bundleContainer">
+                <MsgTip :msgTip="msgTip" :msgIndex="msgIndex" :watcherState="watcherState" :closeState="closeState"></MsgTip>
+            </div>
             <!-- 图片列表 -->
             <draggable v-model="currentList" group="people" @start="drag=true" @end="drag=false" class="dragContainer">
                 <div v-for="(element,index) in currentList" :key="index" class="dragElement">
@@ -28,7 +27,7 @@
                         <div class="elementImg">
                             <img :src="element.imgData" alt="" @click="openImgCheck(index)">
                         </div>
-                        <span>{{element.name}}</span>
+                        <span  @click="openImgCheck(index)">{{element.name?element.name.replace(element.name.substring(element.name.indexOf('---'),element.name.lastIndexOf('.')),''):''}}</span>
                     </div>
                     <div class="elementRight">
                         <a-input-search 
@@ -36,18 +35,18 @@
                             v-show='element.onChange' 
                             v-model="targetIndex" 
                             type='number' 
-                            @search='changeIndex(index,false)'
+                            @search='changeIndex(index,false,element.id)'
                         >
                             <a-button slot="enterButton">调 序</a-button>
                         </a-input-search>
-                        <a-button v-show="!element.onChange" @click="changeIndex(index,true)">调 序</a-button>
-                        <a-popconfirm title="确定要删除吗?" @confirm="confirmDelete(index)"  okText="确定" cancelText="取消">
+                        <a-button v-show="!element.onChange" @click="changeIndex(index,true,null)">调 序</a-button>
+                        <a-popconfirm title="确定要删除吗?" @confirm="confirmDelete(element,index)"  okText="确定" cancelText="取消">
                             <a-button>删 除</a-button>
                         </a-popconfirm>
                     </div>
                 </div>
             </draggable>
-
+            
         </div>
         <!-- 图片查看 -->
         <a-modal
@@ -205,8 +204,20 @@ export default {
             this.checkImgModalStatus = false;
         },
 
-        confirmDelete(index){
-            this.currentList.splice(index,1)
+        confirmDelete(el,index){
+            const _this = this;
+            this.$http.fetchGet('digitalArchives@catagFileDelete.action',{id:el.id})
+                .then(res => {
+                    if(Number(res.code) === 0){
+                        _this.$message.success('删除成功!');
+                        _this.currentList.splice(index,1);
+                    }else{
+                        _this.$message.error('删除失败');
+                    }
+                })
+                .catch(err => {
+                    _this.$message.error('抱歉,网络出错了,请稍后重试');
+                })
         },
 
         // 弹出提示信息 index:[0-success,1-info,2-warning,3-err]
@@ -222,9 +233,10 @@ export default {
             this.watcherState = Math.random();
         },
 
-        changeIndex(index,status){
+        changeIndex(index,status,id){
             // console.log(index)
             const {currentList,targetIndex} = this;
+            const _this = this;
             currentList.forEach((item)=>{item.onChange = false});
             if(!index && index !== 0) return;
             // 调序
@@ -233,12 +245,28 @@ export default {
                     this.targetIndex = '';
                     this.alertTip('请输入大于0的整数',2,false);
                     this.currentList[index].onChange = true;
+                }else if(targetIndex > currentList.length || Number(targetIndex) % 1 !== 0){
+                    this.targetIndex = '';
+                    this.alertTip('请输入小于列表长度的整数',2,false);
+                    this.currentList[index].onChange = true;
                 }else{
-                    let tempItem = currentList[index];
-                    this.currentList.splice(index,1);
-                    this.currentList.splice(targetIndex-1,0,tempItem);
-                    this.currentList[index].onChange = status;
-                    this.alertTip('',0,true);
+                    this.$http.fetchGet('digitalArchives@doSort.action',{targetPage: Number(targetIndex),currentPage: Number(index)+1,id:id})
+                        .then(res => {
+                            if(Number(res.code) === 0){
+                                let tempItem = currentList[index];
+                                _this.currentList.splice(index,1);
+                                _this.currentList.splice(targetIndex-1,0,tempItem);
+                                _this.currentList[index].onChange = status;
+                                _this.alertTip('',0,true);
+                                _this.$message.success('调整成功');
+                            }else{
+                                _this.$message.error('调整失败');
+                            }
+                        })
+                        .catch(err => {
+                            _this.$message.error('抱歉,网络出错了,请稍后重试');
+                        })
+                    
                 }
             }else{
                 this.currentList[index].onChange = status;
@@ -301,11 +329,7 @@ export default {
         margin-top: 0;
     }
     .bundleContainer{
-        position:absolute;
-        width: 80%;
-        right: 0;
-        top:0;
-        z-index: 1000;
+        width: 100%;
     }
     .checkImgContainer{
         padding: 20px;
@@ -327,6 +351,8 @@ export default {
     /* drag elements style*/
     .dragContainer{
         border-bottom: 1px solid #e8e8e8;
+        padding-right: 20px;
+        box-sizing: border-box;
     }
     .dragElement{
         width: 100%;

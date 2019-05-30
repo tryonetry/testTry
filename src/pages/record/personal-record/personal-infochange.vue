@@ -2,7 +2,7 @@
 <template>
   <!-- 信息变更 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascrit:;"
@@ -26,6 +26,7 @@ export default {
 
   data() {
     return {
+      tableTotalNum:0,
       initArr: {
         treeflag: false, //左侧tree是否存在
         tableCheck: false,
@@ -36,27 +37,27 @@ export default {
               title: "姓名",
               type: "text",
               placeholder: "请输入姓名",
-              key: "name",
-              name: "name",
-              postname: "",
+              key: "a0101",
+              name: "a0101",
+              postname: "a0101",
               val: void 0
             },
             {
               title: "身份证号",
               type: "text",
               placeholder: "请输入身份证号",
-              key: "idCard",
-              name: "idCard",
-              postname: "",
+              key: "a0184",
+              name: "a0184",
+              postname: "a0184",
               val: void 0
             },
             {
               title: "存档编号",
               type: "text",
               placeholder: "请输入存档编号",
-              key: "recordNum",
-              name: "recordNum",
-              postname: "",
+              key: "a0100A",
+              name: "a0100A",
+              postname: "a0100A",
               val: void 0
             }
           ],
@@ -72,18 +73,44 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 80
+            width: 60
           },
-          { title: "身份证号", dataIndex: "idCard", key: "idCard" },
-          { title: "姓名", dataIndex: "name", key: "name" },
-          { title: "性别", dataIndex: "gender", key: "gender" },
-          { title: "电话号码", dataIndex: "phone", key: "phone" },
-          { title: "存档编号", dataIndex: "recordNum", key: "recordNum" },
+          { 
+            title: "姓名", 
+            dataIndex: "a0101", 
+            key: "a0101",
+            width:250, 
+          },
+          { 
+            title: "身份证号",
+            dataIndex: "a0184", 
+            key: "a0184",
+            width:250,
+          },
+          { 
+            title: "性别", 
+            dataIndex: "a0104",
+            key: "a0104",
+            width:100,
+          },
+          { 
+            title: "电话号码", 
+            dataIndex: "a3707C", 
+            key: "a3707C",
+            width:250,
+          },
+          { 
+            title: "存档编号", 
+            dataIndex: "a0100A", 
+            key: "a0100A",
+            width:250,
+          },
           {
             title: "存档日期",
-            dataIndex: "recordDate",
-            key: "recordDate",
-            sorter: (a, b) => a.date - b.date
+            dataIndex: "uCreateDate",
+            key: "uCreateDate",
+            sorter: (a, b) => a.date - b.date,
+            width:250,
           },
           {
             title: "操作",
@@ -91,17 +118,7 @@ export default {
             scopedSlots: { customRender: "action" }
           }
         ],
-        tabledataArr: [
-          {
-            key: 1,
-            idCard: "1234567996582147",
-            name: "test",
-            gender: "男",
-            phone: "12345678902",
-            recordNum: "C123",
-            recordDate: "2015-06-03"
-          }
-        ]
+        tabledataArr: []
       }
     };
   },
@@ -121,30 +138,41 @@ export default {
 
   //方法集合
   methods: {
-    getTableData(condition, initableArr) {
+    getTableData(condition, pageNum, limitNum) {
+      const _this = this;
       /***
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
-       * 参数：data:form查询结果：{}
-       *  */
-      console.log(condition);
-      let tempData = [];
-      if (condition.length === 0) {
-        this.initArr.tabledataArr = initableArr;
-      } else {
-        tempData = initableArr.filter(item => {
-          return Object.keys(condition).every(key => {
-            return String(item[key])
-              .toLowerCase()
-              .includes(
-                String(condition[key])
-                  .trim()
-                  .toLowerCase()
-              );
-          });
-        });
-      }
-      console.log(tempData);
-      this.initArr.tabledataArr = tempData;
+       * 参数：condition:form查询结果：{}
+      **/
+      this.$http.fetchPost('personalArch@getPersonalArchList.action',{
+          page: pageNum,
+          limit: limitNum,
+          ...condition
+      }).then((res)=>{
+          if(Number(res.code) === 0){
+              _this.tableTotalNum = res.count;
+              let tempTableData = res.data;
+              this.initArr.tabledataArr = [];
+              console.log(tempTableData);
+              tempTableData.forEach((element, index) => {
+                  this.initArr.tabledataArr.push({
+                      key: element.a01000, //主键值
+                      num: (pageNum - 1) * limitNum + index + 1, //序号
+                      a01000: element.a01000, //id
+                      a0101: element.a0101, //姓名
+                      a0184: element.a0184, //身份证号
+                      a3707c: element.a3707c, //联系电话
+                      a0100A:element.a0100A, //存档编号
+                      // a0888: element.a0888, //单位名称
+                      // companyNumber: element.companyNumber, //单位编号
+                      // shelvesNo: element.shelvesNo, //档案位置号
+                      uCreateDate: element.uCreateDate, //存档日期
+                  });
+              });
+          }else{
+              _this.$message.warning("抱歉,暂时未查到数据!");
+          }
+      })
     },
     editOperate(currdata) {
       /***

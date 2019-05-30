@@ -52,6 +52,7 @@
           :operateStatusVal="operateStatus"
           :currRowDataId="operateDataId"
           :addSelectTreeNode="selectTreeNode"
+          :ramdomKey="ramdomKey"
         ></InfoOperate>
         <template slot="footer">
           <a-button key="cancel" @click="handleCancel">取消</a-button>
@@ -185,7 +186,8 @@ export default {
       operateStatus: null, //操作状态：1-添加， 2-浏览， 3-添加
       currentData: {},
       operateDataId: null, //当前操作数据
-      tempCondition: {} //临时查询条件
+      tempCondition: {}, //临时查询条件
+      ramdomKey:Math.random(), //确保档案目录数据每次都重新加载
     };
   },
   watch: {},
@@ -300,6 +302,7 @@ export default {
        * 功能：模态框状态变为true:打开模态框，根据操作，更该模态框标题
        * 参数:statusVal：操作状态值
        */
+      this.ramdomKey = Math.random();
       this.visible = true;
     },
     handleOk() {

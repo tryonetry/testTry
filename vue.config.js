@@ -14,7 +14,8 @@ module.exports = {
         port: 8088,
         https: false,
         hotOnly: false, //热更新（webpack已实现了，这里false即可）
-
+        hot:true,
+        inline:true,
         proxy: {
             //配置跨域
             '/api': {
