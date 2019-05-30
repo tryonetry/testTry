@@ -19,15 +19,21 @@
         title="交接清单预览"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        :width="1600"
+        :width="modalWidth"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
+        :footer="null"
+        :maskClosable="false"
       >
-        <TableView :initArrData="initPrintArr"></TableView>
-        <template slot="footer">
-          <a-button key="cancel" @click="handleCancel">取消</a-button>
-          <a-button key="submit" type="primary" @click="handleOk">打印</a-button>
-        </template>
+        <div class="modalInnerContainer">
+            <div class="printContent">
+              <PrintTemplate :printDataObj="printTemplateData" ref="printPage"></PrintTemplate>
+            </div>
+            <div class="printBtn">
+              <a-button key="cancel" @click="handleCancel">取消</a-button>
+              <a-button key="submit" type="primary" @click="handleOk">打印</a-button>
+            </div> 
+        </div>
       </a-modal>
     </div>
   </div>
@@ -35,14 +41,18 @@
 
 <script>
 import TableView from "@/components/tableView";
+import PrintTemplate from '@/components/printTemplate';
+import moment from "moment";
+import utils from '@/utils/util.js'
 export default {
   name: "RecordHandover",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView },
+  components: { TableView, PrintTemplate },
   props: [""],
 
   data() {
     return {
+      utils,
       tableTotalNum: 0, //总页数：默认为0
       // tableView传值方式
       initArr: {
@@ -214,19 +224,92 @@ export default {
         // table数据
         tabledataArr: []
       },
-      initPrintArr:{
-        //打印清单数据
-        treeflag: false,
-        tableCheck:false,
-        formData:{
-          formInputs:[]
+      printTemplateData:{
+        //打印模板数据
+        cardTitle: '江西省人才流动中心',   //大标题
+        subTitle: '档案交接清单',         //小标题
+        isRightNum: false,               //是否有右侧编号/内容
+        rightContent:{                   //如果有右侧内容：传值格式
+          title: 'NO：',                 
+          value: '360000B1905300010',
+          className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
+            rightNumber: true,
+            rightNumberRed: true
+          }
         },
-        columnsArr:[],
-        tabledataArr: []
+        otherContent: [                  //日期及其他内容
+          {
+            title: 'AAAAA人',
+            value: 'ZZZZZ'
+          },
+          {
+            type: 'date',
+            title: '日期',
+            value: ''
+          }
+        ],
+        content:[                        //内容部分
+          {
+            type: 'table',
+            data:{
+              columnsArr: [
+                {
+                  title: "序号",
+                  dataIndex: "num",
+                  key: "num",
+                  width: '10%',
+                },
+                {
+                  title: "姓名",
+                  dataIndex: "e0102",
+                  key: "e0102",
+                  width: '10%',
+                },
+                {
+                  title: "性别",
+                  dataIndex: "e0103",
+                  key: "e0103",
+                  width: '10%',
+                },
+                {
+                  title: "身份证号",
+                  dataIndex: "e0104",
+                  key: "e0104",
+                  width: '20%',
+                },
+                {
+                  title: "存档编号",
+                  dataIndex: "e0101",
+                  key: "e0101",
+                  width: '20%',
+                },
+                {
+                  title: "经办人",
+                  dataIndex: "e0108a",
+                  key: "e0108a",
+                  width: '10%',
+                },
+                {
+                  title: "状态",
+                  dataIndex: "e0112Name",
+                  key: "e0112Name",
+                  width: '10%',
+                },
+                {
+                  title: "接收日期",
+                  dataIndex: "e0106a",
+                  key: "e0106a",
+                },
+              ],
+              tableDataArr: []
+            }
+          }
+        ],
       },
       tempCondition: {}, //当前查询条件
       visible: false, //模态框默认不显示
       confirmLoading: false, //确认加载状态 默认为false
+      modalWidth: '',  //modal的宽度
     };
   },
 
@@ -249,6 +332,7 @@ export default {
 
   //方法集合
   methods: {
+    moment,
     getTableData(condition, pageNum, limitNum) {
       /***
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
@@ -361,8 +445,7 @@ export default {
         if(isPrint.isFlag){
           console.log(this.checkTableData);
           this.visible = true;
-          this.initPrintArr.columnsArr = this.initArr.columnsArr;
-          this.initPrintArr.tabledataArr = this.checkTableData;
+          this.printTemplateData.content[0].data.tableDataArr = this.checkTableData;
         } else{
           this.$message.error('请选择已接收的文件信息进行打印！')
         }
@@ -380,16 +463,21 @@ export default {
       /***
        * 功能：打印操作
        */
+      this.$refs.printPage.printFun();
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getTableData(null, 1, 10);
+    let dpiArr = this.utils.js_getDPI();
+    this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {},
+  mounted() {
+
+  },
 
   beforeCreate() {}, //生命周期 - 创建之前
 
@@ -408,4 +496,22 @@ export default {
 </script>
 
 <style scoped>
+.modalInnerContainer{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.printContent{
+  flex:1;
+  overflow-y: auto;
+}
+.printBtn{
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.printBtn button{
+  margin: 0 10px;
+}
 </style>
