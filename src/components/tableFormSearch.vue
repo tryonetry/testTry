@@ -76,7 +76,7 @@
           optionFilterProp="children"
           @focus="searchSelectFocus"
           @blur="searchSelectBlur(item,index)"
-          @change="searchSelectChange"
+          @change="searchSelectChange(item, item.val)"
           :filterOption="filterOption"
           allowClear
         >
@@ -336,12 +336,13 @@ export default {
           connectToArr.forEach((item,i)=>{
             _this.formData.formInputs.forEach((input,index)=>{
               if(input.key === item){
+                let resultObj = connectToFunArr[i](inputItem.val);
                 // 当为时间格式的时候
                 if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
                   // console.log(connectToFunArr[i](inputItem.val))
-                  _this.formData.formInputs[index].val = moment(connectToFunArr[i](inputItem.val))
+                  _this.formData.formInputs[index][resultObj.name] = moment(resultObj.data)
                 }else{
-                  _this.formData.formInputs[index].val = connectToFunArr[i](inputItem.val);
+                  _this.formData.formInputs[index][resultObj.name] = resultObj.data;
                 }
                 
               }
@@ -354,11 +355,25 @@ export default {
 
 
     },
-    searchSelectChange (value) {
-      console.log(`selected ${value}`);
+    searchSelectChange (select, value) {
+      const _this = this;
+      if(select.connectTo && select.connectToFun && select.connectTo.length > 0 && select.connectToFun.length > 0){
+        let connectToArr = select.connectTo;
+        let connectToFunArr = select.connectToFun;
+        connectToArr.forEach((item, i) => {
+          _this.formData.formInputs.forEach((slectItem, index) => {
+              if(slectItem.key == item){
+                let resultObj = connectToFunArr[i](select.val);
+                console.log(resultObj);
+
+                _this.formData.formInputs[index][resultObj.name] = resultObj.data;
+              }
+          });
+        
+        });
+      }
     },
     searchSelectBlur(select,index) {
-      console.log((!select.val && String(select.val) !== '0'))
       if(select.required){
         if(!select.val && String(select.val) !== '0'){
           this.formData.formInputs[index].status = 'error';
@@ -368,7 +383,7 @@ export default {
       }
     },
     searchSelectFocus() {
-      console.log('focus');
+      // console.log('focus');
     },
     filterOption(input, option) {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0

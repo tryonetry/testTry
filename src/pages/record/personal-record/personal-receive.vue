@@ -22,22 +22,22 @@ import moment from "moment";
 // 身份证号到出生日期
 function idcardToBirthdayFun(idNum){
   if(idNum.length === 18){
-    return idNum.substr(6,8);
+    return {name: 'val', data: idNum.substr(6,8) };
   }else if(idNum.length === 15){
     // console.log('19'+idNum.substr(6,6))
-    return '19'+idNum.substr(6,6);
+    return {name: 'val', data: '19'+idNum.substr(6,6) };
   }
-  return '';
+  return  {name: 'val', data: '' };
   
 }
 // 身份证号到性别
 function idcardTotoGender(idNum){
   if(idNum.length === 18){
-    return Number(idNum[16])%2 === 0 ? 2:1;
+    return {name: 'val', data: Number(idNum[16])%2 === 0 ? 2:1 };
   }else if(idNum.length === 15){
-    return Number(idNum[14])%2 === 0 ? 2:1;
+    return {name: 'val', data: Number(idNum[14])%2 === 0 ? 2:1 };
   }
-  return '';
+  return {name: 'val', data: '' };
 }
 
 export default {
