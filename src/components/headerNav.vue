@@ -90,9 +90,9 @@ export default {
       menuTotalArr: [],
       menuArr: [], //一级菜单
       submenuArr: [], //二级菜单
-      submenuDefaultSelect: [],
-      defaultOpenKeys: [],
-      collapsed: false,
+      submenuDefaultSelect: [], //默认选择
+      defaultOpenKeys: [],  //默认展开
+      collapsed: false,  
       menuId: "",
       currentMainIndex:0,
     };
@@ -160,21 +160,22 @@ export default {
         });
     },
     changeMenu(currId, key, path,index) {
-
+      /***
+       * 功能：一级菜单点击函数：获取当前的key值和name值，同时更改面包屑一级目录；
+       */
+      if(this.currentMainIndex === index) return;
       this.menuId = currId;
       this.menuDefaultSelect = [key];
-      this.menuId = key;
+      // this.menuId = key;
       this.currentMainIndex = index;
-      // 获取sessionStorage中的值
 
+      // 获取sessionStorage中的值
       if (sessionStorage.getItem(currId)) {
         this.$router.push(sessionStorage.getItem(currId));
       } else {
         this.$router.push(path);
       }
-      /***
-       * 功能：一级菜单点击函数：获取当前的key值和name值，同时更改面包屑一级目录；
-       */
+      
     },
 
     slideIndexChange(currId, path, menuLevel) {
@@ -259,8 +260,8 @@ export default {
                     utils.deleteVoidFromArr(tempArr)
                   )
                 ) {
-                  console.log(nextSubmenu)
-                  console.log(subItem)
+                  // console.log(nextSubmenu)
+                  // console.log(subItem)
                   _this.submenuDefaultSelect = ["" + nextSubmenu.id];
                   _this.defaultOpenKeys = ["" + subItem.id];
                   hasSearchedSubmenu = true;

@@ -1,8 +1,5 @@
 // 提交mutation修改state状态
 
-
-
-
 const actions = {
     // eg: 外部组件调用使用 this.$store.dispatch('increment',5)
     //自定义触发mutations里函数的方法，[context与store 实例具有相同方法和属性]
@@ -17,6 +14,9 @@ const actions = {
     },
     updateCompanyData(context,data){
         context.commit('_updateCompanyData',data);
+    },
+    getDirectoryData(context,data){
+        context.commit('_getDirectoryData',data);
     }
 };
 

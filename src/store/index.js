@@ -17,6 +17,7 @@ const state = {
     infoPollTreeData: [],  //人才信息总库左侧树data
     infoTableCheckData:[],   //人才信息总库table选择的数据
     companyData:[], // 公司数据
+    directoryData:null, // 字典数据
 }
 
 export default new Vuex.Store({

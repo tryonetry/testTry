@@ -13,6 +13,9 @@ export default {
     },
     _updateCompanyData(state,data){
         state.companyData = data;
+    },
+    _getDirectoryData(state,data){
+        state.directoryData = data;
     }
     
 }

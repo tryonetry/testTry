@@ -22,6 +22,7 @@ export default {
   created(){
     this.getTreeData();
     this.getCompanyData();
+    this.getDirectoryData();
   },
   methods:{
     getTreeData() {
@@ -59,6 +60,16 @@ export default {
       .then(res => {
         if(Number(res.code) === 0){
           this.$store.dispatch("updateCompanyData", res.data);
+        }
+      });
+    },
+    // 获取字典数据
+    getDirectoryData(){
+
+      this.$http.fetchPost("personalArch@personalArchAddSysDictItem.action", {})
+      .then(res => {
+        if(Number(res.code) === 0){
+          this.$store.dispatch("getDirectoryData", res.data);
         }
       });
     }

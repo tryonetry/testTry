@@ -16,14 +16,21 @@ const getters = {
     getCount(state) {
         return state.count
     },
+    // 人才信息总库的tree数据
     getInfoPollTreeData(state){
         return state.infoPollTreeData
     },
+    // 
     getinfoTableCheckData(state){
         return state.infoTableCheckData
     },
+    // 获取公司信息
     getCompanyData(state){
         return state.companyData
+    },
+    // 获取字典数据
+    getDirectoryData(state){
+        return state.directoryData
     }
 }
 
