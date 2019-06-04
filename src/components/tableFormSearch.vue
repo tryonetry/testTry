@@ -321,11 +321,19 @@ export default {
                   // 为 select 选项
                   // 默认其他规则 *_*
                   if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
+                    let hasMatched = false;
                     input.children.forEach((row,j) => {
                       if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
                         _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+                        hasMatched = true;
                       }
-                    })
+                    });
+                    // 扔尚未匹配到
+                    if(!hasMatched){
+                      _this.$set(_this.formData.formInputs[index],'status','error');
+                    }else{
+                      _this.$set(_this.formData.formInputs[index],'status','success');
+                    }
                   }else{
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
                   }

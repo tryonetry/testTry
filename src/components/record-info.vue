@@ -55,10 +55,16 @@ function companyNumToName(numVal){
   if(numVal || String(numVal) === '0'){
     return [
       {name:'val',data:"@_@"+numVal},
-      {name:'disabled',data:true}
+      {name:'disabled',data:true},
+      {name:'tip',data:'* 抱歉,尚未找到对应编号的公司'}
     ]
   }else{
-    return [{name:'val',data:''},{name:'disabled',data:false}]
+    return [
+      {name:'val',data:''},
+      {name:'disabled',data:false},
+      {name:'tip',data:'* 请选择委托存档单位名称'},
+      {name:'status',data:void 0},
+    ]
   }
 }
 
@@ -435,7 +441,7 @@ export default {
               {
                 title: "委托存档单位名称",
                 otherType: "searchSelect",
-                required: false,
+                required: true,
                 placeholder: "请选择委托存档单位名称",
                 key: "companyId",
                 name: "companyId",
