@@ -317,12 +317,16 @@ export default {
               // console.log(resultObjArr)
 
                 resultObjArr.forEach((resultObj) => {
+
                   // 当为时间格式的时候
                   if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
-                  }else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
+                  }
+
+                  // 当关联项为 select searchSelect
+                  else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
                     // 为 select 选项
-                    // 默认其他规则 *_*
+                    // *_* 规则
                     if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
                       let hasMatched = false;
                       input.children.forEach((row,j) => {
@@ -337,7 +341,9 @@ export default {
                       }else{
                         _this.$set(_this.formData.formInputs[index],'status','success');
                       }
-                    }else if(resultObj.operate && resultObj.operate == 'whIdTowhdArea'){
+                    }
+                    // whIdTowhdArea
+                    else if(resultObj.operate && resultObj.operate === 'whIdTowhdArea'){
                       let resultArr = [];
                       this.$http.fetchPost('wareHouse@getWareHouseList.action', {
                         page: 1,
@@ -360,19 +366,29 @@ export default {
                           }
                         }
                       })
-                      
-                      
-                    } else{
-                      _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-
                     }
-                  }else if(resultObj && resultObj.name === 'isHide'){
-                    console.log(1)
+                    // 其他情况
+                    else if(!resultObj.operate){
+                      _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                    }
+                  }
+
+                  // 当关联的数据为 是否隐藏
+                  else if(resultObj && resultObj.name === 'isHide'){
                     _this.$set(_this.formData.formInputs[index],'isHide',resultObj.data)
-                    console.log(_this.formData.formInputs[index])
-                  }else{
+                    // console.log(_this.formData.formInputs[index])
+                  }
+
+                  // record-info 页面的单独操作 -> recordInfoIdCard
+                  else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
+
+                  }
+
+                  // 其他项
+                  else if(!resultObj.operate){
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
                   }
+
                 });
 
               }

@@ -22,7 +22,6 @@ function UnitNatureToCompanyShow(val){
 
 // 身份证号到出生日期
 function idcardToBirthday(idNum){
-
   if(!idNum || idNum.length <= 0){
     return  [{name: 'val', data: '' }];
   }
@@ -46,6 +45,15 @@ function idcardTotoGender(idNum){
     return [{name: 'val', data: Number(idNum[14])%2 === 0 ? "2":"1" }];
   }
   return  [{name: 'val', data: '' }];
+}
+
+// 身份证号对应本身
+function idCardToSelf(idNum){
+  if(!idNum || idNum.length <= 0){
+    return  [{name: 'val', data: '' }];
+  }else{
+    return [{name:"val",data:idNum, operate:'recordInfoIdCard'}]
+  }
 }
 
 // 委托单位名称 To 委托单位编号
@@ -189,8 +197,8 @@ export default {
                 minlength: 15,
                 reg: "testid",
                 tip: "* 请输入正确的身份证号",
-                connectTo:['a0107','a0104'], //关联到日期和性别
-                connectToFun:[idcardToBirthday,idcardTotoGender], 
+                connectTo:['a0107','a0104','a0184'], //关联到日期和性别
+                connectToFun:[idcardToBirthday,idcardTotoGender,idCardToSelf], 
                 status: ""
               },
               {
