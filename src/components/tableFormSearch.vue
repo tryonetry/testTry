@@ -312,35 +312,65 @@ export default {
           _this.formData.formInputs.forEach((input,index)=>{
             if(input.key === item){
               let resultObjArr = connectToFunArr[i](itemData.val);
+              if(resultObjArr.length > 0){
               // console.log(resultObjArr)
-              resultObjArr.forEach((resultObj) => {
-                // 当为时间格式的时候
-                if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
-                  _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
-                }else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
-                  // 为 select 选项
-                  // 默认其他规则 *_*
-                  if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
-                    let hasMatched = false;
-                    input.children.forEach((row,j) => {
-                      if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
-                        _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
-                        hasMatched = true;
+
+                resultObjArr.forEach((resultObj) => {
+                  // 当为时间格式的时候
+                  if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
+                    _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+                  }else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
+                    // 为 select 选项
+                    // 默认其他规则 *_*
+                    if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
+                      let hasMatched = false;
+                      input.children.forEach((row,j) => {
+                        if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
+                          _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+                          hasMatched = true;
+                        }
+                      });
+                      // 扔尚未匹配到
+                      if(!hasMatched){
+                        _this.$set(_this.formData.formInputs[index],'status','error');
+                      }else{
+                        _this.$set(_this.formData.formInputs[index],'status','success');
                       }
-                    });
-                    // 扔尚未匹配到
-                    if(!hasMatched){
-                      _this.$set(_this.formData.formInputs[index],'status','error');
-                    }else{
-                      _this.$set(_this.formData.formInputs[index],'status','success');
+                    }else if(resultObj.operate && resultObj.operate == 'whIdTowhdArea'){
+                      let resultArr = [];
+                      this.$http.fetchPost('wareHouse@getWareHouseList.action', {
+                        page: 1,
+                        limit: 10,
+                      }).then(res => {
+                        if(Number(res.code) === 0){
+                          res.data.forEach(item => {
+                            if(item.whId == resultObj.data){
+                              for(let i = item.whAreaStartNum; i <= item.whAreaNum; i++){
+                                resultArr.push({
+                                  itemCode: i,
+                                  itemName: '第' + i + '区'
+                                })
+                              }
+                            }
+                          });
+                          _this.formData.formInputs[index][resultObj.name] = resultArr;
+                          if(resultArr.length > 0){
+                            _this.formData.formInputs[index]['val'] = resultArr[0].itemCode;
+                          }
+                        }
+                      })
+                      
+                      
+                    } else{
+                      _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+
                     }
                   }else{
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
                   }
-                }else{
-                  _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                }
-              });
+                });
+
+              }
             }
           })
         });

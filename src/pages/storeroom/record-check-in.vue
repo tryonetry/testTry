@@ -37,7 +37,6 @@
 import TableView from "@/components/tableView";
 import TableFromSearch from "../../components/tableFormSearch";
 import utils from "../../utils/util.js";
-import * as http from '@/http';
 
 function whIdTowhdAreaFun(whId){
   /***
@@ -45,30 +44,10 @@ function whIdTowhdAreaFun(whId){
    * 参数：whId:当前选择的库房的itemCode(即whId)值
    *  */
   if(whId){
-    let resultArr = [];
-    http.fetchPost('wareHouse@getWareHouseList.action', {
-      page: 1,
-      limit: 10,
-    }).then(res => {
-      if(Number(res.code) === 0){
-        res.data.forEach(item => {
-          if(item.whId == whId){
-            for(let i = item.whAreaStartNum; i <= item.whAreaNum; i++){
-              resultArr.push({
-                'itemCode': i,
-                'itemName': '第' + i + '区'
-              })
-            }
-          }
-        });
-      }
-    })
-    console.log(resultArr);
-    return { name: 'children', data: resultArr}
+    return [{name: 'children', data: whId, operate: 'whIdTowhdArea'}]
   } else{
-    return { name: 'children', data: []}
+    return [{name: 'children', data: []}]
   }
-  
 }
 
 export default {
@@ -301,7 +280,7 @@ export default {
             val: void 0,
             children: [],
             status: "",
-            connectTo:['whdArea'], //关联到日期和性别
+            connectTo:['whdArea'], //关联到分区
             connectToFun:[whIdTowhdAreaFun],
           },
           {
