@@ -10,12 +10,11 @@
 <script>
 // 关联函数
 // 身份证号到出生日期
-function idcardToBirthdayFun(idNum){
+function idcardToBirthday(idNum){
 
   if(!idNum || idNum.length <= 0){
     return  [{name: 'val', data: '' }];
   }
-
   if(idNum.length === 18){
     return [{name: 'val', data: idNum.substr(6,8) }];
   }else if(idNum.length === 15){
@@ -178,7 +177,7 @@ export default {
                 reg: "testid",
                 tip: "* 请输入正确的身份证号",
                 connectTo:['a0107','a0104'], //关联到日期和性别
-                connectToFun:[idcardToBirthdayFun,idcardTotoGender], 
+                connectToFun:[idcardToBirthday,idcardTotoGender], 
                 status: ""
               },
               {
