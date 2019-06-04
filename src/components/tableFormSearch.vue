@@ -8,9 +8,16 @@
       <!-- :help = 'item.tip ? item.tip : false ' -->
       <!-- hasFeedback -->
       <!-- :label="!item.required?null:item.title" -->
-      <a-col :xl="12" :xxl="8" :xs="24" v-for="(item, index) in formData.formInputs" :key="index">
+      <a-col 
+        :xl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 12 : 24" 
+        :xxl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 8 : 24" 
+        :xs="24" 
+        v-for="(item, index) in formData.formInputs" 
+        :key="index">
+
+        <!-- common formItem -->
         <a-form-item
-          v-if="item.otherType !== 'textarea'"
+          v-if="item.otherType !== 'textarea' && item.otherType !== 'segementTitle'"
           :labelCol="defaultCon.labelCol"
           :wrapperCol="defaultCon.wrapperCol"
           :validate-status = 'item.status ? item.status : "" '
@@ -45,6 +52,7 @@
           :placeholder="item.placeholder"
           :treeDefaultExpandedKeys="['01']"
           @change="treeSelect"
+          @blur="commonRequiredBlur(item,index)"
           v-model="item.val"
           allowClear
         ></a-tree-select>
@@ -55,6 +63,8 @@
           v-model="item.val"
           :placeholder="item.placeholder"
           :disabled = "item.disabled ? item.disabled : false"
+          @change='selectChange(item.val)'
+          @blur="commonRequiredBlur(item,index)"
           allowClear
         >
           <a-select-option
@@ -75,7 +85,7 @@
           v-model="item.val"
           optionFilterProp="children"
           @focus="searchSelectFocus"
-          @blur="searchSelectBlur(item,index)"
+          @blur="commonRequiredBlur(item,index)"
           @change="searchSelectChange(item, item.val)"
           :filterOption="filterOption"
           allowClear
@@ -106,17 +116,18 @@
           v-if="!item.type && item.otherType === 'date'"
           v-model="item.val"
           :disabled = "item.disabled ? item.disabled : false"
-          @change="dateChange"
+          @change="commonRequiredBlur(item,index)"
+          @openChange="dateOpenChange(arguments,item,index)"
           allowClear
         />
-          
 
         <a-month-picker 
           class="formSearchDate"
           v-if="!item.type && item.otherType === 'month'"
           v-model="item.val"
           :disabled = "item.disabled ? item.disabled : false"
-          @change="dateChange" 
+          @change="commonRequiredBlur(item,index)"
+          @openChange="dateOpenChange(arguments,item,index)"
           allowClear
         />
 
@@ -125,7 +136,7 @@
           v-if="!item.type && item.otherType === 'daterange'"
           v-model="item.val"
           :disabled = "item.disabled ? item.disabled : false"
-          @change="dateChange"
+          @change="commonRequiredBlur(item,index)"
           allowClear
         />
 
@@ -141,12 +152,9 @@
         >
           <a-button> <a-icon type="upload" />选择</a-button>
         </a-upload>
-           
         </a-form-item>
-      </a-col>
 
-       <!-- 多行文本 -->
-       <a-col :xl="24" :xxl="16" :xs="24" v-for="(item, index) in formData.formInputs" :key="'_'+index">
+        <!-- other formItem -->
         <a-form-item
           v-if="!item.type && item.otherType === 'textarea'"
           :label="item.title"
@@ -160,8 +168,11 @@
             :autosize="{ minRows: 3, maxRows: 6 }" 
             allowClear
           />
+          
         </a-form-item>
-       </a-col>
+        <!-- inputs分割 title -->
+        <h2 v-if="!item.type && item.otherType === 'segementTitle'" class="segementTitle">{{item.title}}</h2>
+      </a-col>
 
 
     </a-form>
@@ -214,12 +225,12 @@ export default {
         labelCol: {
           sm: { span: 6 },
           xl: { span: 3 },
-          xxl: { span: 3 }
+          xxl: { span: 2 }
         },
         wrapperCol: {
           sm: { span: 18 },
           xl: { span: 20 },
-          xxl: { span: 20}
+          xxl: { span: 14}
         }
       },
     };
@@ -282,12 +293,40 @@ export default {
       })
       // this.form.resetFields();
     },
+
+
     treeSelect(value) {
       this.treeSelectObj.value = value;
     },
-    dateChange(date, dateString){
-      console.log(date, dateString)
+
+    // 联动处理
+    bundleLinkage(itemData){
+      const _this = this;
+      // 如果对应的项有关联到其他项
+      if(itemData.connectTo && itemData.connectToFun && itemData.connectTo.length > 0 && itemData.connectTo.length && itemData.connectToFun.length){
+
+        let connectToArr = itemData.connectTo;
+        let connectToFunArr = itemData.connectToFun;
+        // 遍历关联函数和关联项
+        connectToArr.forEach((item,i)=>{
+          _this.formData.formInputs.forEach((input,index)=>{
+            if(input.key === item){
+              let resultObj = connectToFunArr[i](itemData.val);
+              // 当为时间格式的时候
+              if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
+                _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+              }else{
+                _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+              }
+              
+            }
+          })
+        });
+
+      }
     },
+
+    // 输入表单blur事件
     inputBlur(inputItem,inputIndex){
       const _this = this;
       // 验证正确/错误状态值
@@ -317,44 +356,23 @@ export default {
         }
       }
 
-      // 正确货失败后的操作
+      // 正确或失败后的操作
       if(!isRight){
-        this.formData.formInputs[inputIndex].status = 'error';
-      
+        // this.formData.formInputs[inputIndex].status = 'error';
+        this.$set(this.formData.formInputs[inputIndex],'status','error');
+
       }else{
         if(currInput.required){
-          this.formData.formInputs[inputIndex].status = 'success';
+          // this.formData.formInputs[inputIndex].status = 'success';
+          this.$set(this.formData.formInputs[inputIndex],'status','success');
         }
-
-        // 如果对应的项有关联到其他项
-        if(inputItem.connectTo && inputItem.connectToFun && inputItem.connectTo.length > 0 && inputItem.connectTo.length && inputItem.connectToFun.length){
-
-          let connectToArr = inputItem.connectTo;
-          let connectToFunArr = inputItem.connectToFun;
-
-          // 以下几行代码需放在success中
-          connectToArr.forEach((item,i)=>{
-            _this.formData.formInputs.forEach((input,index)=>{
-              if(input.key === item){
-                let resultObj = connectToFunArr[i](inputItem.val);
-                // 当为时间格式的时候
-                if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
-                  // console.log(connectToFunArr[i](inputItem.val))
-                  _this.formData.formInputs[index][resultObj.name] = moment(resultObj.data)
-                }else{
-                  _this.formData.formInputs[index][resultObj.name] = resultObj.data;
-                }
-                
-              }
-            })
-          });
-
-        }
-
       }
-
-
+      this.bundleLinkage(inputItem)
     },
+    selectChange(value){
+      console.log(value)
+    },
+    // 搜索选择框
     searchSelectChange (select, value) {
       const _this = this;
       if(select.connectTo && select.connectToFun && select.connectTo.length > 0 && select.connectToFun.length > 0){
@@ -373,13 +391,21 @@ export default {
         });
       }
     },
-    searchSelectBlur(select,index) {
-      if(select.required){
-        if(!select.val && String(select.val) !== '0'){
-          this.formData.formInputs[index].status = 'error';
+    // 普通的表单项
+    commonRequiredBlur(item,index) {
+      if(item.required){
+        if(item.val || String(item.val) === '0'){
+          this.$set(this.formData.formInputs[index],'status','success');
         }else{
-          this.formData.formInputs[index].status = 'success';
+          this.$set(this.formData.formInputs[index],'status','error');
         }
+      }
+    },
+    // 日期表单项面板打开或关闭
+    dateOpenChange(args,item,index){
+      console.log(args)
+      if(!args[0]){
+        this.commonRequiredBlur(item,index)
       }
     },
     searchSelectFocus() {
@@ -413,6 +439,17 @@ export default {
   flex-wrap: wrap;
   flex-direction: row;
   justify-content: flex-start;
+}
+.segementTitle{
+  font-size: 18px;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding-left: 20px;
+  margin-bottom: 20px;
+  background: #FAFAFA;
 }
 .formBtns {
   display: flex;

@@ -212,6 +212,7 @@ export default {
     editHandleOk(){
       const _this = this;
       let finalData = this.$refs['EditDocDirectory'].getFinishData();
+      if(!finalData) return ;
       this.$http.fetchPost('digitalArchives@addCatalog.action',{arrs:JSON.stringify(finalData)})
           .then(res => {
               console.log(res);

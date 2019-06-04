@@ -124,7 +124,9 @@ export default {
             msgTip:'',
             msgIndex:0,
             watcherState:Math.random(),
+            // 显示的数据
             listDirectory:[],
+            // 当前的index
             currentIndex:0,
             currentListId:void 0,
             currentListIndex:0,
@@ -132,8 +134,8 @@ export default {
             initEditState:{name:false,date:false,tip:false},
             // 弹框状态
             modalState:false,
+            // 当前文件展示数据
             currentFileList:[],
-
             // 当前条数据正确
             currentRowRight:true,
         };
@@ -267,6 +269,7 @@ export default {
             // console.log(moment().endOf('day'))
             return current && current >= moment().endOf('day');
         },
+        // 日期改变
         dateChange(args,item){
             item.e01z117a = args[1];
         },
@@ -406,7 +409,12 @@ export default {
                 }
 
             });
-            return [...newArrData];
+            if(this.currentRowRight){
+                return [...newArrData];
+            }else{
+                return void 0;
+            }
+
         }        
     },
 

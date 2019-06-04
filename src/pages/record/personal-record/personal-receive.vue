@@ -53,25 +53,27 @@ export default {
        * 功能：表单保存按钮功能
        */
       let temp = {},
-        currValDataArr = this.$refs.accountInfoForm.getFormSearchData(); //调子组件上的方法 获取form表单内容
-      for (let key in currValDataArr) {
-        temp[key] = {};
-        currValDataArr[key].forEach(el => {
+      
+      currValDataArr = this.$refs.accountInfoForm.getFormSearchData(); //调子组件上的方法 获取form表单内容
+      currValDataArr.forEach(el => {
+
+        if(el.name){
           if (el.val) {
             if (
               el.name === "birthday" ||
               el.name === "joinWorkDate" ||
               el.name === "graduateDate"
             ) {
-              temp[key][el.name] = this.moment(el.val);
+              temp[el.name] = this.moment(el.val);
             } else {
-              temp[key][el.name] = el.val;
+              temp[el.name] = el.val;
             }
           } else {
-            temp[key][el.name] = "";
+            temp[el.name] = "";
           }
-        });
-      }
+        }
+        
+      });
       console.log(temp);
     },
     acceptEditParams(){

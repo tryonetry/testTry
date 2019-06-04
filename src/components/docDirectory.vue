@@ -94,10 +94,15 @@ export default {
     },
     data(){
         return{
+            // 树
             treeData:null,
+            // 默认展开的keys
             defaultExpandedKeys:[],
+            // 选择的keys
             selectedKeys:[],
+            // 展开的keys
             expandedKeys:[],
+            // 当前的列表
             currentList:[],
             // 操作提示信息
             msgTip:'',
@@ -106,7 +111,6 @@ export default {
             closeState:false,
             // 调整顺序的目标index
             targetIndex:'',
-
             // 图片查看
             swiperOption:{
                 loop: true,
@@ -194,7 +198,7 @@ export default {
             mapData(data);
             return data;
         },
-
+        // 打开图片
         openImgCheck(index){
             this.swiperOption.initialSlide = index;
             this.checkImgModalStatus = true;
@@ -203,7 +207,7 @@ export default {
         handleCancel(){
             this.checkImgModalStatus = false;
         },
-
+        // 确认删除
         confirmDelete(el,index){
             const _this = this;
             this.$http.fetchGet('digitalArchives@catagFileDelete.action',{id:el.id})
@@ -232,7 +236,7 @@ export default {
             this.msgIndex = index;
             this.watcherState = Math.random();
         },
-
+        // 调序
         changeIndex(index,status,id){
             // console.log(index)
             const {currentList,targetIndex} = this;
@@ -306,6 +310,7 @@ export default {
     },
     
     watch: {
+        // 保证每次进来都是最新状态
         ramdomKey:{
             handler:function(){
                 this.getUerDirectory(this.userId);
