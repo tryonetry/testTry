@@ -40,7 +40,7 @@ function idcardTotoGender(idNum){
 
 // 委托单位名称 To 委托单位编号
 function companyNameToNum(codeVal){
-  console.log(codeVal)
+  // console.log(codeVal)
   if(codeVal){
     return [
       {name:'val',data:codeVal.substr(codeVal.indexOf('_')+1)},
@@ -51,6 +51,16 @@ function companyNameToNum(codeVal){
 }
 
 // 委托单位编号 To 委托单位名称
+function companyNumToName(numVal){
+  if(numVal || String(numVal) === '0'){
+    return [
+      {name:'val',data:"@_@"+numVal},
+      {name:'disabled',data:true}
+    ]
+  }else{
+    return [{name:'val',data:''},{name:'disabled',data:false}]
+  }
+}
 
 import TableFromSearch from "./tableFormSearch";
 export default {
@@ -455,7 +465,9 @@ export default {
                 reg: "",
                 tip: "* 请输入委托存档单位编号",
                 disabled:false,
-                status: ""
+                status: "",
+                connectTo:['companyId'], //关联到委托单位名称
+                connectToFun:[companyNumToName], 
               },
               {
                 title: "转入原因",

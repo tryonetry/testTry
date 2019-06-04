@@ -312,11 +312,23 @@ export default {
           _this.formData.formInputs.forEach((input,index)=>{
             if(input.key === item){
               let resultObjArr = connectToFunArr[i](itemData.val);
-              console.log(resultObjArr)
+              // console.log(resultObjArr)
               resultObjArr.forEach((resultObj) => {
                 // 当为时间格式的时候
                 if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
                   _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+                }else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
+                  // 为 select 选项
+                  // 默认其他规则 *_*
+                  if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
+                    input.children.forEach((row,j) => {
+                      if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
+                        _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+                      }
+                    })
+                  }else{
+                    _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                  }
                 }else{
                   _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
                 }
