@@ -86,7 +86,7 @@
           optionFilterProp="children"
           @focus="searchSelectFocus"
           @blur="commonRequiredBlur(item,index)"
-          @change="searchSelectChange(item, item.val)"
+          @change="searchSelectChange(item)"
           :filterOption="filterOption"
           allowClear
         >
@@ -311,14 +311,16 @@ export default {
         connectToArr.forEach((item,i)=>{
           _this.formData.formInputs.forEach((input,index)=>{
             if(input.key === item){
-              let resultObj = connectToFunArr[i](itemData.val);
-              // 当为时间格式的时候
-              if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
-                _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
-              }else{
-                _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-              }
-              
+              let resultObjArr = connectToFunArr[i](itemData.val);
+              console.log(resultObjArr)
+              resultObjArr.forEach((resultObj) => {
+                // 当为时间格式的时候
+                if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
+                  _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+                }else{
+                  _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                }
+              });
             }
           })
         });
@@ -373,23 +375,8 @@ export default {
       console.log(value)
     },
     // 搜索选择框
-    searchSelectChange (select, value) {
-      const _this = this;
-      if(select.connectTo && select.connectToFun && select.connectTo.length > 0 && select.connectToFun.length > 0){
-        let connectToArr = select.connectTo;
-        let connectToFunArr = select.connectToFun;
-        connectToArr.forEach((item, i) => {
-          _this.formData.formInputs.forEach((slectItem, index) => {
-              if(slectItem.key == item){
-                let resultObj = connectToFunArr[i](select.val);
-                console.log(resultObj);
-
-                _this.formData.formInputs[index][resultObj.name] = resultObj.data;
-              }
-          });
-        
-        });
-      }
+    searchSelectChange (select) {
+      this.bundleLinkage(select)
     },
     // 普通的表单项
     commonRequiredBlur(item,index) {

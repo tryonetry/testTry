@@ -13,30 +13,44 @@
 function idcardToBirthdayFun(idNum){
 
   if(!idNum || idNum.length <= 0){
-    return  {name: 'val', data: '' };
+    return  [{name: 'val', data: '' }];
   }
 
   if(idNum.length === 18){
-    return {name: 'val', data: idNum.substr(6,8) };
+    return [{name: 'val', data: idNum.substr(6,8) }];
   }else if(idNum.length === 15){
     // console.log('19'+idNum.substr(6,6))
-    return {name: 'val', data: '19'+idNum.substr(6,6) };
+    return [{name: 'val', data: '19'+idNum.substr(6,6) }];
   }
-  return  {name: 'val', data: '' };
+  return  [{name: 'val', data: '' }];
 }
 
 // 身份证号到性别
 function idcardTotoGender(idNum){
   if(!idNum || idNum.length <= 0){
-    return  {name: 'val', data: '' };
+    return  [{name: 'val', data: '' }];
   }
   if(idNum.length === 18){
-    return {name: 'val', data: Number(idNum[16])%2 === 0 ? "2":"1" };
+    return [{name: 'val', data: Number(idNum[16])%2 === 0 ? "2":"1" }];
   }else if(idNum.length === 15){
-    return {name: 'val', data: Number(idNum[14])%2 === 0 ? "2":"1" };
+    return [{name: 'val', data: Number(idNum[14])%2 === 0 ? "2":"1" }];
   }
-  return  {name: 'val', data: '' };
+  return  [{name: 'val', data: '' }];
 }
+
+// 委托单位名称 To 委托单位编号
+function companyNameToNum(codeVal){
+  console.log(codeVal)
+  if(codeVal){
+    return [
+      {name:'val',data:codeVal.substr(codeVal.indexOf('_')+1)},
+      {name:'disabled',data:true}
+    ]
+  }
+  return [{name:'val',data:''},{name:'disabled',data:false}]
+}
+
+// 委托单位编号 To 委托单位名称
 
 import TableFromSearch from "./tableFormSearch";
 export default {
@@ -413,30 +427,34 @@ export default {
                 otherType: "searchSelect",
                 required: false,
                 placeholder: "请选择委托存档单位名称",
-                key: "a0202A",
-                name: "a0202A",
+                key: "companyId",
+                name: "companyId",
                 val: void 0,
-                postname: "a0202A",
+                postname: "companyId",
                 maxlength: 40,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择委托存档单位名称",
                 children:[],
-                status: ""
+                status: "",
+                connectTo:['companyNum'], //关联到委托单位编号
+                connectToFun:[companyNameToNum], 
+                disabled:false,
               },
               {
                 title: "委托存档单位编号",
                 type: "text",
                 required: false,
                 placeholder: "请输入委托存档单位编号",
-                key: "a0202A",
-                name: "a0202A",
+                key: "companyNum",
+                name: "companyNum",
                 val: void 0,
-                postname: "a0202A",
+                postname: "companyNum",
                 maxlength: 40,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入委托存档单位编号",
+                disabled:false,
                 status: ""
               },
               {
@@ -619,7 +637,8 @@ export default {
                 children: [],
                 status: ""
               },
-            ]
+            ],
+            companyList:null,
           }
     };
   },
@@ -658,12 +677,6 @@ export default {
           if(item.name === 'inComeReason') item.children = newVal.inComeReasonList;
           // 最高职称
           if(item.name === 'hightestTitle') item.children = newVal.hightestTitleList;
-          // 委托存档单位名称
-          // let tempCompanylist = [];
-          // newVal.companyList.forEach( company => {
-          //   tempCompanylist.push({})
-          // });
-          if(item.name === 'a0202A') item.children = newVal.companyList;
           // 最高学位
           if(item.name === 'a0914') item.children = newVal.degreeList;
           // 最高学历
@@ -684,7 +697,27 @@ export default {
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.$http.fetchGet('personalArch@getCompanyList.action',{})
+      .then(res => {
+        if(Number(res.code) === 0){
+          this.companyList = res.data;
+          // 委托存档单位名称
+          let tempCompanylist = [];
+          res.data.forEach( company => {
+            tempCompanylist.push({itemName:company.itemName,itemCode:company.itemId + '_' + company.itemCode});
+          });
+          this.formData.formInputs.forEach((item,index)=>{
+            if(item.name === 'companyId') item.children = tempCompanylist;
+          })
+        }else{
+          //...
+        }
+      })
+      .catch(err => {
+        // ...
+      });
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
