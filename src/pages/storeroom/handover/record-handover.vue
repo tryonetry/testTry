@@ -176,42 +176,42 @@ export default {
             title: "姓名",
             dataIndex: "e0102",
             key: "e0102",
-            width: 200,
+            width: '10%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
             dataIndex: "e0103",
             key: "e0103",
-            width: 120,
+            width: '6%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "身份证号",
             dataIndex: "e0104",
             key: "e0104",
-            width: 300,
+            width: '20%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "存档编号",
             dataIndex: "e0101",
             key: "e0101",
-            width: 300,
+            width: '20%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
             dataIndex: "e0108a",
             key: "e0108a",
-            width: 200,
+            width: '15%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "状态",
             dataIndex: "e0112Name",
             key: "e0112Name",
-            width: 200,
+            width: '10%',
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -229,19 +229,19 @@ export default {
         cardTitle: '江西省人才流动中心',   //大标题
         subTitle: '档案交接清单',         //小标题
         isRightNum: false,               //是否有右侧编号/内容
-        rightContent:{                   //如果有右侧内容：传值格式
-          title: 'NO：',                 
-          value: '360000B1905300010',
-          className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
-            rightNumber: true,
-            rightNumberRed: true
-          }
-        },
+        // rightContent:{                   //如果有右侧内容：传值格式
+        //   title: 'NO：',                 
+        //   value: '360000B1905300010',
+        //   className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
+        //     rightNumber: true,
+        //     rightNumberRed: true
+        //   }
+        // },
         otherContent: [                  //日期及其他内容
-          {
-            title: 'AAAAA人',
-            value: 'ZZZZZ'
-          },
+          // {
+          //   title: 'AAAAA人',
+          //   value: 'ZZZZZ'
+          // },
           {
             type: 'date',
             title: '日期',
@@ -374,6 +374,26 @@ export default {
         }
       })
     },
+    getAgentOptions(){
+      /**
+       * 功能：获取经办人options
+       */
+      this.$http.fetchPost('fileConnect@queryUserName.action').then(res => {
+        if(Number(res.code) === 0){
+           this.initArr.formData.formInputs.forEach(item => {
+              if(item.key == 'e0108'){
+                res.data.forEach(element => {
+                  item.children.push({
+                    itemCode: element.e0108,
+                    itemName: element.e0108a
+                  })
+                });
+                
+              }
+           });
+        }
+      })
+    },
     acceptRecordFun(){
       /***
        * 功能：接收档案
@@ -421,7 +441,7 @@ export default {
     acceptRecordPostFun(currIdStr){
       /***
        * 功能：接收档案post操作
-       * 参数：
+       * 参数：currIdStr:当前选择的状态为未接收的数据的id
        */
       this.$http.fetchPost('fileConnect@turnTakeOver.action', {
         takeOver: 'takeOver',
@@ -469,6 +489,7 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
+    this.getAgentOptions();
     this.getTableData(null, 1, 10);
     let dpiArr = this.utils.js_getDPI();
     this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);
@@ -476,7 +497,7 @@ export default {
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-
+ 
   },
 
   beforeCreate() {}, //生命周期 - 创建之前
