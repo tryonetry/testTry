@@ -12,7 +12,8 @@
         :xl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 12 : 24" 
         :xxl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 8 : 24" 
         :xs="24" 
-        v-for="(item, index) in formData.formInputs" 
+        v-for="(item, index) in formData.formInputs"
+        v-if="!item.isHide"
         :key="index">
 
         <!-- common formItem -->
@@ -365,6 +366,10 @@ export default {
                       _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
 
                     }
+                  }else if(resultObj && resultObj.name === 'isHide'){
+                    console.log(1)
+                    _this.$set(_this.formData.formInputs[index],'isHide',resultObj.data)
+                    console.log(_this.formData.formInputs[index])
                   }else{
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
                   }
@@ -422,7 +427,7 @@ export default {
       this.bundleLinkage(inputItem)
     },
     selectChange(value){
-      this.bundleLinkage(select)
+      this.bundleLinkage(value)
     },
     // 搜索选择框
     searchSelectChange (select) {

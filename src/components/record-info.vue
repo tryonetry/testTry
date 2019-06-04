@@ -9,6 +9,17 @@
 
 <script>
 // 关联函数
+
+// 存档性质到委托单位名称和委托单位编号的显示
+function UnitNatureToCompanyShow(val){
+  // 单位:01 
+  if(val === '01'){
+    return [{name:'isHide',data:false}]
+  }else{
+    return [{name:'isHide',data:true}]
+  }
+}
+
 // 身份证号到出生日期
 function idcardToBirthday(idNum){
 
@@ -97,7 +108,9 @@ export default {
                 postname: "personType",
                 tip:'* 请选择存档性质',
                 children: [],
-                status: ""
+                status: "",
+                connectTo:['companyId','companyNum'],
+                connectToFun:[UnitNatureToCompanyShow,UnitNatureToCompanyShow],
               },
               {
                 title: "来档方式",
