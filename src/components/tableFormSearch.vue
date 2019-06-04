@@ -63,7 +63,7 @@
           v-model="item.val"
           :placeholder="item.placeholder"
           :disabled = "item.disabled ? item.disabled : false"
-          @change='selectChange(item.val)'
+          @change='selectChange(item)'
           @blur="commonRequiredBlur(item,index)"
           allowClear
         >
@@ -422,7 +422,7 @@ export default {
       this.bundleLinkage(inputItem)
     },
     selectChange(value){
-      console.log(value)
+      this.bundleLinkage(select)
     },
     // 搜索选择框
     searchSelectChange (select) {
