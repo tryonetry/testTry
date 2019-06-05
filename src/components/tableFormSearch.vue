@@ -381,7 +381,7 @@ export default {
 
                   // record-info 页面的单独操作 -> recordInfoIdCard
                   else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
-
+                    
                   }
 
                   // 其他项

@@ -85,7 +85,7 @@ function companyNumToName(numVal){
     ]
   }
 }
-
+import moment from "moment";
 import TableFromSearch from "./tableFormSearch";
 export default {
   name: "RecordInfo",
@@ -93,7 +93,9 @@ export default {
   components: {
     TableFromSearch
   },
-  props: [],
+  props: [
+    "currentPersonData"
+  ],
 
   data() {
     return {
@@ -129,6 +131,7 @@ export default {
                 key: "source",
                 val: void 0,
                 postname: "source",
+                tip:'* 请选择来档方式',
                 children: [],
                 status: ""
               },
@@ -684,6 +687,9 @@ export default {
   //监听属性 类似于data概念
   computed: {
     directoryData:function(){
+      if(this.$store.getters.getDirectoryData){
+        this.splitDirectoryData(this.$store.getters.getDirectoryData)
+      }
       return this.$store.getters.getDirectoryData
     }
   },
@@ -692,50 +698,84 @@ export default {
   watch: {
     directoryData:{
       // 改变数据
-      handler:function(newVal,oldval){
-        console.log(newVal)
-        this.formData.formInputs.forEach((item,index)=>{
-          // 存档性质
-          if(item.name === 'personType') item.children = newVal.archiveTypeList;
-          // 来当方式
-          if(item.name === 'source') item.children = newVal.receiveWayList;
-          // 性别
-          if(item.name === 'a0104') item.children = newVal.sexList;
-          // 民族
-          if(item.name === 'a0117') item.children = newVal.ethnicList;
-          // 婚姻状况
-          if(item.name === 'a0131') item.children = newVal.maritalList;
-          // 健康状况
-          if(item.name === 'a0127') item.children = newVal.healList;
-          // 政治面貌
-          if(item.name === 'a0141') item.children = newVal.politicalList;
-          // 人员身份
-          if(item.name === 'archivesIdentity') item.children = newVal.personIdentityList;
-          // 转入原因
-          if(item.name === 'inComeReason') item.children = newVal.inComeReasonList;
-          // 最高职称
-          if(item.name === 'hightestTitle') item.children = newVal.hightestTitleList;
-          // 最高学位
-          if(item.name === 'a0914') item.children = newVal.degreeList;
-          // 最高学历
-          if(item.name === 'a0834') item.children = newVal.educationList;
-          // 专业类别
-          if(item.name === 'a0827') item.children = newVal.MajorList;
-        })
+      handler:function(newVal,oldVal){
+        this.splitDirectoryData(newVal)
       },
        deep:true,//深度监听
+    },
+    
+    currentPersonData:{
+      handler:function(newVal,oldVal){
+        console.log(newVal)
+        this.insertData(newVal)
+      },
     }
   },
 
   //方法集合
   methods: {
-     getFormSearchData(){
-       return this.$refs.childForm.getFormData();
-     }
+    // 获取tableformSearch中的数据
+    getFormSearchData(){
+      return this.$refs.childForm.getFormData();
+    },
+    // 拆分字典数据
+    splitDirectoryData(Data){
+      if(!Data) return;
+      this.formData.formInputs.forEach((item,index)=>{
+          // 存档性质
+          if(item.name === 'personType') item.children = Data.archiveTypeList;
+          // 来当方式
+          if(item.name === 'source') item.children = Data.receiveWayList;
+          // 性别
+          if(item.name === 'a0104') item.children = Data.sexList;
+          // 民族
+          if(item.name === 'a0117') item.children = Data.ethnicList;
+          // 婚姻状况
+          if(item.name === 'a0131') item.children = Data.maritalList;
+          // 健康状况
+          if(item.name === 'a0127') item.children = Data.healList;
+          // 政治面貌
+          if(item.name === 'a0141') item.children = Data.politicalList;
+          // 人员身份
+          if(item.name === 'archivesIdentity') item.children = Data.personIdentityList;
+          // 转入原因
+          if(item.name === 'inComeReason') item.children = Data.inComeReasonList;
+          // 最高职称
+          if(item.name === 'hightestTitle') item.children = Data.hightestTitleList;
+          // 最高学位
+          if(item.name === 'a0914') item.children = Data.degreeList;
+          // 最高学历
+          if(item.name === 'a0834') item.children = Data.educationList;
+          // 专业类别
+          if(item.name === 'a0827') item.children = Data.MajorList;
+        })
+    },
+
+    // 插入数据
+    insertData(Data){
+      if(!Data) return;
+      this.formData.formInputs.forEach((item,index)=>{
+        for(let key in Data){
+          if(item.name === key){
+            if(!Data[key]){
+              item.val = void 0;
+            }else if(item.otherType && (item.otherType === 'date' || item.otherType === 'month' || item.otherType === 'daterange')){
+              item.val = moment(Data[key]);
+            }else if(item.otherType && item.otherType === 'addressSelect'){
+              item.val = Data[key].split('.')
+            }else{
+              item.val = Data[key]
+            }
+          }
+        }
+      });
+    }
+    
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
+    this.insertData(this.currentPersonData);
     this.$http.fetchGet('personalArch@getCompanyList.action',{})
       .then(res => {
         if(Number(res.code) === 0){
@@ -743,7 +783,7 @@ export default {
           // 委托存档单位名称
           let tempCompanylist = [];
           res.data.forEach( company => {
-            tempCompanylist.push({itemName:company.itemName,itemCode:company.itemId + '_' + company.itemCode});
+            tempCompanylist.push({itemName:company.itemName,itemCode: company.itemCode,itemId:company.itemId});
           });
           this.formData.formInputs.forEach((item,index)=>{
             if(item.name === 'companyId') item.children = tempCompanylist;

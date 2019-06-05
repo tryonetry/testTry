@@ -11,16 +11,38 @@
         >进入</a>
       </div>
     </TableView>
+    <div class="modal">
+      <a-modal
+        centered 
+        :visible="modalState"
+        okText="提交"
+        cancelText="取消"
+        @ok="handleOk"
+        @cancel="handleCancel"
+        :width="'90%'"
+        :maskClosable='false'
+      >
+        <div slot="title" class="titleSlot">
+          <p>信息变更</p>
+          <span>{{currentPersonData && currentPersonData.a0101}}</span>
+        </div>
+        <div class="recordInfoContainer">
+          <RecordInfo :currentPersonData='currentPersonData'></RecordInfo>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
+import RecordInfo from "../../../components/record-info";
 export default {
   name: "PersonalInfoChange",
   //import引入的组件需要注入到对象中才能使用
   components: {
-    TableView
+    TableView,
+    RecordInfo
   },
   props: [""],
 
@@ -119,7 +141,9 @@ export default {
           }
         ],
         tabledataArr: []
-      }
+      },
+      modalState:false,
+      currentPersonData:null,
     };
   },
 
@@ -151,40 +175,42 @@ export default {
       }).then((res)=>{
           if(Number(res.code) === 0){
               _this.tableTotalNum = res.count;
-              let tempTableData = res.data;
-              this.initArr.tabledataArr = [];
-              console.log(tempTableData);
-              tempTableData.forEach((element, index) => {
-                  this.initArr.tabledataArr.push({
-                      key: element.a01000, //主键值
-                      num: (pageNum - 1) * limitNum + index + 1, //序号
-                      a01000: element.a01000, //id
-                      a0101: element.a0101, //姓名
-                      a0184: element.a0184, //身份证号
-                      a3707c: element.a3707c, //联系电话
-                      a0100A:element.a0100A, //存档编号
-                      // a0888: element.a0888, //单位名称
-                      // companyNumber: element.companyNumber, //单位编号
-                      // shelvesNo: element.shelvesNo, //档案位置号
-                      uCreateDate: element.uCreateDate, //存档日期
-                  });
+              this.initArr.tabledataArr = res.data;
+
+              this.initArr.tabledataArr.forEach((element, index) => {
+
+                Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1});
+
+                // this.initArr.tabledataArr.push({
+                //     key: element.a01000, //主键值
+                //     num: (pageNum - 1) * limitNum + index + 1, //序号
+                //     a01000: element.a01000, //id
+                //     a0101: element.a0101, //姓名
+                //     a0184: element.a0184, //身份证号
+                //     a3707c: element.a3707c, //联系电话
+                //     a0100A:element.a0100A, //存档编号
+                //     // a0888: element.a0888, //单位名称
+                //     // companyNumber: element.companyNumber, //单位编号
+                //     // shelvesNo: element.shelvesNo, //档案位置号
+                //     uCreateDate: element.uCreateDate, //存档日期
+                // });
               });
           }else{
               _this.$message.warning("抱歉,暂时未查到数据!");
           }
       })
     },
+    // 点击进入
     editOperate(currdata) {
-      /***
-       * 功能：编辑操作
-       * 参数：data:当前行数据
-       */
-      this.$router.push({
-        name: "personal-receive",
-        params: {
-          data: currdata
-        }
-      });
+      this.currentPersonData = currdata;
+      console.log(this.currentPersonData)
+      this.modalState = true;
+    },
+    handleOk(){
+      // this.modalState = 
+    },
+    handleCancel(){
+      this.modalState = false;
     }
   },
 
@@ -211,4 +237,21 @@ export default {
 </script>
 
 <style scoped>
+.modal{
+    max-height: 80%;
+  }
+  .titleSlot{
+    display: flex;
+  }
+  .titleSlot>p{
+    margin-right: 40px;
+  }
+  .titleSlot>span{
+    color:#2d8cf0;
+  }
+  .recordInfoContainer{
+    height: 700px;
+    max-height: 700px;
+    overflow: auto;
+  }
 </style>
