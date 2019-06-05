@@ -360,8 +360,14 @@ export default {
                               }
                             }
                           });
-                          _this.formData.formInputs[index][resultObj.name] = resultArr;
-                          _this.formData.formInputs[index]['val'] = void 0;
+                          _this.formData.formInputs[index][resultObj.name] = resultArr;    //resultArr赋值给分区的children
+                          _this.formData.formInputs[index]['val'] = void 0;                //默认把分区的val赋值为void 0 
+                          _this.formData.formInputs.forEach(item => {                      //当库房一更改，同时把密集架，层号，列号全清空，且把val赋值为void 0 
+                            if(item.key === 'whdCode' || item.key === 'waColumnCode' || item.key === 'waLayerCode'){
+                              item.children = [];
+                              item.val = void 0;
+                            }
+                          });
                         } else{
                           this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
                         }
@@ -386,8 +392,14 @@ export default {
                               itemName: '第' +  element.whdCode + '号密集架'
                             })
                           });
-                          _this.formData.formInputs[index][resultObj.name] = tempResultArr;   //密集架的children
-                          _this.formData.formInputs[index]['val'] = void 0;                   //默认密集架的val值
+                          _this.formData.formInputs[index][resultObj.name] = tempResultArr;   //tempResultArr赋值给密集架的children
+                          _this.formData.formInputs[index]['val'] = void 0;                   //默认密集架的val值为void 0
+                          _this.formData.formInputs.forEach(item => {                         //同时把层号和列号children赋为[];val为void0
+                            if(item.key === 'waColumnCode' || item.key === 'waLayerCode'){
+                              item.children = [];
+                              item.val = void 0;
+                            }
+                          });
                         } else{
                           this.$message.error('抱歉，暂未获取到密集架数据；请刷新后重试！')
                         }

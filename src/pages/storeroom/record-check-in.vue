@@ -325,7 +325,7 @@ export default {
             val: void 0,
             children:[],
             status: "",
-            connectTo:['whdId'], //关联到密集架
+            connectTo:['whdCode'], //关联到密集架
             connectToFun:[whdAreaTowhdCodeFun],
           },
           {
