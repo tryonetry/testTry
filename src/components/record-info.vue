@@ -47,6 +47,22 @@ function idcardTotoGender(idNum){
   return  [{name: 'val', data: '' }];
 }
 
+// 身份证号到户籍行政区划
+function idCardToAddress(idNum){
+  if(!idNum || idNum.length <= 0){
+    return  [{name: 'val', data: '' }];
+  }
+  // 18位或15位身份证号时
+  if(idNum.length === 18 || idNum.length === 15){
+    let provinceCode = idNum.substr(0,2);
+    let cityCode = idNum.substr(2,2);
+    let areaCode = idNum.substr(4,2);
+    // 612525199508144314
+    return [{name: 'val', data: [ provinceCode, provinceCode+cityCode, provinceCode+cityCode+areaCode ]}];
+  }
+  return  [{name: 'val', data: '' }];
+}
+
 // 身份证号对应本身
 function idCardToSelf(idNum){
   if(!idNum || idNum.length <= 0){
@@ -200,8 +216,8 @@ export default {
                 minlength: 15,
                 reg: "testid",
                 tip: "* 请输入正确的身份证号",
-                connectTo:['a0107','a0104','a0184'], //关联到日期和性别
-                connectToFun:[idcardToBirthday,idcardTotoGender,idCardToSelf], 
+                connectTo:['a0107','a0104','a0111D','a0184'], //关联到日期和性别
+                connectToFun:[idcardToBirthday,idcardTotoGender,idCardToAddress,idCardToSelf], 
                 status: ""
               },
               {
@@ -217,7 +233,7 @@ export default {
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择出生日期",
-                disabled:true,
+                disabled:false,
                 status: ""
               },
               {
@@ -707,7 +723,9 @@ export default {
     currentPersonData:{
       handler:function(newVal,oldVal){
         console.log(newVal)
-        this.insertData(newVal)
+        if(newVal){
+          this.insertData(newVal)
+        }
       },
     }
   },

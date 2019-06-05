@@ -323,7 +323,6 @@ export default {
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
                   }
 
-
                   // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
                   else if(itemData.name === 'companyId' && input.name === 'companyNum' && resultObj.name === 'val'){
                     // 将匹配的下拉框的 itemCode 赋值
@@ -498,11 +497,11 @@ export default {
                       })
                     }
 
-                    // 其他情况
+                    // select或searchSelect的其他情况
                     else if(!resultObj.operate){
                       let hasMatched = false;
                       if(resultObj.name === 'val'){
-                        console.log(resultObj.data)
+                        // console.log(resultObj.data)
                         input.children.forEach((row,j) => {
                           // console.log(row.itemCode === resultObj.data);
                           if((resultObj.data === row.itemCode) && !hasMatched){
@@ -531,7 +530,50 @@ export default {
 
                   // 特殊处理 record-info 页面的单独操作 -> recordInfoIdCard
                   else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
-                    console.log(resultObj.data)
+                    if(input.status === 'success'){
+                      _this.formData.formInputs[index]['tip'] = '* 请输入正确的身份证号';
+                      _this.$http.fetchPost('personalArch@checkRepeat.action',{a0184:resultObj.data})
+                          .then(res => {
+                            if(Number(res.code) === 0){
+                              //弹出确认退档操作
+                              if(res.isInware === '2' && res.archiveStatus === '7'){
+                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此身份证号/社保卡号重复';
+                                _this.$set(_this.formData.formInputs[index],'status','error');
+                                _this.$confirm({
+                                  title: '是否进行退档操作 ?',
+                                  content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
+                                  onOk() {
+                                    _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
+                                      .then(res => {
+                                        if(Number(res.code) === 0){
+                                          _this.formData.formInputs[index][resultObj.name] = '';
+                                          _this.$set(_this.formData.formInputs[index],'status',void 0);
+                                          _this.$message.success('退档操作成功,可前往信息变更页查询信息');
+                                        }else{
+                                          // _this.formData.formInputs[index][resultObj.name] = '';
+                                          _this.$message.error('退档操作失败,请稍后重试');
+                                          return false;
+                                        }
+                                      })
+                                      .catch(err => {
+                                        _this.$message.error('抱歉,网络出错了,请稍后重试')
+                                      })
+                                  },
+                                  onCancel() {},
+                                })
+                              }else{
+                                _this.formData.formInputs[index][resultObj.name] = '';
+                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此身份证号/社保卡号重复';
+                                _this.$set(_this.formData.formInputs[index],'status','error');
+                              }
+                            }else{
+                              //
+                            }
+                          })
+                          .catch(err => {
+                            _this.$message.error('抱歉,网络出错了,请重试')
+                          })
+                    }
                   }
 
                   //waLayerCodeToOrderNo 根据选择的层号拿顺序
@@ -562,10 +604,11 @@ export default {
                     })
                   }
 
-
                   // 其他项
                   else if(!resultObj.operate){
+                    console.log(resultObj.data)
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                    console.log(_this.formData.formInputs[index])
                   }
 
                 });
