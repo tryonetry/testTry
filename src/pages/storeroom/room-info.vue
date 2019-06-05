@@ -193,6 +193,7 @@ export default {
         tabledataArr: []
       },
       roomInfoForm: {
+        //模态框添加或编辑时：tableFormSearch
         formInputs: [
           {
             title: "库房编号",
@@ -303,8 +304,8 @@ export default {
       },
       currentId: null, //当前点击的id值
       operateStatus: null, //操作状态：1-添加， 2-浏览， 3-编辑
-      visible: false,
-      confirmLoading: false,
+      visible: false,      //模态框显隐：默认:false不显示
+      confirmLoading: false,   //模态框加载状态： 默认false不加载
       tempCondition: {}
     };
   },
@@ -358,17 +359,21 @@ export default {
                 freeNum: element.whTotalNum - element.whNowNum
               });
             });
+          } else{
+            this.$message.error('抱歉，获取数据失败，请重新刷新！');
           }
+        }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
         });
     },
     operateFun(data, statusVal) {
       /***
-       * 功能：增加、编辑、浏览操作
+       * 功能：增加、编辑操作
+       * 参数: data:当前操作的数据； statusVal：当前操作按钮的状态值； 1-->添加； 3-->编辑
        */
       this.operateStatus = statusVal;
       this.visible = true;
       let initData = {};
-      console.log(data);
       if (statusVal == 1) {
         //添加操作
         initData = {
@@ -381,6 +386,7 @@ export default {
           whDesc: ""
         };
       } else {
+        //编辑操作
         initData = data;
         this.currentId = data["key"];
       }
@@ -390,6 +396,9 @@ export default {
       );
     },
     handleOk() {
+      /**
+       * 功能：模态框确定操作；根据之前点击的操作按钮判断数据提交；1-->添加； 3-->编辑
+       */
       let currObjData = this.utils.transferFormToObj(
         this.$refs.infoForm.getFormData()
       );
@@ -410,7 +419,7 @@ export default {
             }
           })
           .catch(error => {
-            this.$message.error("添加失败");
+            this.$message.error("抱歉，网络异常，添加失败");
           });
       } else {
         currObjData = Object.assign({}, currObjData, { whId: this.currentId });
@@ -429,14 +438,19 @@ export default {
             }
           })
           .catch(error => {
-            this.$message.error("编辑失败");
+            this.$message.error("抱歉，网络异常，编辑失败");
           });
       }
     },
     handleCancel() {
+      //模态框取消操作
       this.visible = false;
     },
     deleteFun(data) {
+      /**
+       * 功能：删除按钮操作
+       * 参数：data:当前进行删除操作的数据
+       */
       this.$http
         .fetchPost("wareHouse@deleteWareHouse.action", {
           whId: data.key
@@ -450,7 +464,7 @@ export default {
           }
         })
         .catch(error => {
-          this.$message.error("删除失败!");
+          this.$message.error("抱歉，网络异常，删除失败!");
         });
     }
   },

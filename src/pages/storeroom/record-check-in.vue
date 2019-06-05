@@ -23,7 +23,7 @@
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
       >
-        <TableFromSearch :formDataArr="RecordCheckInForm"></TableFromSearch>
+        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm"></TableFromSearch>
         <template slot="footer">
           <a-button key="cancel" @click="handleCancel">取消</a-button>
           <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
@@ -65,7 +65,7 @@ function whdAreaTowhdCodeFun(whdArea){
 
 function whdCodeTowanCodeFun(whdCode){
   /**
-   * 功能：通过密集架找列号
+   * 功能：通过密集架找列号和层号
    * 参数：whdCode：当前选择的密集架itemCode
    */
   if(whdCode){
@@ -75,11 +75,17 @@ function whdCodeTowanCodeFun(whdCode){
   }
 }
 
-function whdCodeTowaLayerCodeFun(whdCode){
+function waLayerCodeToOrderNoFun(layerNum){
   /**
-   * 功能：通过米迦迦找层号
-   * 参数：whdCode：当前选择的密集架itemCode
+   * 功能:当选择层完后；根据选择的库房，分区，密集架，列号http获取顺序号
+   * 参数：columnsNum：当前选择的列
    */
+  console.log(layerNum);
+  if(layerNum){
+    return [{name: 'val', data: layerNum, operate: 'waLayerCodeToOrderNo'}]
+  } else{
+    return [{name: 'val', data: void 0}, {name: 'disabled', data:true}]
+  }
 }
 
 export default {
@@ -333,13 +339,13 @@ export default {
             otherType: "searchSelect",
             required: false,
             placeholder: "请选择密集架",
-            key: "whdCode",
+            key: "whdCode",   //换对应：whdCode
             name: "whdCode",
             val: void 0,
             children: [],
             status: "",
-            connectTo:['waColumnCode', 'waLayerCode'], //关联到列号和层号
-            connectToFun:[whdCodeTowanCodeFun, whdCodeTowanCodeFun],
+            connectTo:['waColumnCode'], //关联到列号和层号
+            connectToFun:[whdCodeTowanCodeFun],
           },
           {
             title: "列号",
@@ -350,7 +356,7 @@ export default {
             name: "waColumnCode",
             val: void 0,
             children: [],
-            status: ""
+            status: "",
           },
           {
             title: "层号",
@@ -361,7 +367,9 @@ export default {
             name: "waLayerCode",
             val: void 0,
             children: [],
-            status: ""
+            status: "",
+            connectTo: ['orderNo'],  //关联到顺序号
+            connectToFun: [waLayerCodeToOrderNoFun]
           },
           {
             title: "顺序号",
@@ -376,22 +384,24 @@ export default {
             reg: "",
             tip: "",
             postname: "orderNo",
-            status: ""
+            status: "",
           },
           {
             title: "档案盒数",
-            type: "text",
+            otherType: "select",
             required: false,
-            placeholder: "请输入档案盒数",
+            placeholder: "请选择档案盒数",
             key: "heNum",
             name: "heNum",
             val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
             postname: "heNum",
-            status: ""
+            status: "",
+            children:[
+              {
+                itemCode: '1',
+                itemName: '1'
+              }
+            ]
           },
           {
             title: "交接人",
@@ -417,16 +427,13 @@ export default {
             otherType: "searchSelect",
             required: false,
             placeholder: "请选择库房",
-            key: "",
-            name: "",
+            key: "whId",
+            name: "whId",
             val: void 0,
-            children: [
-              {
-                itemCode: "",
-                itemName: ""
-              }
-            ],
-            status: ""
+            children: [],
+            status: "",
+            connectTo:['whdArea'], //关联到分区
+            connectToFun:[whIdTowhdAreaFun],
           },
           {
             title: "分区",
@@ -436,13 +443,10 @@ export default {
             key: "whdArea",
             name: "whdArea",
             val: void 0,
-            children: [
-              {
-                itemCode: "",
-                itemName: ""
-              }
-            ],
-            status: ""
+            children: [],
+            status: "",
+            connectTo:['whdCode'], //关联到密集架
+            connectToFun:[whdAreaTowhdCodeFun],
           },
           {
             title: "密集架",
@@ -452,13 +456,8 @@ export default {
             key: "whdCode",
             name: "whdCode",
             val: void 0,
-            children: [
-              {
-                itemCode: "",
-                itemName: ""
-              }
-            ],
-            status: ""
+            children: [],
+            status: "",
           },
           {
             title: "交接人",
@@ -478,6 +477,9 @@ export default {
         ]
       },
       roomDataArr: [],   //库房信息
+      tempWaId: '',  //库表名
+      tempA01000: '',  //暂存：a01000
+      tempCondition: {}, //临时查询条件
     };
   },
 
@@ -505,7 +507,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
        *         */
-
+      this.tempCondition = condition;
       this.$http
         .fetchPost("archDocument@getArchDocumentList.action", {
           page: pageNum,
@@ -579,6 +581,11 @@ export default {
         if (this.checkTableData.length > 0) {
           let tempLen = this.isWaitInRoom(this.checkTableData);
           if (tempLen == this.checkTableData.length) {
+            this.batchAdjustFrom.formInputs.forEach(element => {
+              if(element.key === 'whId'){
+                element.children = this.roomDataArr;
+              }
+            });
             this.RecordCheckInForm = this.batchAdjustFrom;
             this.visible = true;
           } else {
@@ -595,6 +602,7 @@ export default {
        * 功能：根据选择的调整位置数据的id值查询数据然后填入到对应的tableformSearch里
        * 参数：currId:当前选择的table行的key(即id)值；
        */
+      this.tempA01000 = currId;
       if(currId){
         this.$http.fetchPost('archDocument@getWareArchByArchiveId.action',{
           a01000: currId
@@ -605,11 +613,12 @@ export default {
                  el.children = this.roomDataArr;
               }
             });
+             
+            this.tempWaId = res.data.waId;
             this.getinitAreaData(res.data.whId, res.data.whdArea);
             this.getinitWhdData(res.data.whId, res.data.whdArea, res.data.whdId, res.data.waColumnCode, res.data.waLayerCode);
             
             this.RecordCheckInForm = this.utils.getNewFormSearch(res.data,this.positionAdjustForm);
-            console.log(this.RecordCheckInForm);
             this.visible = true;
           }
         })
@@ -666,7 +675,6 @@ export default {
               itemName: '第' +  element.whdCode + '号密集架'
             })
             if(element.whdId === currWhdId){
-              console.log(element);
               for(let i = 1; i<= element.whdColumnNum; i++){
                 tempCloumnArr.push({
                   itemCode: '' + i,
@@ -702,6 +710,7 @@ export default {
       })
     },
     isWaitInRoom(dataArr) {
+      //批量分配操作：判断当前选择的数据为待接收状态的长度
       let templen = 0;
       dataArr.forEach(item => {
         if (item.archiveStatus != "1") {
@@ -721,6 +730,53 @@ export default {
       /***
        * 功能：模态框提交操作
        */
+      console.log(this.$refs.recordCheckInForm.getFormData());
+
+      let currObjData = this.utils.transferFormToObj(
+        this.$refs.recordCheckInForm.getFormData()
+      );
+      if(this.operateStatus === 1){
+        //位置调整
+        currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000, 'waId': this.tempWaId})
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        console.log(newCurrDataObj);
+        this.$http.fetchPost('archDocument@editShelvesInfo.action', newCurrDataObj).then(res => {
+          if(Number(res.code) === 0){
+            this.$message.success('位置调整成功!');
+            this.getTableData(this.tempCondition, 1, 10);
+            setTimeout(() => {
+              this.visible = false;
+              this.confirmLoading = false;
+            }, 2000);
+          } else{
+            this.$message.error("位置调整失败！");
+          }
+        }).catch(error => {
+          this.$message.error("位置调整失败！");
+        })
+      } else{
+        //批量分配档案位置
+      }
+    },
+    getWhdCodeFun(currObjData, formInputs){
+      /**
+       * 功能：currObjData里面whdCode值给了whdId; 根据currObjData里面的whdCode查询对应的name截取出来;赋值给whdCode;
+       * 参数：currObjData:当前tableFormSearch提交的数据; formInputs:tableFormSearch的formInputs；
+       */
+      let tempWhdCode = '';
+      let tempWhdId = currObjData.whdCode;
+      formInputs.forEach(item => {
+        if(item.key === "whdCode"){
+          item.children.forEach(el => {
+            if(el.itemCode === currObjData.whdCode){
+               tempWhdCode = el.itemName;
+            }
+          });
+        }
+      });
+      currObjData.whdCode = tempWhdCode.substr(tempWhdCode.indexOf('第') + 1, tempWhdCode.indexOf('号密集架') - 1);
+      currObjData.whdId  = tempWhdId;
+      return currObjData;
     }
   },
 
