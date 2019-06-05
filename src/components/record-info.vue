@@ -61,18 +61,18 @@ function companyNameToNum(codeVal){
   // console.log(codeVal)
   if(codeVal){
     return [
-      {name:'val',data:codeVal.substr(codeVal.indexOf('_')+1)},
+      {name:'val',data:codeVal},
       {name:'disabled',data:true}
     ]
   }
-  return [{name:'val',data:''},{name:'disabled',data:false}]
+  return [{name:'val',data:''},{name:'disabled',data:true}]
 }
 
 // 委托单位编号 To 委托单位名称
 function companyNumToName(numVal){
   if(numVal || String(numVal) === '0'){
     return [
-      {name:'val',data:"@_@"+numVal},
+      {name:'val',data:numVal},
       {name:'disabled',data:true},
       {name:'tip',data:'* 抱歉,尚未找到对应编号的公司'}
     ]
@@ -783,9 +783,10 @@ export default {
           // 委托存档单位名称
           let tempCompanylist = [];
           res.data.forEach( company => {
-            tempCompanylist.push({itemName:company.itemName,itemCode: company.itemCode,itemId:company.itemId});
+            tempCompanylist.push({itemName:company.itemName,itemCode: company.itemId,itemId:company.itemCode});
           });
           this.formData.formInputs.forEach((item,index)=>{
+            // console.log(tempCompanylist)
             if(item.name === 'companyId') item.children = tempCompanylist;
           })
         }else{

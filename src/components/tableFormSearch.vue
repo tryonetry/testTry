@@ -323,11 +323,41 @@ export default {
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
                   }
 
-                  // 当关联项为 select searchSelect
+
+                  // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
+                  else if(itemData.name === 'companyId' && input.name === 'companyNum' && resultObj.name === 'val'){
+                    // 将匹配的下拉框的 itemCode 赋值
+                    itemData.children.forEach(cr => {
+                      if(cr.itemCode === resultObj.data){
+                        _this.formData.formInputs[index][resultObj.name] = cr.itemId ? cr.itemId : void 0;
+                      }
+                    });
+                  }
+                  // 特殊项处理 name : companyNum -> recordInfo 且关联项为 companyId
+                  else if(itemData.name === 'companyNum' && input.name === 'companyId' && resultObj.name === 'val'){
+                    // 将输入的值 匹配下拉框
+                    let hasMatched = false;
+                    input.children.forEach((row,j) => {
+                      if(resultObj.data === row.itemId){
+                        _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+                        hasMatched = true;
+                      }
+                    });
+                    // 扔尚未匹配到
+                    if(!hasMatched){
+                      _this.formData.formInputs[index]['val'] = void 0;
+                      _this.$set(_this.formData.formInputs[index],'status','error');
+                    }else{
+                      _this.$set(_this.formData.formInputs[index],'status','success');
+                    }
+                  }
+
+                  // 特殊处理项 [停用]
                   else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
                     // 为 select 选项
                     // *_* 规则
                     if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
+                      // console.log(1)
                       let hasMatched = false;
                       input.children.forEach((row,j) => {
                         if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
@@ -337,11 +367,14 @@ export default {
                       });
                       // 扔尚未匹配到
                       if(!hasMatched){
+                        _this.formData.formInputs[index]['val'] = void 0;
                         _this.$set(_this.formData.formInputs[index],'status','error');
                       }else{
                         _this.$set(_this.formData.formInputs[index],'status','success');
                       }
                     }
+
+
                     // whIdTowhdArea:通过库房找分区
                     else if(resultObj.operate && resultObj.operate === 'whIdTowhdArea'){
                       let resultArr = [];
@@ -456,7 +489,26 @@ export default {
 
                     // 其他情况
                     else if(!resultObj.operate){
-                      _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                      let hasMatched = false;
+                      if(resultObj.name === 'val'){
+                        console.log(resultObj.data)
+                        input.children.forEach((row,j) => {
+                          // console.log(row.itemCode === resultObj.data);
+                          if((resultObj.data === row.itemCode) && !hasMatched){
+                            _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0;
+                            hasMatched = true;
+                          }
+                        });
+                        // 扔尚未匹配到
+                        if(!hasMatched){
+                          _this.formData.formInputs[index]['val'] = void 0;
+                          _this.$set(_this.formData.formInputs[index],'status','error');
+                        }else{
+                          _this.$set(_this.formData.formInputs[index],'status','success');
+                        }
+                      }else{
+                        _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                      }
                     }
                   }
 
@@ -466,9 +518,9 @@ export default {
                     // console.log(_this.formData.formInputs[index])
                   }
 
-                  // record-info 页面的单独操作 -> recordInfoIdCard
+                  // 特殊处理 record-info 页面的单独操作 -> recordInfoIdCard
                   else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
-                    
+                    console.log(resultObj.data)
                   }
 
                   // 其他项
@@ -534,6 +586,7 @@ export default {
     },
     // 搜索选择框
     searchSelectChange (select) {
+      console.log(select)
       this.bundleLinkage(select)
     },
     // 普通的表单项
