@@ -342,7 +342,7 @@ export default {
                         _this.$set(_this.formData.formInputs[index],'status','success');
                       }
                     }
-                    // whIdTowhdArea
+                    // whIdTowhdArea:通过库房找分区
                     else if(resultObj.operate && resultObj.operate === 'whIdTowhdArea'){
                       let resultArr = [];
                       this.$http.fetchPost('wareHouse@getWareHouseList.action', {
@@ -354,19 +354,94 @@ export default {
                             if(item.whId == resultObj.data){
                               for(let i = item.whAreaStartNum; i <= item.whAreaNum; i++){
                                 resultArr.push({
-                                  itemCode: i,
+                                  itemCode: '' + i,
                                   itemName: '第' + i + '区'
                                 })
                               }
                             }
                           });
                           _this.formData.formInputs[index][resultObj.name] = resultArr;
-                          if(resultArr.length > 0){
-                            _this.formData.formInputs[index]['val'] = resultArr[0].itemCode;
-                          }
+                          _this.formData.formInputs[index]['val'] = void 0;
+                        } else{
+                          this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
                         }
+                      }).catch(error => {
+                        this.$message.error('抱歉，网络异常！')
                       })
                     }
+
+                    //whdAreaTowhdCode：通过库房的id和分区数找密集架
+                    else if(resultObj.operate && resultObj.operate === 'whdAreaTowhdCode'){
+                      console.log(resultObj);
+                      let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+                      let tempResultArr = [];
+                      this.$http.fetchPost('archDocument@getWhdList.action',{
+                        whId: currWhId,
+                        whdArea: resultObj.data
+                      }).then(res => {
+                        if(Number(res.code) === 0){
+                          res.data.forEach(element => {
+                            tempResultArr.push({
+                              itemCode: element.whdId,
+                              itemName: '第' +  element.whdCode + '号密集架'
+                            })
+                          });
+                          _this.formData.formInputs[index][resultObj.name] = tempResultArr;   //密集架的children
+                          _this.formData.formInputs[index]['val'] = void 0;                   //默认密集架的val值
+                        } else{
+                          this.$message.error('抱歉，暂未获取到密集架数据；请刷新后重试！')
+                        }
+                      }).catch(error => {
+                        this.$message.error('抱歉，网络异常！')
+                      })
+                    }
+
+                    // whdCodeTowanCode 根据密集架获取列号和层号
+                    else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
+                      let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+                      let currWhArea = _this.formData.formInputs[1]['val'];
+                      this.$http.fetchPost('archDocument@getWhdList.action',{
+                        whId: currWhId,
+                        whdArea: currWhArea
+                      }).then(res => {
+                        if(Number(res.code) === 0){
+                          let currCloumnArr = [], currLayerArr = [];
+                          res.data.forEach(element => {
+                            if(element.whdId === resultObj.data){
+                              for(let i = 1; i <= element.whdColumnNum; i++){
+                                currCloumnArr.push({
+                                  itemCode: '' + i,
+                                  itemName: '第' + i + '列'
+                                })
+                              }
+                              for(let j = 1; j <= element.whdLayerNum; j++){
+                                currLayerArr.push({
+                                  itemCode: '' + j,
+                                  itemName: '第' + j + '层'
+                                })
+                              }
+                            }
+                            _this.formData.formInputs.forEach(item => {
+                              if(item.key === 'waColumnCode'){
+                                //列号
+                                item.children = currCloumnArr;
+                                item.val = void 0;
+                              } else if(item.key === 'waLayerCode'){
+                                //层号
+                                item.children = currLayerArr;
+                                item.val = void 0;
+                              }
+                            });
+                          });
+                        } else{
+                          this.$message.error('抱歉，暂未获取到列号和层号数据；请刷新后重试！')
+                        }
+                      }).catch(error => {
+                        this.$message.error('抱歉，网络异常！')
+                      })
+
+                    }
+
                     // 其他情况
                     else if(!resultObj.operate){
                       _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
