@@ -400,6 +400,10 @@ export default {
                               item.children = [];
                               item.val = void 0;
                             }
+                            if(item.key === 'orderNo'){
+                              _this.$set(item, 'disabled', true);
+                              item.val = void 0;
+                            }
                           });
                         } else{
                           this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
@@ -430,6 +434,10 @@ export default {
                           _this.formData.formInputs.forEach(item => {                         //同时把层号和列号children赋为[];val为void0
                             if(item.key === 'waColumnCode' || item.key === 'waLayerCode'){
                               item.children = [];
+                              item.val = void 0;
+                            }
+                            if(item.key === 'orderNo'){
+                              _this.$set(item, 'disabled', true);
                               item.val = void 0;
                             }
                           });
@@ -466,6 +474,7 @@ export default {
                                 })
                               }
                             }
+
                             _this.formData.formInputs.forEach(item => {
                               if(item.key === 'waColumnCode'){
                                 //列号
@@ -474,6 +483,9 @@ export default {
                               } else if(item.key === 'waLayerCode'){
                                 //层号
                                 item.children = currLayerArr;
+                                item.val = void 0;
+                              } else if(item.key === 'orderNo'){
+                                _this.$set(item, 'disabled', true);
                                 item.val = void 0;
                               }
                             });
@@ -484,7 +496,6 @@ export default {
                       }).catch(error => {
                         this.$message.error('抱歉，网络异常！')
                       })
-
                     }
 
                     // 其他情况
@@ -522,6 +533,35 @@ export default {
                   else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
                     console.log(resultObj.data)
                   }
+
+                  //waLayerCodeToOrderNo 根据选择的层号拿顺序
+                  else if(input.type && resultObj && resultObj.operate === 'waLayerCodeToOrderNo'){
+                    let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+                    let currWhArea = _this.formData.formInputs[1]['val'];   //当前分区的itemCode
+                    let currWhdCode = _this.formData.formInputs[2]['val'];   //当前密集架的itemCode
+                    let currCloumn = _this.formData.formInputs[3]['val'];  //当前列号的itemCode
+                    _this.$http.fetchPost('archDocument@getFillOrderNo.action',{
+                      whdId: currWhId,
+                      whdArea: currWhArea,
+                      whdCode: currWhdCode,
+                      waColumnCode: currCloumn,
+                      waLayerCode: resultObj.data
+                    }).then(res => {
+                      if(Number(res.code) === 0){
+                        _this.formData.formInputs.forEach(el => {
+                          if(el.key === 'orderNo'){
+                            el.val = res.orderNo;
+                            _this.$set(el, 'disabled', false);
+                          }
+                        });
+                      } else{
+                        _this.$message.error('抱歉，获取顺序数据失败，请刷新后重试！')
+                      }
+                    }).catch(error => {
+                      _this.$message.error('抱歉，网络异常！')
+                    })
+                  }
+
 
                   // 其他项
                   else if(!resultObj.operate){
