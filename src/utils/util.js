@@ -74,7 +74,11 @@ const utils = {
                             if (dataObj[i]) {
                                 item.val = dataObj[i];
                             } else {
-                                item.val = item.children[0].itemCode;
+                                if(item.children.length > 0){
+                                    item.val = item.children[0].itemCode;
+                                } else{
+                                    item.val = void 0;
+                                }
                             }
                         } else if (!item.type && item.otherType === "addressSelect") {
                             if (dataObj[i]) {
