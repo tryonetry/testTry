@@ -110,7 +110,7 @@ export default {
     TableFromSearch
   },
   props: [
-    "currentPersonData"
+    "currentPersonData",
   ],
 
   data() {
@@ -696,7 +696,8 @@ export default {
               },
             ],
             companyList:null,
-          }
+          },
+          hasDataDisabledOptions:['a0101','a0184']
     };
   },
 
@@ -717,17 +718,17 @@ export default {
       handler:function(newVal,oldVal){
         this.splitDirectoryData(newVal)
       },
-       deep:true,//深度监听
+      deep:true,//深度监听
     },
     
     currentPersonData:{
       handler:function(newVal,oldVal){
-        console.log(newVal)
         if(newVal){
           this.insertData(newVal)
+          this.disableSomeOption(this.hasDataDisabledOptions);
         }
       },
-    }
+    },
   },
 
   //方法集合
@@ -787,13 +788,31 @@ export default {
           }
         }
       });
+    },
+
+    // 有数据时,使部分表单项不可填
+    disableSomeOption(arr){
+      const _this = this;
+        this.formData.formInputs.forEach((item,index) => {
+          arr.forEach(name=>{
+            if(item.name === name){
+              _this.$set(this.formData.formInputs[index],'disabled',true)
+            }
+          });
+        })
     }
     
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.insertData(this.currentPersonData);
+    const {currentPersonData,hasDataDisabledOptions,disableSomeOption,insertData} = this;
+
+    if(currentPersonData){
+      disableSomeOption(hasDataDisabledOptions);
+      insertData(currentPersonData);
+    }
+    
     this.$http.fetchGet('personalArch@getCompanyList.action',{})
       .then(res => {
         if(Number(res.code) === 0){

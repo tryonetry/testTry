@@ -203,7 +203,7 @@ export default {
     // 点击进入
     editOperate(currdata) {
       this.currentPersonData = currdata;
-      console.log(this.currentPersonData)
+      // console.log(this.currentPersonData)
       this.modalState = true;
     },
     handleOk(){
