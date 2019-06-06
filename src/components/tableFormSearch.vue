@@ -245,32 +245,42 @@ export default {
       }
     }
   },
+
   beforeCreate() {
+    // 默认表单绑定数据
     this.form = this.$form.createForm(this);
   },
+
   created() {
-    this.formData = this.formDataArr;
+    // 接收父组件的数据
+    this.formData = [...this.formDataArr];
   },
+
   computed:{
     address(){
       return address;
     }
   },
   methods: {
+
+    // 操作项  data:操作的函数名称
     operate(e, data) {
       this[data](e);
     },
+
     // 清除input框
     emptyInput(item){
       console.log(item)
     },
+
+    //table上面Form查询
     searchForm(event) {
-      //table上面Form查询
       event.preventDefault();
       this.$emit("searchForm", this.formData.formInputs);
     },
+
+    //监听input值得变化
     listeningChange(){
-      //监听input值得变化
       let newData = this.formData.formInputs;
       let newCondition = {};
       newData.forEach(element => {
@@ -282,6 +292,8 @@ export default {
       });
       this.$emit('bundleChange', newCondition);
     },
+
+    // 父组件获取数据
     getFormData(){
       //添加、编辑表单提交
       return this.formData.formInputs;
@@ -664,15 +676,19 @@ export default {
       }
       this.bundleLinkage(inputItem)
     },
+
+    // 选择框改变
     selectChange(value){
       this.bundleLinkage(value)
     },
-    // 搜索选择框
+
+    // 搜索选择框改变
     searchSelectChange (select) {
       console.log(select)
       this.bundleLinkage(select)
     },
-    // 普通的表单项
+
+    // 普通的必填表单项失去焦点
     commonRequiredBlur(item,index) {
       if(item.required){
         if(item.val || String(item.val) === '0'){
@@ -682,6 +698,7 @@ export default {
         }
       }
     },
+
     // 日期表单项面板打开或关闭
     dateOpenChange(args,item,index){
       console.log(args)
@@ -689,12 +706,18 @@ export default {
         this.commonRequiredBlur(item,index)
       }
     },
+
+    // searchSlect失去焦点
     searchSelectFocus() {
       // console.log('focus');
     },
+
+    // searchSelect搜索过滤
     filterOption(input, option) {
       return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
     },
+
+    // 上传提示
     uploadChange(info){
       if (info.file.status !== 'uploading') {
         console.log(info.file, info.fileList);
