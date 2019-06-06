@@ -225,21 +225,21 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
             title: "档案人姓名",
             dataIndex: "a0101",
             key: "a0101",
-            width: 150,
+            width: 120,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
             dataIndex: "a0104",
             key: "a0104",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -267,14 +267,14 @@ export default {
             title: "库房位置",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
-            width: 200,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
             dataIndex: "inwareOperatorName",
             key: "inwareOperatorName",
-            width: 120,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
