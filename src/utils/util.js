@@ -150,6 +150,6 @@ const utils = {
           
          return ratio;
       }
-
+    
 }
 export default utils;

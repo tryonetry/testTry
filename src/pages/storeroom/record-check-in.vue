@@ -480,6 +480,7 @@ export default {
       tempWaId: '',  //库表名
       tempA01000: '',  //暂存：a01000
       tempCondition: {}, //临时查询条件
+      batchDistributeIdStr: '',  //批量分配档案
     };
   },
 
@@ -586,6 +587,8 @@ export default {
                 element.children = this.roomDataArr;
               }
             });
+            console.log(this.checkTableData);
+            this.batchDistributeIdStr = this.getBatchDistributeIdStr(this.checkTableData, 'key');
             this.RecordCheckInForm = this.batchAdjustFrom;
             this.visible = true;
           } else {
@@ -594,6 +597,20 @@ export default {
         } else {
           this.$message.error("请选择需要批量分配档案位置的记录!");
         }
+      }
+    },
+
+    getBatchDistributeIdStr(dataArr, dataKey){
+      /**
+       * 功能：获取批量分配数据的idStr
+       * 参数：
+       */
+      if(dataArr.length > 0 && dataKey){
+        let resultStr = '';
+        dataArr.forEach(item => {
+          resultStr += item[dataKey] + ','
+        });
+        return resultStr.substr(0, resultStr.length - 1);
       }
     },
 
@@ -756,6 +773,23 @@ export default {
         })
       } else{
         //批量分配档案位置
+        currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr});
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        console.log(newCurrDataObj);
+        this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
+          if(Number(res.code)){
+            this.$message.success('批量分配档案操作成功！');
+            this.getTableData(this.tempCondition, 1, 10);
+            setTimeout(() => {
+              this.visible = false;
+              this.confirmLoading = false;
+            }, 2000);
+          } else{
+            this.$message.error('抱歉,操作失败，请刷新后重试！');
+          }
+        }).catch(error => {
+          this.$message.error('抱歉,网络异常');
+        })
       }
     },
     getWhdCodeFun(currObjData, formInputs){
