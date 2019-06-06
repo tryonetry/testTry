@@ -95,14 +95,14 @@ export default {
       /***
        * 功能:打印功能
        */
-      // let subOutputRankPrint = document.getElementById("printPage");
-      // let newContent = subOutputRankPrint.innerHTML;
-      // let oldContent = document.body.innerHTML;
-      // document.body.innerHTML = newContent;
+      let subOutputRankPrint = document.getElementById("printPage");
+      let newContent = subOutputRankPrint.innerHTML;
+      let oldContent = document.body.innerHTML;
+      document.body.innerHTML = newContent;
       window.print();
-      // window.location.reload();
-      // document.body.innerHTML = oldContent;
-      // return false;
+      window.location.reload();
+      document.body.innerHTML = oldContent;
+      return false;
     },
     inputClick(){
       //可编辑input部分：点击变成input
