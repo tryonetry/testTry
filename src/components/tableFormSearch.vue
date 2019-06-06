@@ -253,7 +253,7 @@ export default {
 
   created() {
     // 接收父组件的数据
-    this.formData = [...this.formDataArr];
+    this.formData = {...this.formDataArr};
   },
 
   computed:{
