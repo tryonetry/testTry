@@ -196,16 +196,7 @@ export default {
               key: "archivesIdentity",
               name: "archivesIdentity",
               val: void 0,
-              children: [
-                {
-                  itemCode: "1",
-                  itemName: "干部"
-                },
-                {
-                  itemCode: "2",
-                  itemName: "工人"
-                }
-              ],
+              children: [],
               status: ""
             },
             // date
@@ -532,6 +523,10 @@ export default {
   computed: {
     checkTableData: function() {
       return this.$store.getters.getinfoTableCheckData;
+    },
+    directoryData: function(){
+      //字典数据
+      return this.$store.getters.getDirectoryData
     }
   },
 
@@ -543,6 +538,20 @@ export default {
     //    },
     //    deep:true,//深度监听
     //}
+    directoryData: {
+      //字典数据监听
+      immediate: true,
+      deep: true,
+      handler: function(newVal){
+        if(newVal && newVal['personIdentityList'].length > 0){
+          this.initArr.formData.formInputs.forEach(item => {
+            if(item.key === 'archivesIdentity'){
+              item.children = this.directoryData['personIdentityList'];
+            }
+          });
+        }
+      }
+    }
   },
 
   //方法集合

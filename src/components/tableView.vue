@@ -91,6 +91,7 @@ import TableFromSearch from "@/components/tableFormSearch";
 import { isMoment } from 'moment';
 import { setTimeout } from 'timers';
 import utils from '../utils/util';
+import { networkInterfaces } from 'os';
 
 export default {
   name: "TableView",
@@ -166,7 +167,9 @@ export default {
     window.onresize = null;
   },
   methods: {
-
+    getCondition(){
+      return this.condition;
+    },
     bundleChangeFun(value){
       /**
        * 监听子组件：tableFormSearch上值是否发生变化；当发生变化则修改this.condition的值；

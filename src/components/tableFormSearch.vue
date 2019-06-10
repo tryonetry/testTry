@@ -90,6 +90,7 @@
           @change="searchSelectChange(item)"
           :filterOption="filterOption"
           allowClear
+          :mode="item.mode ? item.mode : ''"
         >
           <a-select-option
             v-for="(el, index) in item.children"
@@ -310,6 +311,7 @@ export default {
 
     treeSelect(value) {
       this.treeSelectObj.value = value;
+      this.listeningChange();
     },
 
     // 联动处理
@@ -708,13 +710,14 @@ export default {
 
     // 选择框改变
     selectChange(value){
-      this.bundleLinkage(value)
+      this.bundleLinkage(value);
+      this.listeningChange();
     },
 
     // 搜索选择框改变
     searchSelectChange (select) {
-      console.log(select)
-      this.bundleLinkage(select)
+      this.bundleLinkage(select);
+      this.listeningChange();
     },
 
     // 普通的必填表单项失去焦点
