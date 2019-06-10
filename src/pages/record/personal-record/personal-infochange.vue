@@ -36,7 +36,7 @@
 
 <script>
 import TableView from "@/components/tableView";
-import RecordInfo from "../../../components/record-info";
+import RecordInfo from "../../../components/record/record-info";
 export default {
   name: "PersonalInfoChange",
   //import引入的组件需要注入到对象中才能使用
@@ -95,13 +95,13 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60
+            width: 80
           },
           { 
             title: "姓名", 
             dataIndex: "a0101", 
             key: "a0101",
-            width:250, 
+            width:150, 
           },
           { 
             title: "身份证号",
@@ -176,10 +176,10 @@ export default {
           if(Number(res.code) === 0){
               _this.tableTotalNum = res.count;
               this.initArr.tabledataArr = res.data;
-
+              console.log(res.data)
               this.initArr.tabledataArr.forEach((element, index) => {
 
-                Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1});
+                Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1,a0104:element.a0104 === "1" ? "男" : "女"});
 
                 // this.initArr.tabledataArr.push({
                 //     key: element.a01000, //主键值

@@ -1,17 +1,20 @@
-<!-- template -->
+<!-- 基本信息展示 -->
 <template>
-    <div class="formHeader">
-        <h2>{{formTitle}}</h2>
-    </div>
+<div class="outerContainer">
+    <a-card :title="cardTitle">
+        <a-card-grid v-for='(item,index) in baseData' :key='index' style="width:33.3%;textAlign:'center'">
+            <p><span class="titleName">{{item.label}}:</span>{{item.val}}</p>
+        </a-card-grid>
+    </a-card>
+</div>
 </template>
 
 <script>
-
 export default {
-    name:"FormHeader",
+    name:"ShowBasicInfo",
     //import引入的组件需要注入到对象中才能使用
     components: {},
-    props:["formTitle",],
+    props:["cardTitle","baseData"],
 
     data() {
         return {
@@ -66,17 +69,11 @@ export default {
 </script>
 
 <style scoped>
-    .formHeader{
-        width: 100%;
-        height: 40px;
+    .outerContainer{
         display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        padding-left: 20px;
-        margin-bottom: 20px;
-        background: #FAFAFA;
     }
-    .formHeader>h2{
-        font-size: 18px;
+    .titleName{
+        margin-right: 10px;
+        color: #87b1df;
     }
 </style>

@@ -102,7 +102,7 @@ function companyNumToName(numVal){
   }
 }
 import moment from "moment";
-import TableFromSearch from "./tableFormSearch";
+import TableFromSearch from "../tableFormSearch";
 export default {
   name: "RecordInfo",
   //import引入的组件需要注入到对象中才能使用
@@ -695,8 +695,8 @@ export default {
                 status: ""
               },
             ],
-            companyList:null,
           },
+          companyList:null,
           hasDataDisabledOptions:['a0101','a0184']
     };
   },
@@ -773,6 +773,7 @@ export default {
     // 插入数据
     insertData(Data){
       if(!Data) return;
+      console.log(Data)
       this.formData.formInputs.forEach((item,index)=>{
         for(let key in Data){
           if(item.name === key){
@@ -820,6 +821,7 @@ export default {
           // 委托存档单位名称
           let tempCompanylist = [];
           res.data.forEach( company => {
+            // attention ! code - id
             tempCompanylist.push({itemName:company.itemName,itemCode: company.itemId,itemId:company.itemCode});
           });
           this.formData.formInputs.forEach((item,index)=>{

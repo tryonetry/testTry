@@ -12,7 +12,7 @@
         centered
         title="个人档案转出"
         :visible="visible"
-        :width="900"
+        :width="'80%'"
         :confirmLoading="confirmLoading"
         okText="转出申请"
         cancelText="取消"
@@ -20,10 +20,7 @@
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
       >
-        <div class="modalContent">
-          <TableFromSearch :formDataArr="searchFormData"></TableFromSearch>
-          <RecordInfo :infoData="recordInfoData" ref="rollOutInfo"></RecordInfo>
-        </div>
+        <TransferOnSite></TransferOnSite>
       </a-modal>
     </div>
   </div>
@@ -31,15 +28,13 @@
 
 <script>
 import TableView from "@/components/tableView";
-import RecordInfo from "../../../components/record-info";
-import TableFromSearch from "../../../components/tableFormSearch";
+import TransferOnSite from "@/components/record/transferOnSite";
 export default {
   name: "PersonalTransferOut",
-  //import引入的组件需要注入到对象中才能使用
+  // import引入的组件需要注入到对象中才能使用
   components: {
     TableView,
-    RecordInfo,
-    TableFromSearch
+    TransferOnSite,
   },
   props: [""],
 
@@ -123,385 +118,9 @@ export default {
         ],
         tabledataArr: []
       },
-      searchFormData: {
-        //inputs
-        formInputs: [
-          {
-            title: "姓名",
-            type: "text",
-            required: false,
-            placeholder: "请输入姓名",
-            key: "searchName",
-            name: "searchName",
-            val: void 0,
-            postname: "",
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "* 请输入姓名",
-            status: ""
-          },
-          {
-            title: "身份证号",
-            type: "text",
-            required: false,
-            placeholder: "请输入身份证号",
-            key: "searchIdCard",
-            name: "searchIdCard",
-            val: void 0,
-            postname: "",
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "* 请输入身份证号",
-            status: ""
-          }
-        ],
-        //btns
-        formBtns: [{ title: "查询", htmltype: "submit", operate: "searchForm" }]
-      },
+      
       visible: false, //模态框默认不可见
       confirmLoading: false, //模态框确认按钮加载：默认不加载
-      recordInfoData: [
-        //个人档案转出模态框渲染
-        {
-          cardTitle: "存档人员基本信息",
-          //form
-          formData: {
-            // inpts
-            formInputs: [
-              {
-                title: "身份证号码",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入身份证号码",
-                key: "personIdCard",
-                name: "personIdCard",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入身份证号码",
-                status: ""
-              },
-              {
-                title: "姓名",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入姓名",
-                key: "personName",
-                name: "personName",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入姓名",
-                status: ""
-              },
-              {
-                title: "曾用名",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入曾用名",
-                key: "personUsedName",
-                name: "personUsedName",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入曾用名",
-                status: ""
-              },
-              {
-                title: "性别",
-                otherType: "searchSelect",
-                required: false,
-                disabled: true,
-                placeholder: "请选择性别",
-                name: "personGender",
-                key: "personGender",
-                val: void 0,
-                postname: "",
-                children: [
-                  { id: 1, title: "女", isdisabled: false },
-                  { id: 2, title: "男", isdisabled: false }
-                ]
-              },
-              {
-                title: "出生年月",
-                otherType: "date",
-                required: false,
-                disabled: true,
-                placeholder: "请选择出生年月",
-                key: "personBirthday",
-                name: "personBirthday",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请选择出生年月",
-                status: ""
-              },
-              {
-                title: "政治面貌",
-                otherType: "searchSelect",
-                required: false,
-                disabled: true,
-                placeholder: "请选择政治面貌",
-                name: "politicsStatus",
-                key: "politicsStatus",
-                val: void 0,
-                postname: "",
-                children: [
-                  { id: 1, title: "中共党员", isdisabled: false },
-                  { id: 2, title: "中共预备党员", isdisabled: false }
-                ]
-              },
-              {
-                title: "最高学历",
-                otherType: "searchSelect",
-                required: false,
-                disabled: true,
-                placeholder: "请选择最高学历",
-                name: "education",
-                key: "education",
-                val: void 0,
-                postname: "",
-                children: [
-                  { id: 1, title: "博士", isdisabled: false },
-                  { id: 2, title: "硕士", isdisabled: false }
-                ]
-              },
-              {
-                title: "存档性质",
-                otherType: "searchSelect",
-                required: false,
-                disabled: true,
-                placeholder: "请选择存档性质",
-                name: "recordSaveType",
-                key: "recordSaveType",
-                val: void 0,
-                postname: "",
-                children: [
-                  { id: 1, title: "xxxxx", isdisabled: false },
-                  { id: 2, title: "yyyyy", isdisabled: false }
-                ]
-              },
-              {
-                title: "存档日期",
-                otherType: "date",
-                required: false,
-                disabled: true,
-                placeholder: "请选择存档日期",
-                key: "recordDate",
-                name: "recordDate",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请选择存档日期",
-                status: ""
-              },
-              {
-                title: "存档编号",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入存档编号",
-                key: "recordNumber",
-                name: "recordNumber",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入请输入存档编号",
-                status: ""
-              },
-              {
-                title: "联系电话",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入联系电话",
-                key: "personPhone",
-                name: "personPhone",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入联系电话",
-                status: ""
-              },
-              {
-                title: "居住地址",
-                type: "text",
-                required: false,
-                disabled: true,
-                placeholder: "请输入居住地址",
-                key: "personAddress",
-                name: "personAddress",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入居住地址",
-                status: ""
-              }
-            ]
-          }
-        },
-        {
-          cardTitle: "转出信息",
-          //form
-          formData: {
-            //inputs
-            formInputs: [
-              {
-                title: "申请人",
-                type: "text",
-                required: false,
-                placeholder: "请输入申请人",
-                key: "personApply",
-                name: "personApply",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入申请人",
-                status: ""
-              },
-              {
-                title: "身份证号",
-                type: "text",
-                required: false,
-                placeholder: "请输入申请人身份证号",
-                key: "applyIdCard",
-                name: "applyIdCard",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入申请人身份证号",
-                status: ""
-              },
-              {
-                title: "申请日期",
-                otherType: "date",
-                required: false,
-                placeholder: "请选择申请日期",
-                key: "applyDate",
-                name: "applyDate",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请选择申请日期",
-                status: ""
-              },
-              {
-                title: "转出原因",
-                otherType: "searchSelect",
-                required: false,
-                placeholder: "请选择转出原因",
-                name: "rollOutReason",
-                key: "rollOutReason",
-                val: void 0,
-                postname: "",
-                children: [
-                  { id: 1, title: "xxxxx", isdisabled: false },
-                  { id: 2, title: "yyyyy", isdisabled: false }
-                ]
-              },
-              {
-                title: "原存档单位名称",
-                type: "text",
-                required: false,
-                placeholder: "请输入原存档单位名称",
-                key: "originOrgan",
-                name: "originOrgan",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入原存档单位名称",
-                status: ""
-              },
-              {
-                title: "转往单位名称",
-                type: "text",
-                required: false,
-                placeholder: "请输入转往单位名称",
-                key: "NowOrgan",
-                name: "NowOrgan",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入转往单位名称",
-                status: ""
-              },
-              {
-                title: "转往单位地址",
-                type: "text",
-                required: false,
-                placeholder: "请输入转往单位地址",
-                key: "NowAddress",
-                name: "NowAddress",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入转往单位地址",
-                status: ""
-              },
-              {
-                title: "备注",
-                otherType: "textarea",
-                required: false,
-                placeholder: "请输入备注",
-                key: "notes",
-                name: "notes",
-                val: void 0,
-                postname: "",
-                maxlength: 20,
-                minlength: 0,
-                reg: "",
-                tip: "* 请输入备注",
-                status: ""
-              },
-              {
-                title: "调档函上传",
-                otherType: "upload",
-                required: false,
-                key: "upload",
-                name: "upload",
-                val: void 0,
-                postname: "",
-                multiple: true, //是否支持多选文件
-                action: "//jsonplaceholder.typicode.com/posts/", //上传地址
-                listType: "text" //上传列表的内建样式
-              }
-            ]
-          }
-        }
-      ]
     };
   },
 
@@ -591,8 +210,8 @@ export default {
 </script>
 
 <style scoped>
-.modalContent{
-  overflow-y: auto;
-  height: 100%;
-}
+  .modalContent{
+    height: 100%;
+    max-height: 100%;
+  }
 </style>

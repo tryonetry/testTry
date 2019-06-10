@@ -15,7 +15,7 @@
 <script>
 
 
-import RecordInfo from "../../../components/record-info";
+import RecordInfo from "../../../components/record/record-info";
 import moment from "moment";
 
 export default {
