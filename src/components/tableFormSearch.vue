@@ -402,7 +402,7 @@ export default {
                                   itemName: '第' + i + '区'
                                 })
                               }
-                              
+
                               //查询容量：空闲容量和总容量
                               let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
                               _this.getCapacityDataFun(currCapacity);
@@ -468,6 +468,18 @@ export default {
                     else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
                       let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
                       let currWhArea = _this.formData.formInputs[1]['val'];
+
+                      //查询容量：空闲容量和总容量
+                      let currWhdCodeName = '';
+                      _this.formData.formInputs[2].children.forEach(el => {
+                        if(el.itemCode === resultObj.data){
+                          currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+                        }
+                      })
+                      let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': resultObj.data, 'whdCode': currWhdCodeName});
+                      _this.getCapacityDataFun(currCapacity);
+                      
+
                       _this.$http.fetchPost('archDocument@getWhdList.action',{
                         whId: currWhId,
                         whdArea: currWhArea
@@ -488,10 +500,6 @@ export default {
                                   itemName: '第' + j + '层'
                                 })
                               }
-                              
-                              //查询容量：空闲容量和总容量
-                              let currCapacity = Object.assign({}, currCapacity, {'whId': element.whId, 'whdArea': element.whdArea, 'whdId': element.whdId, 'whdCode': element.whdCode});
-                              _this.getCapacityDataFun(currCapacity);
                             }
 
                             _this.formData.formInputs.forEach(item => {
@@ -607,11 +615,9 @@ export default {
                     let currWhdCodeName = '';
                     _this.formData.formInputs[2].children.forEach(el => {
                       if(el.itemCode === currWhdCode){
-                        console.log(el);
                         currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
                       }
                     });
-                    console.log(currWhdCodeName);
                     let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': currWhdCode, 'whdCode': currWhdCodeName, 'waColumnCode': currCloumn, 'waLayerCode': resultObj.data});
                     _this.getCapacityDataFun(currCapacity);
 
