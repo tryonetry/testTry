@@ -23,7 +23,11 @@
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
       >
-        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm"></TableFromSearch>
+        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
+          <div class="capacityDiv" slot='otherForm'>
+            空闲容量:{{freeCapacity}}， 总容量:{{totalCapacity}}
+          </div>
+        </TableFromSearch>
         <template slot="footer">
           <a-button key="cancel" @click="handleCancel">取消</a-button>
           <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
@@ -258,8 +262,8 @@ export default {
           },
           {
             title: "存档编号",
-            dataIndex: "a0100A",
-            key: "a0100A",
+            dataIndex: "a0100a",
+            key: "a0100a",
             width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -481,6 +485,8 @@ export default {
       tempA01000: '',  //暂存：a01000
       tempCondition: {}, //临时查询条件
       batchDistributeIdStr: '',  //批量分配档案
+      freeCapacity: 0, //空闲容量
+      totalCapacity: 0, //总容量
     };
   },
 
@@ -529,7 +535,7 @@ export default {
             tempTableData.forEach((element, index) => {
               this.initArr.tabledataArr.push({
                 num: (pageNum - 1) * limitNum + index + 1,
-                key: element.a01000,
+                key: element.a01000,    //唯一的id值； 现在由于垃圾数据影响会报错key值重复
                 a0100a: element.a0100a,
                 a0101: element.a0101,
                 a0184: element.a0184,
@@ -538,6 +544,7 @@ export default {
                 shelvesNo: !element.shelvesNo ? "" : (element.shelvesNo.split("-")[0] + "区" + element.shelvesNo.split("-")[1] +  "排" + element.shelvesNo.split("-")[2] + "号"),
                 inwareOperatorName: element.inwareOperatorName,
                 inwareDate: element.inwareDate,
+                archHandover:element.archHandover,
                 archiveStatus: element.archiveStatus,
                 archiveStatusName: element.archiveStatus == "0" ? "待入库" : (element.archiveStatus == "1" ? "已入库" : "接收待入库")
               });
@@ -583,6 +590,7 @@ export default {
           let tempLen = this.isWaitInRoom(this.checkTableData);
           if (tempLen == this.checkTableData.length) {
             this.batchAdjustFrom.formInputs.forEach(element => {
+              element.val = void 0;
               if(element.key === 'whId'){
                 element.children = this.roomDataArr;
               }
@@ -641,6 +649,29 @@ export default {
         })
       }
     },
+    getCapacityData(currObj){
+      /**
+       * 功能：当修改库房获取空闲容量和总容量
+       * 参数：whId:当前whId
+       */
+      this.$http.fetchPost('archDocument@getDynamicCapacity.action', {
+        whId: (!currObj || !currObj.whId) ? '' : currObj.whId,
+        whdId: (!currObj || !currObj.whdId) ? '' : currObj.whdId,
+        whdArea: (!currObj || !currObj.whdArea) ? '' : currObj.whdArea,
+        whdCode: (!currObj || !currObj.whdCode) ? '' : currObj.whdCode,
+        waColumnCode: (!currObj || !currObj.waColumnCode) ? '' : currObj.waColumnCode,
+        waLayerCode: (!currObj || !currObj.waLayerCode) ? '' : currObj.waLayerCode
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.freeCapacity = res.availableNum;   //空闲容量
+          this.totalCapacity = res.totalNum;  //总容量
+        } else{
+          this.$message.error('抱歉，获取当前容量数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
+    },
     getinitAreaData(currWhId, currWhdArea){
       /**
        * 功能：根据当前数据获取初始化的分区options；
@@ -660,6 +691,8 @@ export default {
                   itemName: '第' + i + '区'
                 })
               }
+              let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
+              this.getCapacityData(currCapacity);    //初始化当前库房的容量
             }
           });
           this.positionAdjustForm.formInputs.forEach(element => {
@@ -668,6 +701,7 @@ export default {
               element.val = currWhdArea;
             }
           });
+          
         } else{
           this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
         }
@@ -704,7 +738,6 @@ export default {
                   itemName: '第' + j + '层'
                 })
               }
-              
             }
           });
           this.positionAdjustForm.formInputs.forEach(element => {
@@ -773,11 +806,11 @@ export default {
         })
       } else{
         //批量分配档案位置
-        currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr});
+        currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr, 'lableNu': ''});
         let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
         console.log(newCurrDataObj);
         this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
-          if(Number(res.code)){
+          if(Number(res.code)=== 0){
             this.$message.success('批量分配档案操作成功！');
             this.getTableData(this.tempCondition, 1, 10);
             setTimeout(() => {
@@ -840,4 +873,8 @@ export default {
 </script>
 
 <style scoped>
+.capacityDiv{
+  display: flex;
+  justify-content: center;
+}
 </style>

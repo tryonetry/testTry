@@ -204,7 +204,7 @@ import regs from '../../src/utils/regexp';
 
 export default {
   name: "TableFromSearch",
-  props: ["formDataArr"],
+  props: ["formDataArr", 'getCapacityDataFun'],
   data() {
     return {
       regs,
@@ -402,6 +402,10 @@ export default {
                                   itemName: '第' + i + '区'
                                 })
                               }
+                              
+                              //查询容量：空闲容量和总容量
+                              let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
+                              _this.getCapacityDataFun(currCapacity);
                             }
                           });
                           _this.formData.formInputs[index][resultObj.name] = resultArr;    //resultArr赋值给分区的children
@@ -464,7 +468,7 @@ export default {
                     else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
                       let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
                       let currWhArea = _this.formData.formInputs[1]['val'];
-                      this.$http.fetchPost('archDocument@getWhdList.action',{
+                      _this.$http.fetchPost('archDocument@getWhdList.action',{
                         whId: currWhId,
                         whdArea: currWhArea
                       }).then(res => {
@@ -484,6 +488,10 @@ export default {
                                   itemName: '第' + j + '层'
                                 })
                               }
+                              
+                              //查询容量：空闲容量和总容量
+                              let currCapacity = Object.assign({}, currCapacity, {'whId': element.whId, 'whdArea': element.whdArea, 'whdId': element.whdId, 'whdCode': element.whdCode});
+                              _this.getCapacityDataFun(currCapacity);
                             }
 
                             _this.formData.formInputs.forEach(item => {
@@ -594,10 +602,25 @@ export default {
                     let currWhArea = _this.formData.formInputs[1]['val'];   //当前分区的itemCode
                     let currWhdCode = _this.formData.formInputs[2]['val'];   //当前密集架的itemCode
                     let currCloumn = _this.formData.formInputs[3]['val'];  //当前列号的itemCode
+                    
+                    //查询容量：空闲容量和总容量
+                    let currWhdCodeName = '';
+                    _this.formData.formInputs[2].children.forEach(el => {
+                      if(el.itemCode === currWhdCode){
+                        console.log(el);
+                        currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+                      }
+                    });
+                    console.log(currWhdCodeName);
+                    let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': currWhdCode, 'whdCode': currWhdCodeName, 'waColumnCode': currCloumn, 'waLayerCode': resultObj.data});
+                    _this.getCapacityDataFun(currCapacity);
+
+                    //查询顺序号
                     _this.$http.fetchPost('archDocument@getFillOrderNo.action',{
-                      whdId: currWhId,
+                      whId: currWhId,
                       whdArea: currWhArea,
-                      whdCode: currWhdCode,
+                      whdId: currWhdCode,
+                      whdCode: currWhdCodeName,
                       waColumnCode: currCloumn,
                       waLayerCode: resultObj.data
                     }).then(res => {
