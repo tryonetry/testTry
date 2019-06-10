@@ -1,10 +1,10 @@
 <!-- template -->
 <template>
   <div class="outer">
-    <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
+    <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData" ref="recordTable">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-          <a-button class="buttonOperate">导出</a-button>
+          <a-button class="buttonOperate" @click="exportFun">导出</a-button>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
@@ -15,6 +15,7 @@
 
 <script>
 import TableView from "@/components/tableView";
+import utils from "../../utils/util.js";
 export default {
   name: "RecordInSearch",
   //import引入的组件需要注入到对象中才能使用
@@ -23,6 +24,7 @@ export default {
 
   data() {
     return {
+      utils,
       tableTotalNum: 0, //总页数：默认为0
       // tableView传值方式
       initArr: {
@@ -38,32 +40,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入存档编号",
-              key: "",
-              name: "",
+              key: "a0100A",
+              name: "a0100A",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
-              status: ""
-            },
-            // select/searchSelect
-            {
-              title: "档案状态",
-              otherType: "select",
-              required: false,
-              placeholder: "请选择档案状态",
-              key: "",
-              name: "",
-              val: void 0,
-              disabled: true,
-              children: [
-                {
-                  itemCode: "1",
-                  itemName: "xxx"
-                }
-              ],
+              postname: "a0100A",
               status: ""
             },
             {
@@ -71,14 +55,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入姓名",
-              key: "",
-              name: "",
+              key: "a0101",
+              name: "a0101",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0101",
               status: ""
             },
             {
@@ -86,14 +70,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入身份证号/社保卡号",
-              key: "",
-              name: "",
+              key: "a0184",
+              name: "a0184",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0184",
               status: ""
             },
             // select/searchSelect
@@ -102,15 +86,10 @@ export default {
               otherType: "select",
               required: false,
               placeholder: "请选择人员身份",
-              key: "",
-              name: "",
+              key: "archivesIdentity",
+              name: "archivesIdentity",
               val: void 0,
-              children: [
-                {
-                  itemCode: "1",
-                  itemName: "干部"
-                }
-              ],
+              children: [],
               status: ""
             },
             // date
@@ -119,14 +98,36 @@ export default {
               otherType: "daterange",
               required: false,
               placeholder: "请选择录入时间",
-              key: "",
-              name: "",
+              key: "startDate-endDate",
+              name: "startDate-endDate",
               val: void 0,
-              postname: "",
+              postname: "startDate-endDate",
               status: ""
               //   disabledDate: "disabledEndDate", //函数名：只能选今天和今天以前的
               //   disabledStartDate: "disabledStartDate" //函数名：只能选今天和今天以后的
-            }
+            },
+            {
+              title: '导出列',
+              otherType: 'searchSelect',
+              required: false,
+              placeholder: "请选择需要导出的列",
+              key: 'colsStr',
+              name: 'colsStr',
+              val: void 0,
+              children: [
+                  { itemCode: 'a0101', itemName: '档案人姓名' },
+                  { itemCode: 'a0104' , itemName: '性别' },
+                  { itemCode: 'a0184' , itemName: '身份证号' },
+                  { itemCode: 'archivesIdentity' , itemName: '人员身份' },
+                  { itemCode: 'a0100a' , itemName: '存档编号' },
+                  { itemCode: 'shelvesNo' , itemName: '库房位置' },
+                  { itemCode: 'inwareOperatorName' , itemName: '经办人' },
+                  { itemCode: 'archHandover' , itemName: '档案交接人' },
+                  { itemCode: 'inwareDate' , itemName: '入库时间' },
+              ],  
+              status: '',
+              mode: 'multiple'
+            },
           ],
 
           // form btns
@@ -142,81 +143,85 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
             title: "档案人姓名",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0101",
+            key: "a0101",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
-            dataIndex: "",
-            key: "",
-            width: 60,
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "身份证号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0184",
+            key: "a0184",
+            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "人员身份",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "archivesIdentity",
+            key: "archivesIdentity",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "存档编号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0100a",
+            key: "a0100a",
+            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "库房位置",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "shelvesNo",
+            key: "shelvesNo",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "inwareOperatorName",
+            key: "inwareOperatorName",
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "档案交接人",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "archHandover",
+            key: "archHandover",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "入库时间",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "inwareDate",
+            key: "inwareDate",
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
         // table数据
         tabledataArr: []
-      }
+      },
+      tempCondition: {}, //临时查询条件
     };
   },
 
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    directoryData: function(){
+      return this.$store.getters.getDirectoryData
+    }
+  },
 
   //监控data中的数据变化
   watch: {
@@ -226,20 +231,91 @@ export default {
     //    },
     //    deep:true,//深度监听
     //}
+    directoryData: {
+      //字典数据监听
+      immediate: true,
+      deep: true,
+      handler: function(newVal){
+        if(newVal && newVal['personIdentityList'].length > 0){
+          this.initArr.formData.formInputs.forEach(item => {
+            if(item.key === 'archivesIdentity'){
+              item.children = this.directoryData['personIdentityList'];
+            }
+          });
+        }
+      }
+    }
   },
 
   //方法集合
   methods: {
     getTableData(condition, pageNum, limitNum) {
-      /***
+      /**
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
-       *         */
+       */
+      this.tempCondition = condition;
+      this.$http.fetchPost('archDocument@getArchInWareList.action',{
+        page: pageNum,
+        limit: limitNum,
+        archiveStatus:'1',
+        a0100A: (!condition || !condition.a0100A) ? '' : condition.a0100A,
+        a0184: (!condition || !condition.a0184) ? '' : condition.a0184,
+        a0101: (!condition || !condition.a0101) ? '' : condition.a0101,
+        archivesIdentity: (!condition || !condition.archivesIdentity) ? '' : condition.archivesIdentity,
+        startDate: (!condition || !condition.startDate) ? '' : condition.startDate,
+        endDate: (!condition || !condition.endDate) ? '' : condition.endDate
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.tableTotalNum = res.count;
+          let tempTableData = res.data;
+          this.initArr.tabledataArr = [];
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              num: (pageNum - 1) * limitNum + index + 1,
+              key: element.a01000,    //唯一的id值； 现在由于垃圾数据影响会报错key值重复
+              a0101: element.a0101,
+              a0104: element.a0104 == "1" ? "男" : "女",
+              a0184: element.a0184,
+              archivesIdentity: element.archivesIdentity == "1" ? "干部" : "工人",
+              shelvesNo: !element.shelvesNo ? "" : (element.shelvesNo.split("-")[0] + "区" + element.shelvesNo.split("-")[1] +  "排" + element.shelvesNo.split("-")[2] + "号"),
+              inwareOperatorName: element.inwareOperatorName,
+              archHandover: element.archHandover,
+              inwareDate: element.inwareDate
+            })
+          });
+        }
+      })
+    },
+    exportFun(){
+      /**
+       * 功能：导出列表功能
+       */
+      let newCondition = this.$refs.recordTable.getCondition();
+      console.log(newCondition);
+      let currDataObj = {};
+      for(let key in newCondition){
+        if(key === 'colsStr'){
+           currDataObj[key] = newCondition[key].join(',');
+        } else if(key.indexOf('-') > -1){
+          
+        } else{
+          currDataObj[key] = newCondition[key];
+        }
+      }
+      currDataObj = Object.assign({}, currDataObj, {'archiveStatus' : '1'})
+      console.log(currDataObj);
+      // this.$http.fetchPost('exportInWareDataList', currDataObj).then(res => {
+
+      // })
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(null, 1, 10);
+  
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},

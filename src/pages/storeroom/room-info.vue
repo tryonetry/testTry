@@ -117,7 +117,7 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {

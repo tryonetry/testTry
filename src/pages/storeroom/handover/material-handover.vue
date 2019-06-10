@@ -170,70 +170,70 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
             title: "姓名",
             dataIndex: "e0102",
             key: "e0102",
-            width: '8%',
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
             dataIndex: "e0103",
             key: "e0103",
-            width: '6%',
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "身份证号",
             dataIndex: "e0104",
             key: "e0104",
-            width: '12%',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "存档编号",
             dataIndex: "e0101",
             key: "e0101",
-            width: '12%',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "材料类别",
             dataIndex: "e0105",
             key: "e0105",
-            width: '10%',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "材料名称",
             dataIndex: "e0106",
             key: "e0106",
-            width: '10%',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "档案位置号",
             dataIndex: "e0107",
             key: "e0107",
-            width: '8%',
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
             dataIndex: "e0108a",
             key: "e0108a",
-            width: '8%',
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "状态",
             dataIndex: "e0112Name",
             key: "e0112Name",
-            width: '8%',
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

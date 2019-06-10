@@ -90,6 +90,7 @@
           @change="searchSelectChange(item)"
           :filterOption="filterOption"
           allowClear
+          :mode="item.mode ? item.mode : ''"
         >
           <a-select-option
             v-for="(el, index) in item.children"
@@ -204,7 +205,7 @@ import regs from '../../src/utils/regexp';
 
 export default {
   name: "TableFromSearch",
-  props: ["formDataArr"],
+  props: ["formDataArr", 'getCapacityDataFun'],
   data() {
     return {
       regs,
@@ -310,6 +311,7 @@ export default {
 
     treeSelect(value) {
       this.treeSelectObj.value = value;
+      this.listeningChange();
     },
 
     // 联动处理
@@ -402,6 +404,10 @@ export default {
                                   itemName: '第' + i + '区'
                                 })
                               }
+
+                              //查询容量：空闲容量和总容量
+                              let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
+                              _this.getCapacityDataFun(currCapacity);
                             }
                           });
                           _this.formData.formInputs[index][resultObj.name] = resultArr;    //resultArr赋值给分区的children
@@ -464,7 +470,19 @@ export default {
                     else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
                       let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
                       let currWhArea = _this.formData.formInputs[1]['val'];
-                      this.$http.fetchPost('archDocument@getWhdList.action',{
+
+                      //查询容量：空闲容量和总容量
+                      let currWhdCodeName = '';
+                      _this.formData.formInputs[2].children.forEach(el => {
+                        if(el.itemCode === resultObj.data){
+                          currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+                        }
+                      })
+                      let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': resultObj.data, 'whdCode': currWhdCodeName});
+                      _this.getCapacityDataFun(currCapacity);
+                      
+
+                      _this.$http.fetchPost('archDocument@getWhdList.action',{
                         whId: currWhId,
                         whdArea: currWhArea
                       }).then(res => {
@@ -594,10 +612,23 @@ export default {
                     let currWhArea = _this.formData.formInputs[1]['val'];   //当前分区的itemCode
                     let currWhdCode = _this.formData.formInputs[2]['val'];   //当前密集架的itemCode
                     let currCloumn = _this.formData.formInputs[3]['val'];  //当前列号的itemCode
+                    
+                    //查询容量：空闲容量和总容量
+                    let currWhdCodeName = '';
+                    _this.formData.formInputs[2].children.forEach(el => {
+                      if(el.itemCode === currWhdCode){
+                        currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+                      }
+                    });
+                    let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': currWhdCode, 'whdCode': currWhdCodeName, 'waColumnCode': currCloumn, 'waLayerCode': resultObj.data});
+                    _this.getCapacityDataFun(currCapacity);
+
+                    //查询顺序号
                     _this.$http.fetchPost('archDocument@getFillOrderNo.action',{
-                      whdId: currWhId,
+                      whId: currWhId,
                       whdArea: currWhArea,
-                      whdCode: currWhdCode,
+                      whdId: currWhdCode,
+                      whdCode: currWhdCodeName,
                       waColumnCode: currCloumn,
                       waLayerCode: resultObj.data
                     }).then(res => {
@@ -679,13 +710,14 @@ export default {
 
     // 选择框改变
     selectChange(value){
-      this.bundleLinkage(value)
+      this.bundleLinkage(value);
+      this.listeningChange();
     },
 
     // 搜索选择框改变
     searchSelectChange (select) {
-      console.log(select)
-      this.bundleLinkage(select)
+      this.bundleLinkage(select);
+      this.listeningChange();
     },
 
     // 普通的必填表单项失去焦点

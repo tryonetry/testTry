@@ -258,6 +258,19 @@ input{
   margin-bottom: -17px;
   padding-bottom: 0px;
 }
+
+.ant-table-header::-webkit-scrollbar {
+  width: 0;
+}
+.ant-table-header::-webkit-scrollbar-track {
+  background-color: #fafafa;
+  opacity: 0;
+}
+.ant-table-header::-webkit-scrollbar-thumb {
+  background: #aaaaaa;
+  opacity: 0;
+}
+
 .ant-modal-body{
   border-radius: 4px;
 }

@@ -4,12 +4,20 @@
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-        <a-button class="buttonOperate" @click="operateFun(1)">位置调整</a-button>
-        <a-button class="buttonOperate" @click="operateFun(2)">批量分配档案位置</a-button>
+        <a-button class="buttonOperate" @click="operateFun(null, 1)">位置调整</a-button>
+        <a-button class="buttonOperate" @click="operateFun(null, 2)">批量分配档案位置</a-button>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
-      <!-- <div slot="tableAction" slot-scope="slotPropsData"></div> -->
+      <div slot="tableAction" slot-scope="slotPropsData">
+        <a
+          v-if="slotPropsData.currRowdata.archiveStatus != 1"
+          class="primaryBtnColor"
+          href="javascript:;"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+          data-type="档案入库"
+        >档案入库</a>
+      </div>
     </TableView>
 
     <!-- 模态框 -->
@@ -23,7 +31,11 @@
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
       >
-        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm"></TableFromSearch>
+        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
+          <div class="capacityDiv" slot='otherForm'>
+            空闲容量:{{freeCapacity}}， 总容量:{{totalCapacity}}
+          </div>
+        </TableFromSearch>
         <template slot="footer">
           <a-button key="cancel" @click="handleCancel">取消</a-button>
           <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
@@ -55,7 +67,6 @@ function whdAreaTowhdCodeFun(whdArea){
    * 功能：通过分区查密集架
    * 参数：whdArea：当前选择的分区itemCode值
    */
-  console.log(whdArea);
   if(whdArea){
     return [{name: 'children', data: whdArea,operate: 'whdAreaTowhdCode'}]
   } else{
@@ -80,13 +91,13 @@ function waLayerCodeToOrderNoFun(layerNum){
    * 功能:当选择层完后；根据选择的库房，分区，密集架，列号http获取顺序号
    * 参数：columnsNum：当前选择的列
    */
-  console.log(layerNum);
   if(layerNum){
     return [{name: 'val', data: layerNum, operate: 'waLayerCodeToOrderNo'}]
   } else{
     return [{name: 'val', data: void 0}, {name: 'disabled', data:true}]
   }
 }
+
 
 export default {
   name: "RecordCheckIn",
@@ -185,16 +196,7 @@ export default {
               key: "archivesIdentity",
               name: "archivesIdentity",
               val: void 0,
-              children: [
-                {
-                  itemCode: "1",
-                  itemName: "干部"
-                },
-                {
-                  itemCode: "2",
-                  itemName: "工人"
-                }
-              ],
+              children: [],
               status: ""
             },
             // date
@@ -225,21 +227,21 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
             title: "档案人姓名",
             dataIndex: "a0101",
             key: "a0101",
-            width: 150,
+            width: 120,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
             dataIndex: "a0104",
             key: "a0104",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -258,8 +260,8 @@ export default {
           },
           {
             title: "存档编号",
-            dataIndex: "a0100A",
-            key: "a0100A",
+            dataIndex: "a0100a",
+            key: "a0100a",
             width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -267,14 +269,14 @@ export default {
             title: "库房位置",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
-            width: 200,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
             dataIndex: "inwareOperatorName",
             key: "inwareOperatorName",
-            width: 120,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -297,6 +299,11 @@ export default {
             key: "archiveStatusName",
             width: 120,
             scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "操作",
+            key: "action",
+            scopedSlots: { customRender: "action" }
           }
         ],
         // table数据
@@ -458,6 +465,32 @@ export default {
             val: void 0,
             children: [],
             status: "",
+            connectTo:['waColumnCode'], //关联到列号和层号
+            connectToFun:[whdCodeTowanCodeFun],
+          },
+          {
+            title: "列号",
+            otherType: "searchSelect",
+            required: false,
+            placeholder: "请选择列号",
+            key: "waColumnCode",
+            name: "waColumnCode",
+            val: void 0,
+            children: [],
+            status: "",
+            isHide: true,
+          },
+          {
+            title: "层号",
+            otherType: "searchSelect",
+            required: false,
+            placeholder: "请选择层号",
+            key: "waLayerCode",
+            name: "waLayerCode",
+            val: void 0,
+            children: [],
+            status: "",
+            isHide: true,
           },
           {
             title: "交接人",
@@ -480,6 +513,9 @@ export default {
       tempWaId: '',  //库表名
       tempA01000: '',  //暂存：a01000
       tempCondition: {}, //临时查询条件
+      batchDistributeIdStr: '',  //批量分配档案
+      freeCapacity: 0, //空闲容量
+      totalCapacity: 0, //总容量
     };
   },
 
@@ -487,6 +523,10 @@ export default {
   computed: {
     checkTableData: function() {
       return this.$store.getters.getinfoTableCheckData;
+    },
+    directoryData: function(){
+      //字典数据
+      return this.$store.getters.getDirectoryData
     }
   },
 
@@ -498,6 +538,20 @@ export default {
     //    },
     //    deep:true,//深度监听
     //}
+    directoryData: {
+      //字典数据监听
+      immediate: true,
+      deep: true,
+      handler: function(newVal){
+        if(newVal && newVal['personIdentityList'].length > 0){
+          this.initArr.formData.formInputs.forEach(item => {
+            if(item.key === 'archivesIdentity'){
+              item.children = this.directoryData['personIdentityList'];
+            }
+          });
+        }
+      }
+    }
   },
 
   //方法集合
@@ -528,7 +582,7 @@ export default {
             tempTableData.forEach((element, index) => {
               this.initArr.tabledataArr.push({
                 num: (pageNum - 1) * limitNum + index + 1,
-                key: element.a01000,
+                key: element.a01000,    //唯一的id值； 现在由于垃圾数据影响会报错key值重复
                 a0100a: element.a0100a,
                 a0101: element.a0101,
                 a0184: element.a0184,
@@ -537,6 +591,7 @@ export default {
                 shelvesNo: !element.shelvesNo ? "" : (element.shelvesNo.split("-")[0] + "区" + element.shelvesNo.split("-")[1] +  "排" + element.shelvesNo.split("-")[2] + "号"),
                 inwareOperatorName: element.inwareOperatorName,
                 inwareDate: element.inwareDate,
+                archHandover:element.archHandover,
                 archiveStatus: element.archiveStatus,
                 archiveStatusName: element.archiveStatus == "0" ? "待入库" : (element.archiveStatus == "1" ? "已入库" : "接收待入库")
               });
@@ -560,40 +615,61 @@ export default {
         }
       })
     },
-    operateFun(statusVal) {
+    operateFun(editDataObj ,statusVal) {
       /***
        * 功能：调整位置：功能
        */
       this.operateStatus = statusVal;
-      if (statusVal == 1) {
-        //位置调整
-        if (this.checkTableData.length === 1) {
-          if (this.checkTableData[0].archiveStatus != "1") {
-            this.$message.error("档案未入库无法进行位置调整操作	！");
+      if(editDataObj){
+        //档案入库操作
+        this.getPositionForm(editDataObj.key);
+      } else{
+        if (statusVal == 1) {
+          //位置调整
+          if (this.checkTableData.length === 1) {
+            if (this.checkTableData[0].archiveStatus != "1") {
+              this.$message.error("档案未入库无法进行位置调整操作	！");
+            } else {
+              this.getPositionForm(this.checkTableData[0].key);
+            }
           } else {
-            this.getPositionForm(this.checkTableData[0].key);
+            this.$message.error("请选择一条数据！");
           }
         } else {
-          this.$message.error("请选择一条数据！");
-        }
-      } else {
-        //批量分配档案位置
-        if (this.checkTableData.length > 0) {
-          let tempLen = this.isWaitInRoom(this.checkTableData);
-          if (tempLen == this.checkTableData.length) {
-            this.batchAdjustFrom.formInputs.forEach(element => {
-              if(element.key === 'whId'){
-                element.children = this.roomDataArr;
-              }
-            });
-            this.RecordCheckInForm = this.batchAdjustFrom;
-            this.visible = true;
+          //批量分配档案位置
+          if (this.checkTableData.length > 0) {
+            let tempLen = this.isWaitInRoom(this.checkTableData);
+            if (tempLen == this.checkTableData.length) {
+              this.batchAdjustFrom.formInputs.forEach(element => {
+                element.val = void 0;
+                if(element.key === 'whId'){
+                  element.children = this.roomDataArr;
+                }
+              });
+              this.batchDistributeIdStr = this.getBatchDistributeIdStr(this.checkTableData, 'key');
+              this.RecordCheckInForm = this.batchAdjustFrom;
+              this.visible = true;
+            } else {
+              this.$message.error("请选择未入库的档案分配位置!");
+            }
           } else {
-            this.$message.error("请选择未入库的档案分配位置!");
+            this.$message.error("请选择需要批量分配档案位置的记录!");
           }
-        } else {
-          this.$message.error("请选择需要批量分配档案位置的记录!");
         }
+      }
+    },
+
+    getBatchDistributeIdStr(dataArr, dataKey){
+      /**
+       * 功能：获取批量分配数据的idStr
+       * 参数：
+       */
+      if(dataArr.length > 0 && dataKey){
+        let resultStr = '';
+        dataArr.forEach(item => {
+          resultStr += item[dataKey] + ','
+        });
+        return resultStr.substr(0, resultStr.length - 1);
       }
     },
 
@@ -615,14 +691,41 @@ export default {
             });
              
             this.tempWaId = res.data.waId;
-            this.getinitAreaData(res.data.whId, res.data.whdArea);
-            this.getinitWhdData(res.data.whId, res.data.whdArea, res.data.whdId, res.data.waColumnCode, res.data.waLayerCode);
+            if(res.data.whId && res.data.whdArea){
+              this.getinitAreaData(res.data.whId, res.data.whdArea);
+              if(res.data.whdId &&  res.data.waColumnCode && res.data.waLayerCode){
+                this.getinitWhdData(res.data.whId, res.data.whdArea, res.data.whdId, res.data.waColumnCode, res.data.waLayerCode);
+              }
+            }
             
             this.RecordCheckInForm = this.utils.getNewFormSearch(res.data,this.positionAdjustForm);
             this.visible = true;
           }
         })
       }
+    },
+    getCapacityData(currObj){
+      /**
+       * 功能：当修改库房获取空闲容量和总容量
+       * 参数：whId:当前whId
+       */
+      this.$http.fetchPost('archDocument@getDynamicCapacity.action', {
+        whId: (!currObj || !currObj.whId) ? '' : currObj.whId,
+        whdId: (!currObj || !currObj.whdId) ? '' : currObj.whdId,
+        whdArea: (!currObj || !currObj.whdArea) ? '' : currObj.whdArea,
+        whdCode: (!currObj || !currObj.whdCode) ? '' : currObj.whdCode,
+        waColumnCode: (!currObj || !currObj.waColumnCode) ? '' : currObj.waColumnCode,
+        waLayerCode: (!currObj || !currObj.waLayerCode) ? '' : currObj.waLayerCode
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.freeCapacity = res.availableNum;   //空闲容量
+          this.totalCapacity = res.totalNum;  //总容量
+        } else{
+          this.$message.error('抱歉，获取当前容量数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
     },
     getinitAreaData(currWhId, currWhdArea){
       /**
@@ -643,6 +746,8 @@ export default {
                   itemName: '第' + i + '区'
                 })
               }
+              let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
+              this.getCapacityData(currCapacity);    //初始化当前库房的容量
             }
           });
           this.positionAdjustForm.formInputs.forEach(element => {
@@ -651,6 +756,7 @@ export default {
               element.val = currWhdArea;
             }
           });
+          
         } else{
           this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
         }
@@ -687,7 +793,6 @@ export default {
                   itemName: '第' + j + '层'
                 })
               }
-              
             }
           });
           this.positionAdjustForm.formInputs.forEach(element => {
@@ -730,8 +835,6 @@ export default {
       /***
        * 功能：模态框提交操作
        */
-      console.log(this.$refs.recordCheckInForm.getFormData());
-
       let currObjData = this.utils.transferFormToObj(
         this.$refs.recordCheckInForm.getFormData()
       );
@@ -739,7 +842,6 @@ export default {
         //位置调整
         currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000, 'waId': this.tempWaId})
         let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
-        console.log(newCurrDataObj);
         this.$http.fetchPost('archDocument@editShelvesInfo.action', newCurrDataObj).then(res => {
           if(Number(res.code) === 0){
             this.$message.success('位置调整成功!');
@@ -749,13 +851,47 @@ export default {
               this.confirmLoading = false;
             }, 2000);
           } else{
-            this.$message.error("位置调整失败！");
+            this.$message.error("抱歉，操作失败，请刷新后重试！");
           }
         }).catch(error => {
-          this.$message.error("位置调整失败！");
+          this.$message.error("抱歉，网络异常！");
+        })
+      } else if(this.operateStatus === 3){
+        //档案入库
+        currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000})
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        this.$http.fetchPost('archDocument@setShelvesInfo.action', newCurrDataObj).then(res => {
+          if(Number(res.code) === 0){
+            this.$message.success('档案入库成功！');
+            this.getTableData(this.tempCondition, 1, 10);
+            setTimeout(() => {
+              this.visible = false;
+              this.confirmLoading = false;
+            }, 2000);
+          } else{
+            this.$message.error('抱歉，操作失败，请刷新后重试！')
+          }
+        }).catch(error => {
+          this.$message.error("抱歉，网络异常！");
         })
       } else{
         //批量分配档案位置
+        currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr, 'lableNu': ''});
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
+          if(Number(res.code)=== 0){
+            this.$message.success('批量分配档案操作成功！');
+            this.getTableData(this.tempCondition, 1, 10);
+            setTimeout(() => {
+              this.visible = false;
+              this.confirmLoading = false;
+            }, 2000);
+          } else{
+            this.$message.error('抱歉,操作失败，请刷新后重试！');
+          }
+        }).catch(error => {
+          this.$message.error('抱歉,网络异常');
+        })
       }
     },
     getWhdCodeFun(currObjData, formInputs){
@@ -806,4 +942,8 @@ export default {
 </script>
 
 <style scoped>
+.capacityDiv{
+  display: flex;
+  justify-content: center;
+}
 </style>

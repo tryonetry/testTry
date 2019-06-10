@@ -15,7 +15,7 @@
           :columns="columns"
           :dataSource="tabledata"
           :rowSelection="{onSelect:onSelect, onSelectAll:onSelectAll }"
-          :scroll="{ x: 1300,y:tableHeight}"
+          :scroll="{ x: tableWidth,y:tableHeight}"
           align="center"
           :pagination="false"
         >
@@ -39,7 +39,7 @@
           :columns="columns"
           :dataSource="tabledata"
           align="center"
-          :scroll="{ x: 1300,y:tableHeight}"
+          :scroll="{ x:tableWidth ,y:tableHeight}"
           :pagination="false"
         >
           <!-- 按钮操作 -->
@@ -90,6 +90,8 @@ import OrganTree from "@/components/organTree";
 import TableFromSearch from "@/components/tableFormSearch";
 import { isMoment } from 'moment';
 import { setTimeout } from 'timers';
+import utils from '../utils/util';
+import { networkInterfaces } from 'os';
 
 export default {
   name: "TableView",
@@ -110,6 +112,7 @@ export default {
       tableTotalCount: 0,
       currentPageNum: 1,
       condition:{},  //子组件的查询结果
+      tableWidth:"100%",
       tableHeight:450, // 设置table滚动的高度
       timer:null, //监听器
     };
@@ -147,13 +150,16 @@ export default {
   },
   mounted() {
     const _this = this;
-    // 监听窗口改变
+    
+    // 监听窗口改变 - setTimeout 阻塞
     setTimeout(function(){
       _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
+      _this.tableWidth = utils.detectZoom() + "%";
     },0);
     window.onresize = function(){
       _this.$nextTick(function(){
         _this.tableHeight = document.querySelector('.tableCon').clientHeight - 52;
+        _this.tableWidth = utils.detectZoom() + "%";
       });
     }
   },
@@ -161,6 +167,9 @@ export default {
     window.onresize = null;
   },
   methods: {
+    getCondition(){
+      return this.condition;
+    },
     bundleChangeFun(value){
       /**
        * 监听子组件：tableFormSearch上值是否发生变化；当发生变化则修改this.condition的值；
