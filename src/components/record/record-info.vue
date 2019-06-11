@@ -337,7 +337,7 @@ export default {
                 maxlength: 20,
                 minlength: 0,
                 reg: "testMobile",
-                tip: "* 请输入手机号码",
+                tip: "* 请输入正确的手机号码",
                 status: ""
               },
               {
@@ -706,9 +706,11 @@ export default {
   computed: {
     directoryData:function(){
       if(this.$store.getters.getDirectoryData){
-        this.splitDirectoryData(this.$store.getters.getDirectoryData)
+        this.splitDirectoryData(this.$store.getters.getDirectoryData);
+        return this.$store.getters.getDirectoryData;
+      }else{
+        return null;
       }
-      return this.$store.getters.getDirectoryData
     }
   },
 
@@ -734,10 +736,12 @@ export default {
 
   //方法集合
   methods: {
+
     // 获取tableformSearch中的数据
     getFormSearchData(){
       return this.$refs.childForm.getFormData();
     },
+
     // 拆分字典数据
     splitDirectoryData(Data){
       if(!Data) return;

@@ -165,41 +165,45 @@ const regs = {
     // },
 
     // 验证邮箱
-    testEmail:function(rule,email,callback){
+    testEmail:function(email){
         let reg = new RegExp('^([a-zA-Z0-9]+[_|\\_|\\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\\_|\\.]?)*[a-zA-Z0-9]+\\.[a-zA-Z]{2,3}$','ig');
         if(reg.test(email)){
-            callback();
             return 1;
         }else{
-            callback(new Error('请输入正确的邮箱'))
             return 0;
         }
     },
 
     // 验证电话号
-    testMobile:function(rule,mobile,callback){
+    testMobile:function(mobile){
         let reg = new RegExp('^1\\d{10,10}$');
         if(reg.test(mobile)){
-            callback();
             return 1;
         }else{
-            callback(new Error('请输入正确的电话号码'));
             return 0;
         }
     },
 
     // 验证邮编
-    testZipCode:function(rule,zipCode,callback){
+    testZipCode:function(zipCode){
       let reg = new RegExp('^\\d{6,6}$');
       if(reg.test(zipCode)){
-        callback();
         return 1;
       }else{
-        callback(new Error('请输入正确的邮政编码'));
         return 0;
       }
     },
-    
+
+    //验证传真号码
+    testFaxNum:function(fax){
+      let reg = new RegExp('^(0?\\d{2,3}\\-)?[1-9]\\d{6,7}(\\-\\d{1,4})?$');
+      if(reg.test(fax)){
+        return 1;
+      }else{
+        return 0;
+      }
+    }
+
 }
 
 export default regs;

@@ -33,11 +33,11 @@ export default {
             type: "text",
             required: true,
             placeholder: "请输入委托存档单位名称",
-            key: "departName",
-            name: "departName",
+            key: "companyName",
+            name: "companyName",
             val: void 0,
-            postname: "",
-            maxlength: 20,
+            postname: "companyName",
+            maxlength: 40,
             minlength: 0,
             reg: '',
             tip: '* 请输入委托存档单位名称',
@@ -47,11 +47,11 @@ export default {
             title: "委托存档单位编号",
             type: "text",
             required: true,
-            placeholder: "请输入单位名称",
-            key: "departName",
-            name: "departName",
+            placeholder: "请输入单位编号",
+            key: "companyNumber",
+            name: "companyNumber",
             val: void 0,
-            postname: "",
+            postname: "companyNumber",
             maxlength: 20,
             minlength: 0,
             reg: '',
@@ -63,10 +63,10 @@ export default {
             otherType: "searchSelect",
             required: true,
             placeholder: "请选择经营范围",
-            name: "businessRange",
-            key: "businessRange",
+            name: "companyManagementRange",
+            key: "companyManagementRange",
             val: void 0,
-            postname: "",
+            postname: "companyManagementRange",
             tip: '* 请选择经营范围',
             children: []
           },
@@ -75,10 +75,10 @@ export default {
             otherType: "searchSelect",
             required: true,
             placeholder: "请选择单位性质",
-            key: "unitNature",
-            name: "unitNature",
+            key: "companyNature",
+            name: "companyNature",
             val: void 0,
-            postname: "",
+            postname: "companyNature",
             tip: '* 请选择单位性质',
             children: []
           },
@@ -90,7 +90,7 @@ export default {
             key: "economicType",
             name: "economicType",
             val: void 0,
-            postname: "",
+            postname: "economicType",
             tip: '* 请选择单位经济类型',
             children: []
           },
@@ -99,10 +99,10 @@ export default {
             otherType: "addressSelect",
             required: true,
             placeholder: "请选择单位归属地",
-            key: "departAddress",
-            name: "departAddress",
+            key: "areaCode",
+            name: "areaCode",
             val: void 0,
-            postname: "",
+            postname: "areaCode",
             tip: '* 请选择单位归属地',
             children: []
           },
@@ -111,10 +111,10 @@ export default {
             type: "text",
             required: true,
             placeholder: "请输入单位地址",
-            key: "address",
-            name: "address",
+            key: "companyPostalAddress",
+            name: "companyPostalAddress",
             val: void 0,
-            postname: "",
+            postname: "companyPostalAddress",
             maxlength: 100,
             minlength: 0,
             reg: '',
@@ -126,10 +126,10 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入注册资本(万元)",
-            key: "asset",
-            name: "asset",
+            key: "companyRegisteredCapital",
+            name: "companyRegisteredCapital",
             val: void 0,
-            postname: "",
+            postname: "companyRegisteredCapital",
             maxlength: 20,
             minlength: 0,
             reg: ""
@@ -139,10 +139,10 @@ export default {
             type: "text",
             required: true,
             placeholder: "请输入法定代表人",
-            key: "legalPerson",
-            name: "legalPerson",
+            key: "enterpriseLegalPerson",
+            name: "enterpriseLegalPerson",
             val: void 0,
-            postname: "",
+            postname: "enterpriseLegalPerson",
             maxlength: 40,
             minlength: 2,
             reg: '',
@@ -153,8 +153,8 @@ export default {
             title: '成立日期',
             otherType:'date',
             required: true,
-            key: 'buildDate',
-            name: 'buildDate',
+            key: 'registrationDate',
+            name: 'registrationDate',
             val: void 0,
             postname: '',
             tip: '* 请选择成立日期',
@@ -177,10 +177,10 @@ export default {
             type: "text",
             required: true,
             placeholder: "请输入单位联系人",
-            key: "unitContact",
-            name: "unitContact",
+            key: "companyContact",
+            name: "companyContact",
             val: void 0,
-            postname: "",
+            postname: "companyContact",
             maxlength: 40,
             minlength: 2,
             reg: '',
@@ -195,11 +195,11 @@ export default {
             key: "contactPhone",
             name: "contactPhone",
             val: void 0,
-            postname: "",
+            postname: "contactPhone",
             maxlength: 11,
             minlength: 11,
-            reg: '',
-            tip: '* 请输入联系人电话',
+            reg: 'testMobile',
+            tip: '* 请输入正确的联系人电话',
             status: '',
           },
           {
@@ -207,14 +207,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入电子邮箱",
-            key: "email",
-            name: "email",
+            key: "contactEmail",
+            name: "contactEmail",
             val: void 0,
-            postname: "",
+            postname: "contactEmail",
             maxlength: 40,
             minlength: 0,
-            reg: '',
-            tip: '* 请输入电子邮箱',
+            reg: 'testEmail',
+            tip: '* 请输入正确的电子邮箱',
             status: '',
           },
           {
@@ -222,14 +222,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入邮编编码",
-            key: "postalCode",
-            name: "postalCode",
+            key: "companyPostCodes",
+            name: "companyPostCodes",
             val: void 0,
-            postname: "",
+            postname: "companyPostCodes",
             maxlength: 6,
             minlength: 6,
-            reg: '',
-            tip: '* 请输入邮编编码',
+            reg: 'testZipCode',
+            tip: '* 请输入正确的邮编编码',
             status: '',
           },
           {
@@ -237,14 +237,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入传真号码",
-            key: "faxNumber",
-            name: "faxNumber",
+            key: "contactFax",
+            name: "contactFax",
             val: void 0,
-            postname: "",
+            postname: "contactFax",
             maxlength: 40,
             minlength: 0,
             reg: '',
-            tip: '* 请输入传真号码',
+            tip: '* 请输入正确的传真号码',
             status: '',
           },
           {
@@ -252,10 +252,10 @@ export default {
             type: "text",
             required: true,
             placeholder: "请输入统一社会信用代码",
-            key: "creditCode",
-            name: "creditCode",
+            key: "businessLicense",
+            name: "businessLicense",
             val: void 0,
-            postname: "",
+            postname: "businessLicense",
             maxlength: 40,
             minlength: 0,
             reg: '',
@@ -267,10 +267,10 @@ export default {
             otherType: "textarea",
             required: false,
             placeholder: "请输入备注",
-            key: "notes",
-            name: "notes",
+            key: "remarks",
+            name: "remarks",
             val: void 0,
-            postname: "",
+            postname: "remarks",
             maxlength: 200,
             minlength: 0,
             reg: '',
@@ -283,16 +283,27 @@ export default {
   },
 
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    // 获取字典数据
+    directoryData:function(){
+      if(this.$store.getters.getDirectoryData){
+        this.splitDirectoryData(this.$store.getters.getDirectoryData);
+        return this.$store.getters.getDirectoryData;
+      }else{
+        return null;
+      }
+    }
+  },
 
   //监控data中的数据变化
   watch: {
-    //obj:{
-    //    handler:function(val,oldval){
-    //
-    //    },
-    //    deep:true,//深度监听
-    //}
+    directoryData:{
+      // 改变数据
+      handler:function(newVal,oldVal){
+        this.splitDirectoryData(newVal)
+      },
+      deep:true,//深度监听
+    },
   },
 
   //方法集合
@@ -309,12 +320,14 @@ export default {
       });
       console.log(temp);
     },
+    
     resetFormBtn(){
       /***
        * 功能：表单重置
        */
       this.$refs.accountInfoForm.resetForm();   //调用子组件上的重置方法
     },
+
     acceptEditParams(){
       /***
        * 功能：编辑按钮：接收参数，并且把参数对应的 formInput里的val 修改
@@ -334,8 +347,21 @@ export default {
           });
         }
       }
-     
-    }
+    },
+
+    // 拆分字典
+    splitDirectoryData(Data){
+      if(!Data) return;
+      this.departInfoArr.formInputs.forEach((item,index)=>{
+          // 经营范围
+          if(item.name === 'companyManagementRange') item.children = Data.belongIndustryList;
+          // 单位性质
+          if(item.name === 'companyNature') item.children = Data.organizationTypeList;
+          // 单位经济类型
+          if(item.name === 'economicType') item.children = Data.economicTypeList;
+      })
+    },
+
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）

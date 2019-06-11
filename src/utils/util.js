@@ -41,9 +41,15 @@ const utils = {
         }
         return isEqual;
     },
+
     //通过地址code查询地址name
     checkAddressName: function (code) {
-        let codeArr = code.split('.');
+        let codeArr = null;
+        if(typeof(code) === 'string'){
+            codeArr = code.split('.');
+        }else if(code instanceof Array){
+            codeArr = code;
+        }   
         let result = [];
         return searchName(codeArr, address, 0, result).join('');
     },

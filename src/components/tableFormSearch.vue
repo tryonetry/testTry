@@ -107,6 +107,7 @@
           :options="address"
           :placeholder="item.placeholder"
           v-model="item.val"
+          @blur="commonRequiredBlur(item,index)"
           :fieldNames="{label:'name',value:'code',children:'children'}"
           :disabled = "item.disabled ? item.disabled : false"
           allowClear
@@ -294,20 +295,59 @@ export default {
       this.$emit('bundleChange', newCondition);
     },
 
-    // 父组件获取数据
+    // 父组件获取数据并验证数据准确性
     getFormData(){
-      //添加、编辑表单提交
-      return this.formData.formInputs;
+      console.log('传递数据....')
+      const _this = this;
+      // 必填项的 status 值是否都为 success 以及已填写的非必填项数据是否准确
+      let requiredFiledsRight = true;
+      let notRequiredHasDataRight = true;
+
+      this.formData.formInputs.forEach((item,index) => {
+
+        // 判断必填项的数据是否准确
+        if(item.required && item.status !== 'success'){
+          requiredFiledsRight = false;
+          _this.$set(this.formData.formInputs[index],'status','error');
+        }
+
+        // 判断非必填项 已填写的数据是否准确
+        if(!item.required && (item.val || String(item.val) === '0')){
+          //存在正则时候直接使用正则验证
+          if(item.reg && this.regs[item.reg]){
+            let regFun = this.regs[item.reg];
+            if(regFun(item.val) === 0){
+              notRequiredHasDataRight = false;
+              _this.$set(this.formData.formInputs[index],'status','error');
+            }
+          }
+          // 不存在正则时,判断最大长度和最小长度
+          else if(!item.reg ){
+            // 存在最小长度
+            if((item.minlength || item.minlength === 0) && item.val.length < item.minlength){
+              notRequiredHasDataRight = false;
+              _this.$set(this.formData.formInputs[index],'status','error');
+            }
+            // 存在最大长度
+            if((!!item.maxlength || item.maxlength === 0) && item.val.length > item.maxlength){
+              notRequiredHasDataRight = false;
+              _this.$set(this.formData.formInputs[index],'status','error');
+            }
+          }
+        }
+
+      });
+      return { requiredFiledsRight, notRequiredHasDataRight, resultData:this.formData.formInputs };
     },
 
+    //重置按钮操作
     resetForm() {
-      //重置按钮操作
       this.formData.formInputs.forEach((item)=>{
         item.val = void 0;
+        item.status = void 0;
       })
       // this.form.resetFields();
     },
-
 
     treeSelect(value) {
       this.treeSelectObj.value = value;
@@ -673,14 +713,14 @@ export default {
       let currInput = this.formData.formInputs[inputIndex];
 
       //存在正则时候直接使用正则验证
-      if(currInput.reg && this.regs[currInput.reg] && currInput.required){
+      if(currInput.reg && this.regs[currInput.reg]){
         let regFun = this.regs[currInput.reg];
         if(regFun(currInput.val) === 0){
           isRight = false;
         }
       }
       // 不存在正则时,判断最大长度和最小长度
-      else if(!currInput.reg && currInput.required){
+      else if(!currInput.reg ){
         // 判断值是否存在
         if(!currInput.val && String(currInput.val) !== '0'){
           isRight = false;
@@ -696,14 +736,15 @@ export default {
       }
 
       // 正确或失败后的操作
-      if(!isRight){
+      if(!isRight && currInput.required ){
         // this.formData.formInputs[inputIndex].status = 'error';
         this.$set(this.formData.formInputs[inputIndex],'status','error');
-
-      }else{
+      }else if(isRight){
         if(currInput.required){
           // this.formData.formInputs[inputIndex].status = 'success';
           this.$set(this.formData.formInputs[inputIndex],'status','success');
+        }else{
+          this.$set(this.formData.formInputs[inputIndex],'status',void 0);
         }
       }
       this.bundleLinkage(inputItem)
@@ -723,18 +764,26 @@ export default {
 
     // 普通的必填表单项失去焦点
     commonRequiredBlur(item,index) {
-      if(item.required){
-        if(item.val || String(item.val) === '0'){
+      let isRight = true;
+      if(item.val || String(item.val) === '0'){
+        isRight = true;
+      }else{
+        isRight = false;
+      }
+      if(item.required && !isRight){
+        this.$set(this.formData.formInputs[index],'status','error');
+      }else{
+        if(item.required){
           this.$set(this.formData.formInputs[index],'status','success');
         }else{
-          this.$set(this.formData.formInputs[index],'status','error');
+          this.$set(this.formData.formInputs[index],'status',void 0);
         }
       }
     },
 
     // 日期表单项面板打开或关闭
     dateOpenChange(args,item,index){
-      console.log(args)
+      // console.log(args)
       if(!args[0]){
         this.commonRequiredBlur(item,index)
       }
