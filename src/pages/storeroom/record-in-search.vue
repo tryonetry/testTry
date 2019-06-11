@@ -4,7 +4,9 @@
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData" ref="recordTable">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-          <a-button class="buttonOperate" @click="exportFun">导出</a-button>
+          <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name='fieldsName'>
+            <a-button class="buttonOperate" @click="exportFun">导出入库清单</a-button>
+          </JsonExcel>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
@@ -16,10 +18,13 @@
 <script>
 import TableView from "@/components/tableView";
 import utils from "../../utils/util.js";
+import moment from "moment";
+import JsonExcel from 'vue-json-excel'
+
 export default {
   name: "RecordInSearch",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView },
+  components: { TableView, JsonExcel },
   props: [""],
 
   data() {
@@ -113,7 +118,7 @@ export default {
               placeholder: "请选择需要导出的列",
               key: 'colsStr',
               name: 'colsStr',
-              val: void 0,
+              val: [],
               children: [
                   { itemCode: 'a0101', itemName: '档案人姓名' },
                   { itemCode: 'a0104' , itemName: '性别' },
@@ -213,6 +218,20 @@ export default {
         tabledataArr: []
       },
       tempCondition: {}, //临时查询条件
+      fieldsJson:{     //导出列表字段对应
+        '序号': 'num',
+        '档案人姓名': "a0101",
+        '性别': "a0104",
+        '身份证号': "a0184",
+        '人员身份': "archivesIdentity",
+        '存档编号': "a0100a",
+        '库房位置': "shelvesNo",
+        '经办人': "inwareOperatorName",
+        '档案交接人': "archHandover",
+        '入库时间': 'inwareDate'
+      },
+      exportFiledsJson: {},
+      fieldsName: '档案入库清单' + this.moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
     };
   },
 
@@ -249,6 +268,7 @@ export default {
 
   //方法集合
   methods: {
+    moment,
     getTableData(condition, pageNum, limitNum) {
       /**
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
@@ -281,7 +301,8 @@ export default {
               shelvesNo: !element.shelvesNo ? "" : (element.shelvesNo.split("-")[0] + "区" + element.shelvesNo.split("-")[1] +  "排" + element.shelvesNo.split("-")[2] + "号"),
               inwareOperatorName: element.inwareOperatorName,
               archHandover: element.archHandover,
-              inwareDate: element.inwareDate
+              inwareDate: element.inwareDate,
+              a0100a: element.a0100a,
             })
           });
         }
@@ -292,22 +313,42 @@ export default {
        * 功能：导出列表功能
        */
       let newCondition = this.$refs.recordTable.getCondition();
-      console.log(newCondition);
-      let currDataObj = {};
-      for(let key in newCondition){
-        if(key === 'colsStr'){
-           currDataObj[key] = newCondition[key].join(',');
-        } else if(key.indexOf('-') > -1){
-          
-        } else{
-          currDataObj[key] = newCondition[key];
+      if(JSON.stringify(newCondition) !== '{}'){
+        newCondition = newCondition;
+      } else{
+        newCondition = {
+          'a0100A': "",
+          'a0101': "",
+          'a0184': "",
+          'archivesIdentity': "",
+          'colsStr': [],
+          'startDate-endDate': ""
         }
       }
-      currDataObj = Object.assign({}, currDataObj, {'archiveStatus' : '1'})
-      console.log(currDataObj);
-      // this.$http.fetchPost('exportInWareDataList', currDataObj).then(res => {
-
-      // })
+      let currFiledsJsonObj = {}, conditionLen = newCondition['colsStr'].length ;
+      if(conditionLen > 0){
+        for(let key in this.fieldsJson){
+          for(let i = 0; i< newCondition['colsStr'].length; i++){
+            if(newCondition['colsStr'][i] === this.fieldsJson[key]){
+              currFiledsJsonObj[key] = this.fieldsJson[key];
+            }
+          }
+        }
+      } else{
+        currFiledsJsonObj = {
+          '序号': 'num',
+          '档案人姓名': "a0101",
+          '性别': "a0104",
+          '身份证号': "a0184",
+          '人员身份': "archivesIdentity",
+          '存档编号': "a0100a",
+          '库房位置': "shelvesNo",
+          '经办人': "inwareOperatorName",
+          '档案交接人': "archHandover",
+          '入库时间': 'inwareDate'
+        }
+      }
+      this.exportFiledsJson = currFiledsJsonObj;
     }
   },
 
