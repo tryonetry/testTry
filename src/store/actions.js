@@ -17,6 +17,9 @@ const actions = {
     },
     getDirectoryData(context,data){
         context.commit('_getDirectoryData',data);
+    },
+    getNavData(context,data){
+        context.commit('_getNavData',data);
     }
 };
 

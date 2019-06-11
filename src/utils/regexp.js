@@ -187,6 +187,19 @@ const regs = {
             return 0;
         }
     },
+
+    // 验证邮编
+    testZipCode:function(rule,zipCode,callback){
+      let reg = new RegExp('^\\d{6,6}$');
+      if(reg.test(zipCode)){
+        callback();
+        return 1;
+      }else{
+        callback(new Error('请输入正确的邮政编码'));
+        return 0;
+      }
+    },
+    
 }
 
 export default regs;

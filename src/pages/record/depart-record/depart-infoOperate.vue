@@ -1,6 +1,5 @@
-<!-- template -->
+<!-- 单位立户 -->
 <template>
-  <!-- 单位立户 -->
   <div class="outer departContainer" style="overflow-y:auto;">
     <TableFromSearch :formDataArr="departInfoArr"  ref="accountInfoForm">
       <a-row slot="otherForm">
@@ -30,7 +29,22 @@ export default {
       departInfoArr: {
         formInputs: [
           {
-            title: "单位名称",
+            title: "委托存档单位名称",
+            type: "text",
+            required: true,
+            placeholder: "请输入委托存档单位名称",
+            key: "departName",
+            name: "departName",
+            val: void 0,
+            postname: "",
+            maxlength: 20,
+            minlength: 0,
+            reg: '',
+            tip: '* 请输入委托存档单位名称',
+            status: '',
+          },
+          {
+            title: "委托存档单位编号",
             type: "text",
             required: true,
             placeholder: "请输入单位名称",
@@ -41,7 +55,7 @@ export default {
             maxlength: 20,
             minlength: 0,
             reg: '',
-            tip: '* 请输入正确的单位名称',
+            tip: '* 请输入委托存档单位编号',
             status: '',
           },
           {
@@ -53,24 +67,20 @@ export default {
             key: "businessRange",
             val: void 0,
             postname: "",
-            children: [
-              { id: 1, title: "农业", isdisabled: false },
-              { id: 2, title: "农业、林业", isdisabled: true }
-            ]
+            tip: '* 请选择经营范围',
+            children: []
           },
           {
             title: "单位性质",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择单位性质",
             key: "unitNature",
             name: "unitNature",
             val: void 0,
             postname: "",
-            children: [
-              { id: 1, title: "企业", isdisabled: false },
-              { id: 2, title: "机关", isdisabled: false }
-            ]
+            tip: '* 请选择单位性质',
+            children: []
           },
           {
             title: "单位经济类型",
@@ -81,10 +91,35 @@ export default {
             name: "economicType",
             val: void 0,
             postname: "",
-            children: [
-              { id: 1, title: "内资", isdisabled: false },
-              { id: 2, title: "国有全资", isdisabled: false }
-            ]
+            tip: '* 请选择单位经济类型',
+            children: []
+          },
+          {
+            title: "单位归属地",
+            otherType: "addressSelect",
+            required: true,
+            placeholder: "请选择单位归属地",
+            key: "departAddress",
+            name: "departAddress",
+            val: void 0,
+            postname: "",
+            tip: '* 请选择单位归属地',
+            children: []
+          },
+          {
+            title: "单位地址",
+            type: "text",
+            required: true,
+            placeholder: "请输入单位地址",
+            key: "address",
+            name: "address",
+            val: void 0,
+            postname: "",
+            maxlength: 100,
+            minlength: 0,
+            reg: '',
+            tip: '* 请输入单位地址',
+            status: '',
           },
           {
             title: "注册资本(万元)",
@@ -100,78 +135,6 @@ export default {
             reg: ""
           },
           {
-            title: "社保登记号",
-            type: "text",
-            required: false,
-            placeholder: "请输入社保登记号",
-            name: "socialNum",
-            key: "socialNum",
-            val: void 0,
-            postname: "",
-            maxlength: 20,
-            minlength: 0,
-            reg: ""
-          },
-          {
-            title: "单位归属地",
-            otherType: "addressSelect",
-            required: true,
-            placeholder: "请输入单位归属地",
-            key: "departAddress",
-            name: "departAddress",
-            val: void 0,
-            postname: "",
-            children: [
-              {
-                value: "zhejiang",
-                label: "Zhejiang",
-                children: [
-                  {
-                    value: "hangzhou",
-                    label: "Hangzhou",
-                    children: [
-                      {
-                        value: "xihu",
-                        label: "West Lake"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                value: "jiangsu",
-                label: "Jiangsu",
-                children: [
-                  {
-                    value: "nanjing",
-                    label: "Nanjing",
-                    children: [
-                      {
-                        value: "zhonghuamen",
-                        label: "Zhong Hua Men"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            title: "单位地址",
-            type: "text",
-            required: true,
-            placeholder: "请输入单位地址",
-            key: "address",
-            name: "address",
-            val: void 0,
-            postname: "",
-            maxlength: 20,
-            minlength: 0,
-            reg: '',
-            tip: '* 请输入单位地址',
-            status: '',
-          },
-          {
             title: "法定代表人",
             type: "text",
             required: true,
@@ -180,25 +143,10 @@ export default {
             name: "legalPerson",
             val: void 0,
             postname: "",
-            maxlength: 20,
-            minlength: 0,
+            maxlength: 40,
+            minlength: 2,
             reg: '',
             tip: '* 请输入法定代表人',
-            status: '',
-          },
-          {
-            title: "法人身份证号",
-            type: "text",
-            required: true,
-            placeholder: "请输入法人身份证号",
-            key: "legalIdCard",
-            name: "legalIdCard",
-            val: void 0,
-            postname: "",
-            maxlength: 20,
-            minlength: 0,
-            reg: '',
-            tip: '* 请输入正确的法人身份证号',
             status: '',
           },
           {
@@ -218,8 +166,9 @@ export default {
             required: false,
             key: 'accountDate',
             name: 'accountDate',
-            val: void 0,
+            val: moment(new Date()),
             postname: '',
+            disabled:true,
             tip: '* 请选择立户日期',
             status: ''
           },
@@ -232,25 +181,25 @@ export default {
             name: "unitContact",
             val: void 0,
             postname: "",
-            maxlength: 20,
-            minlength: 0,
+            maxlength: 40,
+            minlength: 2,
             reg: '',
             tip: '* 请输入单位联系人',
             status: '',
           },
           {
-            title: "联系人手机号",
+            title: "联系人电话",
             type: "text",
             required: true,
-            placeholder: "请输入联系人手机号",
+            placeholder: "请输入联系人电话",
             key: "contactPhone",
             name: "contactPhone",
             val: void 0,
             postname: "",
-            maxlength: 20,
-            minlength: 0,
+            maxlength: 11,
+            minlength: 11,
             reg: '',
-            tip: '* 请输入联系人手机号',
+            tip: '* 请输入联系人电话',
             status: '',
           },
           {
@@ -262,7 +211,7 @@ export default {
             name: "email",
             val: void 0,
             postname: "",
-            maxlength: 20,
+            maxlength: 40,
             minlength: 0,
             reg: '',
             tip: '* 请输入电子邮箱',
@@ -277,8 +226,8 @@ export default {
             name: "postalCode",
             val: void 0,
             postname: "",
-            maxlength: 20,
-            minlength: 0,
+            maxlength: 6,
+            minlength: 6,
             reg: '',
             tip: '* 请输入邮编编码',
             status: '',
@@ -292,7 +241,7 @@ export default {
             name: "faxNumber",
             val: void 0,
             postname: "",
-            maxlength: 20,
+            maxlength: 40,
             minlength: 0,
             reg: '',
             tip: '* 请输入传真号码',
@@ -307,7 +256,7 @@ export default {
             name: "creditCode",
             val: void 0,
             postname: "",
-            maxlength: 20,
+            maxlength: 40,
             minlength: 0,
             reg: '',
             tip: '* 请输入统一社会信用代码',

@@ -13,6 +13,7 @@
                 class="aInput"
                 placeholder="请输入完整的身份证号/社保卡号"
                 v-model="idCardNum"
+                @change="searchConditionChange"
             ></a-input>
         </p>
         <p>
@@ -22,6 +23,7 @@
                 class="aInput"
                 placeholder="请输入完整的存档编号"
                 v-model="saveRecordNum"
+                @change="searchConditionChange"
             ></a-input>
         </p>
         <!-- 查询按钮 -->
@@ -41,7 +43,9 @@
     <!-- 调转信息 -->
     <FormHeader :formTitle='"调转信息"'></FormHeader>
     <div class="detailContent">
-        
+        <TableFromSearch 
+            :formDataArr='isInner ? formDataInner : ( !isEnterprice ? formDataNotInner : formDataEnterprice) '>
+        </TableFromSearch>
     </div>
 
 </div>
@@ -49,14 +53,45 @@
 
 <script>
 
+// 委托单位名称 To 委托单位编号
+function companyNameToNum(codeVal){
+  // console.log(codeVal)
+  if(codeVal){
+    return [
+      {name:'val',data:codeVal},
+      {name:'disabled',data:true}
+    ]
+  }
+  return [{name:'val',data:''},{name:'disabled',data:false}]
+}
+
+// 委托单位编号 To 委托单位名称
+function companyNumToName(numVal){
+  if(numVal || String(numVal) === '0'){
+    return [
+      {name:'val',data:numVal},
+      {name:'disabled',data:true},
+      {name:'tip',data:'* 抱歉,尚未找到对应编号的公司'}
+    ]
+  }else{
+    return [
+      {name:'val',data:''},
+      {name:'disabled',data:false},
+      {name:'tip',data:'* 请选择委托存档单位名称'},
+      {name:'status',data:void 0},
+    ]
+  }
+}
+
 import FormHeader from "../formHeader";
 import ShowBasicInfo from '../showBasicInfo';
 import TableFromSearch from "../tableFormSearch";
+import moment from "moment";
 
 export default {
     name:"TransferOnSite",
     //import引入的组件需要注入到对象中才能使用
-    components: { FormHeader, ShowBasicInfo },
+    components: { FormHeader, ShowBasicInfo, TableFromSearch },
     props:["isInner"],
 
     data() {
@@ -108,6 +143,308 @@ export default {
             ],
             cardTitle:'',
             baseData:null,
+            isEnterprice:false,
+            // 非内部调转
+            formDataNotInner: {
+                // inputs
+                formInputs: [
+                    {
+                        title: '申请人',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入申请人姓名",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入正确的申请人姓名',
+                        status: '',
+                    },
+                    {
+                        title: '身份证号/社保卡号',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入申请人身份证号/社保卡号",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 18,
+                        minlength: 15,
+                        reg: 'testid',
+                        tip: '* 请输入正确的申请人身份证号/社保卡号',
+                        status: '',
+                    },
+                    {
+                        title: '申请人电话',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入申请人电话号码",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 11,
+                        minlength: 11,
+                        reg: 'testMobile',
+                        tip: '* 请输入正确的申请人电话号码',
+                        status: '',
+                    },
+                    {
+                        title: '邮政编码',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入邮政编码",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 6,
+                        minlength: 6,
+                        reg: 'testZipCode',
+                        tip: '* 请输入正确的邮政编码',
+                        status: '',
+                    },
+                    {
+                        title: "申请日期",
+                        otherType: "date",
+                        required: false,
+                        placeholder: "请选择申请日期",
+                        key: "a0107",
+                        name: "a0107",
+                        val: moment(new Date()),
+                        postname: "a0107",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请选择申请日期",
+                        disabled:true,
+                        status: ""
+                    },
+                    {
+                        title: "转出方式",
+                        otherType: "select",
+                        required: true,
+                        placeholder: "请选择转出方式",
+                        name: "source",
+                        key: "source",
+                        val: void 0,
+                        postname: "source",
+                        tip:'* 请选择转出方式',
+                        children: [],
+                        status: ""
+                    },
+                    {
+                        title: '原档案管理机构',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入原档案管理机构",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入原档案管理机构',
+                        status: '',
+                    },
+                    {
+                        title: '转往单位名称',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入转往单位名称",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入转往单位名称',
+                        status: '',
+                    },
+                    {
+                        title: '转往单位地址',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入转往单位地址",
+                        key: "name",
+                        name: "name",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入转往单位地址',
+                        status: '',
+                    },
+                    {
+                        title: "转往单位行政区划",
+                        otherType: "addressSelect",
+                        required: true,
+                        placeholder: "请选择转往单位行政区划",
+                        key: "a0111D",
+                        name: "a0111D",
+                        val: void 0,
+                        postname: "a0111D",
+                        maxlength: 100,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请选择转往单位行政区划",
+                        status: ""
+                    },
+                    {
+                        title: "备注",
+                        otherType: "textarea",
+                        required: false,
+                        placeholder: "请输入备注",
+                        key: "remarks",
+                        name: "remarks",
+                        val: void 0,
+                        postname: "remarks",
+                        maxlength: 200,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请输入备注",
+                        status: ""
+                    }
+                ],
+            },
+
+            formDataEnterprice:{
+                formInputs: [
+                    {
+                        title: '调转日期',
+                        otherType: "date",
+                        required: false,
+                        placeholder: "请选择调转日期",
+                        key: "name",
+                        name: "name",
+                        val: moment(new Date()),
+                        postname: "",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请选择调转日期',
+                        disabled:true,
+                        status: '',
+                    },
+                    {
+                        title: "调转方式",
+                        otherType: "select",
+                        required: true,
+                        placeholder: "请选择调转方式",
+                        name: "source",
+                        key: "source",
+                        val: void 0,
+                        postname: "source",
+                        tip:'* 请选择调转方式',
+                        children: [
+                            {itemCode:"01",itemName:"集体转集体"},
+                            {itemCode:"02",itemName:"集体转个人"},
+                            {itemCode:"03",itemName:"个人转集体"},
+                        ],
+                        disabled:false,
+                        status: ""
+                    },
+                ]
+            },
+
+            formDataInner:{
+                formInputs: [
+                    {
+                        title: '调转日期',
+                        otherType: "date",
+                        required: false,
+                        placeholder: "请选择调转日期",
+                        key: "name",
+                        name: "name",
+                        val: moment(new Date()),
+                        postname: "",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请选择调转日期',
+                        disabled:true,
+                        status: '',
+                    },
+                    {
+                        title: "调转方式",
+                        otherType: "select",
+                        required: true,
+                        placeholder: "请选择调转方式",
+                        name: "source",
+                        key: "source",
+                        val: void 0,
+                        postname: "source",
+                        tip:'* 请选择调转方式',
+                        children: [
+                            {itemCode:"01",itemName:"集体转集体"},
+                            {itemCode:"02",itemName:"集体转个人"},
+                            {itemCode:"03",itemName:"个人转集体"},
+                        ],
+                        disabled:false,
+                        status: ""
+                    },
+                    {
+                        title: "委托存档单位名称",
+                        otherType: "searchSelect",
+                        required: false,
+                        placeholder: "请选择委托存档单位名称",
+                        key: "companyId",
+                        name: "companyId",
+                        val: void 0,
+                        postname: "companyId",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请选择委托存档单位名称",
+                        children:[],
+                        status: "",
+                        connectTo:['companyNum'], //关联到委托单位编号
+                        connectToFun:[companyNameToNum], 
+                        disabled:false,
+                    },
+                    {
+                        title: "委托存档单位编号",
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入委托存档单位编号",
+                        key: "companyNum",
+                        name: "companyNum",
+                        val: void 0,
+                        postname: "companyNum",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请输入委托存档单位编号",
+                        disabled:false,
+                        status: "",
+                        connectTo:['companyId'], //关联到委托单位名称
+                        connectToFun:[companyNumToName],
+                    },
+                    {
+                        title: "备注",
+                        otherType: "textarea",
+                        required: false,
+                        placeholder: "请输入备注",
+                        key: "remarks",
+                        name: "remarks",
+                        val: void 0,
+                        postname: "remarks",
+                        maxlength: 200,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请输入备注",
+                        status: ""
+                    }
+                ]
+            },
+            
         };
     },
 
@@ -151,11 +488,18 @@ export default {
 
         // 处理数据
         handleData(dataName,getedData){
-            console.log(getedData)
+            if(getedData.personType.split('-')[1] === '01' && !this.isInner){
+                this.isEnterprice = true;
+            }
             this[dataName].forEach((item) => {
                 Object.assign(item,{val:getedData[item.name]});
             });
             this.baseData = this[dataName];
+        },
+
+        // search condition bundle change
+        searchConditionChange(){
+            console.log(1)
         }
 
     },
@@ -167,6 +511,52 @@ export default {
         }else{
             this.baseData = this.innerData;
         }
+        // 获取转出方式
+        this.$http.fetchPost('archTransferOut@getSceneArchTransferOut.action',null)
+            .then(res => {
+                if(Number(res.code) === 0){
+                    this.formDataNotInner.formInputs.forEach((item,index)=>{
+                        // console.log(tempCompanylist)
+                        if(item.name === 'companyId') item.children = res.transferTypeList;
+                    })
+                    
+                }
+            })
+            .catch(err => {
+                //....
+            });
+
+        // 获取调转方式
+        // this.$http.fetchPost('ArchTransferOutAction@getSceneArchTransferOut.action',null)
+        //     .then(res => {
+        //         console.log(res);
+        //     })
+        //     .catch(err => {
+        //         //....
+        //     });
+
+        // 获取公司名称
+        this.$http.fetchGet('personalArch@getCompanyList.action',{})
+            .then(res => {
+                if(Number(res.code) === 0){
+                this.companyList = res.data;
+                // 委托存档单位名称
+                let tempCompanylist = [];
+                res.data.forEach( company => {
+                    // attention ! code - id
+                    tempCompanylist.push({itemName:company.itemName,itemCode: company.itemId,itemId:company.itemCode});
+                });
+                this.formDataInner.formInputs.forEach((item,index)=>{
+                    // console.log(tempCompanylist)
+                    if(item.name === 'companyId') item.children = tempCompanylist;
+                })
+                }else{
+                //...
+                }
+            })
+            .catch(err => {
+                // ...
+            });
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

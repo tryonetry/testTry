@@ -18,6 +18,7 @@ const state = {
     infoTableCheckData:[],   //人才信息总库table选择的数据
     companyData:[], // 公司数据
     directoryData:null, // 字典数据
+    navData:null, //导航栏数据
 }
 
 export default new Vuex.Store({

@@ -339,6 +339,7 @@ export default {
 
                   // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
                   else if(itemData.name === 'companyId' && input.name === 'companyNum' && resultObj.name === 'val'){
+                    _this.formData.formInputs[index][resultObj.name] = void 0;
                     // 将匹配的下拉框的 itemCode 赋值
                     itemData.children.forEach(cr => {
                       if(cr.itemCode === resultObj.data){
@@ -351,15 +352,15 @@ export default {
                     // 将输入的值 匹配下拉框
                     let hasMatched = false;
                     input.children.forEach((row,j) => {
-                      if(resultObj.data === row.itemId){
+                      if(resultObj.data === row.itemId && resultObj.data){
                         _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
                         hasMatched = true;
                       }
                     });
-                    // 扔尚未匹配到
+                    // 尚未匹配到
                     if(!hasMatched){
                       _this.formData.formInputs[index]['val'] = void 0;
-                      _this.$set(_this.formData.formInputs[index],'status','error');
+                      _this.$set(_this.formData.formInputs[index],'status','warning');
                     }else{
                       _this.$set(_this.formData.formInputs[index],'status','success');
                     }

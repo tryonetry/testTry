@@ -14,7 +14,7 @@
         centered
         title="档案内部调转"
         :visible="visible"
-        :width="'80%'"
+        :width="'90%'"
         :confirmLoading="confirmLoading"
         okText="确定"
         cancelText="取消"

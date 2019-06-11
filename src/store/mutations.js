@@ -16,6 +16,9 @@ export default {
     },
     _getDirectoryData(state,data){
         state.directoryData = data;
+    },
+    _getNavData(state,data){
+        state.navData = data;
     }
     
 }

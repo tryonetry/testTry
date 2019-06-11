@@ -12,13 +12,14 @@
         centered
         title="个人档案转出"
         :visible="visible"
-        :width="'80%'"
+        :width="'90%'"
         :confirmLoading="confirmLoading"
         okText="转出申请"
         cancelText="取消"
         @ok="rollOutApplyFun"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
+        :maskClosable='false'
       >
         <TransferOnSite></TransferOnSite>
       </a-modal>

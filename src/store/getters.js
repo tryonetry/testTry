@@ -31,6 +31,10 @@ const getters = {
     // 获取字典数据
     getDirectoryData(state){
         return state.directoryData
+    },
+    // 获取导航栏数据
+    getNavData(state){
+        return state.navData;
     }
 }
 

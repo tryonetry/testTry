@@ -81,7 +81,7 @@ function companyNameToNum(codeVal){
       {name:'disabled',data:true}
     ]
   }
-  return [{name:'val',data:''},{name:'disabled',data:true}]
+  return [{name:'val',data:''},{name:'disabled',data:false}]
 }
 
 // 委托单位编号 To 委托单位名称
@@ -101,6 +101,7 @@ function companyNumToName(numVal){
     ]
   }
 }
+
 import moment from "moment";
 import TableFromSearch from "../tableFormSearch";
 export default {
@@ -275,7 +276,7 @@ export default {
                 name: "a0111D",
                 val: void 0,
                 postname: "a0111D",
-                maxlength: 20,
+                maxlength: 100,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择户籍行政区划",
@@ -335,7 +336,7 @@ export default {
                 postname: "a3707C",
                 maxlength: 20,
                 minlength: 0,
-                reg: "",
+                reg: "testMobile",
                 tip: "* 请输入手机号码",
                 status: ""
               },
@@ -350,7 +351,7 @@ export default {
                 postname: "a3708",
                 maxlength: 20,
                 minlength: 0,
-                reg: "",
+                reg: "testEmail",
                 tip: "* 请输入电子邮箱",
                 status: ""
               },
@@ -480,7 +481,7 @@ export default {
               {
                 title: "委托存档单位名称",
                 otherType: "searchSelect",
-                required: true,
+                required: false,
                 placeholder: "请选择委托存档单位名称",
                 key: "companyId",
                 name: "companyId",
@@ -569,7 +570,7 @@ export default {
                 name: "oldArchiveUnitArea",
                 val: void 0,
                 postname: "oldArchiveUnitArea",
-                maxlength: 40,
+                maxlength: 100,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择原存档单位行政区划",
@@ -814,6 +815,7 @@ export default {
       insertData(currentPersonData);
     }
     
+    // 获取公司名称
     this.$http.fetchGet('personalArch@getCompanyList.action',{})
       .then(res => {
         if(Number(res.code) === 0){

@@ -87,7 +87,6 @@ export default {
       currentPath: null,
       // 默认选中的 menu key
       menuDefaultSelect: ["top1"],
-      menuTotalArr: [],
       menuArr: [], //一级菜单
       submenuArr: [], //二级菜单
       submenuDefaultSelect: [], //默认选择
@@ -98,6 +97,9 @@ export default {
     };
   },
   computed: {
+    navData(){
+      return this.$store.getters.getNavData;
+    },
     breadcrumb() {
       return this.$route.meta.breadcrumbList;
     },
@@ -125,39 +127,30 @@ export default {
       /***
        * 功能：获取菜单总数据； 然后拆分出一级菜单数据以及二级菜单(包含子)数据
        */
-      this.$http
-        .fetchGet("login@getUserModule.action", {})
-        .then(res => {
-          if (res.data) {
-            this.menuTotalArr = res.data;
-            this.menuTotalArr.forEach(item => {
-              // console.log(item.orderno)
-              this.menuArr.push({
-                id: item.id,
-                name: item.name,
-                path: item.muPath,
-                orderno: item.orderno
-              });
-              if (item.children) {
-                item.children.forEach(el => {
-                  this.submenuArr.push({
-                    id: el.id,
-                    menuId: el.pId,
-                    name: el.name,
-                    orderno: el.orderno,
-                    path: el.muPath,
-                    children: el.children
-                  });
-                });
-              }
-            });
-            this.menuId = this.menuArr[0].id;
-            this.routeChange(this.currentPath);
-          }
-        })
-        .catch(err => {
-          console.log(err);
+      if(!this.navData || this.navData.length <= 0) return;
+      this.navData.forEach(item => {
+        // console.log(item.orderno)
+        this.menuArr.push({
+          id: item.id,
+          name: item.name,
+          path: item.muPath,
+          orderno: item.orderno
         });
+        if (item.children) {
+          item.children.forEach(el => {
+            this.submenuArr.push({
+              id: el.id,
+              menuId: el.pId,
+              name: el.name,
+              orderno: el.orderno,
+              path: el.muPath,
+              children: el.children
+            });
+          });
+        }
+      });
+      this.menuId = this.menuArr[0].id;
+      this.routeChange(this.currentPath);
     },
     changeMenu(currId, key, path,index) {
       /***
@@ -204,6 +197,7 @@ export default {
 
     // 获取路由 change 导航列表
     routeChange(currentRoutePath) {
+      if(!currentRoutePath) return;
       const _this = this;
       let routeLevelArr = currentRoutePath.split("/");
       let tempArr = utils.deleteVoidFromArr(routeLevelArr);
@@ -294,6 +288,7 @@ export default {
   watch: {
     currentPath: {
       handler: function(newVal) {
+        if(!newVal) return;
         this.routeChange(newVal);
         const { menuId, currentPath } = this;
         // // // --------change sessionStorage---------
@@ -301,7 +296,12 @@ export default {
           sessionStorage.setItem(menuId, currentPath);
         }
       }
-    }
+    },
+    navData:{
+      handler: function(newVal) {
+        this.getMenuData();
+      }
+    },
   }
 };
 </script>
