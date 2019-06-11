@@ -196,7 +196,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证号",
+            title: "身份证号/社保卡号",
             dataIndex: "e0104",
             key: "e0104",
             width: 300,
@@ -280,7 +280,7 @@ export default {
                   width: '10%',
                 },
                 {
-                  title: "身份证号",
+                  title: "身份证号/社保卡号",
                   dataIndex: "e0104",
                   key: "e0104",
                   width: '20%',

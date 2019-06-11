@@ -402,47 +402,49 @@ export default {
       /**
        * 功能：模态框确定操作；根据之前点击的操作按钮判断数据提交；1-->添加； 3-->编辑
        */
+      let formDataObj = this.$refs.infoForm.getFormData();
       let currObjData = this.utils.transferFormToObj(
-        this.$refs.infoForm.getFormData()
+        formDataObj['resultData']
       );
-      console.log(currObjData);
-      if (this.operateStatus == 1) {
-        this.$http
-          .fetchPost("wareHouse@insertWareHouse.action", currObjData)
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("添加成功");
-              this.getTableData(this.tempCondition, 1, 10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else {
-              this.$message.error("添加失败");
-            }
-          })
-          .catch(error => {
-            this.$message.error("抱歉，网络异常，添加失败");
-          });
-      } else {
-        currObjData = Object.assign({}, currObjData, { whId: this.currentId });
-        this.$http
-          .fetchPost("wareHouse@editWareHouse.action", currObjData)
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("编辑成功");
-              this.getTableData(this.tempCondition, 1, 10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else {
-              this.$message.error("编辑失败");
-            }
-          })
-          .catch(error => {
-            this.$message.error("抱歉，网络异常，编辑失败");
-          });
+      if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
+        if (this.operateStatus == 1) {
+          this.$http
+            .fetchPost("wareHouse@insertWareHouse.action", currObjData)
+            .then(res => {
+              if (Number(res.code) === 0) {
+                this.$message.success("添加成功");
+                this.getTableData(this.tempCondition, 1, 10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else {
+                this.$message.error("添加失败");
+              }
+            })
+            .catch(error => {
+              this.$message.error("抱歉，网络异常，添加失败");
+            });
+        } else {
+          currObjData = Object.assign({}, currObjData, { whId: this.currentId });
+          this.$http
+            .fetchPost("wareHouse@editWareHouse.action", currObjData)
+            .then(res => {
+              if (Number(res.code) === 0) {
+                this.$message.success("编辑成功");
+                this.getTableData(this.tempCondition, 1, 10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else {
+                this.$message.error("编辑失败");
+              }
+            })
+            .catch(error => {
+              this.$message.error("抱歉，网络异常，编辑失败");
+            });
+        }
       }
     },
     handleCancel() {

@@ -200,7 +200,7 @@
   </div>
 </template>
 <script>
-import moment from "moment";
+import {isMoment, moment} from "moment";
 import address from '../../public/json/address.js';
 import regs from '../../src/utils/regexp';
 
@@ -302,7 +302,7 @@ export default {
       // 必填项的 status 值是否都为 success 以及已填写的非必填项数据是否准确
       let requiredFiledsRight = true;
       let notRequiredHasDataRight = true;
-
+      let postResultObj = {};
       this.formData.formInputs.forEach((item,index) => {
 
         // 判断必填项的数据是否准确
@@ -335,9 +335,22 @@ export default {
             }
           }
         }
-
+        
+        //把当前的formIputs修改成http提交数据的格式
+        if(isMoment(item.val)){
+          //val为moment格式
+          postResultObj[item.key] = this.moment(item.val).format('YYYY-MM-DD');
+        } else if(item.otherType === 'addressSelect'){
+          postResultObj[item.key] = item.val.join('.');
+        } else if(item.otherType === 'searchSelect' && item.mode){
+          //可输入搜索多选
+          postResultObj[item.key] = item.val.join(',');
+        } else{
+          postResultObj[item.key] = item.val;
+        }
       });
-      return { requiredFiledsRight, notRequiredHasDataRight, resultData:this.formData.formInputs };
+      console.log(postResultObj);
+      return { requiredFiledsRight, notRequiredHasDataRight, resultData:this.formData.formInputs, postObj: postResultObj };
     },
 
     //重置按钮操作

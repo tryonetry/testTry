@@ -474,51 +474,53 @@ export default {
       this.visible = false;
     },
     handleOk() {
+      let formDataObj = this.$refs.shelfForm.getFormData();
       let currObjData = this.utils.transferFormToObj(
-        this.$refs.shelfForm.getFormData()
+        formDataObj['resultData']
       );
-      console.log(currObjData);
-      if (this.operateStatus == 1) {
-        //添加
-        currObjData = Object.assign({}, currObjData, {'whId': this.selectTreeNode['pId'], 'whdArea': parseInt(this.selectTreeNode['title'])})
-        this.$http
-          .fetchPost("wareHouse@insertWareHouseDetail.action", currObjData)
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("添加成功！");
-              this.getTableData(this.tempCondition, 1,10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else {
+      if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
+        if (this.operateStatus == 1) {
+          //添加
+          currObjData = Object.assign({}, currObjData, {'whId': this.selectTreeNode['pId'], 'whdArea': parseInt(this.selectTreeNode['title'])})
+          this.$http
+            .fetchPost("wareHouse@insertWareHouseDetail.action", currObjData)
+            .then(res => {
+              if (Number(res.code) === 0) {
+                this.$message.success("添加成功！");
+                this.getTableData(this.tempCondition, 1,10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else {
+                this.$message.error("添加失败！");
+              }
+            })
+            .catch(error => {
               this.$message.error("添加失败！");
-            }
-          })
-          .catch(error => {
-            this.$message.error("添加失败！");
-          });
-      } else {
-        //编辑
-        currObjData = Object.assign({}, currObjData, { 'whdId': this.currentId, 'whId': this.currWhId });
-        console.log(currObjData);
-        this.$http
-          .fetchPost("wareHouse@editWareHouseDetail.action", currObjData)
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("编辑成功！");
-              this.getTableData(this.tempCondition, 1,10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else {
+            });
+        } else {
+          //编辑
+          currObjData = Object.assign({}, currObjData, { 'whdId': this.currentId, 'whId': this.currWhId });
+          console.log(currObjData);
+          this.$http
+            .fetchPost("wareHouse@editWareHouseDetail.action", currObjData)
+            .then(res => {
+              if (Number(res.code) === 0) {
+                this.$message.success("编辑成功！");
+                this.getTableData(this.tempCondition, 1,10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else {
+                this.$message.error("编辑失败！");
+              }
+            })
+            .catch(error => {
               this.$message.error("编辑失败！");
-            }
-          })
-          .catch(error => {
-            this.$message.error("编辑失败！");
-          });
+            });
+        }
       }
     },
     deleteFun(data) {

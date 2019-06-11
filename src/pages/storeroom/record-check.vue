@@ -130,21 +130,144 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
-            title: "",
+            title: "存档编号",
+            dataIndex: "a0100a",
+            key: "a0100a",
+            width: 200,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "档案人姓名",
+            dataIndex: "a0101",
+            key: "a0101",
+            width: 120,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "性别",
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 80,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "公民身份号码/社保卡号",
+            dataIndex: "a0184",
+            key: "a0184",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "档案位置号",
+            dataIndex: "shelvesNo",
+            key: "shelvesNo",
+            width: 120,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "单位编号",
+            dataIndex: "companyNumber",
+            key: "companyNumber",
+            width: 120,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "单位名称",
+            dataIndex: "companyName",
+            key: "companyName",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅人",
+            dataIndex: "borrower",
+            key: "borrower",
+            width: 120,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅人证件号",
+            dataIndex: "borrowerTelNum",
+            key: "borrowerTelNum",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅日期",
+            dataIndex: "borrowDate",
+            key: "borrowDate",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅单位",
+            dataIndex: "borrowUnit",
+            key: "borrowUnit",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅经办人",
+            dataIndex: "borrowOperatorName",
+            key: "borrowOperatorName",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅备注",
             dataIndex: "",
             key: "",
-            //width: 60,
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还人",
+            dataIndex: "returner",
+            key: "returner",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还日期",
+            dataIndex: "returnDate",
+            key: "returnDate",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还经办人",
+            dataIndex: "returnOperatorName",
+            key: "returnOperatorName",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还说明",
+            dataIndex: "returnDesc",
+            key: "returnDesc",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "借出状态",
+            dataIndex: "uState",
+            key: "uState",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            width: 150,
+            fixed: 'right',
             scopedSlots: { customRender: "action" }
           }
         ],
         // table数据
         tabledataArr: []
-      }
+      },
+      tempCondition: {}, //临时查询条件
     };
   },
 
@@ -164,10 +287,32 @@ export default {
   //方法集合
   methods: {
     getTableData(condition, pageNum, limitNum) {
-      /***
+      /**
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
-       *         */
+       */
+      this.tempCondition = condition;
+      this.$http.fetchPost('archBorrow@getArchBorrowApplyList.action', {
+          page: pageNum,
+          limit: limitNum,
+          applyName: (!condition || !condition.a0101) ? '' : condition.a0101,
+          applyIdNum: (!condition || !condition.a0184) ? '' : condition.a0184,
+          archSerialNum: (!condition || !condition.a0100a) ? '' : condition.a0100a,
+          startDate: (!condition || !condition.startDate) ? '' : condition.startDate,
+          endDate: (!condition || !condition.endDate) ? '' : condition.endDate
+      }).then(res => {
+          if(Number(res.code) === 0){
+            this.tableTotalNum = res.count;
+            let tempTableData = res.data;
+            this.initArr.tabledataArr = [];
+            tempTableData.forEach((element, index) => {
+               this.initArr.tabledataArr.push({
+                   num: (pageNum - 1) * limitNum + index + 1,
+                //    key: 
+               })
+            });
+          }
+      })
     }
   },
 

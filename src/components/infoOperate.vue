@@ -3233,8 +3233,11 @@ export default {
       /***
        * 功能：模态框点击提交按钮：当前获取的表单内容，把值为空的赋值为''; 不为空的为原值;
        */
-      let submitFormData =this.utils.transferFormToObj(this.$refs.infoForm.getFormData());
-      this.operateSubmitData(submitFormData);
+      let formDataObj = this.$refs.infoForm.getFormData();
+      let submitFormData =this.utils.transferFormToObj(formDataObj['resultData']);
+      if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
+        this.operateSubmitData(submitFormData);
+      }
     },
     operateSubmitData(dataObj) {
       /***

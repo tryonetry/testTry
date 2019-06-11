@@ -254,7 +254,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证号",
+            title: "身份证号/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
             width: 200,
@@ -838,13 +838,15 @@ export default {
       /***
        * 功能：模态框提交操作
        */
+      let formDataObj = this.$refs.recordCheckInForm.getFormData();
       let currObjData = this.utils.transferFormToObj(
-        this.$refs.recordCheckInForm.getFormData()
+        formDataObj['resultData']
       );
       if(this.operateStatus === 1){
         //位置调整
         currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000, 'waId': this.tempWaId})
-        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        let formDataObj = this.$refs.recordCheckInForm.getFormData();
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
         this.$http.fetchPost('archDocument@editShelvesInfo.action', newCurrDataObj).then(res => {
           if(Number(res.code) === 0){
             this.$message.success('位置调整成功!');
@@ -862,7 +864,8 @@ export default {
       } else if(this.operateStatus === 3){
         //档案入库
         currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000})
-        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        let formDataObj = this.$refs.recordCheckInForm.getFormData();
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
         this.$http.fetchPost('archDocument@setShelvesInfo.action', newCurrDataObj).then(res => {
           if(Number(res.code) === 0){
             this.$message.success('档案入库成功！');
@@ -880,7 +883,8 @@ export default {
       } else{
         //批量分配档案位置
         currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr, 'lableNu': ''});
-        let newCurrDataObj = this.getWhdCodeFun(currObjData, this.$refs.recordCheckInForm.getFormData());
+        let formDataObj = this.$refs.recordCheckInForm.getFormData();
+        let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
         this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
           if(Number(res.code)=== 0){
             this.$message.success('批量分配档案操作成功！');
