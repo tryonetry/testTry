@@ -154,12 +154,17 @@ export default {
     // 监听窗口改变 - setTimeout 阻塞
     setTimeout(function(){
       _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
-      _this.tableWidth = utils.detectZoom() + "%";
+      console.log(window.screen.width);
+      let currScreenWidth = 1920-280;
+      _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+      console.log(utils.detectZoom()/100)
     },0);
     window.onresize = function(){
       _this.$nextTick(function(){
+        let currScreenWidth = 1920 - 280;
         _this.tableHeight = document.querySelector('.tableCon').clientHeight - 52;
-        _this.tableWidth = utils.detectZoom() + "%";
+        _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+        console.log(_this.tableWidth)      
       });
     }
   },
