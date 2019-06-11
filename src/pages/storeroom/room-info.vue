@@ -125,6 +125,7 @@ export default {
             dataIndex: "whCode",
             key: "whCode",
             width: 200,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -132,6 +133,7 @@ export default {
             dataIndex: "whName",
             key: "whName",
             width: 200,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -180,12 +182,13 @@ export default {
             title: "库房描述",
             dataIndex: "whDesc",
             key: "whDesc",
-            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            width: 150,
+            fixed: "right",
             scopedSlots: { customRender: "action" }
           }
         ],

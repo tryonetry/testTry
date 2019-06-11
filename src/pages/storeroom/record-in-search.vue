@@ -152,10 +152,19 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
+            title: "存档编号",
+            dataIndex: "a0100a",
+            key: "a0100a",
+            width: 250,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "档案人姓名",
             dataIndex: "a0101",
             key: "a0101",
             width: 150,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -177,13 +186,6 @@ export default {
             dataIndex: "archivesIdentity",
             key: "archivesIdentity",
             width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "存档编号",
-            dataIndex: "a0100a",
-            key: "a0100a",
-            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

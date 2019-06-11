@@ -128,6 +128,7 @@ export default {
             dataIndex: "whdCode",
             key: "whdCode",
             width: 150,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -135,6 +136,7 @@ export default {
             dataIndex: "whdName",
             key: "whdName",
             width: 150,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -176,12 +178,14 @@ export default {
             title: "密集架描述",
             dataIndex: "whdDesc",
             key: "whdDesc",
-            width: 180,
+            // width: 180,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            width: 150,
+            fixed: "right",
             scopedSlots: { customRender: "action" }
           }
         ],

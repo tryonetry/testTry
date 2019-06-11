@@ -174,10 +174,19 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
+            title: "存档编号",
+            dataIndex: "e0101",
+            key: "e0101",
+            width: 200,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "姓名",
             dataIndex: "e0102",
             key: "e0102",
             width: 100,
+            fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -191,13 +200,6 @@ export default {
             title: "身份证号",
             dataIndex: "e0104",
             key: "e0104",
-            width: 200,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "存档编号",
-            dataIndex: "e0101",
-            key: "e0101",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
