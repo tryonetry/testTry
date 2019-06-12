@@ -207,7 +207,7 @@ export default {
               placeholder: "请选择录入时间",
               key: "startDate-endDate",
               name: "startDate-endDate",
-              val: void 0,
+              val: [void 0, void 0],
               postname: "startDate-endDate",
               status: ""
               //   disabledDate: "disabledEndDate", //函数名：只能选今天和今天以前的
