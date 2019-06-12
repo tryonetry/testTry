@@ -155,13 +155,13 @@ export default {
     setTimeout(function(){
       _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
       console.log(window.screen.width);
-      let currScreenWidth = 1920-280;
+      let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
       _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
       console.log(utils.detectZoom()/100)
     },0);
     window.onresize = function(){
       _this.$nextTick(function(){
-        let currScreenWidth = 1920 - 280;
+        let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
         _this.tableHeight = document.querySelector('.tableCon').clientHeight - 52;
         _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
         console.log(_this.tableWidth)      

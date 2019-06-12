@@ -187,7 +187,6 @@ export default {
                         title: "存档日期",
                         dataIndex: "uCreateDate",
                         key: "uCreateDate",
-                        //width: 60,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     // {
