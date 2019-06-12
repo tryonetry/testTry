@@ -7,22 +7,32 @@
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
+         <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
         <a
+          v-if="slotPropsData.currRowdata.uState === '11'"
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-          data-type="浏览"
+          data-type="已入库"
           class="primaryBtnColor"
-        >浏览</a>
+        >已入库</a>
+        <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
+
         <a
+          v-if="slotPropsData.currRowdata.uState === '9'"
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-          data-type="编辑"
-        >编辑</a>"
+          data-type="归还"
+        >归还</a>
+
+        <a 
+          v-if="slotPropsData.currRowdata.uState === '8'"
+          href="javascript:;"
+          data-type="借出"
+        >借出</a>
+
+        <!-- @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"         -->
         <a-popconfirm
           title="确定删除吗?"
           okText="确定"
           cancelText="取消"
-          @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
         >
           <a href="javascript:;" class="errorBtnColor">删除</a>
         </a-popconfirm>
@@ -105,7 +115,7 @@ export default {
               placeholder: "请选择申请日期",
               key: "startDate-endDate",
               name: "startDate-endDate",
-              val: void 0,
+              val: [void 0, void 0],
               postname: "startDate-endDate",
               status: "",
             //   disabledDate: "disabledEndDate", //函数名：只能选今天和今天以前的
@@ -141,7 +151,7 @@ export default {
             title: "档案人姓名",
             dataIndex: "a0101",
             key: "a0101",
-            width: 120,
+            width: 150,
             fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -163,21 +173,21 @@ export default {
             title: "档案位置号",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
-            width: 120,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "单位编号",
             dataIndex: "companyNumber",
             key: "companyNumber",
-            width: 120,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "单位名称",
             dataIndex: "companyName",
             key: "companyName",
-            width: 200,
+            width: 180,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -194,55 +204,55 @@ export default {
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
-          {
-            title: "查阅日期",
-            dataIndex: "borrowDate",
-            key: "borrowDate",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "查阅单位",
-            dataIndex: "borrowUnit",
-            key: "borrowUnit",
-            width: 200,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "查阅经办人",
-            dataIndex: "borrowOperatorName",
-            key: "borrowOperatorName",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "查阅备注",
-            dataIndex: "",
-            key: "",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "归还人",
-            dataIndex: "returner",
-            key: "returner",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "归还日期",
-            dataIndex: "returnDate",
-            key: "returnDate",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "归还经办人",
-            dataIndex: "returnOperatorName",
-            key: "returnOperatorName",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
+          // {
+          //   title: "查阅日期",
+          //   dataIndex: "borrowDate",
+          //   key: "borrowDate",
+          //   width: 120,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "查阅单位",
+          //   dataIndex: "borrowUnit",
+          //   key: "borrowUnit",
+          //   width: 200,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "查阅经办人",
+          //   dataIndex: "borrowOperatorName",
+          //   key: "borrowOperatorName",
+          //   width: 120,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "查阅备注",
+          //   dataIndex: "borrowReason",
+          //   key: "borrowReason",
+          //   width: 150,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "归还人",
+          //   dataIndex: "returner",
+          //   key: "returner",
+          //   width: 100,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "归还日期",
+          //   dataIndex: "returnDate",
+          //   key: "returnDate",
+          //   width: 120,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
+          // {
+          //   title: "归还经办人",
+          //   dataIndex: "returnOperatorName",
+          //   key: "returnOperatorName",
+          //   width: 120,
+          //   scopedSlots: { customRender: "cursorTitle" }
+          // },
           {
             title: "归还说明",
             dataIndex: "returnDesc",
@@ -308,7 +318,25 @@ export default {
             tempTableData.forEach((element, index) => {
                this.initArr.tabledataArr.push({
                    num: (pageNum - 1) * limitNum + index + 1,
-                //    key: 
+                   key: element.a01000,
+                   a0100a: element.a0100a,
+                   a0101: element.a0101,
+                   a0104: element.a0104 === '1' ? '男' : '女',
+                   a0184: element.a0184,
+                   shelvesNo: element.shelvesNo,
+                   companyNumber: element.companyNumber,
+                   companyName: element.companyName,
+                   borrower: element.borrower,
+                   borrowerTelNum: element.borrowerTelNum,
+                   borrowDate: element.borrowDate,
+                   borrowUnit: element.borrowUnit,
+                   borrowOperatorName: element.borrowOperatorName,
+                   borrowReason: element.borrowReason,
+                   returner: element.returner,
+                   returnDate: element.returnDate,
+                   returnOperatorName: element.returnOperatorName,
+                   returnDesc: element.returnDesc,
+                   uState: element.uState,
                })
             });
           }
@@ -317,7 +345,9 @@ export default {
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(null, 1, 10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
