@@ -16,7 +16,6 @@
           :dataSource="tabledata"
           :rowSelection="{onSelect:onSelect, onSelectAll:onSelectAll }"
           :scroll="{ x: tableWidth,y:tableHeight}"
-          align="center"
           :pagination="false"
         >
           <span slot="action" slot-scope="text, record">
@@ -38,7 +37,6 @@
           v-if="!tablecheck"
           :columns="columns"
           :dataSource="tabledata"
-          align="center"
           :scroll="{ x:tableWidth ,y:tableHeight}"
           :pagination="false"
         >
