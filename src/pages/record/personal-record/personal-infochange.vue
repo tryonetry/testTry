@@ -95,13 +95,14 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 80
+            width: 100
           },
           { 
             title: "姓名", 
             dataIndex: "a0101", 
             key: "a0101",
-            width:150, 
+            fixed: "left",
+            width:250, 
           },
           { 
             title: "身份证号",
@@ -113,7 +114,7 @@ export default {
             title: "性别", 
             dataIndex: "a0104",
             key: "a0104",
-            width:100,
+            width:200,
           },
           { 
             title: "电话号码", 
@@ -125,18 +126,20 @@ export default {
             title: "存档编号", 
             dataIndex: "a0100A", 
             key: "a0100A",
-            width:250,
+            width:200,
           },
           {
             title: "存档日期",
             dataIndex: "uCreateDate",
             key: "uCreateDate",
-            sorter: (a, b) => a.date - b.date,
-            width:250,
+            sorter: (a, b) => Number(a.uCreateDate.replace(/-/g,'')) - Number(b.uCreateDate.replace(/-/g,'')),
+            // width:250,
           },
           {
             title: "操作",
             key: "action",
+            fixed: "right",
+            width:250,
             scopedSlots: { customRender: "action" }
           }
         ],
@@ -196,7 +199,7 @@ export default {
                 // });
               });
           }else{
-              _this.$message.warning("抱歉,暂时未查到数据!");
+              _this.$message.error("抱歉,暂时未查到数据!");
           }
       })
     },
@@ -215,7 +218,9 @@ export default {
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(null,1,10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
