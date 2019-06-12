@@ -55,26 +55,24 @@ export default {
       let temp = {},
       
       currValDataArr = this.$refs.accountInfoForm.getFormSearchData(); //调子组件上的方法 获取form表单内容
-      currValDataArr.forEach(el => {
-
-        if(el.name){
-          if (el.val) {
-            if (
-              el.name === "birthday" ||
-              el.name === "joinWorkDate" ||
-              el.name === "graduateDate"
-            ) {
-              temp[el.name] = this.moment(el.val);
-            } else {
-              temp[el.name] = el.val;
-            }
-          } else {
-            temp[el.name] = "";
-          }
-        }
-        
-      });
-      console.log(temp);
+      // currValDataArr.forEach(el => {
+      //   if(el.name){
+      //     if (el.val) {
+      //       if (
+      //         el.name === "birthday" ||
+      //         el.name === "joinWorkDate" ||
+      //         el.name === "graduateDate"
+      //       ) {
+      //         temp[el.name] = this.moment(el.val);
+      //       } else {
+      //         temp[el.name] = el.val;
+      //       }
+      //     } else {
+      //       temp[el.name] = "";
+      //     }
+      //   }
+      // });
+      console.log(currValDataArr);
     },
     acceptEditParams(){
       /***

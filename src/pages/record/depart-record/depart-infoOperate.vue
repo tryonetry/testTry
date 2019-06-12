@@ -315,10 +315,11 @@ export default {
        */
       let temp ={}, 
       currValDataArr = this.$refs.accountInfoForm.getFormData();
-      currValDataArr.forEach(el => {
-         temp[el.name] = el.val;
-      });
-      console.log(temp);
+      console.log(currValDataArr);
+      // currValDataArr.forEach(el => {
+      //    temp[el.name] = el.val;
+      // });
+      // console.log(temp);
     },
     
     resetFormBtn(){
