@@ -166,98 +166,98 @@ export default {
             title: "公民身份号码/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
-            width: 200,
+            width: 350,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "档案位置号",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
-            width: 150,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "单位编号",
             dataIndex: "companyNumber",
             key: "companyNumber",
-            width: 100,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "单位名称",
             dataIndex: "companyName",
             key: "companyName",
-            width: 180,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "查阅人",
             dataIndex: "borrower",
             key: "borrower",
-            width: 120,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "查阅人证件号",
             dataIndex: "borrowerTelNum",
             key: "borrowerTelNum",
+            width: 250,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅日期",
+            dataIndex: "borrowDate",
+            key: "borrowDate",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅单位",
+            dataIndex: "borrowUnit",
+            key: "borrowUnit",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
-          // {
-          //   title: "查阅日期",
-          //   dataIndex: "borrowDate",
-          //   key: "borrowDate",
-          //   width: 120,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "查阅单位",
-          //   dataIndex: "borrowUnit",
-          //   key: "borrowUnit",
-          //   width: 200,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "查阅经办人",
-          //   dataIndex: "borrowOperatorName",
-          //   key: "borrowOperatorName",
-          //   width: 120,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "查阅备注",
-          //   dataIndex: "borrowReason",
-          //   key: "borrowReason",
-          //   width: 150,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "归还人",
-          //   dataIndex: "returner",
-          //   key: "returner",
-          //   width: 100,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "归还日期",
-          //   dataIndex: "returnDate",
-          //   key: "returnDate",
-          //   width: 120,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
-          // {
-          //   title: "归还经办人",
-          //   dataIndex: "returnOperatorName",
-          //   key: "returnOperatorName",
-          //   width: 120,
-          //   scopedSlots: { customRender: "cursorTitle" }
-          // },
+          {
+            title: "查阅经办人",
+            dataIndex: "borrowOperatorName",
+            key: "borrowOperatorName",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "查阅备注",
+            dataIndex: "borrowReason",
+            key: "borrowReason",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还人",
+            dataIndex: "returner",
+            key: "returner",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还日期",
+            dataIndex: "returnDate",
+            key: "returnDate",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "归还经办人",
+            dataIndex: "returnOperatorName",
+            key: "returnOperatorName",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
           {
             title: "归还说明",
             dataIndex: "returnDesc",
             key: "returnDesc",
-            width: 150,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -278,6 +278,7 @@ export default {
         tabledataArr: []
       },
       tempCondition: {}, //临时查询条件
+      
     };
   },
 

@@ -136,7 +136,6 @@ export default {
             
             let theadWidthArr = [];
             let fixedLeftNum = 0;
-            console.log(newVal.columnsArr.length)
             newVal.columnsArr.forEach((col,i) => {
               // 不固定且有宽度的 push
               if(col.width && col.width > 0 && !col.fixed){
@@ -196,18 +195,40 @@ export default {
     // 监听窗口改变 - setTimeout 阻塞
     setTimeout(function(){
       _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
-      console.log(window.screen.width);
+      
       let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
+      let tempWidth = 0;
+      
+      _this.initArrData.columnsArr.forEach(el => {
+        if(el.width){
+          tempWidth += Number(el.width);
+        }
+      });
+      tempWidth +=  200;
+      if(tempWidth > currScreenWidth){
+        currScreenWidth = tempWidth
+      }
       _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
-      console.log(utils.detectZoom()/100)
     },0);
 
     window.onresize = function(){
       _this.$nextTick(function(){
+        
         let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
+        
+        let tempWidth = 0;
+        _this.initArrData.columnsArr.forEach(el => {
+          if(el.width){
+            tempWidth += Number(el.width);
+          }
+        });
+        tempWidth +=  200;
+        if(tempWidth > currScreenWidth){
+          currScreenWidth = tempWidth
+        }
+
         _this.tableHeight = document.querySelector('.tableCon').clientHeight - 52;
         _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
-        console.log(_this.tableWidth)      
       });
     }
 
@@ -230,7 +251,6 @@ export default {
        * 功能:接收子组件选择的treeNode值
        * 参数：value：子组件上选择的treeNode
        */
-      console.log(this.condition);
       this.condition = Object.assign({}, this.condition, {upUnitId: value['key'], type: value['type']});
       this.$emit("accepttreeNode", value, this.condition); //把treeNode选择得值派发给父组件：info-poll
 
@@ -263,23 +283,19 @@ export default {
           }
         }
       });
-      console.log(this.condition);
       this.$emit("searchTable", this.condition, 1, 10);
       this.tabledata = this.$parent.initArr.tabledataArr;
       this.currentPageNum = 1;
-      // console.log(this.tabledata);
     },
     onSelect(record,selected,selectedRows) {
       /***
        * 功能：checbox-table选择表格数据
        * 参数：record:当前行； selected:true/false; selectedRows:[]选择的数据
        */
-      console.log(selectedRows);
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
     onSelectAll(selected, selectedRows, changeRows) {
       //table全选
-      console.log(selected, selectedRows, changeRows);
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
     changeTableData() {
