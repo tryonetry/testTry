@@ -125,6 +125,7 @@ export default {
           {
             title: "姓名",
             dataIndex: "a0101",
+            fixed: "left",
             key: "a0101",
             width: 100,
             scopedSlots: { customRender: "cursorTitle" }

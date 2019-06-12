@@ -27,7 +27,7 @@
               <template slot='title'>
                 {{text}}
               </template>
-              <span class="tdOverflow">{{text}}</span>
+              {{text}}
             </a-tooltip>
           </span>
         </a-table>
@@ -131,8 +131,52 @@ export default {
             "hctabledata",
             JSON.stringify(newVal.tabledataArr)
           );
+          
+          this.$nextTick(function(){
+            
+            let theadWidthArr = [];
+            let fixedLeftNum = 0;
+            console.log(newVal.columnsArr.length)
+            newVal.columnsArr.forEach((col,i) => {
+              // 不固定且有宽度的 push
+              if(col.width && col.width > 0 && !col.fixed){
+                theadWidthArr.push(col.width);
+              }
+              if(col.fixed === 'left'){
+                fixedLeftNum += 1;
+              }
+
+            });
+            if(newVal.tableCheck) fixedLeftNum += 1;
+            let theadWidthArrLen = theadWidthArr.length;
+            let thDom = document.querySelectorAll('.ant-table-thead th');
+            let trDom = document.querySelectorAll('.ant-table-tbody tr');
+            // console.log(theadWidthArrLen);
+            [].forEach.call(trDom,(item,index) => {
+              [].forEach.call(item.childNodes,(td,tdIndex) => {
+                
+                if(newVal.tableCheck){
+                  if(tdIndex !== 0 && td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
+                    td.style.maxWidth = theadWidthArr[tdIndex-fixedLeftNum]+'px';
+                  }
+                }else {
+                  if(td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
+                    td.style.maxWidth = theadWidthArr[tdIndex-fixedLeftNum]+'px';
+                  }
+                }
+
+                // td.setAttribute('max-height',)
+              })
+            });
+
+          });
+
         }
+
+        
+        
       }
+
     },
     totalCount: {
       immediate: true,
@@ -157,6 +201,7 @@ export default {
       _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
       console.log(utils.detectZoom()/100)
     },0);
+
     window.onresize = function(){
       _this.$nextTick(function(){
         let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
@@ -165,6 +210,7 @@ export default {
         console.log(_this.tableWidth)      
       });
     }
+
   },
   destroyed(){
     window.onresize = null;
