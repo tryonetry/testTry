@@ -94,7 +94,7 @@
         :maskClosable='false'
       >
         <div class="sendModalForm">
-          <TableFromSearch :formDataArr='sendFormData' :layout='sendModal'></TableFromSearch>
+          <TableFromSearch :formDataArr='sendFormData' :layout='sendModal' ref="sendForm"></TableFromSearch>
         </div>
       </a-modal>
     </div>
@@ -280,14 +280,14 @@ export default {
               type: "text",
               required: true,
               placeholder: "请输入邮寄编号",
-              key: "name",
-              name: "name",
+              key: "confNumber",
+              name: "confNumber",
               val: void 0,
-              postname: "",
+              postname: "confNumber",
               maxlength: 20,
               minlength: 0,
-              reg: '',
-              tip: '* 请输入邮寄编号',
+              reg: 'testNumAndChar',
+              tip: '* 请输入正确的邮寄编号',
               status: '',
               colWidth:[12,24],
           },
@@ -296,10 +296,10 @@ export default {
               otherType: "date",
               required: true,
               placeholder: "请选择邮寄日期",
-              key: "name",
-              name: "name",
+              key: "confNumberDate",
+              name: "confNumberDate",
               val: void 0,
-              postname: "",
+              postname: "confNumberDate",
               maxlength: 20,
               minlength: 0,
               reg: '',
@@ -312,10 +312,10 @@ export default {
               otherType: "textarea",
               required: false,
               placeholder: "请输入邮寄备注",
-              key: "name",
-              name: "name",
+              key: "confNumberRemark",
+              name: "confNumberRemark",
               val: void 0,
-              postname: "",
+              postname: "confNumberRemark",
               maxlength: 200,
               minlength: 0,
               reg: '',
@@ -417,7 +417,29 @@ export default {
 
     // 邮寄编号保存
     saveSendNum(){
-      this.sendConfirmLoading = true;
+      const _this = this;
+      let result = this.$refs.sendForm.getFormData();
+      console.log(result)
+      if(result.notRequiredHasDataRight && result.requiredFiledsRight){
+        this.sendConfirmLoading = true;
+        this.$http.fetchPost('archTransferOut@insertJybh.action',{...result.postObj,id:this.currentPersonId})
+          .then(res => {
+            // console.log(res);
+            if(Number(res.code) === 0){
+              _this.$message.success('保存成功!');
+              
+            }else{
+              _this.$message.error('抱歉,保存失败,请重试');
+            }
+          })
+          .catch(err => {
+            _this.$message.error('抱歉,网络异常,请稍后重试');
+          })
+          .finally(end => {
+            _this.sendConfirmLoading = false;
+          })
+      }
+      
     },
 
     rollOutApplyFun() {

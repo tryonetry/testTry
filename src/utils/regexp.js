@@ -202,6 +202,16 @@ const regs = {
       }else{
         return 0;
       }
+    },
+
+    // 只包含英文和数字
+    testNumAndChar:function(val){
+      let reg = new RegExp('^[A-Za-z0-9]+$');
+      if(reg.test(val)){
+        return 1;
+      }else{
+        return 0;
+      }
     }
 
 }

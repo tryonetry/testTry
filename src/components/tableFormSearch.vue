@@ -200,7 +200,8 @@
   </div>
 </template>
 <script>
-import {isMoment, moment} from "moment";
+import {isMoment} from "moment";
+import moment from 'moment';
 import address from '../../public/json/address.js';
 import regs from '../../src/utils/regexp';
 
@@ -264,7 +265,7 @@ export default {
     }
   },
   methods: {
-
+    moment,
     // 操作项  data:操作的函数名称
     operate(e, data) {
       this[data](e);
@@ -339,7 +340,7 @@ export default {
         //把当前的formIputs修改成http提交数据的格式
         if(isMoment(item.val)){
           //val为moment格式
-          postResultObj[item.key] = this.moment(item.val).format('YYYY-MM-DD');
+          postResultObj[item.key] = _this.moment(item.val).format('YYYY-MM-DD');
         } else if(item.otherType === 'addressSelect'){
           postResultObj[item.key] = item.val.join('.');
         } else if(item.otherType === 'searchSelect' && item.mode){
@@ -725,6 +726,11 @@ export default {
       let isRight = true;
       let currInput = this.formData.formInputs[inputIndex];
 
+      // 不为空验证
+      if(currInput.required && !currInput.val && String(currInput.val) !== '0'){
+        isRight = false;
+      } 
+
       //存在正则时候直接使用正则验证
       if(currInput.reg && this.regs[currInput.reg]){
         let regFun = this.regs[currInput.reg];
@@ -734,10 +740,7 @@ export default {
       }
       // 不存在正则时,判断最大长度和最小长度
       else if(!currInput.reg ){
-        // 判断值是否存在
-        if(!currInput.val && String(currInput.val) !== '0'){
-          isRight = false;
-        }
+        
         // 存在最小长度
         if(isRight && (!!currInput.minlength || currInput.minlength === 0) && currInput.val.length < currInput.minlength){
           isRight = false;
@@ -747,7 +750,7 @@ export default {
           isRight = false;
         }
       }
-
+      
       // 正确或失败后的操作
       if(!isRight && currInput.required ){
         // this.formData.formInputs[inputIndex].status = 'error';
