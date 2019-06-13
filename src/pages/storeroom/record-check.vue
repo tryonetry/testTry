@@ -3,29 +3,41 @@
   <div class="outer">
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
-      <span slot="formAction"></span>
+      <span slot="formAction">
+        <a-button class="buttonOperate" @click="operateSceneFun">现场查(借)阅</a-button>
+        <a-button class="buttonOperate">批量查(借)阅</a-button>
+      </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
          <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
         <a
-          v-if="slotPropsData.currRowdata.uState === '11'"
+          v-if="slotPropsData.currRowdata.borrowState === '11'"
           href="javascript:;"
           data-type="已入库"
-          class="primaryBtnColor"
+          class="successBtnColor"
         >已入库</a>
         <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
 
         <a
-          v-if="slotPropsData.currRowdata.uState === '9'"
+          v-if="slotPropsData.currRowdata.borrowState === '9'"
           href="javascript:;"
           data-type="归还"
+          class="primaryBtnColor"
         >归还</a>
 
+        <a
+          v-if="slotPropsData.currRowdata.borrowState === '10'"
+          href="javascript:;"
+          data-type="入库"
+          class="infoBtnColor"
+        >入库</a>
+
         <a 
-          v-if="slotPropsData.currRowdata.uState === '8'"
+          v-if="slotPropsData.currRowdata.borrowState === '8'"
           href="javascript:;"
           data-type="借出"
+          class="warnBtnColor"
         >借出</a>
 
         <!-- @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"         -->
@@ -38,6 +50,27 @@
         </a-popconfirm>
       </div>
     </TableView>
+
+    <!-- 现场借出modal -->
+    <div class="addModal">
+      <a-modal
+        centered
+        title="档案现场查(借)阅"
+        :visible="sceneVisible"
+        :confirmLoading="visibleConfirmLoading"
+        :width="1600"
+        @cancel="handleCancel"
+        :maskClosable="false"
+        style="height:85%;overflow: hidden;"
+      >
+        <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" @searchTable="getSceneTableData" ref="sceneTableView">
+          <span slot="formAction">
+            <a-button class="buttonOperate" @click="resetSceneTable">重置</a-button>
+            <a-button class="buttonOperate">批量查(借)阅</a-button>
+          </span>
+        </TableView>
+      </a-modal>
+    </div>
   </div>
 </template>
 
@@ -55,7 +88,7 @@ export default {
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
-        tableCheck: false, //table是否可以check
+        tableCheck: true, //table是否可以check
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -262,8 +295,8 @@ export default {
           },
           {
             title: "借出状态",
-            dataIndex: "uState",
-            key: "uState",
+            dataIndex: "borrowStateName",
+            key: "borrowStateName",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -278,7 +311,153 @@ export default {
         tabledataArr: []
       },
       tempCondition: {}, //临时查询条件
-      
+      sceneVisible: false,   //现场借出modal 默认false：不显示
+      visibleConfirmLoading: false,  //现场借出modal 默认false：不加载
+      sceneTableTotalNum: 0,  //档案现场借出总页数：默认为0
+      sceneLoanDataInitArr:{
+        //档案现场借出传得tableView数据
+        treeflag: false, //左侧tree是否存在
+        tableCheck: true, //table是否可以check
+        formData: {
+          //forminputs data
+          formInputs: [
+            {
+              title: "姓名",
+              type: "text",
+              required: false,
+              placeholder: "请输入姓名",
+              key: "a0101",
+              name: "a0101",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "",
+              tip: "",
+              postname: "a0101",
+              status: ""
+            },
+            {
+              title: "存档编号",
+              type: "text",
+              required: false,
+              placeholder: "请输入(准确的)存档编号",
+              key: "a0100A",
+              name: "a0100A",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "",
+              tip: "",
+              postname: "a0100A",
+              status: ""
+            },
+            {
+              title: "身份号码/社保卡号",
+              type: "text",
+              required: false,
+              placeholder: "请输入(完整的)公民身份号码/社保卡号",
+              key: "a0184",
+              name: "a0184",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "",
+              tip: "",
+              postname: "a0184",
+              status: ""
+            },
+            {
+              title: "单位编号",
+              type: "text",
+              required: false,
+              placeholder: "请输入单位编号",
+              key: "companyNumber",
+              name: "companyNumber",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "",
+              tip: "",
+              postname: "companyNumber",
+              status: ""
+            },
+            {
+                title: '单位名称',
+                otherType: 'searchSelect',
+                required: false,
+                placeholder: "请选择单位名称",
+                key: 'companyId',
+                name: 'companyId',
+                val: void 0,
+                children: [],  
+                status: '',
+            },
+            {
+              title: "存档日期",
+              otherType: "daterange",
+              required: false,
+              placeholder: "请选择存档日期",
+              key: "startDate-endDate",
+              name: "startDate-endDate",
+              val: [void 0, void 0],
+              postname: "startDate-endDate",
+              status: "",
+            },
+          ],
+          formBtns: [
+            { title: "查询", htmltype: "submit", operate: "searchForm" },
+            // { title: "重置", htmltype: "button", operate: "resetForm" }
+          ]
+        },
+        columnsArr:[
+          //表头
+          {
+            title: "序号",
+            dataIndex: "num",
+            key: "num",
+            fixed: "left",
+            width: 80,
+            scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
+          },
+          {
+            title: "存档编号",
+            dataIndex: "a0100A",
+            key: "a0100A",
+            width: 200,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "姓名",
+            dataIndex: "a0101",
+            key: "a0101",
+            width: 150,
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+           {
+            title: "公民身份号码/社保卡号",
+            dataIndex: "a0184",
+            key: "a0184",
+            width: 350,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "档案位置号",
+            dataIndex: "shelvesNo",
+            key: "shelvesNo",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "存档日期",
+            dataIndex: "uCreateDate",
+            key: "uCreateDate",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+        ],
+        tabledataArr: []
+      }
     };
   },
 
@@ -337,11 +516,71 @@ export default {
                    returnDate: element.returnDate,
                    returnOperatorName: element.returnOperatorName,
                    returnDesc: element.returnDesc,
-                   uState: element.uState,
+                   borrowState: element.borrowState,
+                   borrowStateName: element.borrowState === '7' ? '待出库' : (element.borrowState === '8' ? '待借出' : (element.borrowState === '9' ? '带归还' : (element.borrowState === '10' ? '待入库' :(element.borrowState === '11' ? '已入库' : '')))) 
                })
             });
+          } else{
+            this.$message.error('抱歉，获取数据失败，请重新刷新！');
           }
-      })
+      }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
+        });
+    },
+    
+    operateSceneFun(){
+      /**
+       * 功能：现场借出功能
+       */
+      this.sceneVisible = true;
+    },
+
+    getSceneTableData(sceneCondition, pageNum, limitNum){
+      /**
+       * 功能：档案现场借出：根据当前查询条件：sceneCondition，getTable数据
+       * 参数：sceneCondition:form查询结果：{}
+       */
+      this.$http.fetchPost('archBorrow@getPersonalArchList.action', {
+        page: pageNum,
+        limit: limitNum,
+        a0101: (!sceneCondition || !sceneCondition.a0101) ? '' : sceneCondition.a0101,
+        a0100A:  (!sceneCondition || !sceneCondition.a0100A) ? '' : sceneCondition.a0100A,
+        a0184:  (!sceneCondition || !sceneCondition.a0184) ? '' : sceneCondition.a0184,
+        companyNumber:  (!sceneCondition || !sceneCondition.companyNumber) ? '' : sceneCondition.companyNumber,
+        companyId:  (!sceneCondition || !sceneCondition.companyId) ? '' : sceneCondition.companyId,
+        startDate:  (!sceneCondition || !sceneCondition.startDate) ? '' : sceneCondition.startDate,
+        endDate:  (!sceneCondition || !sceneCondition.endDate) ? '' : sceneCondition.endDate,
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.sceneTableTotalNum = res.count;
+          let tempSceneTableData = res.data;
+          this.sceneLoanDataInitArr.tabledataArr = [];
+          tempSceneTableData.forEach((element, index) => {
+            this.sceneLoanDataInitArr.tabledataArr.push({
+              num: (pageNum - 1) * limitNum + index + 1,
+              key: element.a01000,
+              a0100A: element.a0100A,
+              a0101: element.a0101,
+              a0184: element.a0184,
+              uCreateDate: element.uCreateDate,
+              shelvesNo: element.shelvesNo
+            })
+          });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请重新刷新！');
+        }
+      }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
+        });
+    },
+    
+    resetSceneTable(){
+      //档案现场查借阅重置
+    },
+    
+    handleCancel(){
+      //modal默认关闭
+      this.sceneVisible = false
     }
   },
 
