@@ -5,55 +5,77 @@
     <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
       <div slot="tableAction" slot-scope="slotPropsData">
 
+        <!-- 待出库状态 -->
         <a
           href="javascrit:;"
           class="canNotClickBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '0'"
         >待出库</a>
-        
-        <a
-          href="javascrit:;"
-          class="warnBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
-          v-if="String(slotPropsData.currRowdata.transferOutState) === '1'"
-        >撤销</a>
+
+        <!-- 撤销操作 -->
+        <a-popconfirm
+          title="您确定撤销吗?"
+          okText="确定"
+          cancelText="取消"
+          @confirm="cancelOrDelete(slotPropsData.currRowdata && slotPropsData.currRowdata.id,0)"
+        >
+          <a
+            href="javascrit:;"
+            class="warnBtnColor"
+            v-if="String(slotPropsData.currRowdata.transferOutState) === '1'"
+          >撤销</a>
+        </a-popconfirm>
+
+        <!-- 转出操作 -->
         <a
           href="javascrit:;"
           class="primaryBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
+          @click="rollOutFun(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '1'"
         >转出</a>
+
+        <!-- 已转出状态 -->
         <a
           href="javascrit:;"
           class="canNotClickBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '2'"
         >已转出</a>
+
+        <!-- 邮寄编号操作 -->
         <a
           href="javascrit:;"
           class="primaryBtnColor"
           @click="openSendModal(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '2' && !slotPropsData.currRowdata.confNumber"
         >邮寄编号</a>
+
+        <!-- 预览打印操作 -->
         <a
           href="javascrit:;"
           class="primaryBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '2' && !slotPropsData.currRowdata.confNumber"
         >预览打印</a>
+
+        <!-- 已撤销状态 -->
         <a
           href="javascrit:;"
           class="canNotClickBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '3'"
         >已撤销</a>
-        <a
-          href="javascrit:;"
-          class="errorBtnColor"
-          @click="editOperate(slotPropsData.currRowdata)"
-          v-if="String(slotPropsData.currRowdata.transferOutState) !== '3'"
-        >删除</a>
+
+        <!-- 删除操作 -->
+        <a-popconfirm
+          title="您确定删除吗?"
+          okText="确定"
+          cancelText="取消"
+          @confirm="cancelOrDelete(slotPropsData.currRowdata && slotPropsData.currRowdata.id,1)"
+        >
+          <a
+            href="javascrit:;"
+            class="errorBtnColor"
+            v-if="String(slotPropsData.currRowdata.transferOutState) !== '3'"
+          >删除</a>
+        </a-popconfirm>
 
       </div>
       <span slot="formAction">
@@ -75,14 +97,13 @@
         style="height:85%;overflow: hidden;"
         :maskClosable='false'
       >
-        <TransferOnSite></TransferOnSite>
+        <TransferOnSite :personData="currentPersonData"></TransferOnSite>
       </a-modal>
     </div>
     <!-- 邮寄编号弹层 -->
     <div class="addModal">
       <a-modal
         centered
-        title="邮寄编号"
         :visible="sendModalShow"
         :width="'50%'"
         :confirmLoading="sendConfirmLoading"
@@ -93,6 +114,12 @@
         style="height:40%;overflow: hidden;"
         :maskClosable='false'
       >
+        <!-- title -->
+        <div slot="title" class="titleSlot">
+          <p>邮寄编号填写</p>
+          <span>注意 : 请认真核对邮寄编号,保存后无法修改</span>
+        </div>
+
         <div class="sendModalForm">
           <TableFromSearch :formDataArr='sendFormData' :layout='sendModal' ref="sendForm"></TableFromSearch>
         </div>
@@ -352,11 +379,13 @@ export default {
         },
       },
       tableTotalNum: 0, //table数据量
+      tempCondition:{},
       visible: false, //模态框默认不可见
       sendModalShow:false, //邮寄编号弹层
       confirmLoading: false, //模态框确认按钮加载：默认不加载
       sendConfirmLoading:false, //邮寄确认按钮加载
-      currentPersonId:null,
+      currentPersonData:{}, //当前人的数据
+      currentPersonId:'', //当前人的 id
     };
   },
 
@@ -381,7 +410,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
       **/
-     console.log(condition)
+      this.tempCondition = condition;
       this.$http.fetchPost('archTransferOut@getArchTransferOutApplyList.action',{
           page: pageNum,
           limit: limitNum,
@@ -403,10 +432,12 @@ export default {
           }
       })
     },
-    rollOutFun() {
+
+    rollOutFun(personData) {
       /***
        * 功能：现场转出函数
        *  */
+      this.currentPersonData = personData;
       this.visible = true;
     },
     // 邮寄编号modal打开
@@ -419,7 +450,7 @@ export default {
     saveSendNum(){
       const _this = this;
       let result = this.$refs.sendForm.getFormData();
-      console.log(result)
+      
       if(result.notRequiredHasDataRight && result.requiredFiledsRight){
         this.sendConfirmLoading = true;
         this.$http.fetchPost('archTransferOut@insertJybh.action',{...result.postObj,id:this.currentPersonId})
@@ -427,7 +458,8 @@ export default {
             // console.log(res);
             if(Number(res.code) === 0){
               _this.$message.success('保存成功!');
-              
+              _this.getTableData(_this.tempCondition,1,10);
+              _this.sendModalShow = false;
             }else{
               _this.$message.error('抱歉,保存失败,请重试');
             }
@@ -442,10 +474,45 @@ export default {
       
     },
 
-    rollOutApplyFun() {
+    // 撤销 cd - 0 撤销  cd - 1
+    cancelOrDelete(id,cd){
+      const _this = this;
+      if(cd === 0){
+        this.$http.fetchPost('archDocument@archTransferoutOutCancel.action',{id,"archOut":"archOut"})
+          .then(res => {
+            if(Number(res.code) === 0){
+              _this.$message.success('撤销成功 !');
+              _this.getTableData(_this.tempCondition,1,10);
+            }else if(Number(res.code) === 2){
+              _this.$message.warning('抱歉, 您已过了撤销操作的时间, 请转出后进行退档操作!');
+            }else{
+              _this.$message.error('抱歉,撤销失败,请重试');
+            }
+          })
+          .catch(err => {
+            _this.$message.error('抱歉,网络异常,请稍后重试');
+          })
+      }else if(cd === 1){
+        this.$http.fetchPost('archTransferOut@deleteArchTransferOut.action',{id})
+          .then(res => {
+            if(Number(res.code) === 0){
+              _this.$message.success('删除成功 !');
+              _this.getTableData(_this.tempCondition,1,10);
+            }else{
+              _this.$message.error('抱歉,删除失败,请重试');
+            }
+          })
+          .catch(err => {
+            _this.$message.error('抱歉,网络异常,请稍后重试');
+          })
+      }
+    },  
+
+    rollOutApplyFun(personData) {
       /**
        * 功能：模态框：转出申请操作
        */
+
       this.confirmLoading = true;
 
     },
@@ -488,7 +555,17 @@ export default {
     max-height: 100%;
   }
   .sendModalForm{
+    padding-top: 10px;
     height: 100%;
     overflow: auto;
+  }
+  .titleSlot{
+    display: flex;
+  }
+  .titleSlot>p{
+    margin-right: 40px;
+  }
+  .titleSlot>span{
+    color:red;
   }
 </style>

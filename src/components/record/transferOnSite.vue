@@ -41,7 +41,7 @@
     </div>
 
     <!-- 调转信息 -->
-    <FormHeader :formTitle='"调转信息"'></FormHeader>
+    <FormHeader :formTitle='isInner ? "调转信息" : "转出信息"'></FormHeader>
     <div class="detailContent">
         <TableFromSearch 
             :formDataArr='isInner ? formDataInner : ( !isEnterprice ? formDataNotInner : formDataEnterprice) '>
@@ -92,7 +92,7 @@ export default {
     name:"TransferOnSite",
     //import引入的组件需要注入到对象中才能使用
     components: { FormHeader, ShowBasicInfo, TableFromSearch },
-    props:["isInner"],
+    props:["isInner","personData"],
 
     data() {
         return {
