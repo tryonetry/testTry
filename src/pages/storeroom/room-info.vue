@@ -33,6 +33,7 @@
         :confirmLoading="confirmLoading"
         :width="1600"
         @cancel="handleCancel"
+        :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
         <TableFromSearch :formDataArr="roomInfoForm" ref="infoForm"></TableFromSearch>

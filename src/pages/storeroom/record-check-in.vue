@@ -29,6 +29,7 @@
         :confirmLoading="confirmLoading"
         :width="1600"
         @cancel="handleCancel"
+        :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
         <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
@@ -569,7 +570,7 @@ export default {
         .fetchPost("archDocument@getArchDocumentList.action", {
           page: pageNum,
           limit: limitNum,
-          a0100a: (!condition || !condition.a0100a) ? "" : condition.a0100a,
+          a0100A: (!condition || !condition.a0100A) ? "" : condition.a0100A,
           archiveStatus: (!condition || !condition.archiveStatus) ? "" : condition.archiveStatus,
           a0184: (!condition || !condition.a0184) ? "" : condition.a0184,
           a0101: (!condition || !condition.a0101) ? "" : condition.a0101,
