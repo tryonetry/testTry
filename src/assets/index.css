@@ -131,7 +131,8 @@ input[readonly]{
   .defaultBtnColor,
   .successBtnColor,
   .warnBtnColor,
-  .errorBtnColor{
+  .errorBtnColor,
+  .canNotClickBtnColor{
     padding:0 6px
   }
   .primaryBtnColor{
@@ -167,7 +168,12 @@ input[readonly]{
   .errorBtnColor:hover{
     color:#f59f8a;
   }
-
+  .canNotClickBtnColor{
+    color: #9e9e9e;
+  }
+  .canNotClickBtnColor:hover{
+    color: #afafaf;
+  }
   .info_select .ant-select-selection{
     border: none;
   }

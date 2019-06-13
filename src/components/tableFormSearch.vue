@@ -9,8 +9,8 @@
       <!-- hasFeedback -->
       <!-- :label="!item.required?null:item.title" -->
       <a-col 
-        :xl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 12 : 24" 
-        :xxl="item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 8 : 24" 
+        :xl="item.colWidth && item.colWidth[1] ? item.colWidth[1] : item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 12 : 24" 
+        :xxl="item.colWidth && item.colWidth[0] ? item.colWidth[0] : item.otherType !== 'textarea' && item.otherType !== 'segementTitle' ? 8 : 24" 
         :xs="24" 
         v-for="(item, index) in formData.formInputs"
         v-if="!item.isHide"
@@ -19,8 +19,8 @@
         <!-- common formItem -->
         <a-form-item
           v-if="item.otherType !== 'textarea' && item.otherType !== 'segementTitle'"
-          :labelCol="defaultCon.labelCol"
-          :wrapperCol="defaultCon.wrapperCol"
+          :labelCol="layout && layout.defaultCon && layout.defaultCon.labelCol ? layout.defaultCon.labelCol : defaultCon.labelCol"
+          :wrapperCol="layout && layout.defaultCon && layout.defaultCon.wrapperCol ? layout.defaultCon.wrapperCol : defaultCon.wrapperCol"
           :validate-status = 'item.status ? item.status : "" '
           :help = 'item.status === "error" ? (item.tip ? item.tip : false):"" '
           hasFeedback
@@ -161,8 +161,8 @@
         <a-form-item
           v-if="!item.type && item.otherType === 'textarea'"
           :label="item.title"
-          :labelCol="textareaCon.labelCol"
-          :wrapperCol="textareaCon.wrapperCol"
+          :labelCol="layout && layout.textareaCon && layout.textareaCon.labelCol ? layout.textareaCon.labelCol : textareaCon.labelCol"
+          :wrapperCol="layout && layout.textareaCon && layout.textareaCon.wrapperCol ? layout.textareaCon.wrapperCol : textareaCon.wrapperCol"
         >
           <!-- v-decorator="[ item.name, {rules: [{ required: item.required}]}]" -->
           <a-textarea 
@@ -206,7 +206,7 @@ import regs from '../../src/utils/regexp';
 
 export default {
   name: "TableFromSearch",
-  props: ["formDataArr", 'getCapacityDataFun'],
+  props: ["formDataArr", 'getCapacityDataFun','layout'],
   data() {
     return {
       regs,

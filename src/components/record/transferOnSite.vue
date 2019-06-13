@@ -225,7 +225,7 @@ export default {
                         status: ""
                     },
                     {
-                        title: "转出方式",
+                        title: "转出原因",
                         otherType: "select",
                         required: true,
                         placeholder: "请选择转出方式",
