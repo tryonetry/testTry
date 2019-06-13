@@ -284,7 +284,7 @@ export default {
         }
       });
       this.$emit("searchTable", this.condition, 1, 10);
-      this.tabledata = this.$parent.initArr.tabledataArr;
+      // this.tabledata = this.$parent.initArr.tabledataArr;
       this.currentPageNum = 1;
     },
     onSelect(record,selected,selectedRows) {
