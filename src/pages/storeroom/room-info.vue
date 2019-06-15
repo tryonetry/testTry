@@ -31,16 +31,18 @@
         :title="operateStatus==1? '添加信息': '编辑信息'"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        :width="1600"
+        width="80%"
         @cancel="handleCancel"
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
-        <TableFromSearch :formDataArr="roomInfoForm" ref="infoForm"></TableFromSearch>
-        <template slot="footer">
-          <a-button key="cancel" @click="handleCancel">取消</a-button>
-          <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
-        </template>
+        <div style="height:100%;overflow:auto;">
+          <TableFromSearch :formDataArr="roomInfoForm" ref="infoForm"></TableFromSearch>
+          <template slot="footer">
+            <a-button key="cancel" @click="handleCancel">取消</a-button>
+            <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
+          </template>
+        </div>
       </a-modal>
     </div>
   </div>

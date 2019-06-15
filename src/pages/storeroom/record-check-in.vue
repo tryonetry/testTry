@@ -27,20 +27,22 @@
         :title="operateStatus==1 ? '调整档案位置': '选择分配区域'"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        :width="1600"
+        width="80%"
         @cancel="handleCancel"
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
-        <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
-          <div class="capacityDiv" slot='otherForm'>
-            空闲容量:{{freeCapacity}}， 总容量:{{totalCapacity}}
-          </div>
-        </TableFromSearch>
-        <template slot="footer">
-          <a-button key="cancel" @click="handleCancel">取消</a-button>
-          <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
-        </template>
+        <div style="height:100%;overflow:auto;">
+          <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
+            <div class="capacityDiv" slot='otherForm'>
+              空闲容量:{{freeCapacity}}， 总容量:{{totalCapacity}}
+            </div>
+          </TableFromSearch>
+          <template slot="footer">
+            <a-button key="cancel" @click="handleCancel">取消</a-button>
+            <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
+          </template>
+        </div>
       </a-modal>
     </div>
   </div>
