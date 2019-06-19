@@ -9,38 +9,27 @@
       </TableFromSearch>
 
       <div class="tableCon" v-if="!isHasNotTable" ref="tableCon">
+
+
         <!-- checkbox -->
         <a-table
-          v-if="tablecheck"
           :columns="columns"
           :dataSource="tabledata"
-          :rowSelection="{onSelect:onSelect, onSelectAll:onSelectAll,getCheckboxProps:getCheckboxProps}"
-          :scroll="{ x: tableWidth,y:tableHeight}"
+          :rowSelection="tablecheck ? {onSelect:onSelect, onSelectAll:onSelectAll,getCheckboxProps:getCheckboxProps} : null"
+          :scroll="isEditAndAdd ? {x:tableWidth} :{ x: tableWidth,y:tableHeight}"
           :pagination="false"
+          :bordered="bordered"
         >
-          <span slot="action" slot-scope="text, record">
-            <slot name="tableAction" :currRowdata="record" :currTableData="tabledata">table操作按钮</slot>
-          </span>
-          <span slot="cursorTitle" slot-scope="text, record">
-            <!-- 鼠标放上去显示当前行数据 -->
-            <a-tooltip :currRowdata="record" placement="bottom">
-              <template slot='title'>
-                {{text}}
-              </template>
-              {{text}}
-            </a-tooltip>
-          </span>
-        </a-table>
 
-        <!-- 没有checkbox -->
-        <a-table
-          v-if="!tablecheck"
-          :columns="columns"
-          :dataSource="tabledata"
-          :scroll="{ x:tableWidth ,y:tableHeight}"
-          :pagination="false"
-        >
-          <!-- 按钮操作 -->
+          <!-- 表格页脚 (添加时候显示) -->
+          <template v-if="isEditAndAdd" slot="footer" slot-scope="currentPageData">
+            <div class="addBtn" @click="addList">
+              <a-icon type="plus" style="color:#666"/>
+            </div>
+          </template>
+          <!-- ####################################### 此处是自定义列 ############################### -->
+
+          <!-- 操作按钮 -->
           <span slot="action" slot-scope="text, record">
             <slot name="tableAction" :currRowdata="record" :currTableData="tabledata">table操作按钮</slot>
           </span>
@@ -51,7 +40,7 @@
               <template slot='title'>
                 {{text}}
               </template>
-              <span class="tdOverflow">{{text}}</span>
+              {{text}}
             </a-tooltip>
           </span>
 
@@ -68,10 +57,39 @@
           <div slot="img" slot-scope="text, record" class="tableImg">
             <img :src="record.photo" alt="">
           </div>
+          <!-- { "key": 0, "index": 0, "inEdit": { "e0105": false, "e0106": true }, "e0105": "aaa", "e0106": "bbb", "e0106a": "ccc", "e0114": "ddd" } aaa -->
 
+
+          <!-- 普通输入框可编辑列 -->
+          <!-- <div slot="editInput" slot-scope="text, record ,index" v-if='columns && (record.index || record.index === 0)' @click='changeEdit($event)'>
+            {{$event}}
+            <a-input v-model="text"></a-input>
+            <span>{{text}}</span>
+          </div> -->
+
+          <template slot="editInput" slot-scope="text, record">
+          <EditInput :text="text" @change="onCellChange(record.key, 'name', $event)"/>
+        </template>
+
+          <!-- 日期可编辑列 -->
+          <div slot="editDateInput" slot-scope="text, record">
+
+          </div>
+
+          <!-- 下拉框入框可编辑列 -->
+          <div slot="editSelectInput" slot-scope="text, record">
+
+          </div>
+
+          <!-- 可搜索下拉框可编辑列 -->
+          <div slot="editSearchSelectInput" slot-scope="text, record">
+
+          </div>
+          <!-- ####################################### 此处是自定义列 ############################### -->
         </a-table>
+        
       </div>
-      <div class="pagination_view" v-if="!isHasNotTable">
+      <div class="pagination_view" v-if="!isHasNotTable && !noPagination">
         <a-pagination
           v-model="currentPageNum"
           :total="tableTotalCount"
@@ -89,13 +107,12 @@ import TableFromSearch from "@/components/tableFormSearch";
 import { isMoment } from 'moment';
 import { setTimeout } from 'timers';
 import utils from '../utils/util';
-import { networkInterfaces } from 'os';
 
 export default {
   name: "TableView",
   components: {
     OrganTree,
-    TableFromSearch
+    TableFromSearch,
   },
   props: ["initArrData", "totalCount","filterTableCheck"],
   data() {
@@ -113,6 +130,7 @@ export default {
       tableWidth:"100%",
       tableHeight:450, // 设置table滚动的高度
       timer:null, //监听器
+      bordered:false, // 边框默认 false
     };
   },
   watch: {
@@ -122,6 +140,10 @@ export default {
       handler(newVal, oldVal) {
         if (newVal) {
           this.treeFlag = newVal.treeflag;
+          this.noPagination = newVal.noPagination;
+          this.bordered = newVal.bordered ? newVal.bordered : false;
+          this.isEditAndAdd = newVal.isEditAndAdd ? newVal.isEditAndAdd : false;
+          this.superimposeWidth = newVal.superimposeWidth ? newVal.superimposeWidth : false;
           this.formData = newVal.formData;
           this.columns = newVal.columnsArr;
           this.tabledata = newVal.tabledataArr;
@@ -131,7 +153,8 @@ export default {
             "hctabledata",
             JSON.stringify(newVal.tabledataArr)
           );
-          
+
+          // 宽度溢出
           this.$nextTick(function(){
             
             let theadWidthArr = [];
@@ -148,8 +171,8 @@ export default {
             });
             if(newVal.tableCheck) fixedLeftNum += 1;
             let theadWidthArrLen = theadWidthArr.length;
-            let thDom = document.querySelectorAll('.ant-table-thead th');
-            let trDom = document.querySelectorAll('.ant-table-tbody tr');
+            let thDom = document.querySelectorAll('.tableCon .ant-table-thead th');
+            let trDom = document.querySelectorAll('.tableCon .ant-table-tbody tr');
             // console.log(theadWidthArrLen);
             [].forEach.call(trDom,(item,index) => {
               [].forEach.call(item.childNodes,(td,tdIndex) => {
@@ -171,8 +194,6 @@ export default {
           });
 
         }
-
-        
         
       }
 
@@ -188,7 +209,7 @@ export default {
 
   },
   created() {
-    console.log(this.filterTableCheck)
+
   },
   mounted() {
     const _this = this;
@@ -206,7 +227,7 @@ export default {
         }
       });
       tempWidth +=  200;
-      if(tempWidth > currScreenWidth){
+      if(tempWidth > currScreenWidth || _this.superimposeWidth){
         currScreenWidth = tempWidth
       }
       _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
@@ -228,7 +249,7 @@ export default {
           currScreenWidth = tempWidth
         }
 
-        _this.tableHeight = document.querySelector('.tableCon').clientHeight - 52;
+        _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
         _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
       });
     }
@@ -317,6 +338,27 @@ export default {
     changePagination(page, pageSize){
       //换页：page:当前page; pageSize:当前页得显示数据数量
       this.$emit('searchTable', this.condition, page, pageSize);
+    },
+
+    changeEdit(e){
+      e.inEdit = true;
+    },
+
+    // 添加数据
+    addList(){
+
+      if(this.columns.length <= 0) return;
+
+      // 添加空行
+      let emptyRow = {};
+      this.columns.forEach(item => {
+        if(item.dataIndex){
+          emptyRow[item.dataIndex] = void 0;
+          emptyRow['key'] = this.tabledata.length;
+          emptyRow['index'] = this.tabledata.length;
+        }
+      });
+      this.tabledata.push(emptyRow);
     }
   },
   computed:{
@@ -389,5 +431,13 @@ export default {
 }
 .tableImg>img{
   height: 100%;
+}
+.addBtn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 17px;
+  box-sizing: border-box;
+  cursor: pointer;
 }
 </style>

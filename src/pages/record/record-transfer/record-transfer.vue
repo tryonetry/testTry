@@ -116,7 +116,7 @@ export default {
                             key: "materialTransferStartDate-materialTransferEndDate",
                             name: "materialTransferStartDate-materialTransferEndDate",
                             val: [void 0 , void 0],
-                            postname: "",
+                            postname: "materialTransferStartDate-materialTransferEndDate",
                             status: '',
                             disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
                             disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
@@ -205,13 +205,14 @@ export default {
                         title: "经办人",
                         dataIndex: "e0108a",
                         key: "e0108a",
-                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "状态",
                         dataIndex: "e0112",
                         key: "e0112",
+                        fixed: "right",
+                        width: 100,
                         // scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
@@ -273,6 +274,7 @@ export default {
             this.$http.fetchPost('fileConnect@getConnectList.action',{
                 page: pageNum,
                 limit: limitNum,
+                e0100:'0',
                 ...condition
             }).then((res)=>{
                 if(Number(res.code) === 0){

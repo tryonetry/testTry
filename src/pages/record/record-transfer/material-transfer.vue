@@ -4,38 +4,71 @@
       <TableView
           :initArrData="initArr"
           :totalCount="tableTotalNum"
+          :filterTableCheck='filterTableCheck'
            @searchTable="getTableData"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
            <span slot="formAction">
-               <a-button class="buttonOperate" type="primary">添 加</a-button>
+               <a-button class="buttonOperate" type="primary" @click="addMaterial">添 加</a-button>
                <a-button class="buttonOperate" type="primary">移 交</a-button>
            </span>
 
-           <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
-           <div slot="tableAction" slot-scope="slotPropsData">
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-                   data-type="浏览"
-                   class="primaryBtnColor"
-               >浏览</a>
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-                   data-type="编辑"
-               >编辑</a>"
-               <a-popconfirm
-                   title="确定删除吗?"
-                   okText="确定"
-                   cancelText="取消"
-                   @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
-               >
-                   <a href="javascript:;" class="errorBtnColor">删除</a>
-               </a-popconfirm>
-            </div>
       </TableView>
+
+      <!-- addMaterial modal -->
+      <div class="addMaterialModal">
+        <a-modal
+            centered
+            title="人员新增材料接收记录"
+            :visible="visible"
+            @cancel="handleCancel"
+            :width="'90%'"
+            style="height:85%;overflow: hidden;"
+            :footer="null"
+            :maskClosable='false'
+        >   
+            <!-- modal table -->
+            <TableView
+                :initArrData="initArr1"
+                :totalCount="tableTotalNum1"
+                @searchTable="getTableData1"
+            >
+                <div slot="tableAction" slot-scope="slotPropsData">
+                    <a
+                        href="javascript:;"
+                        @click="openEdit(slotPropsData.currRowdata)"
+                        data-type="浏览"
+                        class="primaryBtnColor"
+                    >添加</a>
+                </div>
+            </TableView>
+
+            <a-modal
+                centered
+                title="添加人员材料"
+                :visible="visible1"
+                @cancel="handleCancel1"
+                :width="'90%'"
+                style="height:85%;overflow: hidden;"
+                :maskClosable='false'
+            >
+                <template slot="footer">
+                    <a-button key="back" @click="handleCancel1">取消</a-button>
+                    <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="saveConfirm">保存</a-button>
+                </template>
+                <TableView :initArrData="initArr2">
+                    <div slot="tableAction" slot-scope="slotPropsData">
+                        <a
+                            href="javascript:;"
+                            class="primaryBtnColor"
+                        >删 除</a>
+                    </div>
+                </TableView>
+            </a-modal>
+        </a-modal>
+        </div>
+
 </div>
 </template>
 
@@ -54,7 +87,7 @@ export default {
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
-                tableCheck: false, //table是否可以check
+                tableCheck: true, //table是否可以check
                 // formInputs 传值方式
                 formData: {
                     //forminputs data
@@ -66,14 +99,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入姓名",
-                            key: "name",
-                            name: "name",
+                            key: "e0102",
+                            name: "e0102",
                             val: void 0,
                             maxlength: 20,
                             minlength: 0,
                             reg: '',
                             tip: '',
-                            postname:'',
+                            postname:'e0102',
                             status: '',
                         },
                         {
@@ -81,14 +114,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入身份证号/社保卡号",
-                            key: "idCard",
-                            name: "idCard",
+                            key: "e0104",
+                            name: "e0104",
                             val: void 0,
                             maxlength: 20,
                             minlength: 0,
                             reg: '',
                             tip: '',
-                            postname:'',
+                            postname:'e0104',
                             status: '',
                         },
                         {
@@ -96,14 +129,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入存档编号",
-                            key: "saveNum",
-                            name: "saveNum",
+                            key: "e0101",
+                            name: "e0101",
                             val: void 0,
                             maxlength: 18,
                             minlength: 15,
                             reg: '',
                             tip: '',
-                            postname:'',
+                            postname:'e0101',
                             status: '',
                         },
                         // date
@@ -112,10 +145,10 @@ export default {
                             otherType: 'daterange',
                             required: false,
                             placeholder: '选择接受日期',
-                            key: "transferDate",
-                            name: "transferDate",
-                            val: void 0,
-                            postname: "",
+                            key: "materialTransferStartDate-materialTransferEndDate",
+                            name: "materialTransferStartDate-materialTransferEndDate",
+                            val: [void 0 , void 0],
+                            postname: "materialTransferStartDate-materialTransferEndDate",
                             status: '',
                             disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
                             disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
@@ -125,8 +158,8 @@ export default {
                             otherType: 'searchSelect',
                             required: false,
                             placeholder: "请选择经办人",
-                            key: 'manager',
-                            name: 'manager',
+                            key: 'e0108',
+                            name: 'e0108',
                             val: void 0,
                             children: [
                                 {
@@ -142,14 +175,19 @@ export default {
                             otherType: 'select',
                             required: false,
                             placeholder: "请选择移交状态",
-                            key: 'transferStatus',
-                            name: 'transferStatus',
+                            key: 'e0109',
+                            name: 'e0109',
+                            postname: "e0109",
                             val: void 0,
                             children: [
                                 {
-                                    itemCode: '',
-                                    itemName: '请选择移交状态'
-                                }
+                                    itemCode: '1',
+                                    itemName: '未移交'
+                                },
+                                {
+                                    itemCode: '0',
+                                    itemName: '已移交'
+                                },
                             ],
                             status: '',
                         },
@@ -173,82 +211,265 @@ export default {
                     },
                     {
                         title: "姓名",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0102",
+                        key: "e0102",
+                        width: 150,
+                        fixed: "left",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "性别",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
-                        scopedSlots: { customRender: "cursorTitle" }
+                        dataIndex: "e0103",
+                        key: "e0103",
+                        width: 80,
                     },
                     {
                         title: "身份证号",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0104",
+                        key: "e0104",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "存档编号",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0101",
+                        key: "e0101",
+                        width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "接收日期",
+                        dataIndex: "auCreateDate",
+                        key: "auCreateDate",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "材料类别",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0105",
+                        key: "e0105",
+                        width: 100,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "材料名称",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0106",
+                        key: "e0106",
+                        width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "档案位置编号",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0107",
+                        key: "e0107",
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "经办人",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "e0108a",
+                        key: "e0108a",
+                        // width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "状态",
-                        dataIndex: "status",
-                        key: "status",
-                        // width: 60,
+                        dataIndex: "e0112",
+                        key: "e0112",
+                        width: 100,
+                        fixed:'right'
                         // scopedSlots: { customRender: "cursorTitle" }
                     },
-                    // {
-                    //     title: "操作",
-                    //     key: "action",
-                    //     scopedSlots: { customRender: "action" }
-                    // }
+                    {
+                        title: "在库状态",
+                        dataIndex:'isInware',
+                        key: "isInware",
+                        width: 150,
+                        fixed:'right'
+                    }
                 ],
                 // table数据
                 tabledataArr: [],
-            }
+            },
+            tableTotalNum1:0,
+            initArr1:{
+                treeflag: false, 
+                tableCheck: false, 
+                superimposeWidth:true, //表格宽度叠加
+                formData: {
+                    //forminputs data
+                    formInputs:[
 
+                        //input
+                        {
+                            title: '姓名',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入姓名",
+                            key: "a0101",
+                            name: "a0101",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'e0102',
+                            status: '',
+                        },
+                        {
+                            title: '身份证号/社保卡号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入身份证号/社保卡号",
+                            key: "a0184",
+                            name: "a0184",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'a0184',
+                            status: '',
+                        },
+                        {
+                            title: '存档编号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入存档编号",
+                            key: "a0100a",
+                            name: "a0100a",
+                            val: void 0,
+                            maxlength: 18,
+                            minlength: 15,
+                            reg: '',
+                            tip: '',
+                            postname:'a0100a',
+                            status: '',
+                        },
+                    ],
+                    
+                    // form btns
+                    formBtns: [
+                        { title: "查询", htmltype: "submit", operate: "searchForm" },
+                        { title: "重置", htmltype: "button", operate: "resetForm" }
+                    ],
+                },
+                //table的表头
+                columnsArr: [
+                    {
+                        title: "序号",
+                        dataIndex: "num",
+                        key: "num",
+                        fixed: "left",
+                        width: 150,
+                        // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                    },
+                    {
+                        title: "姓名",
+                        dataIndex: "a0101",
+                        key: "a0101",
+                        width: 300,
+                        fixed: "left",
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "性别",
+                        dataIndex: "a0104",
+                        key: "a0104",
+                        width: 200,
+                    },
+                    {
+                        title: "身份证号",
+                        dataIndex: "a0184",
+                        key: "a0184",
+                        width: 300,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "a0100a",
+                        key: "a0100a",
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "添加材料",
+                        width: 300,
+                        fixed:'right',
+                        scopedSlots: { customRender: "action" }
+                    }
+                ],
+                // table数据
+                tabledataArr: [],
+            },
+            // 添加操作项
+            initArr2:{
+                isEditAndAdd:true,
+                treeflag: false,
+                tableCheck: false,
+                noPagination:true, // 分页是否不显示
+                bordered:true, // 表格 border 是否显示
+                superimposeWidth:true, //表格宽度叠加
+                formData:{},
+                columnsArr: [
+                    {
+                        title: "材料类型",
+                        dataIndex: "e0105",
+                        key: "e0105",
+                        width: 200,
+                        scopedSlots: { customRender: "editInput" }
+                    },
+                    {
+                        title: "材料名称",
+                        dataIndex: "e0106",
+                        key: "e0106",
+                        width: 300,
+                        scopedSlots: { customRender: "editInput" }
+                    },
+                    {
+                        title: "接收日期",
+                        dataIndex: "e0106a",
+                        key: "e0106a",
+                        width: 200,
+                    },
+                    {
+                        title: "备注",
+                        dataIndex: "e0114",
+                        key: "e0114",
+                        width: 500,
+                    },
+                    {
+                        title: "操作",
+                        scopedSlots: { customRender: "action" }
+                    }
+                ],
+                // 此处的数组中必须存在 index 和 inEdit
+                tabledataArr: [
+                    {
+                        key:0,
+                        index:0,
+                        inEdit:{e0105:false,e0106:true},
+                        e0105:'aaa',
+                        e0106:'bbb',
+                        e0106a:'ccc',
+                        e0114:'ddd',
+                    }
+                ],
+            },
+            visible:false,
+            visible1:false,
+            tempCondition:{},
+            tempCondition1:{},
+            saveConfirmLoading:false,
+            
         };
     },
 
     //监听属性 类似于data概念
-    computed: {},
+    computed: {
+        checkTableData: function() {
+            return this.$store.getters.getinfoTableCheckData;
+        }
+    },
 
     //监控data中的数据变化
     watch: {
@@ -263,18 +484,123 @@ export default {
     //方法集合
     methods: {
 
-        getTableData(condition, pageNum, limitNum) {
-          /***
-           * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
-           * 参数：condition:form查询结果：{}
-*         */
+        // 过滤 table 不可选择项
+        filterTableCheck(record){
+            return { 
+                props: {
+                    disabled: record.e0112  !== '待移交', // Column configuration not to be checked
+                }
+            }
+        },
 
-        }
+        // 获取数据
+        getTableData(condition, pageNum, limitNum) {
+            const _this = this;
+            /***
+             * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
+             * 参数：condition:form查询结果：{}
+             **/
+            this.tempCondition = condition;
+            this.$http.fetchPost('fileConnect@getConnectList.action',{
+                page: pageNum,
+                limit: limitNum,
+                e0100:'1',
+                ...condition
+            }).then((res)=>{
+                if(Number(res.code) === 0){
+                    this.tableTotalNum = res.count;
+                    this.initArr.tabledataArr = res.data;
+                    this.initArr.tabledataArr.forEach((element, index) => {
+                        let tempState = String(element.transferOutState);
+                        Object.assign(element,{
+                            key:element.e01000,
+                            num: (pageNum - 1) * limitNum + index + 1,
+                            e0112:element.e0112 === "1" ? "待接收" : element.e0112 === "0" ? "已接收" : "待移交",
+                            isInware:element.isInware === "2" ? "已转出" : "在库", 
+                        });
+                    });
+                }else{
+                    _this.$message.warning("抱歉,暂时未查到数据!");
+                }
+            })
+        },
+
+        // 获取需选择的人员数据
+        getTableData1(condition, pageNum, limitNum) {
+            const _this = this;
+            /***
+             * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
+             * 参数：condition:form查询结果：{}
+             **/
+            this.tempCondition1 = condition;
+            this.$http.fetchPost('fileConnect@getPersonalList.action',{
+                page: pageNum,
+                limit: limitNum,
+                e0100:'1',
+                ...condition
+            }).then((res)=>{
+                if(Number(res.code) === 0){
+                    this.tableTotalNum1 = res.count;
+                    this.initArr1.tabledataArr = res.data;
+                    this.initArr1.tabledataArr.forEach((element, index) => {
+                        let tempState = String(element.transferOutState);
+                        Object.assign(element,{
+                            key:element.a01000,
+                            num: (pageNum - 1) * limitNum + index + 1,
+                            a0104:element.a0104 === '1' ? '男' : element.a0104 === '2' ? '女' : element.a0104 === '0' ? '未知的性别' : element.a0104 === '9' ? '未说明性别' : '',
+                        });
+                    });
+                }else{
+                    _this.$message.warning("抱歉,暂时未查到数据!");
+                }
+            })
+        },
+
+        addMaterial(){
+            this.visible = true;
+        },
+
+        // 取消选择人员新增材料接收记录
+        handleCancel(){
+            this.visible = false;
+        },
+
+        // 添加
+        openEdit(rowData){
+            this.visible1 = true;
+        },
+
+        // 关闭
+        handleCancel1(){
+            this.visible1 = false;
+        },
+
+        saveConfirm(){
+            
+        },
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
+        const _this = this;
 
+        // 初始化数据
+        this.getTableData(null,1,10);
+
+        // 查询经办人
+        this.$http.fetchGet('fileConnect@archTurnOverList.action',{})
+            .then(res => {
+                if(Number(res.code) === 0){
+                    let personArr = [];
+                    res.data.forEach(item => {
+                        personArr.push({itemCode:item.e0108,itemName:item.e0108a})
+                    });
+                    _this.$set(_this.initArr.formData.formInputs[4],'children',personArr);
+                }
+            })
+            .catch(err => {
+                //...
+            })
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

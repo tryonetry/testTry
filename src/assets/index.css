@@ -278,6 +278,11 @@ input{
 .ant-modal-body{
   border-radius: 4px;
 }
+/* 表格页脚 */
+.ant-table-footer{
+  padding: 0;
+  background: #ffffff;
+}
 
 /* 上传材料时的上传文件列表样式 */
 
