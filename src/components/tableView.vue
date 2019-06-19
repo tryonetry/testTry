@@ -301,8 +301,9 @@ export default {
     },
 
     getCheckboxProps(record){
-      console.log(this.filterTableCheck(record))
-      return this.filterTableCheck(record);
+      if(this.filterTableCheck && this.filterTableCheck instanceof Function){
+        return this.filterTableCheck(record);
+      }
     },
 
     changeTableData() {

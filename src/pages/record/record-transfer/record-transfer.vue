@@ -257,10 +257,9 @@ export default {
         
         // 过滤 table 不可选择项
         filterTableCheck(record){
-            console.log(record.e0112)
             return { 
                 props: {
-                    disabled: record.e0112 === '0' || record.e0112 === '1', // Column configuration not to be checked
+                    disabled: record.e0112  !== '待移交', // Column configuration not to be checked
                 }
             }
         },
