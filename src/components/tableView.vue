@@ -303,6 +303,10 @@ export default {
     getCheckboxProps(record){
       if(this.filterTableCheck && this.filterTableCheck instanceof Function){
         return this.filterTableCheck(record);
+      }else{
+        return record => {
+          return {props:{}}
+        }
       }
     },
 
