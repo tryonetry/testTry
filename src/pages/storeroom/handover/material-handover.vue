@@ -48,8 +48,9 @@ export default {
   name: "MaterialHandover",
   //import引入的组件需要注入到对象中才能使用
   components: { TableView, PrintTemplate },
-  props: [""],
 
+  props: [],
+  
   data() {
     return {
       utils,

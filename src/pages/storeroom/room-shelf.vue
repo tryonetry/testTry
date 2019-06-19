@@ -44,11 +44,11 @@
       >
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="roomShelfForm" ref="shelfForm"></TableFromSearch>
-          <template slot="footer">
-            <a-button key="cancel" @click="handleCancel">取消</a-button>
-            <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
-          </template>
         </div>
+        <template slot="footer">
+          <a-button key="cancel" @click="handleCancel">取消</a-button>
+          <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
+        </template>
       </a-modal>
     </div>
   </div>

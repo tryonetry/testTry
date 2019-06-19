@@ -38,11 +38,11 @@
       >
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="roomInfoForm" ref="infoForm"></TableFromSearch>
-          <template slot="footer">
+        </div>
+        <template slot="footer">
             <a-button key="cancel" @click="handleCancel">取消</a-button>
             <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
-          </template>
-        </div>
+        </template>
       </a-modal>
     </div>
   </div>
