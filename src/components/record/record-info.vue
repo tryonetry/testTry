@@ -112,6 +112,8 @@ export default {
   },
   props: [
     "currentPersonData",
+    "isStaff",
+    "currentEnterprice",
   ],
 
   data() {
@@ -136,6 +138,7 @@ export default {
                 tip:'* 请选择存档性质',
                 children: [],
                 status: "",
+                disabled:false,
                 connectTo:['companyId','companyNum'],
                 connectToFun:[UnitNatureToCompanyShow,UnitNatureToCompanyShow],
               },
@@ -698,7 +701,7 @@ export default {
             ],
           },
           companyList:null,
-          hasDataDisabledOptions:['a0101','a0184']
+          hasDataDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum']
     };
   },
 
@@ -747,7 +750,13 @@ export default {
       if(!Data) return;
       this.formData.formInputs.forEach((item,index)=>{
           // 存档性质
-          if(item.name === 'personType') item.children = Data.archiveTypeList;
+          if(item.name === 'personType'){
+            item.children = Data.archiveTypeList;
+            if(this.isStaff){
+              item.val = '02';
+              item.disabled = true;
+            }
+          }
           // 来当方式
           if(item.name === 'source') item.children = Data.receiveWayList;
           // 性别
@@ -772,7 +781,15 @@ export default {
           if(item.name === 'a0834') item.children = Data.educationList;
           // 专业类别
           if(item.name === 'a0827') item.children = Data.MajorList;
-        })
+
+          // 单位编号
+          if(item.name === 'companyNum' && this.currentEnterprice && this.currentEnterprice.companyNumber){
+            item.val = this.currentEnterprice.companyNumber;
+            item.disabled = true;
+          }
+      });
+      
+
     },
 
     // 插入数据
@@ -832,8 +849,17 @@ export default {
           });
           this.formData.formInputs.forEach((item,index)=>{
             // console.log(tempCompanylist)
-            if(item.name === 'companyId') item.children = tempCompanylist;
-          })
+            if(item.name === 'companyId') {
+              item.children = tempCompanylist
+              if(this.currentEnterprice && this.currentEnterprice.id){
+                item.val = this.currentEnterprice.id;
+                item.disabled = true;
+              }else if(this.currentPersonData && this.currentPersonData.companyId){
+                item.val = this.currentPersonData.companyId;
+                item.disabled = true;
+              }
+            };
+          });
         }else{
           //...
         }

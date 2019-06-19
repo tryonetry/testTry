@@ -2,21 +2,55 @@
 <template>
   <!-- 单位职工录入 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData">
-      <div slot="tableAction">
-        <a href="javascrit:;" class="successBtnColor">进入</a>
-      </div>
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+        <div slot="tableAction" slot-scope="slotPropsData">
+          <a href="javascrit:;" @click="editOperate(slotPropsData.currRowdata)" class="primaryBtnColor">录入职工信息</a>
+        </div>
     </TableView>
+
+    <!-- 点击进入 -->
+    <div class="changeModal">
+      <a-modal
+        centered
+        :visible="changeModalShow"
+        :width="'90%'"
+        style="height:90%;overflow: hidden;"
+        :maskClosable='false'
+        @cancel="handleCancel"
+        :keyboard='true'
+      >
+        <!-- title -->
+        <template slot="footer">
+          <a-button key="back" @click="handleCancel">取消</a-button>
+          <a-button key="submit" type="primary" :loading='confirmLoading' @click="insertInfoToCompany">保存</a-button>
+        </template>
+
+        <!-- title -->
+        <div slot="title" class="titleSlot">
+          <p>单位职工录入</p>
+          <span>{{currentEnterprice.companyName}}</span>
+        </div>
+        <div class="insertContainer">
+          <RecordInfo :isStaff='isStaff' :currentEnterprice='currentEnterprice' ref="accountInfoForm"></RecordInfo>
+        </div>
+      </a-modal>
+    </div>
+    
   </div>
 </template>
 
 <script>
+
+import moment from 'moment';
 import TableView from "@/components/tableView";
+import RecordInfo from "@/components/record/record-info";
+
 export default {
   name: "DepartWorkerOperate",
   //import引入的组件需要注入到对象中才能使用
   components: {
-    TableView
+    TableView,
+    RecordInfo,
   },
   props: [""],
 
@@ -29,30 +63,30 @@ export default {
           //form inputs
           formInputs: [
             {
-              title: "单位名称",
+              title: "委托存档单位名称",
               type: "text",
-              placeholder: "请输入单位名称",
-              key: "departname",
-              name: "departname",
-              postname: "",
+              placeholder: "请输入委托存档单位名称",
+              key: "companyName",
+              name: 'companyName',
+              postname: 'companyName',
+              val: void 0
+            },
+            {
+              title: "委托存档单位编号",
+              type: "text",
+              placeholder: "请输入委托存档单位编号",
+              key: "companyNumber",
+              name: 'companyNumber',
+              postname: '',
               val: void 0
             },
             {
               title: "统一社会信用代码",
               type: "text",
               placeholder: "请输入统一社会信用代码",
-              key: "creditCode",
-              name: "creditCode",
-              postname: "",
-              val: void 0
-            },
-            {
-              title: "选择日期",
-              otherType: "daterange",
-              placeholder: "请选择开始日期-结束日期",
-              key: "date",
-              name: "date",
-              postname: "",
+              key: "businessLicense",
+              name: 'businessLicense',
+              postname: 'businessLicense',
               val: void 0
             }
           ],
@@ -68,38 +102,123 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 80
+            width: 100
           },
-          {
-            title: "统一社会信用代码",
-            dataIndex: "creditCode",
-            key: "creditCode"
+          { 
+            title: "统一社会信用代码", 
+            dataIndex: "businessLicense", 
+            key: "businessLicense",
+            fixed: "left",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
           },
-          { title: "单位名称", dataIndex: "departname", key: "departname" },
-          { title: "联系电话", dataIndex: "contactPhone", key: "contactPhone" },
-          {
-            title: "立户日期",
-            dataIndex: "accountDate",
-            key: "accountDate",
-            sorter: (a, b) => a.date - b.date
+          { 
+            title: "委托存档单位名称", 
+            dataIndex: "companyName", 
+            key: "companyName",
+            width: 300,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          { 
+            title: "委托存档单位编号", 
+            dataIndex: "companyNumber", 
+            key: "companyNumber",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          { 
+            title: "联系电话", 
+            dataIndex: "contactPhone", 
+            key: "contactPhone", 
+            width: 200,
+          },
+          { 
+            title: "立户日期", 
+            dataIndex: "tatsudoDate", 
+            key: "tatsudoDate", 
+            scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            fixed: "right",
+            width: 250,
             scopedSlots: { customRender: "action" }
           }
         ],
-        tabledataArr: [
+        tabledataArr:[],
+        tempCondition:{},
+      },
+      deleteModalData:{
+        formInputs: [
           {
-            key: 1,
-            num: 1,
-            creditCode: "1412423423523523",
-            departname: "景德镇陶瓷学院",
-            contactPhone: "14355555555",
-            accountDate: "2019-03-15"
-          }
+              title: '销户原因',
+              type: "text",
+              required: false,
+              placeholder: "请输入销户原因",
+              key: "respon",
+              name: "respon",
+              val: void 0,
+              postname: "respon",
+              maxlength: 100,
+              minlength: 0,
+              reg: '',
+              tip: '* 请输入销户原因',
+              status: '',
+              colWidth:[24,24],
+          },
+          {
+              title: '销户日期',
+              otherType: "date",
+              required: false,
+              placeholder: "请选择销户日期",
+              key: "closeDate",
+              name: "closeDate",
+              val: moment(new Date()),
+              postname: "closeDate",
+              maxlength: 20,
+              minlength: 0,
+              reg: '',
+              tip: '* 请选择销户日期',
+              status: '',
+              disabled:true,
+              colWidth:[24,24],
+          },
         ]
-      }
+      },
+      // deleteModal 布局
+      deleteModal:{
+        defaultCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 6 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 16 }
+          }
+        },
+        textareaCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 3 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 20 }
+          }
+        },
+      },
+      tableTotalNum:0,
+      changeModalShow:false,
+      confirmLoading:false,
+      currentEnterprice:{},
+      random:Math.random(),
+      isStaff:true,
     };
   },
 
@@ -118,35 +237,94 @@ export default {
 
   //方法集合
   methods: {
-    getTableData(condition, initableArr) {
+
+    getTableData(condition, pageNum, limitNum) {
+      const _this = this;
       /***
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
-       * 参数：data:form查询结果：{}
-       *  */
-      console.log(condition);
-      let tempData = [];
-      if (condition.length === 0) {
-        this.initArr.tabledataArr = initableArr;
-      } else {
-        tempData = initableArr.filter(item => {
-          return Object.keys(condition).every(key => {
-            return String(item[key])
-              .toLowerCase()
-              .includes(
-                String(condition[key])
-                  .trim()
-                  .toLowerCase()
-              );
-          });
-        });
+       * 参数：condition:form查询结果：{}
+      **/
+      this.tempCondition = condition;
+      this.$http.fetchPost('companyInfo@getCompanyInfoList.action',{
+          page: pageNum,
+          limit: limitNum,
+          ...condition
+      }).then((res)=>{
+          if(Number(res.code) === 0){
+              this.tableTotalNum = res.count;
+              console.log(this.tableTotalNum)
+              this.initArr.tabledataArr = res.data;
+              this.initArr.tabledataArr.forEach((element, index) => {
+                Object.assign(element,{
+                  key:element.id,
+                  num: (pageNum - 1) * limitNum + index + 1,
+                  transferType: element.transferType === '1' ? '集体转集体' : element.transferType === '2' ? '集体转个人' : element.transferType === '3' ? '个人转集体' : '',
+                });
+              });
+
+              // console.log(this.initArr.tabledataArr)
+          }else{
+              _this.$message.error("抱歉,暂时未查到数据!");
+          }
+      })
+    },
+
+    editOperate(currdata){
+      this.currentEnterprice = currdata;
+      console.log(currdata)
+      this.random = Math.random();
+      this.changeModalShow = true;
+    },
+
+    deleteFun(currdata) {
+      // 销户操作
+      this.currentEnterprice = currdata;
+      this.deleteModalShow = true;
+      this.$nextTick(function(){
+        this.$refs.deleteForm.resetForm();
+      });
+    },
+
+    // 关闭弹框 
+    handleCancel(){
+      this.changeModalShow  = false;
+    },
+
+    reGetData(){
+      this.getTableData(this.tempCondition,1,10);
+    },
+
+    insertInfoToCompany(){
+      const _this = this;
+      let reultFormData = this.$refs.accountInfoForm.getFormSearchData(); 
+      // console.log(reultFormData)
+      if(reultFormData.isRight && this.currentEnterprice.id){
+        this.confirmLoading = true;
+        this.$http.fetchPost('companyInfo@insertPersonalArch.action',{
+          ...reultFormData.postObj,
+          a01000:_this.currentEnterprice.id,
+        })
+        .then(res => {
+          if(Number(res.code) === 0){
+            _this.$message.success('录入成功');
+          }else{
+            _this.$message.warning('抱歉,录入失败,请重试');
+          }
+        })
+        .catch(err => {
+          _this.$message.error('抱歉,网络错误,请稍后重试');
+        })
+        .finally(end => {
+          _this.confirmLoading = false;
+        })
       }
-      console.log(tempData);
-      this.initArr.tabledataArr = tempData;
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(this.tempCondition,1,10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
@@ -168,4 +346,23 @@ export default {
 </script>
 
 <style scoped>
+  .outerContainer{
+    height: 100%;
+  }
+  .titleSlot{
+    display: flex;
+  }
+  .titleSlot>p{
+    margin-right: 40px;
+  }
+  .titleSlot>span{
+    color:#2d8cf0;
+  }
+  .insertContainer{
+    width: 100%;
+    height: 100%;
+    padding-top: 10px;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
 </style>

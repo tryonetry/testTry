@@ -165,9 +165,10 @@
           :wrapperCol="layout && layout.textareaCon && layout.textareaCon.wrapperCol ? layout.textareaCon.wrapperCol : textareaCon.wrapperCol"
         >
           <!-- v-decorator="[ item.name, {rules: [{ required: item.required}]}]" -->
-          <a-textarea 
+          <a-textarea
             :placeholder="item.placeholder" 
             v-model="item.val"
+            :disabled='item.disabled'
             :autosize="{ minRows: 3, maxRows: 6 }" 
             allowClear
           />
@@ -305,60 +306,96 @@ export default {
       let notRequiredHasDataRight = true;
       let postResultObj = {};
       this.formData.formInputs.forEach((item,index) => {
-
-        // 判断必填项的数据是否准确
-        if(item.required && item.status !== 'success'){
-          requiredFiledsRight = false;
-          _this.$set(this.formData.formInputs[index],'status','error');
-        }
-
-        // 判断非必填项 已填写的数据是否准确
-        if(!item.required && (item.val || String(item.val) === '0')){
-          //存在正则时候直接使用正则验证
-          if(item.reg && this.regs[item.reg]){
-            let regFun = this.regs[item.reg];
-            if(regFun(item.val) === 0){
-              notRequiredHasDataRight = false;
-              _this.$set(this.formData.formInputs[index],'status','error');
-            }
-          }
-          // 不存在正则时,判断最大长度和最小长度
-          else if(!item.reg ){
-            // 存在最小长度
-            if((item.minlength || item.minlength === 0) && item.val.length < item.minlength){
-              notRequiredHasDataRight = false;
-              _this.$set(this.formData.formInputs[index],'status','error');
-            }
-            // 存在最大长度
-            if((!!item.maxlength || item.maxlength === 0) && item.val.length > item.maxlength){
-              notRequiredHasDataRight = false;
-              _this.$set(this.formData.formInputs[index],'status','error');
-            }
-          }
-        }
         
-        //把当前的formIputs修改成http提交数据的格式
-        if(isMoment(item.val)){
-          //val为moment格式
-          postResultObj[item.key] = _this.moment(item.val).format('YYYY-MM-DD');
-        } else if(item.otherType === 'addressSelect'){
-          postResultObj[item.key] = item.val.join('.');
-        } else if(item.otherType === 'searchSelect' && item.mode){
-          //可输入搜索多选
-          postResultObj[item.key] = item.val.join(',');
-        } else{
-          postResultObj[item.key] = item.val;
+        // 忽略已隐藏的项
+        if(!item.isHide){
+
+            // 判断必填项的数据是否准确
+            if(item.required && !item.disabled && item.status === 'error'){
+              requiredFiledsRight = false;
+            }
+
+            // 必填项或者已填写的非必填项
+            if(item.required || (!item.required && (item.val || String(item.val) === '0'))){
+              
+              if(item.required && !item.val){
+                requiredFiledsRight = false;
+                _this.$set(_this.formData.formInputs[index],'status','error');
+              }
+
+              //存在正则时候直接使用正则验证
+              if(item.reg && this.regs[item.reg]){
+                let regFun = this.regs[item.reg];
+                if(regFun(item.val) === 0){
+                  if(item.required){
+                    requiredFiledsRight = false;
+                  }else{
+                    notRequiredHasDataRight = false;
+                  }
+                  _this.$set(this.formData.formInputs[index],'status','error');
+                }
+              }
+
+              // 不存在正则时,判断最大长度和最小长度
+              else if(!item.reg ){
+                // 存在最小长度
+                if((item.minlength || item.minlength === 0) && item.val && item.val.length && item.val.length < item.minlength){
+                  if(item.required){
+                    requiredFiledsRight = false;
+                  }else{
+                    notRequiredHasDataRight = false;
+                  }
+                  _this.$set(this.formData.formInputs[index],'status','error');
+                }
+                // 存在最大长度
+                if((item.maxlength || item.maxlength === 0) && item.val && item.val.length && item.val.length > item.maxlength){
+                  if(item.required){
+                    requiredFiledsRight = false;
+                  }else{
+                    notRequiredHasDataRight = false;
+                  }
+                  _this.$set(this.formData.formInputs[index],'status','error');
+                }
+              }
+
+            }
+              
+            
+            //把当前的formIputs修改成http提交数据的格式
+            if(isMoment(item.val)){
+              //val为moment格式
+              postResultObj[item.key] = _this.moment(item.val).format('YYYY-MM-DD');
+            } else if(item.otherType === 'addressSelect'){
+              postResultObj[item.key] = item.val ? item.val.join('.') : void 0;
+            } else if(item.otherType === 'searchSelect' && item.mode){
+              //可输入搜索多选
+              postResultObj[item.key] = item.val ? item.val.join(',') : void 0;
+            } else{
+              postResultObj[item.key] = item.val;
+            }
         }
+
       });
-      console.log(postResultObj);
-      return { requiredFiledsRight, notRequiredHasDataRight, resultData:this.formData.formInputs, postObj: postResultObj };
+
+      // 返回需要的数据
+      return { 
+        requiredFiledsRight, 
+        notRequiredHasDataRight, 
+        resultData:this.formData.formInputs, 
+        postObj: postResultObj ,
+        isRight:requiredFiledsRight && notRequiredHasDataRight,
+      };
+
     },
 
     //重置按钮操作
     resetForm() {
       this.formData.formInputs.forEach((item)=>{
-        item.val = void 0;
-        item.status = void 0;
+        if(!item.disabled){
+          item.val = void 0;
+          item.status = void 0;
+        }
+        
       })
       // this.form.resetFields();
     },
@@ -392,7 +429,13 @@ export default {
                   }
 
                   // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
-                  else if(itemData.name === 'companyId' && input.name === 'companyNum' && resultObj.name === 'val'){
+                  else if(
+                    (itemData.name === 'transferCompanyId' || 
+                    itemData.name === 'companyId') && 
+                    (input.name === 'transferCompanyNum' || 
+                    input.name === 'companyNum') && 
+                    resultObj.name === 'val'
+                  ){
                     _this.formData.formInputs[index][resultObj.name] = void 0;
                     // 将匹配的下拉框的 itemCode 赋值
                     itemData.children.forEach(cr => {
@@ -402,7 +445,13 @@ export default {
                     });
                   }
                   // 特殊项处理 name : companyNum -> recordInfo 且关联项为 companyId
-                  else if(itemData.name === 'companyNum' && input.name === 'companyId' && resultObj.name === 'val'){
+                  else if(
+                    (itemData.name === 'companyNum' ||
+                    itemData.name === 'transferCompanyNum') && 
+                    (input.name === 'companyId' || 
+                    input.name === 'transferCompanyId') && 
+                    resultObj.name === 'val'
+                  ){
                     // 将输入的值 匹配下拉框
                     let hasMatched = false;
                     input.children.forEach((row,j) => {
@@ -742,15 +791,15 @@ export default {
       else if(!currInput.reg ){
         
         // 存在最小长度
-        if(isRight && (!!currInput.minlength || currInput.minlength === 0) && currInput.val.length < currInput.minlength){
+        if(isRight && currInput.val && (!!currInput.minlength || currInput.minlength === 0) && currInput.val.length < currInput.minlength){
           isRight = false;
         }
         // 存在最大长度
-        if(isRight && (!!currInput.maxlength || currInput.maxlength === 0) && currInput.val.length > currInput.maxlength){
+        if(isRight && currInput.val && (!!currInput.maxlength || currInput.maxlength === 0) && currInput.val.length > currInput.maxlength){
           isRight = false;
         }
       }
-      
+
       // 正确或失败后的操作
       if(!isRight && currInput.required ){
         // this.formData.formInputs[inputIndex].status = 'error';

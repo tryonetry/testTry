@@ -5,7 +5,7 @@
     <RecordInfo ref="accountInfoForm">
       <a-row slot="operationAction">
         <a-col :span="24" align="middle">
-          <a-button class="btnMargin" type="primary" @click="submitInfoBtn">立即提交</a-button>
+          <a-button class="btnMargin" type="primary" @click="submitInfoBtn" :loading='confirmLoading'>立即提交</a-button>
         </a-col>
       </a-row>
     </RecordInfo>
@@ -15,7 +15,7 @@
 <script>
 
 
-import RecordInfo from "../../../components/record/record-info";
+import RecordInfo from "@/components/record/record-info";
 import moment from "moment";
 
 export default {
@@ -28,7 +28,7 @@ export default {
 
   data() {
     return {
-      
+      confirmLoading:false,
     };
   },
 
@@ -49,30 +49,29 @@ export default {
   methods: {
     moment,
     submitInfoBtn() {
-      /**
-       * 功能：表单保存按钮功能
-       */
-      let temp = {},
-      
-      currValDataArr = this.$refs.accountInfoForm.getFormSearchData(); //调子组件上的方法 获取form表单内容
-      // currValDataArr.forEach(el => {
-      //   if(el.name){
-      //     if (el.val) {
-      //       if (
-      //         el.name === "birthday" ||
-      //         el.name === "joinWorkDate" ||
-      //         el.name === "graduateDate"
-      //       ) {
-      //         temp[el.name] = this.moment(el.val);
-      //       } else {
-      //         temp[el.name] = el.val;
-      //       }
-      //     } else {
-      //       temp[el.name] = "";
-      //     }
-      //   }
-      // });
-      console.log(currValDataArr);
+
+      const _this = this;
+      let reultFormData = this.$refs.accountInfoForm.getFormSearchData(); 
+      // console.log(reultFormData)
+      if(reultFormData.isRight){
+        this.confirmLoading = true;
+        this.$http.fetchPost('fileConnect@insertPersonalArch.action',{
+          ...reultFormData.postObj,
+        })
+        .then(res => {
+          if(Number(res.code) === 0){
+            _this.$message.success('提交成功');
+          }else{
+            _this.$message.warning('抱歉,提交失败,请重试');
+          }
+        })
+        .catch(err => {
+          _this.$message.error('抱歉,网络错误,请稍后重试');
+        })
+        .finally(end => {
+          _this.confirmLoading = false;
+        })
+      }
     },
     acceptEditParams(){
       /***

@@ -14,7 +14,7 @@
           v-if="tablecheck"
           :columns="columns"
           :dataSource="tabledata"
-          :rowSelection="{onSelect:onSelect, onSelectAll:onSelectAll }"
+          :rowSelection="{onSelect:onSelect, onSelectAll:onSelectAll,getCheckboxProps:getCheckboxProps}"
           :scroll="{ x: tableWidth,y:tableHeight}"
           :pagination="false"
         >
@@ -97,7 +97,7 @@ export default {
     OrganTree,
     TableFromSearch
   },
-  props: ["initArrData", "totalCount"],
+  props: ["initArrData", "totalCount","filterTableCheck"],
   data() {
     return {
       formData: [], //表格上方form
@@ -188,6 +188,7 @@ export default {
 
   },
   created() {
+    console.log(this.filterTableCheck)
   },
   mounted() {
     const _this = this;
@@ -298,6 +299,12 @@ export default {
       //table全选
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
+
+    getCheckboxProps(record){
+      console.log(this.filterTableCheck(record))
+      return this.filterTableCheck(record);
+    },
+
     changeTableData() {
       //更新table
       this.tabledata = this.$parent.initArr.tabledataArr;
@@ -306,6 +313,9 @@ export default {
       //换页：page:当前page; pageSize:当前页得显示数据数量
       this.$emit('searchTable', this.condition, page, pageSize);
     }
+  },
+  computed:{
+    
   }
 };
 </script>

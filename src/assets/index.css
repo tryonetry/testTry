@@ -267,8 +267,8 @@ input{
   -moz-appearance: none;
 }
 .ant-table-fixed-header .ant-table-scroll .ant-table-header{
-  margin-bottom: -17px;
-  padding-bottom: 0px;
+  /* margin-bottom: -17px;
+  padding-bottom: 0px; */
 }
 
 .ant-table-header::-webkit-scrollbar{
@@ -287,4 +287,14 @@ input{
 }
 .ant-upload-list-item{
   width: 33.3%;
+}
+.ant-card-bordered{
+  width: 100%;
+}
+
+.ant-input-disabled{
+  background: #ffffff;
+}
+.ant-select-disabled .ant-select-selection{
+  background: #ffffff;
 }
