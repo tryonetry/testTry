@@ -4,26 +4,25 @@
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-        <a-button class="buttonOperate" @click="operateSceneFun">现场查(借)阅</a-button>
-        <a-button class="buttonOperate" @click="multipleOperate(1)">批量查(借)阅</a-button>
+        <a-button class="buttonOperate" @click="multipleOperate('now')">现场查(借)阅</a-button>
+        <a-button class="buttonOperate" @click="multipleOperate('batchAudit')">批量查(借)阅</a-button>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
-         <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
         <a
           v-if="slotPropsData.currRowdata.borrowState === '11'"
           href="javascript:;"
           data-type="已入库"
           class="successBtnColor"
         >已入库</a>
-        <!-- @click="operateFun(currentData=slotPropsData.currRowdata, 1)" -->
 
         <a
           v-if="slotPropsData.currRowdata.borrowState === '9'"
           href="javascript:;"
           data-type="归还"
           class="primaryBtnColor"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 'return')"
         >归还</a>
 
         <a
@@ -31,6 +30,7 @@
           href="javascript:;"
           data-type="入库"
           class="infoBtnColor"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 'putstorage')"
         >入库</a>
 
         <a 
@@ -38,18 +38,21 @@
           href="javascript:;"
           data-type="借出"
           class="warnBtnColor"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 'checkout')"
         >借出</a>
 
-        <!-- @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"         -->
         <a-popconfirm
           title="确定删除吗?"
           okText="确定"
           cancelText="取消"
+          @confirm="deleteFun(slotPropsData.currRowdata)"
         >
           <a href="javascript:;" class="errorBtnColor">删除</a>
         </a-popconfirm>
       </div>
     </TableView>
+
+
 
     <!-- 现场借出modal -->
     <div class="addModal">
@@ -57,40 +60,41 @@
         centered
         title="档案现场查(借)阅"
         :visible="sceneVisible"
-        :confirmLoading="visibleConfirmLoading"
+        :confirmLoading="sceneConfirmLoading"
         width="80%"
-        @cancel="handleCancel"
+        @cancel="sceneCancel"
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
-        :footer ="null"
+        :footer="null"
       >
-        <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" @searchTable="getSceneTableData" ref="sceneTableView">
-          <span slot="formAction">
-            <a-button class="buttonOperate" type="danger" @click="clearSceneTable">清除累计查询</a-button>
-            <a-button class="buttonOperate" @click="multipleOperate(2)">批量查(借)阅</a-button>
-          </span>
-        </TableView>
+        <!-- 现场查借阅modal -->
+        <div class="sceneBorrow">
+           <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" @searchTable="getSceneTableData" ref="sceneTableView">
+            <span slot="formAction">
+              <a-button class="buttonOperate" type="danger" @click="clearSceneTable">清除累计查询</a-button>
+              <a-button class="buttonOperate" @click="multipleOperate('batchNow')">批量查(借)阅</a-button>
+            </span>
+          </TableView>
+        </div>
       </a-modal>
     </div>
+
+    <!-- 批量查借阅modal -->
     <div class="addModal">
       <a-modal
         centered
         title="批量查(借)阅"
-        :visible="multipleVisible"
-        :confirmLoading="multipleConfirmLoading"
-        width="60%"
-        @cancel="mulitipleCancel"
-        @ok="mulitipleOk"
+        :visible="modalVisible"
+        :confirmLoading="modalConfirmLoading"
+        width="80%"
+        @cancel="handleCancel"
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
-        <div style="height:100%;overflow:auto;">
+        <!-- 批量查借阅 -->
+        <div class="batchBorrow">
           <TableFromSearch :formDataArr="multipleForm" :layout="layoutModal" ref="multipleTableForm" ></TableFromSearch>
           <div class="right" slot="otherForm">
-             <!-- msg -->
-            <div class="bundleContainer">
-                <MsgTip :msgTip="msgTip" :msgIndex="msgIndex"></MsgTip>
-            </div>
              <!-- 表格头部 -->
             <div class="materialHead">
               <ul>
@@ -134,13 +138,36 @@
                 <!-- <a-button type="primary"><a-icon type="plus" />新 增</a-button> -->
             </p>
           </div>
-          <template slot="footer">
-            <a-button key="cancel" @click="mulitipleCancel">取消</a-button>
-            <a-button key="submit" type="primary" @click="mulitipleOk">提交</a-button>
-          </template>
         </div>
+
+        <!-- 批量查借阅modal--footer操作 -->
+        <template slot="footer">
+          <a-button key="cancel" @click="handleCancel">取消</a-button>
+          <a-button key="submit" type="primary" @click="mulitipleOk">提交</a-button>
+        </template>
       </a-modal>
     </div>
+
+    <!-- 归还modal -->
+    <!-- <div class="addModal">
+      <a-modal
+        centered
+        title="批量查(借)阅"
+        :visible="modalVisible"
+        :confirmLoading="modalConfirmLoading"
+        width="80%"
+        @cancel="handleCancel"
+        :maskClosable="false"
+        style="height:85%;overflow: hidden;"
+      >
+        <TableFromSearch :formDataArr="multipleForm" :layout="layoutModal" ref="multipleTableForm" ></TableFromSearch>
+
+        <template slot="footer">
+          <a-button key="cancel" @click="handleCancel">取消</a-button>
+          <a-button key="submit" type="primary" @click="mulitipleOk">提交</a-button>
+        </template>
+      </a-modal>
+    </div> -->
   </div>
 </template>
 
@@ -148,12 +175,11 @@
 import TableView from "@/components/tableView";
 import TableFromSearch from '@/components/tableFormSearch';
 // import EditTableCell from '../../components/storeroom/EdittableCell';
-import MsgTip from '@/components/msgTip';
 import regs from '../../utils/regexp';
 export default {
   name: "RecordCheck",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, TableFromSearch,MsgTip },
+  components: { TableView, TableFromSearch },
   props: [""],
 
   data() {
@@ -385,8 +411,10 @@ export default {
         tabledataArr: []
       },
       tempCondition: {}, //临时查询条件
-      sceneVisible: false,   //现场借出modal 默认false：不显示
-      visibleConfirmLoading: false,  //现场借出modal 默认false：不加载
+      sceneVisible:false,   //现场借出modal 默认false：不显示
+      sceneConfirmLoading : false,  //现场借出modal 默认false：不加载
+      modalVisible: false,   //批量查借阅modal 默认false：不显示
+      modalConfirmLoading: false,  //批量查借阅modal 默认false：不加载
       sceneTableTotalNum: 0,  //档案现场借出总页数：默认为0
       sceneLoanDataInitArr:{
         //档案现场借出传得tableView数据
@@ -517,24 +545,31 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
+            title: "存档日期",
+            dataIndex: "uCreateDate",
+            key: "uCreateDate",
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "档案位置号",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
+            fixed:'right',
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "存档日期",
-            dataIndex: "uCreateDate",
-            key: "uCreateDate",
+            title: "是否在库",
+            dataIndex: "isInwareName",
+            key: "isInwareName",
+            fixed:'right',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
         tabledataArr: []
       },
       tempSceneCondition: {},  //档案现场查借阅临时查询条件
-      multipleVisible: false,  //批量查借阅modal 默认false：不显示
-      multipleConfirmLoading:false,  ////批量查借阅modal 默认false：不加载
       multipleForm: {
         formInputs:[
           {
@@ -630,8 +665,13 @@ export default {
             title: '函件上传',
             otherType: 'upload',
             multiple: false,
-            action:'',
-            listType: 'text',
+            action:this.$targetHost + 'archBorrow@uploadBusinessLetter.action',
+            listType: 'picture',
+            accept: '.jpg, .png, .gif, .bmp, .jpeg',
+            val: void 0,
+            name: 'file',
+            key: 'file',
+            postname: 'file',
             colWidth: [12, 24]
           }
         ]
@@ -683,8 +723,6 @@ export default {
         }
       ],
       borrowTableData:[],
-      msgTip: '', 
-      msgIndex: 0,
       listDirectory: [],
       currentIndex: 0,
       currentListId:void 0,
@@ -694,6 +732,7 @@ export default {
       currentRowRight:true,
       mulitipleOperateVal: null, //批量操作功能：1--> 现场直接借出，不经过申请； 2-->客户提出申请后再借出；
       archiveIdStr: '',  //批量操作返回的符合的id字符串
+
     };
   },
 
@@ -740,7 +779,7 @@ export default {
             tempTableData.forEach((element, index) => {
                this.initArr.tabledataArr.push({
                    num: (pageNum - 1) * limitNum + index + 1,
-                   key: element.a01000,
+                   key: element.id,
                    a0100a: element.a0100a,
                    a0101: element.a0101,
                    a0104: element.a0104 === '1' ? '男' : '女',
@@ -769,17 +808,10 @@ export default {
           this.$message.error('抱歉，网络异常！');
         });
     },
-    
-    operateSceneFun(){
-      /**
-       * 功能：现场借出功能
-       */
-      this.sceneVisible = true;
-    },
 
     getSceneTableData(sceneCondition, pageNum, limitNum){
       /**
-       * 功能：档案现场借出：根据当前查询条件：sceneCondition，getTable数据
+       * 功能：现场查借阅moda--查询操作：根据当前查询条件：sceneCondition，getTable数据
        * 参数：sceneCondition:form查询结果：{}
        */
       this.tempSceneCondition = sceneCondition;
@@ -806,7 +838,9 @@ export default {
               a0101: element.a0101,
               a0184: element.a0184,
               uCreateDate: element.uCreateDate,
-              shelvesNo: element.shelvesNo
+              shelvesNo: element.shelvesNo,
+              isInware: element.isInware,
+              isInwareName: element.isInware === '0' ? '在库' : (element.isInware === '1' ? '已出库' : '已转出')
             })
           });
         } else{
@@ -819,7 +853,7 @@ export default {
     
     clearSceneTable(){
       /**
-       * 功能：档案现场查借阅重置
+       * 功能：现场查借阅modal---清除累计查询操作功能：清空tableformSearch以及table里面的累计查询
        */
       //清空当前tableFormsearch内容
       this.sceneLoanDataInitArr.formData.formInputs.forEach(item => {
@@ -843,70 +877,102 @@ export default {
         this.sceneLoanDataInitArr.tabledataArr = [];
       })
     },
-    
+
     multipleOperate(currOpeVal){
       /***
-       * 功能:批量查借阅功能
-       * 参数：currOpeVal:当前点击的批量查借阅操作: 1--> 现场直接借出，不经过申请； 2-->客户提出申请后再借出；
+       * 功能:现场查借阅、批量查借阅按钮功能
+       * 参数：currOpeVal:当前点击的操作:now-->现场查借阅modal;  batchAudit--> 批量查借阅：客户提出申请后再借出； batchNow-->批量查借阅：现场直接借出，不经过申请；
        */
-      this.mulitipleOperateVal = currOpeVal;
-      if(Number(currOpeVal) === 1){
-        if(this.checkTableData && this.checkTableData.length > 0){
-          let isOperateObj = this.isMultipleOperateFun(this.checkTableData);
-          console.log(isOperateObj);
-          this.archiveIdStr = isOperateObj['archiveIdStr'];
+      const _this = this;
+      _this.mulitipleOperateVal = currOpeVal;
+      if(currOpeVal === 'batchAudit'){
+        //批量查借阅操作：客户提出申请后,再借出
+        if(_this.checkTableData && _this.checkTableData.length > 0){
+          let isOperateObj = _this.isMultipleOperateFun(_this.checkTableData, '8');
+          _this.archiveIdStr = isOperateObj['archiveIdStr'];
           if(isOperateObj['isOperate']){
-             this.multipleVisible = true;
+             _this.modalVisible = true;
           } else{
-            this.$message.error('请选择借出状态为:待借出，进行批量查借阅操作！')
+            _this.$message.error('请选择借出状态为:待借出，进行批量查借阅操作！');
           }
         } else{
-          this.$message.error('请至少选择一条数据进行批量查借阅操作！')
+          _this.$message.error('请至少选择一条数据进行批量查借阅操作！');
         }
-        
-      } else{
-        console.log('客户提出申请后,再借出');
-        console.log(this.checkTableData);
+      } else if(currOpeVal === 'batchNow'){
+        //现场查借阅--批量查借阅操作：不需要申请
+        if(_this.checkTableData.length > 0){
+          console.log(_this.checkTableData);
+          let isOperateObj = _this.isMultipleOperateFun(_this.checkTableData, '0');
+          _this.archiveIdStr = isOperateObj['archiveIdStr'];
+          console.log(isOperateObj);
+          if(isOperateObj['isOperate']){
+            this.modalVisible = true;
+          } else{
+            _this.$message.error('请选择状态为：在库，进行批量查借阅操作！');
+          }
+        } else {
+          _this.$message.error('请至少选择一条数据进行批量查借阅操作！');
+        }
+      } else if(currOpeVal === 'now') {
+        //现场借查借阅--打开modal
+        _this.sceneVisible = true;
+        _this.clearSceneTable();
+        _this.$store.dispatch("getinfoTableCheckData", []);
       }
     },
 
-    isMultipleOperateFun(tempDataArr){
+    isMultipleOperateFun(tempDataArr, batchStatus){
       /**
        * 功能:根据当前选择数据判断是否可以执行批量查借阅操作
+       * 参数：tempDataArr：当前checkTable选择的数据
        */
       let tempObj = {
          'isOperate' : false,
          'archiveIdStr': ''
       }, isOperate = false, archiveIdStr ='';
-      tempDataArr.forEach(element => {
-        if(element.borrowState === '8'){
-          tempObj.isOperate = true;
-          tempObj.archiveIdStr += element.key;
-        } else{
-          tempObj.isOperate = false;
-          return;
-        }
-      });
+      if(batchStatus === '8'){
+        //批量操作---需申请
+        tempDataArr.forEach(element => {
+          if(element.borrowState === batchStatus){
+            tempObj.isOperate = true;
+            tempObj.archiveIdStr += element.key;
+          } else{
+            tempObj.isOperate = false;
+            return;
+          }
+        });
+      } else if(batchStatus === '0'){
+        //现场查借阅--批量操作--不需要申请
+        tempDataArr.forEach(element => {
+          if(element.isInware === batchStatus){
+            tempObj.isOperate = true;
+            tempObj.archiveIdStr += element.key;
+          } else{
+            tempObj.isOperate = false;
+            return;
+          }
+        });
+      }
+      
       return tempObj
     },
 
-    handleCancel(){
-      //modal默认关闭
-      this.sceneVisible = false
+    sceneCancel(){
+      //现场查借阅modal
+      this.sceneVisible = false;
     },
-    mulitipleCancel(){
-      this.multipleVisible = false;
+    handleCancel(){
+      //批量查借阅---modal默认关闭
+      this.modalVisible = false
     },
 
-    
-  
     addNewMaterial(){
     // 添加新的查借阅人
       this.listDirectory.push({...this.initEditState});
     },
 
     bundleClick(index,columnName,el){
-      // 切换状态
+      // 切换table状态为edit状态
       const { currentIndex } = this;
       this.resetAllState();
       this.listDirectory[index].inEdit[columnName] = true;
@@ -927,11 +993,15 @@ export default {
     },
 
     deleteMaterial(index){
-      // 删除材料
+      // 删除查借阅人
       this.listDirectory.splice(index,1);
     },
     
     isRegIdNum(val, index, key, event){
+      /**
+       * 功能：输入查借阅人身份证号验证
+       * 参数：val:当前input值； index:当前row的index； key：当前列的key值； event：当前target
+       */
       if(val){
         let isReg = regs.testid(val);
         if(isReg){
@@ -952,27 +1022,55 @@ export default {
       }
     },
     mulitipleOk(){
+      /**
+       * 功能：批量查借阅modal提交功能
+       */
       let formResult = this.$refs.multipleTableForm.getFormData();
       let currPostObj = formResult['postObj'];
       currPostObj.strArr = this.archiveIdStr;
       if(formResult['notRequiredHasDataRight'] && formResult['requiredFiledsRight']){
-        if(this.listDirectory.length >=2){
+        if(this.listDirectory.length >=2){   //判断table：表格数据必须大于2条
           let tempListTableArr = [...this.listDirectory];
-          let borrorwTableObj = this.getNewBorrowTable(tempListTableArr);
-          if(borrorwTableObj['tempFalg']){
-            console.log(borrorwTableObj['borrowData']);
-            currPostObj['borrowers'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrower');
-            currPostObj['borrowerTelNums'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrowerTelNum');
-            
-            console.log(currPostObj);
-            if(this.mulitipleOperateVal){
-              //1--> 现场直接借出，不经过申请；
-              currPostObj.batch = '1';
-              console.log(currPostObj);
+          let borrorwTableObj = this.getNewBorrowTable(tempListTableArr); 
+          if(borrorwTableObj['tempFalg']){  //判断table 表格已填数据必填项不能为空
+            currPostObj['borrowers'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrower');   //table：查借阅人
+            currPostObj['borrowerTelNums'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrowerTelNum');  //table:查借阅人身份证号码
+            if(this.mulitipleOperateVal === 'batchAudit'){   //判断执行---批量查借阅操作:batchAudit-->批量查借阅； batchNow-->批量查借阅现场查(借)阅--批量查借阅；
+              //操作为batchAudit-->客户提出申请后再借出； 
+              currPostObj.bacch = '0';
+              this.$http.fetchPost('archBorrow@archBorrow.action', currPostObj).then(res => {
+                if(Number(res.code) === 0){
+                  this.$message.success('批量查(借)阅成功！');
+                  this.getTableData(this.tempCondition, 1, 10);
+                  setTimeout(() => {
+                    this.modalVisible = false;
+                    this.modalConfirmLoading = false;
+                  }, 2000);
+                } else{
+                  this.$message.error('抱歉，操作失败，请刷新后重试！');
+                }
+              }).catch(error => {
+                  this.$message.error('抱歉，网络异常！');
+              })
             } else{
-              // 2-->客户提出申请后再借出；
-              currPostObj.batch = '0';
-              console.log(currPostObj);
+              // 操作为batchNow-->现场直接借出，不经过申请；
+              currPostObj.bacch = '1';
+              this.$http.fetchPost('archBorrow@archBorrowNow.action', currPostObj).then(res => {
+                if(Number(res.code) === 0){
+                  this.$message.success('批量查(借)阅成功！');
+                  this.getTableData(this.tempCondition, 1, 10);
+                  setTimeout(() => {
+                    this.sceneVisible = false;
+                    this.sceneConfirmLoading = false;
+                    this.modalVisible = false;
+                    this.modalConfirmLoading = false;
+                  }, 2000);
+                } else{
+                  this.$message.error('抱歉，操作失败，请刷新后重试！');
+                }
+              }).catch(error => {
+                  this.$message.error('抱歉，网络异常！');
+              })
             }
 
           } else{
@@ -987,7 +1085,8 @@ export default {
 
     getNewBorrowTable(listDirectoryArr){
       /**
-       * 功能：验证当前表格数据不能为空
+       * 功能：验证当前表格数据不能为空并且当前表格里身份证号码也都通过验证
+       * 参数：listDirectoryArr:checkTable选择得数据
        */
       const _this = this;
       let  tempFalg = true, newData = [];
@@ -995,7 +1094,7 @@ export default {
         delete item.idNum;
         delete item.inEdit;
         delete item.name;
-        if(item.borrower && item.borrowerTelNum){
+        if(item.borrower && item.borrowerTelNum && regs.testid(item.borrowerTelNum)){
           tempFalg =  true;
           newData.push(item);
         } else{
@@ -1006,6 +1105,10 @@ export default {
     },
 
     borrowFun(dataArr, keyVal){
+      /**
+       * 功能：批量查借阅table：根据需要的字段名重组数据为字符串返回
+       * 参数：dataArr：当前table数据； keyVal：当前需要组为字符串得字段名
+       */
       let currStr = '';
       dataArr.forEach(el => {
         for(let key in el){
@@ -1015,7 +1118,42 @@ export default {
         }
       });
       return currStr.substr(0, currStr.length - 1);
-    }  
+    },
+
+    operateFun(currRowData, operateVal){
+      /**
+       * 功能：table表里得操作
+       * 参数：currRowData:当前row数据； operateVal：当前操作
+       */
+      if(operateVal === 'return'){
+        console.log('归还');
+      } else if(operateVal === 'putstorage'){
+        console.log('入库');
+      } else if(operateVal === 'checkout'){
+        console.log('借出');
+      }
+    },
+
+    deleteFun(currentRowData){
+      /**
+       * 功能：删除操作
+       * 参数：currentRowData：当前行数据
+       */
+      if(currentRowData['key']){
+        this.$http.fetchPost('archBorrow@deleteArchBorrow.action', {
+          id: currentRowData['key']
+        }).then(res => {
+          if(Number(res.code) === 0){
+            this.$message.success('删除成功！');
+            this.getTableData(this.tempCondition, 1, 10);
+          } else{
+            this.$message.error('抱歉，删除失败，请刷新后重试！');
+          }
+        }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
+        })
+      }
+    }
   },
   
 
@@ -1156,5 +1294,8 @@ export default {
     color: #2d8cf0;
 }
 
-
+.batchBorrow{
+  height:100%;
+  overflow:auto;
+}
 </style>

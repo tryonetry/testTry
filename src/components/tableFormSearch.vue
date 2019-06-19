@@ -150,6 +150,7 @@
           :multiple="item.multiple"
           :action='item.action'
           :list-type="item.listType"
+          :accept="!item.accept ? '': item.accept"
            @change="uploadChange"
            allowClear
         >
