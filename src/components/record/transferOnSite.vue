@@ -3,8 +3,8 @@
 <div class="outerContainer">
 
     <!-- 查询条件 -->
-    <FormHeader :formTitle='"查询条件"'></FormHeader>
-    <div class="detailContent searchCoditions">
+    <FormHeader :formTitle='"查询条件"' v-if='!isAction'></FormHeader>
+    <div class="detailContent searchCoditions" v-if='!isAction'>
         <!-- 查询条件 -->
         <p>
             <span>身份证号/社保卡号:</span>
@@ -37,14 +37,16 @@
     <!-- 基本信息 -->
     <FormHeader :formTitle='"存档人员基本信息"'></FormHeader>
     <div class="detailContent">
-        <ShowBasicInfo :baseData="baseData" :cardTitle="cardTitle"></ShowBasicInfo>
+        <ShowBasicInfo :baseData="baseData" :cardTitle="cardTitle" :isAction='isAction'></ShowBasicInfo>
     </div>
 
     <!-- 调转信息 -->
     <FormHeader :formTitle='isInner ? "调转信息" : "转出信息"'></FormHeader>
     <div class="detailContent">
         <TableFromSearch 
-            :formDataArr='isInner ? formDataInner : ( !isEnterprice ? formDataNotInner : formDataEnterprice) '>
+            :formDataArr='isAction ? formDataAction : isInner ? formDataInner : !isEnterprice ? formDataNotInner : formDataEnterprice'
+            ref="tableForm"
+        >
         </TableFromSearch>
     </div>
 
@@ -52,6 +54,15 @@
 </template>
 
 <script>
+
+// 调转方式到委托单位名称和委托单位编号的显示
+function UnitNatureToCompanyShow(val){
+  if(val !== '2'){
+    return [{name:'isHide',data:false}]
+  }else{
+    return [{name:'isHide',data:true}]
+  }
+}
 
 // 委托单位名称 To 委托单位编号
 function companyNameToNum(codeVal){
@@ -87,12 +98,13 @@ import FormHeader from "../formHeader";
 import ShowBasicInfo from '../showBasicInfo';
 import TableFromSearch from "../tableFormSearch";
 import moment from "moment";
+import { setTimeout } from 'timers';
 
 export default {
     name:"TransferOnSite",
     //import引入的组件需要注入到对象中才能使用
     components: { FormHeader, ShowBasicInfo, TableFromSearch },
-    props:["isInner","personData"],
+    props:["isInner","isAction","actionData","personData","showRandom","handleCancel","requestData"],
 
     data() {
         return {
@@ -100,7 +112,7 @@ export default {
             saveRecordNum:void 0,
             notInnerData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
-                { label:"性别", val:void 0 ,name:'a0104'},
+                { label:"性别", val:void 0 ,name:'a0104',hasDataNotShow:true},
                 { label:"身份证号/社保卡号", val:void 0 ,name:'a0184'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"出生日期", val:void 0 ,name:'a0107'},
@@ -108,12 +120,12 @@ export default {
                 { label:"最高学历", val:void 0 ,name:'a0834'},
                 { label:"存档性质", val:void 0 ,name:'personType'},
                 { label:"存档日期", val:void 0 ,name:'uCreateDate'},
-                { label:"存档状态", val:void 0 ,name:'isInware'},
+                { label:"存档状态", val:void 0 ,name:'isInware',hasDataNotShow:true},
                 { label:"联系电话", val:void 0 ,name:'a3707C'},
                 { label:"现居住地址", val:void 0 ,name:'a3711'},
-                { label:"委托存档单位名称", val:void 0 ,name:'companyId'},
-                { label:"委托存档单位编号", val:void 0 ,name:'companyNum'},
-                { label:"缺少材料", val:void 0 ,name:'lackMaterials'},
+                { label:"委托存档单位名称", val:void 0 ,name:'companyId',hasDataNotShow:true},
+                { label:"委托存档单位编号", val:void 0 ,name:'companyNum',hasDataNotShow:true},
+                { label:"缺少材料", val:void 0 ,name:'lackMaterials',hasDataNotShow:true},
             ],
             innerData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
@@ -141,9 +153,125 @@ export default {
                 { label:"委托存档单位", val:void 0 ,name:'companyId'},
                 { label:"委托存档编号", val:void 0 ,name:'companyNum'},
             ],
+            id:null,
             cardTitle:'',
             baseData:null,
             isEnterprice:false,
+            // 操作转出
+            formDataAction:{
+                formInputs:[
+                    {
+                        title: '申请人',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入申请人姓名",
+                        key: "applyName",
+                        name: "applyName",
+                        val: void 0,
+                        postname: "applyName",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入正确的申请人姓名',
+                        status: '',
+                        disabled:true,
+                    },
+                    {
+                        title: '身份证号/社保卡号',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入申请人身份证号/社保卡号",
+                        key: "applyIdNum",
+                        name: "applyIdNum",
+                        val: void 0,
+                        postname: "applyIdNum",
+                        maxlength: 18,
+                        minlength: 15,
+                        reg: 'testid',
+                        tip: '* 请输入正确的申请人身份证号/社保卡号',
+                        status: '',
+                        disabled:true,
+                    },
+                    {
+                        title: "转出日期",
+                        otherType: "date",
+                        required: false,
+                        placeholder: "请选择申请日期",
+                        key: "transferOutDate",
+                        name: "transferOutDate",
+                        val: moment(new Date()),
+                        postname: "transferOutDate",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请选择申请日期",
+                        disabled:true,
+                        status: ""
+                    },
+                    {
+                        title: "转出原因",
+                        otherType: "select",
+                        required: true,
+                        placeholder: "请选择转出原因",
+                        name: "transferOutCause",
+                        key: "transferOutCause",
+                        val: void 0,
+                        postname: "transferOutCause",
+                        tip:'* 请选择转出方式',
+                        children: [],
+                        status: "",
+                        disabled:true,
+                    },
+                    {
+                        title: '转往单位名称',
+                        type: "text",
+                        required: true,
+                        placeholder: "请输入转往单位名称",
+                        key: "archiveDirectionOrg",
+                        name: "archiveDirectionOrg",
+                        val: void 0,
+                        postname: "",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入转往单位名称',
+                        status: '',
+                        disabled:true,
+                    },
+                    {
+                        title: '转往单位地址',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入转往单位地址",
+                        key: "archiveDirectionAddress",
+                        name: "archiveDirectionAddress",
+                        val: void 0,
+                        postname: "archiveDirectionAddress",
+                        maxlength: 40,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入转往单位地址',
+                        status: '',
+                        disabled:true,
+                    },
+                    {
+                        title: "备注",
+                        otherType: "textarea",
+                        required: false,
+                        placeholder: "请输入备注",
+                        key: "remarks",
+                        name: "remarks",
+                        val: void 0,
+                        postname: "remarks",
+                        maxlength: 200,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请输入备注",
+                        status: "",
+                        disabled:true,
+                    }
+                ]
+            },
             // 非内部调转
             formDataNotInner: {
                 // inputs
@@ -153,10 +281,10 @@ export default {
                         type: "text",
                         required: true,
                         placeholder: "请输入申请人姓名",
-                        key: "name",
-                        name: "name",
+                        key: "applyName",
+                        name: "applyName",
                         val: void 0,
-                        postname: "",
+                        postname: "applyName",
                         maxlength: 20,
                         minlength: 0,
                         reg: '',
@@ -168,10 +296,10 @@ export default {
                         type: "text",
                         required: true,
                         placeholder: "请输入申请人身份证号/社保卡号",
-                        key: "name",
-                        name: "name",
+                        key: "applyIdNum",
+                        name: "applyIdNum",
                         val: void 0,
-                        postname: "",
+                        postname: "applyIdNum",
                         maxlength: 18,
                         minlength: 15,
                         reg: 'testid',
@@ -183,10 +311,10 @@ export default {
                         type: "text",
                         required: false,
                         placeholder: "请输入申请人电话号码",
-                        key: "name",
-                        name: "name",
+                        key: "applyTemnum",
+                        name: "applyTemnum",
                         val: void 0,
-                        postname: "",
+                        postname: "applyTemnum",
                         maxlength: 11,
                         minlength: 11,
                         reg: 'testMobile',
@@ -196,12 +324,12 @@ export default {
                     {
                         title: '邮政编码',
                         type: "text",
-                        required: false,
+                        required: true,
                         placeholder: "请输入邮政编码",
-                        key: "name",
-                        name: "name",
+                        key: "postalCode",
+                        name: "postalCode",
                         val: void 0,
-                        postname: "",
+                        postname: "postalCode",
                         maxlength: 6,
                         minlength: 6,
                         reg: 'testZipCode',
@@ -213,8 +341,8 @@ export default {
                         otherType: "date",
                         required: false,
                         placeholder: "请选择申请日期",
-                        key: "a0107",
-                        name: "a0107",
+                        key: "applyDate",
+                        name: "applyDate",
                         val: moment(new Date()),
                         postname: "a0107",
                         maxlength: 20,
@@ -228,11 +356,11 @@ export default {
                         title: "转出原因",
                         otherType: "select",
                         required: true,
-                        placeholder: "请选择转出方式",
-                        name: "source",
-                        key: "source",
+                        placeholder: "请选择转出原因",
+                        name: "transferOutCause",
+                        key: "transferOutCause",
                         val: void 0,
-                        postname: "source",
+                        postname: "transferOutCause",
                         tip:'* 请选择转出方式',
                         children: [],
                         status: ""
@@ -242,8 +370,8 @@ export default {
                         type: "text",
                         required: false,
                         placeholder: "请输入原档案管理机构",
-                        key: "name",
-                        name: "name",
+                        key: "originalArchiveOrg",
+                        name: "originalArchiveOrg",
                         val: void 0,
                         postname: "",
                         maxlength: 40,
@@ -257,8 +385,8 @@ export default {
                         type: "text",
                         required: true,
                         placeholder: "请输入转往单位名称",
-                        key: "name",
-                        name: "name",
+                        key: "archiveDirectionOrg",
+                        name: "archiveDirectionOrg",
                         val: void 0,
                         postname: "",
                         maxlength: 40,
@@ -272,10 +400,10 @@ export default {
                         type: "text",
                         required: false,
                         placeholder: "请输入转往单位地址",
-                        key: "name",
-                        name: "name",
+                        key: "archiveDirectionAddress",
+                        name: "archiveDirectionAddress",
                         val: void 0,
-                        postname: "",
+                        postname: "archiveDirectionAddress",
                         maxlength: 40,
                         minlength: 0,
                         reg: '',
@@ -287,10 +415,10 @@ export default {
                         otherType: "addressSelect",
                         required: true,
                         placeholder: "请选择转往单位行政区划",
-                        key: "a0111D",
-                        name: "a0111D",
+                        key: "archiveDirectionArea",
+                        name: "archiveDirectionArea",
                         val: void 0,
-                        postname: "a0111D",
+                        postname: "archiveDirectionArea",
                         maxlength: 100,
                         minlength: 0,
                         reg: "",
@@ -322,10 +450,10 @@ export default {
                         otherType: "date",
                         required: false,
                         placeholder: "请选择调转日期",
-                        key: "name",
-                        name: "name",
+                        key: "transferDate",
+                        name: "transferDate",
                         val: moment(new Date()),
-                        postname: "",
+                        postname: "transferDate",
                         maxlength: 20,
                         minlength: 0,
                         reg: '',
@@ -338,17 +466,17 @@ export default {
                         otherType: "select",
                         required: true,
                         placeholder: "请选择调转方式",
-                        name: "source",
-                        key: "source",
-                        val: void 0,
-                        postname: "source",
+                        name: "transferType",
+                        key: "transferType",
+                        val: "02",
+                        postname: "transferType",
                         tip:'* 请选择调转方式',
                         children: [
                             {itemCode:"01",itemName:"集体转集体"},
                             {itemCode:"02",itemName:"集体转个人"},
                             {itemCode:"03",itemName:"个人转集体"},
                         ],
-                        disabled:false,
+                        disabled:true,
                         status: ""
                     },
                 ]
@@ -361,10 +489,10 @@ export default {
                         otherType: "date",
                         required: false,
                         placeholder: "请选择调转日期",
-                        key: "name",
-                        name: "name",
+                        key: "transferDate",
+                        name: "transferDate",
                         val: moment(new Date()),
-                        postname: "",
+                        postname: "transferDate",
                         maxlength: 20,
                         minlength: 0,
                         reg: '',
@@ -377,54 +505,56 @@ export default {
                         otherType: "select",
                         required: true,
                         placeholder: "请选择调转方式",
-                        name: "source",
-                        key: "source",
+                        name: "transferType",
+                        key: "transferType",
                         val: void 0,
-                        postname: "source",
+                        postname: "transferType",
                         tip:'* 请选择调转方式',
                         children: [
-                            {itemCode:"01",itemName:"集体转集体"},
-                            {itemCode:"02",itemName:"集体转个人"},
-                            {itemCode:"03",itemName:"个人转集体"},
+                            {itemCode:"1",itemName:"集体转集体"},
+                            {itemCode:"2",itemName:"集体转个人"},
+                            {itemCode:"3",itemName:"个人转集体"},
                         ],
+                        connectTo:['transferCompanyId','transferCompanyNum'], //关联到委托单位编号
+                        connectToFun:[UnitNatureToCompanyShow,UnitNatureToCompanyShow], 
                         disabled:false,
                         status: ""
                     },
                     {
                         title: "委托存档单位名称",
                         otherType: "searchSelect",
-                        required: false,
+                        required: true,
                         placeholder: "请选择委托存档单位名称",
-                        key: "companyId",
-                        name: "companyId",
+                        key: "transferCompanyId",
+                        name: "transferCompanyId",
                         val: void 0,
-                        postname: "companyId",
+                        postname: "transferCompanyId",
                         maxlength: 40,
                         minlength: 0,
                         reg: "",
                         tip: "* 请选择委托存档单位名称",
                         children:[],
                         status: "",
-                        connectTo:['companyNum'], //关联到委托单位编号
+                        connectTo:['transferCompanyNum'], //关联到委托单位编号
                         connectToFun:[companyNameToNum], 
                         disabled:false,
                     },
                     {
                         title: "委托存档单位编号",
                         type: "text",
-                        required: false,
+                        required: true,
                         placeholder: "请输入委托存档单位编号",
-                        key: "companyNum",
-                        name: "companyNum",
+                        key: "transferCompanyNum",
+                        name: "transferCompanyNum",
                         val: void 0,
-                        postname: "companyNum",
+                        postname: "transferCompanyNum",
                         maxlength: 40,
                         minlength: 0,
                         reg: "",
                         tip: "* 请输入委托存档单位编号",
                         disabled:false,
                         status: "",
-                        connectTo:['companyId'], //关联到委托单位名称
+                        connectTo:['transferCompanyId'], //关联到委托单位名称
                         connectToFun:[companyNumToName],
                     },
                     {
@@ -444,7 +574,6 @@ export default {
                     }
                 ]
             },
-            
         };
     },
 
@@ -453,17 +582,44 @@ export default {
 
     //监控data中的数据变化
     watch: {
-        //obj:{
-        //    handler:function(val,oldval){
-        //        
-        //    },
-        //    deep:true,//深度监听
-        //}
+        showRandom:{
+            handler:function(val){
+                if(!this.isInner){
+                    this.isEnterprice = false;
+                    this.clearBaseInfoData('notInnerData');
+                    if(this.isAction){
+                        this.transferOutShow();
+                    }
+                }else{
+                    console.log(1)
+                    this.clearBaseInfoData('innerData');
+                }
+            },
+        }
     },
 
     //方法集合
     methods: {
-        // 获取数据
+
+        // 清空基本信息数据
+        clearBaseInfoData(baseDataName){
+            this.handleData(baseDataName,null);
+            this.id = null;
+        },
+
+        // 清除 form数据
+        claerForm(dataName){
+            this[dataName].formInputs.forEach(item => {
+                if(!item.disabled){
+                    Object.assign(item,{val:void 0,status:''});
+                    if(item.isHide){
+                        Object.assign(item,{isHide:false});
+                    }
+                }
+            })
+        },
+
+        // 查询数据
         fetchData(){
             const _this = this;
             let fetchUrl = this.isInner ? 'personalArch@getPersonalArchByIdNumAndName.action':'archTransferOut@getPersonalArchByNumAndName.action';
@@ -474,52 +630,233 @@ export default {
                 if(Number(res.code) === 0 && res.data){
                     //数据处理
                     if(!_this.isInner){
+                        // 非内部调转
                         _this.handleData('notInnerData',res.data);
                     }else{
                         _this.handleData('innerData',res.data);
                     }
                 }else{
-                    _this.$message.error('查询失败或档案信息不存在!')
+                    _this.$message.error('查询失败或档案信息不存在!');
+                    _this.isInner ? _this.clearBaseInfoData('innerData') : _this.clearBaseInfoData('notInnerData');
                 }
             }).catch(err => {
-                _this.$message.error('抱歉,网络异常,请稍后重试')
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+                _this.isInner ? _this.clearBaseInfoData('innerData') : _this.clearBaseInfoData('notInnerData');
             });
         },
 
         // 处理数据
         handleData(dataName,getedData){
-            if(getedData.personType.split('-')[1] === '01' && !this.isInner){
+            
+            const _this = this;
+            let tempData = getedData;
+
+            if(this.isAction && getedData){
+                tempData = getedData.personalArch;
+            }
+
+            // 获取除form之外的传递后台所需的数据 比如 id 值
+            if(tempData){
+                // 非操作转出
+                if(!this.isAction){
+                    this.id = tempData.a01000;
+                }else{
+                    // 操作转出
+                    this.id = getedData.archTransferOut.id;
+                }
+            }
+
+            // 判断是否为 Enterprice
+            if(tempData && tempData.personType && tempData.personType.split('-')[1] === '01' && !this.isInner){
                 this.isEnterprice = true;
             }
+
+            // 改变 btn 的 title
+            if(!this.isInner){
+                if(this.isAction){
+                    this.$emit('sendConfirmBtnTitle',"转出");
+                }else if(this.isEnterprice){
+                    this.$emit('sendConfirmBtnTitle',"确定");
+                }else{
+                    this.$emit('sendConfirmBtnTitle',"转出申请");
+                }
+            }
+
+            // 填写数据
             this[dataName].forEach((item) => {
-                Object.assign(item,{val:getedData[item.name]});
+                Object.assign(item,{val:tempData && tempData[item.name] ? (item.name === "personType" ? tempData[item.name].split('-')[0] : tempData[item.name]) : ''});
             });
+
             this.baseData = this[dataName];
         },
 
         // search condition bundle change
         searchConditionChange(){
             console.log(1)
-        }
+        },
+
+        // 关闭
+        closeMoal(){
+            setTimeout(() => {
+                this.handleCancel();
+                this.requestData();
+            },2000)
+        },
+        
+        // 点击操作中的转出回显
+        transferOutShow(){
+
+            if(this.actionData){
+                this.handleData('notInnerData',this.actionData);
+                //回填 form 数据
+                this.formDataAction.formInputs.forEach(item => {
+                    if(item.otherType !== 'date'){
+                        Object.assign(item,{
+                            val:this.actionData.archTransferOut && this.actionData.archTransferOut[item.name] ? this.actionData.archTransferOut[item.name] : void 0
+                        });
+                    }
+                });
+            }else{
+                this.handleData('notInnerData',null);
+            }
+        },
+
+        // 点击确认 或 转出申请
+        confirmOrTransferOut(){
+            const _this = this;
+            let result = this.$refs.tableForm.getFormData();
+
+            // 判断获取到的数据是否正确
+            if(result.isRight){
+                this.$emit('sendBtnStatus',true);
+                // 非操作转出
+                if(!this.isAction){
+
+                    // 非内部调转
+                    if(!this.isInner && this.id){
+
+                        // 单位确认
+                        if(this.isEnterprice){
+                            this.$http.fetchPost('personalArch@internalTransferArch.action',{
+                                archiveId:this.id,
+                                ...result.postObj,
+                            })
+                            .then(res => {
+                                // console.log(res)
+                                if(Number(res.code) === 0){
+                                    _this.$message.success('确认成功');
+                                    _this.closeMoal();
+                                }else{
+                                    _this.$message.error('抱歉,确认失败,请重试');
+                                }
+                            })
+                            .catch(err => {
+                                //...
+                                _this.$message.error('抱歉,网络异常,请稍后重试');
+                            })
+                            .finally(end => {
+                                _this.$emit('sendBtnStatus',false);
+                            })
+                        }else{
+                            // 个人申请转出
+                            this.$http.fetchPost('archTransferOut@sceneArchTransferOut.action',{
+                                archiveId:this.id,
+                                ...result.postObj,
+                            })
+                            .then(res => {
+                                // console.log(res)
+                                if(Number(res.code) === 0){
+                                    _this.$message.success('申请转出成功');
+                                    _this.closeMoal();
+                                }else{
+                                    _this.$message.error('抱歉,转出申请失败,请重试');
+                                }
+                            })
+                            .catch(err => {
+                                //...
+                                _this.$message.error('抱歉,网络异常,请稍后重试');
+                            })
+                            .finally(end => {
+                                _this.$emit('sendBtnStatus',false);
+                            })
+                        }
+                    }else{
+                        // 内部调转
+                        this.$http.fetchPost('personalArch@internalTransferArchs.action',{
+                            archiveId:this.id,
+                            ...result.postObj,
+                        })
+                        .then(res => {
+                            // console.log(res)
+                            if(Number(res.code) === 0){
+                                _this.$message.success('调转成功');
+                                _this.closeMoal();
+                            }else{
+                                _this.$message.error('抱歉,调转失败,请重试');
+                            }
+                        })
+                        .catch(err => {
+                            //...
+                            _this.$message.error('抱歉,网络异常,请稍后重试');
+                        })
+                        .finally(end => {
+                            _this.$emit('sendBtnStatus',false);
+                        })
+                    }
+
+                }else{
+                    // 操作转出
+                    this.$http.fetchPost('archTransferOut@archTransferOut.action',{
+                        id:this.id,
+                    })
+                    .then(res => {
+                        // console.log(res)
+                        if(Number(res.code) === 0){
+                            _this.$message.success('转出成功');
+                            _this.closeMoal();
+                        }else{
+                            _this.$message.error('抱歉,转出失败,请重试');
+                        }
+                    })
+                    .catch(err => {
+                        //...
+                        _this.$message.error('抱歉,网络异常,请稍后重试');
+                    })
+                    .finally(end => {
+                        _this.$emit('sendBtnStatus',false);
+                    })
+                }
+
+            }
+            
+            
+        },
 
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
+        const _this = this;
+
         if(!this.isInner){
             this.baseData = this.notInnerData;
         }else{
             this.baseData = this.innerData;
         }
+
+        // 处理 action 转出传过来的数据
+        if(this.isAction){
+            this.transferOutShow();
+        }
+
         // 获取转出方式
         this.$http.fetchPost('archTransferOut@getSceneArchTransferOut.action',null)
             .then(res => {
                 if(Number(res.code) === 0){
                     this.formDataNotInner.formInputs.forEach((item,index)=>{
                         // console.log(tempCompanylist)
-                        if(item.name === 'companyId') item.children = res.transferTypeList;
+                        if(item.name === 'transferOutCause') item.children = res.transferTypeList;
                     })
-                    
                 }
             })
             .catch(err => {
@@ -548,7 +885,7 @@ export default {
                 });
                 this.formDataInner.formInputs.forEach((item,index)=>{
                     // console.log(tempCompanylist)
-                    if(item.name === 'companyId') item.children = tempCompanylist;
+                    if(item.name === 'transferCompanyId') item.children = tempCompanylist;
                 })
                 }else{
                 //...
@@ -557,6 +894,7 @@ export default {
             .catch(err => {
                 // ...
             });
+    
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）
@@ -584,6 +922,7 @@ export default {
 
 <style scoped>
     .outerContainer{
+        margin-right: 10px;
         height: 100%;
         overflow: auto;
     }

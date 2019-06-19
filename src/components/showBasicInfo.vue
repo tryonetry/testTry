@@ -2,7 +2,12 @@
 <template>
 <div class="outerContainer">
     <a-card :title="cardTitle">
-        <a-card-grid v-for='(item,index) in baseData' :key='index' style="width:33.3%;textAlign:'center'">
+        <a-card-grid 
+            v-for='(item,index) in baseData' 
+            :key='index' 
+            style="width:33.3%;textAlign:'center'"
+            v-if='!isAction || !item.hasDataNotShow'
+        >
             <p><span class="titleName">{{item.label}}:</span>{{item.val}}</p>
         </a-card-grid>
     </a-card>
@@ -14,7 +19,7 @@ export default {
     name:"ShowBasicInfo",
     //import引入的组件需要注入到对象中才能使用
     components: {},
-    props:["cardTitle","baseData"],
+    props:["cardTitle","baseData","isAction"],
 
     data() {
         return {

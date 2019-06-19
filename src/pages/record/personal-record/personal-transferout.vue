@@ -30,9 +30,9 @@
         <a
           href="javascrit:;"
           class="primaryBtnColor"
-          @click="rollOutFun(slotPropsData.currRowdata)"
+          @click="transferOutShow(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '1'"
-        >转出</a>
+        >确认转出</a>
 
         <!-- 已转出状态 -->
         <a
@@ -79,9 +79,10 @@
 
       </div>
       <span slot="formAction">
-        <a-button class="buttonOperate" @click="rollOutFun">现场转出</a-button>
+        <a-button class="buttonOperate" @click="rollOutFun()">现场转出申请</a-button>
       </span>
     </TableView>
+    
     <!-- 档案转出弹层 -->
     <div class="addModal">
       <a-modal
@@ -90,16 +91,27 @@
         :visible="visible"
         :width="'90%'"
         :confirmLoading="confirmLoading"
-        okText="转出申请"
+        :okText="confirmBtnTitle"
         cancelText="取消"
         @ok="rollOutApplyFun"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
         :maskClosable='false'
       >
-        <TransferOnSite :personData="currentPersonData"></TransferOnSite>
+        <TransferOnSite 
+          :personData="currentPersonData" 
+          :showRandom='showRandom' 
+          @sendConfirmBtnTitle='getConfirmBtnTitle'
+          @sendBtnStatus="getBtnStatus"
+          :handleCancel='handleCancel'
+          :requestData="requestData"
+          :isAction="isAction"
+          :actionData="actionData"
+          ref="transferChild"
+        ></TransferOnSite>
       </a-modal>
     </div>
+
     <!-- 邮寄编号弹层 -->
     <div class="addModal">
       <a-modal
@@ -125,6 +137,7 @@
         </div>
       </a-modal>
     </div>
+
   </div>
 </template>
 
@@ -132,6 +145,7 @@
 import TableView from "@/components/tableView";
 import TransferOnSite from "@/components/record/transferOnSite";
 import TableFromSearch from "@/components/tableFormSearch";
+import { request } from 'http';
 export default {
   name: "PersonalTransferOut",
   // import引入的组件需要注入到对象中才能使用
@@ -378,6 +392,8 @@ export default {
           }
         },
       },
+      isAction:false,
+      actionData:null,
       tableTotalNum: 0, //table数据量
       tempCondition:{},
       visible: false, //模态框默认不可见
@@ -385,7 +401,9 @@ export default {
       confirmLoading: false, //模态框确认按钮加载：默认不加载
       sendConfirmLoading:false, //邮寄确认按钮加载
       currentPersonData:{}, //当前人的数据
+      showRandom:Math.random(),
       currentPersonId:'', //当前人的 id
+      confirmBtnTitle:'转出申请',
     };
   },
 
@@ -428,18 +446,26 @@ export default {
                 });
               });
           }else{
-              _this.$message.error("抱歉,暂时未查到数据!");
+              _this.$message.warning("抱歉,暂时未查到数据!");
           }
       })
     },
 
-    rollOutFun(personData) {
+    rollOutFun() {
       /***
        * 功能：现场转出函数
        *  */
-      this.currentPersonData = personData;
+      this.isAction = false;
       this.visible = true;
+      this.showRandom = Math.random();
+      // 清除 form 数据
+      this.$nextTick(function(){
+        this.$refs.transferChild.claerForm('formDataEnterprice');
+        this.$refs.transferChild.claerForm('formDataNotInner');
+        this.$refs.transferChild.claerForm('formDataAction');
+      })
     },
+
     // 邮寄编号modal打开
     openSendModal(row){
       this.sendModalShow = true;
@@ -512,17 +538,59 @@ export default {
       /**
        * 功能：模态框：转出申请操作
        */
-
-      this.confirmLoading = true;
+      this.$refs.transferChild.confirmOrTransferOut();
+      // this.confirmLoading = true;
 
     },
+
     handleCancel() {
       /***
        * 功能：模态框取消操作
        */
       this.visible = false;
       this.sendModalShow = false;
-    }
+    },
+
+    //获取 btn 的 title 
+    getConfirmBtnTitle(title){
+      this.confirmBtnTitle = title;
+    },
+
+    // 获取当前的 btn 的 提交状态
+    getBtnStatus(status){
+      this.confirmLoading = status;
+    },
+
+    requestData(){
+      this.getTableData(this.tempCondition,1,10);
+    },
+
+    // action 转出
+    transferOutShow(personData){
+
+        const _this = this;
+
+        this.actionData = null;
+        if(personData && personData.archiveId && personData.id){
+            this.isAction = true;
+            this.$http.fetchGet('archTransferOut@getArchTransferOutInfo.action',{
+                archiveId:personData.archiveId,
+                id:personData.id,
+            }).then(res => {
+                if(Number(res.code) === 0 && res.data){
+                  _this.visible = true;
+                  _this.showRandom = Math.random();
+                  _this.actionData = res.data;
+                }else{
+                  _this.$message.error('档案信息不存在!');
+                }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试')
+            });
+        }
+    },
+
+
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）

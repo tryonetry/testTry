@@ -212,7 +212,17 @@ const regs = {
       }else{
         return 0;
       }
-    }
+    },
+
+    // 只包含数字
+    testOnlyNum:function (val) {
+      let reg = new RegExp('^[0-9]+$');
+      if(reg.test(val)){
+        return 1;
+      }else{
+        return 0;
+      }
+    },
 
 }
 
