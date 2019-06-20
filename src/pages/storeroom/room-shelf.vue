@@ -356,7 +356,11 @@ export default {
                 freeCapacity: element.whdTotalNum - element.whdNowNum
               });
             });
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
+        }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
         });
     },
     getInitTreeData() {

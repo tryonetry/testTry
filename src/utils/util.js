@@ -1,4 +1,5 @@
 import address from '../../public/json/address';
+import moment from 'moment'
 
 // 递归遍历 address
 function searchName(codeArr, dataArr, deep, result) {
@@ -68,9 +69,9 @@ const utils = {
                                 item.otherType === "daterange")
                         ) {
                             if (dataObj[i]) {
-                                item.val = this.moment(dataObj[i], "YYYY-MM-DD");
+                                item.val = moment(dataObj[i], "YYYY-MM-DD");
                             } else {
-                                item.val = this.moment(new Date(), "YYYY-MM-DD");
+                                item.val = moment(new Date(), "YYYY-MM-DD");
                             }
                         } else if (
                             !item.type &&

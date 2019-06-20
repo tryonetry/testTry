@@ -4,41 +4,60 @@
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-          <a-button class="buttonOperate">批量出库</a-button>
+          <a-button class="buttonOperate" @click="operateFun(null, '1')">批量出库</a-button>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-          data-type="浏览"
+          @click="operateFun(currentData=slotPropsData.currRowdata, '2')"
+          data-type="出库"
           class="primaryBtnColor"
-        >浏览</a>
-        <a
-          href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-          data-type="编辑"
-        >编辑</a>
+        >出库</a>
         <a-popconfirm
-          title="确定删除吗?"
+          title="确定撤销吗?"
           okText="确定"
           cancelText="取消"
           @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
         >
-          <a href="javascript:;" class="errorBtnColor">删除</a>
+          <a href="javascript:;" class="errorBtnColor">撤销</a>
         </a-popconfirm>
       </div>
     </TableView>
+
+    <!-- 出库modal -->
+    <div class="addModal">
+      <a-modal
+        centered
+        :title="operateStatus== '1'? '档案转出批量出库登记': '档案转出出库登记'"
+        :visible="visible"
+        :confirmLoading="confirmLoading"
+        width="50%"
+        @cancel="handleCancel"
+        :maskClosable="false"
+        style="height:85%;overflow: hidden;"
+      >
+        <div style="height:100%;overflow:auto;">
+          <TableFromSearch :formDataArr="checkoutForm" :layout="layoutModal" ref="checkoutForm"></TableFromSearch>
+        </div>
+        <template slot="footer">
+            <a-button key="cancel" @click="handleCancel">取消</a-button>
+            <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
+        </template>
+      </a-modal>
+    </div>
   </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
+import TableFromSearch from "../../components/tableFormSearch";
+import utils from "../../utils/util.js";
 export default {
   name: "RecordCheckOut",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView },
+  components: { TableView, TableFromSearch },
   props: [""],
 
   data() {
@@ -58,14 +77,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入姓名",
-              key: "",
-              name: "",
+              key: "a0101",
+              name: "a0101",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0101",
               status: ""
             },
             {
@@ -73,14 +92,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入身份证号/社保卡号",
-              key: "",
-              name: "",
+              key: "a0184",
+              name: "a0184",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0184",
               status: ""
             },
             {
@@ -88,14 +107,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入存档编号",
-              key: "",
-              name: "",
+              key: "a0100a",
+              name: "a0100a",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0100a",
               status: ""
             },
             {
@@ -103,44 +122,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入档案位置号",
-              key: "",
-              name: "",
+              key: "shelvesNo",
+              name: "shelvesNo",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
-              status: ""
-            },
-            {
-              title: "单位名称",
-              type: "text",
-              required: false,
-              placeholder: "请输入单位名称",
-              key: "",
-              name: "",
-              val: void 0,
-              maxlength: 20,
-              minlength: 0,
-              reg: "",
-              tip: "",
-              postname: "",
-              status: ""
-            },
-            {
-              title: "单位编号",
-              type: "text",
-              required: false,
-              placeholder: "请输入单位编号",
-              key: "",
-              name: "",
-              val: void 0,
-              maxlength: 20,
-              minlength: 0,
-              reg: "",
-              tip: "",
-              postname: "",
+              postname: "shelvesNo",
               status: ""
             },
             // select/searchSelect
@@ -149,13 +138,14 @@ export default {
               otherType: "select",
               required: false,
               placeholder: "请选择出库类型",
-              key: "",
-              name: "",
+              key: "outwareType",
+              name: "outwareType",
+              postname: "outwareType",
               val: void 0,
               children: [
                 {
-                  itemCode: "1",
-                  itemName: "xxx"
+                  itemCode: "transferout",
+                  itemName: "档案转出"
                 }
               ],
               status: ""
@@ -175,60 +165,206 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
+            title: "存档编号",
+            dataIndex: "a0100a",
+            key: "a0100a",
+            fixed: "left",
+            width: 300,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "档案人姓名",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0101",
+            key: "a0101",
+            fixed: "left",
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "身份证号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "存档编号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "单位名称",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0184",
+            key: "a0184",
+            width: 350,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "库房位置",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "shelvesNo ",
+            key: "shelvesNo ",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            fixed: 'right',
+            width: 200,
             scopedSlots: { customRender: "action" }
           }
         ],
         // table数据
         tabledataArr: []
-      }
+      },
+      tempCondition:{},  //临时查询条件
+      operateStatus: null, //操作状态值， 1--批量出库，； 2--出库
+      visible: false,     //modal--默认false，不显示
+      confirmLoading: false,   //modal--默认false，不加载
+      checkoutForm:{
+        formInputs:[
+          {
+            title: "申请人",
+            type: "text",
+            required: false,
+            placeholder: "请输入申请人",
+            key: "",
+            name: "",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: "",
+            tip: "",
+            postname: "",
+            status: "",
+            isHide: false,
+            disabled: true,
+            colWidth: [12, 24]
+          },
+          {
+              title: '申请日期',
+              otherType: '',  
+              required: false,
+              placeholder: '请选择申请日期',
+              key: "",
+              name: "",
+              val: void 0,
+              postname: "",
+              status: '',
+              isHide: false,
+              disabled: true,
+              colWidth: [12, 24]
+          },
+          {
+            title: "出库经办人",
+            type: "text",
+            required: false,
+            placeholder: "请输入出库经办人",
+            key: "",
+            name: "",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: "",
+            tip: "",
+            postname: "",
+            status: "",
+            isHide: false,
+            disabled: true,
+            colWidth: [12, 24]
+          },
+          {
+            title: "存档编号",
+            type: "text",
+            required: false,
+            placeholder: "请输入存档编号",
+            key: "",
+            name: "",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: "",
+            tip: "",
+            postname: "",
+            status: "",
+            isHide: false,
+            disabled: true,
+            colWidth: [12, 24]
+          },
+          {
+            title: "档案位置号",
+            type: "text",
+            required: false,
+            placeholder: "请输入档案位置号",
+            key: "",
+            name: "",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: "",
+            tip: "",
+            postname: "",
+            status: "",
+            isHide: false,
+            disabled: true,
+            colWidth: [12, 24]
+          },
+          {
+            title: '出库日期',
+            otherType: '',  
+            required: false,
+            placeholder: '请选择出库日期',
+            key: "",
+            name: "",
+            val: void 0,
+            postname: "",
+            status: '',
+            isHide: false,
+            disabled: true,
+            colWidth: [12, 24]
+          },
+          {
+            title: "出库说明",
+            otherType: "textarea",
+            required: false,
+            placeholder: "请输入出库说明",
+            key: "",
+            name: "",
+            val: void 0,
+            postname: "",
+            maxlength: 200,
+            minlength: 0,
+            reg: "",
+            tip: "* 请输入出库说明",
+            status: "",
+            colWidth: [24, 24]
+          },
+        ]
+      },
+      layoutModal:{
+        defaultCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 6 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 16 }
+          }
+        },
+        textareaCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 3 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 20 }
+          }
+        },
+      },
     };
   },
 
@@ -252,11 +388,67 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
        *         */
+      this.tempCondition = condition;
+      this.$http.fetchPost('archDocument@getArchOutWareList.action', {
+        page: pageNum,
+        limit: limitNum,
+        a0100a: (!condition || !condition.a0100a) ? '' : condition.a0100a,
+        a0101: (!condition || !condition.a0101) ? '' : condition.a0101,
+        a0184: (!condition || !condition.a0184) ? '' : condition.a0184,
+        outwareType: (!condition || !condition.outwareType) ? 'transferout' : condition.outwareType,
+        shelvesNo: (!condition || !condition.shelvesNo) ? '' : condition.shelvesNo
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.tableTotalNum = res.count;
+          let tempTableData = res.data;
+          this.initArr.tabledataArr = [];
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              num: (pageNum - 1) * limitNum + index + 1,
+              key: element.reviewId,
+              a0100a: element.a0100a,
+              a0101: element.a0101,
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
+              a0184: element.a0184,
+              shelvesNo: element.shelvesNo
+            })
+          });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
+    },
+    operateFun(currData, operateVal){
+      /**
+       * 功能：批量出库、出库操作
+       * 参数：currData：当前row数据[为批量出库时，为null]; operateVal:当前操作状态值， 1--批量出库；2--出库
+       */
+      const _this = this; 
+      _this.operateStatus = operateVal;
+      if(currData && operateVal === '2'){
+        //出库
+        _this.visible = true;
+        _this.checkoutForm = utils.getNewFormSearch(currData, _this.checkoutForm);
+      } else{
+        //批量出库
+      }
+    },
+    handleCancel(){
+      this.visible = false;
+    },
+    handleOk(){
+      /**
+       * 功能：modal---提交操作
+       */
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(null, 1, 10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},

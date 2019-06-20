@@ -36,14 +36,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入姓名",
-              key: "",
-              name: "",
+              key: "a0101",
+              name: "a0101",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0101",
               status: ""
             },
             {
@@ -51,14 +51,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入身份证号/社保卡号",
-              key: "",
-              name: "",
+              key: "a0184",
+              name: "a0184",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0184",
               status: ""
             },
             {
@@ -66,14 +66,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入存档编号",
-              key: "",
-              name: "",
+              key: "a0100a",
+              name: "a0100a",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "a0100a",
               status: ""
             },
             // select/searchSelect
@@ -82,13 +82,18 @@ export default {
               otherType: "select",
               required: false,
               placeholder: "请选择出库类型",
-              key: "",
-              name: "",
+              key: "ao0102",
+              name: "ao0102",
+              postname: "ao0102",
               val: void 0,
               children: [
                 {
-                  itemCode: "",
-                  itemName: ""
+                  itemCode: "1",
+                  itemName: "档案查阅"
+                },
+                {
+                  itemCode: "2",
+                  itemName: "档案转出"
                 }
               ],
               status: ""
@@ -99,10 +104,10 @@ export default {
               otherType: "daterange",
               required: false,
               placeholder: "请选择出库时间",
-              key: "",
-              name: "",
+              key: "startDate-endDate",
+              name: "startDate-endDate",
               val: void 0,
-              postname: "",
+              postname: "startDate-endDate",
               status: "",
             //   disabledDate: "disabledEndDate", //函数名：只能选今天和今天以前的
             //   disabledStartDate: "disabledStartDate" //函数名：只能选今天和今天以后的
@@ -126,66 +131,69 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
+            title: "存档编号",
+            dataIndex: "a0100a",
+            key: "a0100a",
+            fixed: 'left',
+            width: 250,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "档案人姓名",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0101",
+            key: "a0101",
+            fixed: 'left',
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "性别",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "身份证号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "存档编号",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "a0184",
+            key: "a0184",
+            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "出库类型",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "ao0102",
+            key: "ao0102",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "ao0103",
+            key: "ao0103",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "交接人",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "ao0104",
+            key: "ao0104",
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "出库日期",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "ao0105",
+            key: "ao0105",
+            sorter: (a, b) => a.ao0105 && b.ao0105 && Number(a.ao0105.replace(/[\s+|\-|\:]/g,'')) - Number(b.ao0105.replace(/[\s+|\-|\:]/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "出库说明",
-            dataIndex: "",
-            key: "",
-            // width: 60,
+            dataIndex: "REMARKS",
+            key: "REMARKS",
+            width: 200,            
+            fixed: 'right',
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
@@ -215,11 +223,48 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
        *         */
+      this.$http.fetchPost('archDocument@getarchOutRecordsList.action', {
+        page: pageNum,
+        limit: limitNum,
+        a0100a: (!condition || !condition.a0100a) ? '' : condition.a0100a,
+        a0101: (!condition || !condition.a0101) ? '' : condition.a0101,
+        a0184: (!condition || !condition.a0184) ? '' : condition.a0184,
+        ao0102: (!condition || !condition.ao0102) ? '' : condition.ao0102,
+        startDate: (!condition || !condition.startDate) ? '' : condition.startDate,
+        endDate: (!condition || !condition.endDate) ? '' : condition.endDate
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.tableTotalNum = res.count;
+          let tempTableData = res.data;
+          this.initArr.tabledataArr = [];
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              num: (pageNum - 1) * limitNum + index + 1,
+              key: element.ao01000,
+              a0100a: element.a0100a,
+              a0101: element.a0101,
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
+              a0184: element.a0184,
+              ao0102: element.ao0102 === '1' ? '档案查询' : '档案转出',
+              ao0103: element.ao0103, 
+              ao0104: element.ao0104,
+              ao0105: element.ao0105,
+              REMARKS: element.REMARKS
+            })
+          });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(null, 1, 10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},

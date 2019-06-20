@@ -243,6 +243,7 @@ export default {
             title: "接收日期",
             dataIndex: "e0106a",
             key: "e0106a",
+            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/\-/g,'')) - Number(b.e0106a.replace(/\-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
@@ -395,7 +396,11 @@ export default {
               e0112Name: element.e0112 === '0' ? '已接收' : '待接收'
             })
           });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
         }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
       })
     },
     getAgentOptions(){

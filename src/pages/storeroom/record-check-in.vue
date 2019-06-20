@@ -602,7 +602,11 @@ export default {
                 archiveStatusName: element.archiveStatus == "0" ? "待入库" : (element.archiveStatus == "1" ? "已入库" : "接收待入库")
               });
             });
+          } else {
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
+        }).catch(error => {
+          this.$message.error('抱歉，网络异常！');
         });
     },
     getOtherInfo(){

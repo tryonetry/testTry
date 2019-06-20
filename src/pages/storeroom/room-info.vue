@@ -338,7 +338,7 @@ export default {
        *         */
       this.tempCondition = condition;
       this.$http
-        .fetchGet("wareHouse@getWareHouseList.action", {
+        .fetchPost("wareHouse@getWareHouseList.action", {
           status: 1,
           page: pageNum,
           limit: limitNum,

@@ -213,6 +213,7 @@ export default {
             title: "入库时间",
             dataIndex: "inwareDate",
             key: "inwareDate",
+            sorter: (a, b) => a.inwareDate && b.inwareDate && Number(a.inwareDate.replace(/[\s+|\-|\:]/g,'')) - Number(b.inwareDate.replace(/[\s+|\-|\:]/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
@@ -307,7 +308,11 @@ export default {
               a0100a: element.a0100a,
             })
           });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
         }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
       })
     },
     exportFun(){
