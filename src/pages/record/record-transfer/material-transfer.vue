@@ -57,7 +57,7 @@
                     <a-button key="back" @click="handleCancel1">取消</a-button>
                     <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="saveConfirm">保存</a-button>
                 </template>
-                <TableView :initArrData="initArr2">
+                <TableView :initArrData="initArr2" ref='editTable'>
                     <div slot="tableAction" slot-scope="slotPropsData">
                         <a
                             href="javascript:;"
@@ -410,48 +410,66 @@ export default {
                 bordered:true, // 表格 border 是否显示
                 superimposeWidth:true, //表格宽度叠加
                 formData:{},
+                editableCol:[
+                    'e0105_editSelectInput',
+                    'e0106_editInput',
+                    'e0106a_editDateInput',
+                    'e0114_editAddressInput',
+                    "材料名称_requireTitle",
+                    "材料类型_requireTitle",
+                ],
+
+                //可编辑列
                 columnsArr: [
                     {
-                        title: "材料类型",
+                        // title: "材料类型",
                         dataIndex: "e0105",
                         key: "e0105",
                         width: 200,
-                        scopedSlots: { customRender: "editInput" }
+                        slots: { title: '材料类型_requireTitle' },
+                        scopedSlots: { customRender: "e0105_editSelectInput" },
+                        itemChildren:[
+                            {itemCode:'1',itemName:'类型一'},
+                            {itemCode:'2',itemName:'类型二'},
+                        ]
                     },
                     {
-                        title: "材料名称",
+                        // title: "材料名称",
                         dataIndex: "e0106",
                         key: "e0106",
                         width: 300,
-                        scopedSlots: { customRender: "editInput" }
+                        slots: { title: '材料名称_requireTitle'},
+                        scopedSlots: { customRender: "e0106_editInput" },
                     },
                     {
                         title: "接收日期",
                         dataIndex: "e0106a",
                         key: "e0106a",
                         width: 200,
+                        scopedSlots: { customRender: "e0106a_editDateInput" },
+                        dateFormat:'YYYY-MM-DD',
                     },
                     {
                         title: "备注",
                         dataIndex: "e0114",
                         key: "e0114",
                         width: 500,
+                        scopedSlots: { customRender: "e0114_editAddressInput" },
                     },
                     {
                         title: "操作",
                         scopedSlots: { customRender: "action" }
                     }
                 ],
-                // 此处的数组中必须存在 index 和 inEdit
+                
                 tabledataArr: [
                     {
                         key:0,
-                        index:0,
-                        inEdit:{e0105:false,e0106:true},
-                        e0105:'aaa',
+                        e0105:{code:void 0,name:''},
                         e0106:'bbb',
-                        e0106a:'ccc',
-                        e0114:'ddd',
+                        e0106a:'19950814',
+                        e0114:{code:[ "13", "1303", "130303" ],name:"秦皇岛"},
+                        inEdit:false,
                     }
                 ],
             },
@@ -576,7 +594,7 @@ export default {
         },
 
         saveConfirm(){
-            
+            this.$refs.editTable.getTableData();
         },
     },
 

@@ -303,3 +303,7 @@ input{
 .ant-select-disabled .ant-select-selection{
   background: #ffffff;
 }
+
+.ant-select{
+  width: 100%;
+}

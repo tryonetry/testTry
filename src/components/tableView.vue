@@ -27,10 +27,17 @@
               <a-icon type="plus" style="color:#666"/>
             </div>
           </template>
+
           <!-- ####################################### 此处是自定义列 ############################### -->
+          
 
           <!-- 操作按钮 -->
-          <span slot="action" slot-scope="text, record">
+          <span slot="action" slot-scope="text, record, index" class="actionContainer">
+            <!-- 可编辑按钮 -->
+            <p v-if="editableCol && editableCol.length > 0" class="editAble">
+              <a v-if="record.inEdit" href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,false)">确 定</a>
+              <a v-else href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,true)">编 辑</a>
+            </p>
             <slot name="tableAction" :currRowdata="record" :currTableData="tabledata">table操作按钮</slot>
           </span>
 
@@ -57,34 +64,82 @@
           <div slot="img" slot-scope="text, record" class="tableImg">
             <img :src="record.photo" alt="">
           </div>
-          <!-- { "key": 0, "index": 0, "inEdit": { "e0105": false, "e0106": true }, "e0105": "aaa", "e0106": "bbb", "e0106a": "ccc", "e0114": "ddd" } aaa -->
 
+          <!-- 必填项表头 -->
+          <template  v-for="col in editCol" :slot="col">
+            <p :key="col" v-if='col.split("_")[1] === "requireTitle"'>
+              {{col.split("_")[0]}}
+              <span class="redSpan">*</span>
+            </p>
+          </template>
 
-          <!-- 普通输入框可编辑列 -->
-          <!-- <div slot="editInput" slot-scope="text, record ,index" v-if='columns && (record.index || record.index === 0)' @click='changeEdit($event)'>
-            {{$event}}
-            <a-input v-model="text"></a-input>
-            <span>{{text}}</span>
-          </div> -->
+          <!-- <span slot="材料类型_requireTitle" ><a-icon type="smile-o" /> Name</span> -->
 
-          <template slot="editInput" slot-scope="text, record">
-          <EditInput :text="text" @change="onCellChange(record.key, 'name', $event)"/>
-        </template>
+          <!-- 此处未知 bug 只能同时存在一个 v-for 循环的 solt,所以将不同的类型分置同一个 for 中 -->
+          <template  v-for="col in editCol" :slot="col" slot-scope="text, record ,index">
 
-          <!-- 日期可编辑列 -->
-          <div slot="editDateInput" slot-scope="text, record">
+              <!-- <span :key="col" v-if='col.split("_")[1] === "requireTitle"'>{{col.split("_")[0]}}<span>*</span></p> -->
 
-          </div>
+              <!-- 普通可编辑列 -->
+              <div :key="col" v-if='col.split("_")[1] === "editInput"'>
+                <a-input 
+                  v-if="record.inEdit"
+                  v-model="record[col.split('_')[0]]"
+                  class="editInput"></a-input>
+                <span v-else>{{text}}</span>
+              </div>
 
-          <!-- 下拉框入框可编辑列 -->
-          <div slot="editSelectInput" slot-scope="text, record">
+              <!-- 日期可编辑列 -->
+              <div :key="col" v-if='col.split("_")[1] === "editDateInput"'>
+                <a-date-picker
+                  v-if="record.inEdit"
+                  placeholder="请选择日期"
+                  :format="getColHeaderData(col.split('_')[0]) && getColHeaderData(col.split('_')[0]).dateFormat"
+                  :value="text ? moment(text,getColHeaderData(col.split('_')[0]) && getColHeaderData(col.split('_')[0]).dateFormat) : void 0"
+                  @change="changeDataEdit(arguments,index,col.split('_')[0])"
+                  allowClear
+                />
+                <span v-else>{{text}}</span>
+              </div>
 
-          </div>
+              <!-- 可搜索下拉框可编辑列 -->
+              <div :key="col" v-if='col.split("_")[1] === "editSelectInput"'>
+                <a-select
+                  v-if="record.inEdit"
+                  showSearch
+                  optionFilterProp="children"
+                  placeholder="请选择"
+                  v-model="record[col.split('_')[0]].code"
+                  @change="changeSearchSelectEdit(arguments,index,col.split('_')[0],getColHeaderData(col.split('_')[0]) && getColHeaderData(col.split('_')[0]).itemChildren)"
+                  :filterOption="filterOption"
+                  allowClear
+                >
+                  <a-select-option
+                    v-for="(el, index) in getColHeaderData(col.split('_')[0]) && getColHeaderData(col.split('_')[0]).itemChildren"
+                    :key="index"
+                    :value="el.itemCode"
+                    :disabled="el.isdisabled">
+                    {{el.itemName}}
+                  </a-select-option>
+                </a-select>
+                <span v-else>{{record[col.split('_')[0]].name}}</span>
+              </div>
 
-          <!-- 可搜索下拉框可编辑列 -->
-          <div slot="editSearchSelectInput" slot-scope="text, record">
+              <!-- 地址可编辑列 -->
+              <div :key="col" v-if='col.split("_")[1] === "editAddressInput"'>
+                <a-cascader
+                  v-if="record.inEdit"
+                  :options="address"
+                  placeholder="请选择地址"
+                  v-model="record[col.split('_')[0]].code"
+                  @change="changeAddressEdit(arguments,index,col.split('_')[0])"
+                  :fieldNames="{label:'name',value:'code',children:'children'}"
+                  allowClear
+                />
+                <span v-else>{{record[col.split('_')[0]].name}}</span>
+              </div>
 
-          </div>
+          </template>
           <!-- ####################################### 此处是自定义列 ############################### -->
         </a-table>
         
@@ -104,6 +159,8 @@
 <script>
 import OrganTree from "@/components/organTree";
 import TableFromSearch from "@/components/tableFormSearch";
+import address from '../../public/json/address.js';
+import moment from 'moment';
 import { isMoment } from 'moment';
 import { setTimeout } from 'timers';
 import utils from '../utils/util';
@@ -144,6 +201,7 @@ export default {
           this.bordered = newVal.bordered ? newVal.bordered : false;
           this.isEditAndAdd = newVal.isEditAndAdd ? newVal.isEditAndAdd : false;
           this.superimposeWidth = newVal.superimposeWidth ? newVal.superimposeWidth : false;
+          this.editableCol = newVal.editableCol;
           this.formData = newVal.formData;
           this.columns = newVal.columnsArr;
           this.tabledata = newVal.tabledataArr;
@@ -154,7 +212,9 @@ export default {
             JSON.stringify(newVal.tabledataArr)
           );
 
-          // 宽度溢出
+          
+
+          // 单元格宽度溢出处理
           this.$nextTick(function(){
             
             let theadWidthArr = [];
@@ -259,6 +319,8 @@ export default {
     window.onresize = null;
   },
   methods: {
+    moment,
+    isMoment,
     getCondition(){
       return this.condition;
     },
@@ -277,6 +339,12 @@ export default {
       this.$emit("accepttreeNode", value, this.condition); //把treeNode选择得值派发给父组件：info-poll
 
     },
+
+    // 获取 table 数据
+    getTableData(){
+      console.log(this.tabledata)
+    },
+
     searchFormFun(data) {
       /***
        * 功能：调用父组件的searchTable函数，重新获取tableData值
@@ -340,8 +408,19 @@ export default {
       this.$emit('searchTable', this.condition, page, pageSize);
     },
 
-    changeEdit(e){
-      e.inEdit = true;
+    /***
+     * 此处以下为可编辑列部分的方法
+     */
+
+    //获取当前列对应的列头数据 
+    getColHeaderData(colName){
+      let result = null;
+      this.columns.forEach(item => {
+        if(colName === item.dataIndex){
+          result = item;
+        }
+      });
+      return result;
     },
 
     // 添加数据
@@ -353,16 +432,71 @@ export default {
       let emptyRow = {};
       this.columns.forEach(item => {
         if(item.dataIndex){
-          emptyRow[item.dataIndex] = void 0;
+          
+          if(item.scopedSlots && item.scopedSlots.customRender && (item.scopedSlots.customRender.split('_')[1] === 'editAddressInput' || item.scopedSlots.customRender.split('_')[1] === 'editSelectInput')){
+            emptyRow[item.dataIndex] = {code:void 0,name:''};
+          }else{
+            emptyRow[item.dataIndex] = void 0;
+          }
           emptyRow['key'] = this.tabledata.length;
-          emptyRow['index'] = this.tabledata.length;
+          if(this.editableCol && this.editableCol.length > 0){
+            emptyRow['inEdit'] = false;
+          }
         }
       });
+      console.log(emptyRow)
       this.tabledata.push(emptyRow);
+    },
+
+    // 改变编辑状态
+    changeEditStatus(index,state){
+      this.tabledata[index].inEdit = state;
+      this.tabledata = [...this.tabledata]
+    },
+
+    // editInput change
+    changeEditInput(value,index,col){
+      this.tabledata[index][col] = value;
+    },
+
+    // 日期编辑列
+    changeDataEdit(args,index,col){
+      this.tabledata[index][col] = args[1];
+    },
+
+    // searchSelect搜索过滤
+    filterOption(input, option) {
+      return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+    },
+
+    // 可搜索编辑列
+    changeSearchSelectEdit(args,index,col,itemChildren){
+      itemChildren.forEach(item => {
+        if(item.itemCode === args[0]){
+          this.tabledata[index][col].name = item.itemName;
+        }
+      })
+    },
+    // 地址编辑列
+    changeAddressEdit(args,index,col){
+      let addressName = '';
+      args[1].forEach(item => {
+        addressName += " " + item.name
+      })
+      this.tabledata[index][col].name = addressName;
     }
+
   },
+
+
   computed:{
-    
+    // 解决 v-if v-for 同时存在的问题 
+    editCol:function(){
+      return this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
+    },
+    address(){
+      return address;
+    }
   }
 };
 </script>
@@ -439,5 +573,20 @@ export default {
   padding: 17px;
   box-sizing: border-box;
   cursor: pointer;
+}
+.actionContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.editAble{
+  display: flex;
+}
+.editInput{
+  text-align: center;
+}
+.redSpan{
+  margin-left: 5px;
+  color: red;
 }
 </style>
