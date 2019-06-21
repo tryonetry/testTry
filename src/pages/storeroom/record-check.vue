@@ -370,7 +370,7 @@ export default {
             dataIndex: "returnDate",
             key: "returnDate",
             width: 150,
-            sorter: (a, b) => a.returnDate && b.returnDate && Number(a.returnDate.replace(/\-/g,'')) - Number(b.returnDate.replace(/\-/g,'')),
+            sorter: (a, b) => a.returnDate && b.returnDate && Number(a.returnDate.replace(/-/g,'')) - Number(b.returnDate.replace(/-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -1166,8 +1166,8 @@ export default {
           let tempListTableArr = [...this.listDirectory];
           let borrorwTableObj = this.getNewBorrowTable(tempListTableArr); 
           if(borrorwTableObj['tempFalg']){  //判断table 表格已填数据必填项不能为空
-            currPostObj['borrowers'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrower');   //table：查借阅人
-            currPostObj['borrowerTelNums'] = this.borrowFun(borrorwTableObj['borrowData'], 'borrowerTelNum');  //table:查借阅人身份证号码
+            currPostObj['borrowers'] = utils.borrowFun(borrorwTableObj['borrowData'], 'borrower');   //table：查借阅人
+            currPostObj['borrowerTelNums'] = utils.borrowFun(borrorwTableObj['borrowData'], 'borrowerTelNum');  //table:查借阅人身份证号码
             if(this.mulitipleOperateVal === 'batchAudit' || this.mulitipleOperateVal === 'checkout'){   //判断执行---批量查借阅操作:batchAudit-->批量查借阅； batchNow-->批量查借阅现场查(借)阅--批量查借阅；
               //操作为batchAudit-->客户提出申请后再借出； 
               currPostObj.bacch = '0';
@@ -1237,22 +1237,6 @@ export default {
         }
       });
       return {'tempFalg':tempFalg, 'borrowData': newData}
-    },
-
-    borrowFun(dataArr, keyVal){
-      /**
-       * 功能：批量查借阅table：根据需要的字段名重组数据为字符串返回
-       * 参数：dataArr：当前table数据； keyVal：当前需要组为字符串得字段名
-       */
-      let currStr = '';
-      dataArr.forEach(el => {
-        for(let key in el){
-          if(key === keyVal){
-            currStr += el[key] + ','
-          }
-        }
-      });
-      return currStr.substr(0, currStr.length - 1);
     },
 
     operateFun(currRowData, operateVal){

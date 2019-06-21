@@ -115,6 +115,22 @@ const utils = {
         });
         return submitFormData;
     },
+    
+    borrowFun(dataArr, keyVal){
+        /**
+         * 功能：根据需要的字段名重组数据为字符串返回
+         * 参数：dataArr：当前table数据； keyVal：当前需要组为字符串得字段名
+         */
+        let currStr = '';
+        dataArr.forEach(el => {
+          for(let key in el){
+            if(key === keyVal){
+              currStr += el[key] + ','
+            }
+          }
+        });
+        return currStr.substr(0, currStr.length - 1);
+      },
 
     js_getDPI() {
         var arrDPI = new Array();

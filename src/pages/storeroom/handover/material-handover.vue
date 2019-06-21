@@ -243,7 +243,7 @@ export default {
             title: "接收日期",
             dataIndex: "e0106a",
             key: "e0106a",
-            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/\-/g,'')) - Number(b.e0106a.replace(/\-/g,'')),
+            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
