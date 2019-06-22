@@ -213,7 +213,7 @@ export default {
             title: "入库时间",
             dataIndex: "inwareDate",
             key: "inwareDate",
-            sorter: (a, b) => a.inwareDate && b.inwareDate && Number(a.inwareDate.replace(/[\s+|\-|\:]/g,'')) - Number(b.inwareDate.replace(/[\s+|\-|\:]/g,'')),
+            sorter: (a, b) => a.inwareDate && b.inwareDate && Number(a.inwareDate.replace(/[\s+|\-|:]/g,'')) - Number(b.inwareDate.replace(/[\s+|\-|:]/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
@@ -319,9 +319,10 @@ export default {
       /**
        * 功能：导出列表功能
        */
-      let newCondition = this.$refs.recordTable.getCondition();
-      if(JSON.stringify(newCondition) !== '{}'){
-        newCondition = newCondition;
+      let tempNewCondition = this.$refs.recordTable.getCondition();
+      let newCondition = {};
+      if(JSON.stringify(tempNewCondition) !== '{}'){
+        newCondition = tempNewCondition;
       } else{
         newCondition = {
           'a0100A': "",
@@ -332,6 +333,7 @@ export default {
           'startDate-endDate': ""
         }
       }
+      console.log(newCondition);
       let currFiledsJsonObj = {}, conditionLen = newCondition['colsStr'].length ;
       if(conditionLen > 0){
         for(let key in this.fieldsJson){

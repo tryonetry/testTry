@@ -19,7 +19,7 @@
           title="确定撤销吗?"
           okText="确定"
           cancelText="取消"
-          @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
+          @confirm="recallFun(slotPropsData.currRowdata)"
         >
           <a href="javascript:;" class="errorBtnColor">撤销</a>
         </a-popconfirm>
@@ -54,6 +54,7 @@
 import TableView from "@/components/tableView";
 import TableFromSearch from "../../components/tableFormSearch";
 import utils from "../../utils/util.js";
+import moment from 'moment';
 export default {
   name: "RecordCheckOut",
   //import引入的组件需要注入到对象中才能使用
@@ -226,14 +227,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入申请人",
-            key: "",
-            name: "",
+            key: "applyName",
+            name: "applyName",
             val: void 0,
             maxlength: 20,
             minlength: 0,
             reg: "",
-            tip: "",
-            postname: "",
+            tip: "请输入申请人",
+            postname: "applyName",
             status: "",
             isHide: false,
             disabled: true,
@@ -241,13 +242,13 @@ export default {
           },
           {
               title: '申请日期',
-              otherType: '',  
+              otherType: 'date',  
               required: false,
               placeholder: '请选择申请日期',
-              key: "",
-              name: "",
+              key: "applyDate",
+              name: "applyDate",
               val: void 0,
-              postname: "",
+              postname: "applyDate",
               status: '',
               isHide: false,
               disabled: true,
@@ -258,14 +259,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入出库经办人",
-            key: "",
-            name: "",
+            key: "outwareOperatorName",
+            name: "outwareOperatorName",
             val: void 0,
             maxlength: 20,
             minlength: 0,
             reg: "",
-            tip: "",
-            postname: "",
+            tip: "请输入出库经办人",
+            postname: "outwareOperatorName",
             status: "",
             isHide: false,
             disabled: true,
@@ -276,14 +277,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入存档编号",
-            key: "",
-            name: "",
+            key: "a0100a",
+            name: "a0100a",
             val: void 0,
             maxlength: 20,
             minlength: 0,
             reg: "",
-            tip: "",
-            postname: "",
+            tip: "请输入存档编号",
+            postname: "a0100a",
             status: "",
             isHide: false,
             disabled: true,
@@ -294,14 +295,14 @@ export default {
             type: "text",
             required: false,
             placeholder: "请输入档案位置号",
-            key: "",
-            name: "",
+            key: "shelvesNo",
+            name: "shelvesNo",
             val: void 0,
             maxlength: 20,
             minlength: 0,
             reg: "",
-            tip: "",
-            postname: "",
+            tip: "请输入档案位置号",
+            postname: "shelvesNo",
             status: "",
             isHide: false,
             disabled: true,
@@ -309,14 +310,15 @@ export default {
           },
           {
             title: '出库日期',
-            otherType: '',  
+            otherType: 'date',  
             required: false,
             placeholder: '请选择出库日期',
-            key: "",
-            name: "",
-            val: void 0,
-            postname: "",
+            key: "outwareDate",
+            name: "outwareDate",
+            val: moment(new Date(), 'YYYY-MM-DD'),
+            postname: "outwareDate",
             status: '',
+            tip: '请选择出库日期',
             isHide: false,
             disabled: true,
             colWidth: [12, 24]
@@ -326,10 +328,10 @@ export default {
             otherType: "textarea",
             required: false,
             placeholder: "请输入出库说明",
-            key: "",
-            name: "",
+            key: "outwareDesc",
+            name: "outwareDesc",
             val: void 0,
-            postname: "",
+            postname: "outwareDesc",
             maxlength: 200,
             minlength: 0,
             reg: "",
@@ -365,11 +367,17 @@ export default {
           }
         },
       },
+      currOperateId: null, //当前操作的id
+      batchOperateIdStr: null,  //批量操作--id字符串
     };
   },
 
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    checkTableData: function() {
+      return this.$store.getters.getinfoTableCheckData;
+    },
+  },
 
   //监控data中的数据变化
   watch: {
@@ -410,7 +418,11 @@ export default {
               a0101: element.a0101,
               a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
               a0184: element.a0184,
-              shelvesNo: element.shelvesNo
+              shelvesNo: element.shelvesNo,
+              applyName: element.applyName,
+              applyDate: element.applyDate,
+              outwareOperatorName: element.outwareOperatorName,
+              outwareDesc: element.outwareDesc,
             })
           });
         } else{
@@ -429,12 +441,32 @@ export default {
       _this.operateStatus = operateVal;
       if(currData && operateVal === '2'){
         //出库
+        _this.checkoutForm.formInputs.forEach(el => {
+          if(el.key === 'applyName' || el.key === 'applyDate' || el.key === 'a0100a' || el.key === 'shelvesNo'){
+            el.isHide = false;
+          }
+        });
+        _this.currOperateId = currData['key'];
         _this.visible = true;
         _this.checkoutForm = utils.getNewFormSearch(currData, _this.checkoutForm);
       } else{
         //批量出库
+        _this.checkoutForm.formInputs.forEach(el => {
+          if(el.key === 'applyName' || el.key === 'applyDate' || el.key === 'a0100a' || el.key === 'shelvesNo'){
+            el.isHide = true;
+          } else if(el.key === 'outwareOperatorName' || el.key === 'outwareDesc'){
+            el.val = void 0;
+          }
+        });
+        if(_this.checkTableData && _this.checkTableData.length > 0){
+          _this.visible = true;
+          _this.batchOperateIdStr = utils.borrowFun(_this.checkTableData, 'key');
+        } else{
+          _this.$message.error('请至少选择一条需要出库的档案申请信息进行批量出库操作!')
+        }
       }
     },
+
     handleCancel(){
       this.visible = false;
     },
@@ -442,6 +474,64 @@ export default {
       /**
        * 功能：modal---提交操作
        */
+      const _this = this;
+      let resultForm =  _this.$refs.checkoutForm.getFormData();
+      if(resultForm['isRight']){
+        let currPostObj = resultForm['postObj'];
+        if(_this.operateStatus === '2'){
+          //出库操作
+          currPostObj.id = _this.currOperateId;
+          _this.$http.fetchPost('archDocument@archTransferoutOutWare.action', currPostObj).then(res => {
+            if(Number(res.code) === 0){
+              _this.$message.success('出库成功！');
+              _this.getTableData(_this.tempCondition, 1, 10);
+              setTimeout(() => {
+                _this.visible = false;
+                _this.confirmLoading = false;
+              })
+            } else{
+              _this.$message.error('抱歉，操作失败，请刷新后重试！');
+            }
+          }).catch(error => {
+            _this.$message.error('抱歉，网络异常！');
+          })
+        } else if(_this.operateStatus === '1'){
+          //批量操作
+          currPostObj.ids = _this.batchOperateIdStr;
+          _this.$http.fetchPost('archDocument@archTransferoutOutWares.action', currPostObj).then(res => {
+            if(Number(res.code) === 0){
+              _this.$message.success('出库成功！');
+              _this.getTableData(_this.tempCondition, 1, 10);
+              setTimeout(() => {
+                _this.visible = false;
+                _this.confirmLoading = false;
+              })
+            } else{
+              _this.$message.error('抱歉，操作失败，请刷新后重试！');
+            }
+          }).catch(error => {
+            _this.$message.error('抱歉，网络异常！');
+          })
+        }
+      }
+    },
+    recallFun(currData){
+      /**
+       * 功能：撤回操作;
+       * 参数：currData:当前row数据
+       */
+      this.$http.fetchPost('archDocument@archTransferoutOutCancel.action',{
+        id: currData['key']
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.$message.success('撤回成功！');
+          this.getTableData(this.tempCondition, 1, 10);
+        } else{
+          this.$message.error('抱歉，操作失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
     }
   },
 

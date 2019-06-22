@@ -185,7 +185,7 @@ export default {
             title: "出库日期",
             dataIndex: "ao0105",
             key: "ao0105",
-            sorter: (a, b) => a.ao0105 && b.ao0105 && Number(a.ao0105.replace(/[\s+|\-|\:]/g,'')) - Number(b.ao0105.replace(/[\s+|\-|\:]/g,'')),
+            sorter: (a, b) => a.ao0105 && b.ao0105 && Number(a.ao0105.replace(/[\s+|\-|:]/g,'')) - Number(b.ao0105.replace(/[\s+|\-|:]/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
