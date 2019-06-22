@@ -50,6 +50,7 @@ export default {
         return {
                             
             tableTotalNum: 0,   //总页数：默认为0
+            tempCondition:{},
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
@@ -65,14 +66,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入姓名",
-                            key: "name",
-                            name: "name",
+                            key: "applyName",
+                            name: "applyName",
                             val: void 0,
                             maxlength: 20,
                             minlength: 0,
                             reg: '',
                             tip: '',
-                            postname:'',
+                            postname:'applyName',
                             status: '',
                         },
 
@@ -82,10 +83,10 @@ export default {
                             otherType: 'daterange',
                             required: false,
                             placeholder: '请选择申请日期',
-                            key: "applyDate",
-                            name: "applyDate",
-                            val: void 0,
-                            postname: "",
+                            key: "applyStartDate-applyEndDate",
+                            name: "applyStartDate-applyEndDate",
+                            val: [void 0 , void 0],
+                            postname: "applyStartDate-applyEndDate",
                             status: '',
                             disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
                             disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
@@ -105,62 +106,64 @@ export default {
                         dataIndex: "num",
                         key: "num",
                         fixed: "left",
-                        width: 60,
+                        width: 100,
                         // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
                         title: "姓名",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applyName",
+                        key: "applyName",
+                        fixed: "left",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "身份证号",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applyIdNum",
+                        key: "applyIdNum",
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系电话",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applyTelNum",
+                        key: "applyTelNum",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "最高学历",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applyDegree",
+                        key: "applyDegree",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     
                     {
                         title: "毕业院校",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applySchool",
+                        key: "applySchool",
+                        width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "申请日期",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "applyDate",
+                        key: "applyDate",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "原档案管理机构",
-                        dataIndex: "",
-                        key: "",
-                        // width: 60,
+                        dataIndex: "originalArchiveOrg",
+                        key: "originalArchiveOrg",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "操作",
                         key: "action",
+                        fixed:'right',
+                        width: 150,
                         scopedSlots: { customRender: "action" }
                     }
                 ],
@@ -187,18 +190,40 @@ export default {
     //方法集合
     methods: {
 
+        // 获取数据
         getTableData(condition, pageNum, limitNum) {
-          /***
-           * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
-           * 参数：condition:form查询结果：{}
-*         */
-
-        }
+            const _this = this;
+            /***
+             * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
+             * 参数：condition:form查询结果：{}
+             **/
+            this.tempCondition = condition;
+            this.$http.fetchPost('archStore@getArchStoreApplyList.action',{
+                page: pageNum,
+                limit: limitNum,
+                ...condition
+            }).then((res)=>{
+                if(Number(res.code) === 0){
+                    this.tableTotalNum = res.count;
+                    this.initArr.tabledataArr = res.data;
+                    this.initArr.tabledataArr.forEach((element, index) => {
+                        let tempState = String(element.transferOutState);
+                        Object.assign(element,{
+                            key:element.id,
+                            num: (pageNum - 1) * limitNum + index + 1,
+                        });
+                    });
+                }else{
+                    _this.$message.warning("抱歉,暂时未查到数据!");
+                }
+            })
+        },
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-
+        // 初始化数据
+        this.getTableData(null,1,10);
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

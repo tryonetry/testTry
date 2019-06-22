@@ -57,14 +57,17 @@
                     <a-button key="back" @click="handleCancel1">取消</a-button>
                     <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="saveConfirm">保存</a-button>
                 </template>
-                <TableView :initArrData="initArr2" ref='editTable'>
-                    <div slot="tableAction" slot-scope="slotPropsData">
-                        <a
-                            href="javascript:;"
-                            class="primaryBtnColor"
-                        >删 除</a>
-                    </div>
-                </TableView>
+                <div class="editTableContainer">
+                    <TableView :initArrData="initArr2" ref='editTable'>
+                        <span slot="tableAction" ></span>
+                        <!-- <div slot="tableAction" slot-scope="slotPropsData">
+                            <a
+                                href="javascript:;"
+                                class="primaryBtnColor"
+                            >删 除</a>
+                        </div> -->
+                    </TableView>
+                </div>
             </a-modal>
         </a-modal>
         </div>
@@ -645,5 +648,10 @@ export default {
 </script>
 
 <style scoped>
-
+.editTableContainer{
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 </style>

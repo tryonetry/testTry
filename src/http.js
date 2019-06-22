@@ -1,7 +1,7 @@
 import axios from 'axios'
 import qs from 'qs'
 
-axios.defaults.timeout = 10000; 
+// axios.defaults.timeout = 20000; 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 axios.defaults.baseURL = 'api/hasngcadrefile/';   //配置接口地址
 

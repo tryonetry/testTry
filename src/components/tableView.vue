@@ -1,5 +1,5 @@
 <template>
-  <div class="viewContainer">
+  <div :class="editableCol && editableCol.length > 0 ? 'editViewContainer' : 'viewContainer'">
     <div class="organ_tree" v-if="treeFlag">
       <OrganTree @sendTreeValue="acceptTreeValue"></OrganTree>
     </div>
@@ -37,6 +37,14 @@
             <p v-if="editableCol && editableCol.length > 0" class="editAble">
               <a v-if="record.inEdit" href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,false)">确 定</a>
               <a v-else href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,true)">编 辑</a>
+              <a-popconfirm
+                title="您确定撤销吗?"
+                okText="确定"
+                cancelText="取消"
+                @confirm="deleteRow(index)"
+              >
+                <a href="javascript:;" class="errorBtnColor">删 除</a>
+              </a-popconfirm>
             </p>
             <slot name="tableAction" :currRowdata="record" :currTableData="tabledata">table操作按钮</slot>
           </span>
@@ -444,8 +452,13 @@ export default {
           }
         }
       });
-      console.log(emptyRow)
       this.tabledata.push(emptyRow);
+    },
+
+    // 删除行
+    deleteRow(index){
+      // console.log(this.tabledata[index])
+      this.tabledata.splice(index,1);
     },
 
     // 改变编辑状态
@@ -507,6 +520,12 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: #fff;
+}
+.editViewContainer{
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: #fff;
 }
 .organ_tree {
