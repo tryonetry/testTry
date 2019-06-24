@@ -5,6 +5,7 @@
           :initArrData="initArr"
           :totalCount="tableTotalNum"
            @searchTable="getTableData"
+           :loading="tableLoading"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
@@ -99,8 +100,8 @@ export default {
 
     data() {
         return {
-                            
             tableTotalNum: 0,   //总页数：默认为0
+            tableLoading:false,
             tempCondition:{},
             reviewModal:false, // 审核弹层
             currentData:null, // 当前行数据
@@ -113,8 +114,8 @@ export default {
                 { label:"被查阅人姓名", val:void 0 ,name:'applyName'},
                 { label:"被查阅人身份号码/社保卡号", val:void 0 ,name:'applyIdNum'},
                 { label:"查阅原因", val:void 0 ,name:'consultCause'},
-                { label:"查阅申请人", val:void 0 ,name:'borrower',oneRow:true},
-                { label:"查阅申请人证件号", val:void 0 ,name:'borrowerTelNum',oneRow:true},
+                { label:"查阅申请人", val:void 0 ,name:'borrower'},
+                { label:"查阅申请人证件号", val:void 0 ,name:'borrowerTelNum'},
             ],
             // tableView传值方式
             initArr:{
@@ -220,7 +221,8 @@ export default {
                 ],
                 // table数据
                 tabledataArr: [],
-            }
+            },
+            hanzi:['一','二','三','四','五','六','七','八','九','十']
 
         };
     },
@@ -248,6 +250,7 @@ export default {
              * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
              * 参数：condition:form查询结果：{}
              **/
+            this.tableLoading = true;
             this.tempCondition = condition;
             this.$http.fetchPost('archBorrow@getArchBorrowApplyListPage.action',{
                 page: pageNum,
@@ -267,17 +270,32 @@ export default {
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading = false;
             })
         },
 
         // 审核
         review(currRowdata){
+            const _this = this;
             this.currentData = currRowdata;
             this.reviewModal = true;
             // console.log(currRowdata);
             this.baseData.forEach(item => {
                 Object.assign(item,{val:currRowdata[item.name]})
             });
+            console.log(currRowdata);
+            let imgFiles = JSON.parse(currRowdata.applyFilePath);
+            // 多条图片数据
+            if(imgFiles && imgFiles.length > 0){
+                imgFiles.forEach((item,index) => {
+                    _this.baseData.push(
+                        { label:"申请文件"+_this.hanzi[index], val:item.base64data ,name:item.name,isImg:true},
+                    )
+                })
+            }
             
         },
 

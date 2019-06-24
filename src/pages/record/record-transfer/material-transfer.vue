@@ -6,12 +6,13 @@
           :totalCount="tableTotalNum"
           :filterTableCheck='filterTableCheck'
            @searchTable="getTableData"
+           :loading="tableLoading"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
            <span slot="formAction">
                <a-button class="buttonOperate" type="primary" @click="addMaterial">添 加</a-button>
-               <a-button class="buttonOperate" type="primary">移 交</a-button>
+               <a-button class="buttonOperate" type="primary" @click="transfer" :loading="loading">移 交</a-button>
            </span>
 
       </TableView>
@@ -33,6 +34,7 @@
                 :initArrData="initArr1"
                 :totalCount="tableTotalNum1"
                 @searchTable="getTableData1"
+                :loading="tableLoading1"
             >
                 <div slot="tableAction" slot-scope="slotPropsData">
                     <a
@@ -87,6 +89,7 @@ export default {
         return {
                             
             tableTotalNum: 0,   //总页数：默认为0
+            tableLoading:false,
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
@@ -276,13 +279,22 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "状态",
-                        dataIndex: "e0112",
-                        key: "e0112",
-                        width: 100,
-                        fixed:'right'
+                        title: "移交状态",
+                        dataIndex: "e0109",
+                        key: "e0109",
+                        fixed: "right",
+                        width: 150,
                         // scopedSlots: { customRender: "cursorTitle" }
                     },
+                    {
+                        title: "接收状态",
+                        dataIndex: "e0112",
+                        key: "e0112",
+                        fixed: "right",
+                        width: 150,
+                        // scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    
                     {
                         title: "在库状态",
                         dataIndex:'isInware',
@@ -295,6 +307,7 @@ export default {
                 tabledataArr: [],
             },
             tableTotalNum1:0,
+            tableLoading1:false,
             initArr1:{
                 treeflag: false, 
                 tableCheck: false, 
@@ -480,6 +493,7 @@ export default {
             visible1:false,
             tempCondition:{},
             tempCondition1:{},
+            loading:false,
             saveConfirmLoading:false,
             
         };
@@ -509,7 +523,7 @@ export default {
         filterTableCheck(record){
             return { 
                 props: {
-                    disabled: record.e0112  !== '待移交', // Column configuration not to be checked
+                    disabled: record.e0109  !== '待移交', // Column configuration not to be checked
                 }
             }
         },
@@ -522,6 +536,7 @@ export default {
              * 参数：condition:form查询结果：{}
              **/
             this.tempCondition = condition;
+            this.tableLoading = true;
             this.$http.fetchPost('fileConnect@getConnectList.action',{
                 page: pageNum,
                 limit: limitNum,
@@ -536,14 +551,48 @@ export default {
                         Object.assign(element,{
                             key:element.e01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            e0112:element.e0112 === "1" ? "待接收" : element.e0112 === "0" ? "已接收" : "待移交",
+                            e0112:element.e0112 === "1" ? "待接收" : "已接收",
+                            e0109:element.e0109 === "1" ? "待移交" : "已移交",
                             isInware:element.isInware === "2" ? "已转出" : "在库", 
                         });
                     });
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading = false;
             })
+        },
+
+        // 移交
+        transfer(){
+            const _this = this;
+            let strArr = "";
+            // 抽取 id
+            this.checkTableData.forEach(person => {
+                strArr += person.e01000 + ","
+            });
+            // 提交 id 数组
+            if(strArr.length > 0){
+                this.loading = true;
+                this.$http.fetchPost('fileConnect@turnTakeOver.action',{
+                    strArr:strArr
+                }).then(res => {
+                    if(Number(res.code) === 0){
+                        _this.$message.success("移交成功");
+                        _this.getTableData(_this.tempCondition,1,10)
+                    }else{
+                        _this.$message.warning("抱歉,移交失败,请重试")
+                    }
+                }).catch(err => {
+                    _this.$message.error("抱歉,网络异常,请稍后重试")
+                }).finally(end => {
+                    console.log(end);
+                    _this.loading = false;
+                })
+            }
         },
 
         // 获取需选择的人员数据
@@ -554,6 +603,7 @@ export default {
              * 参数：condition:form查询结果：{}
              **/
             this.tempCondition1 = condition;
+            this.tableLoading1 = true;
             this.$http.fetchPost('fileConnect@getPersonalList.action',{
                 page: pageNum,
                 limit: limitNum,
@@ -574,11 +624,16 @@ export default {
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading1 = false;
             })
         },
 
         addMaterial(){
             this.visible = true;
+            this.initArr1.tabledataArr = [];
         },
 
         // 取消选择人员新增材料接收记录
@@ -598,6 +653,7 @@ export default {
 
         saveConfirm(){
             this.$refs.editTable.getTableData();
+            // this.saveConfirmLoading = true;
         },
     },
 

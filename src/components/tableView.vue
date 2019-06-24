@@ -15,7 +15,7 @@
         <a-table
           :columns="columns"
           :dataSource="tabledata"
-          :rowSelection="tablecheck ? {onSelect:onSelect, onSelectAll:onSelectAll,getCheckboxProps:getCheckboxProps} : null"
+          :rowSelection="tablecheck ? {onSelect:onSelect, onSelectAll:onSelectAll,getCheckboxProps:getCheckboxProps,selectedRowKeys: selectedRowKeys, onChange: onSelectChange} : null"
           :scroll="isEditAndAdd ? {x:tableWidth} :{ x: tableWidth,y:tableHeight}"
           :pagination="false"
           :bordered="bordered"
@@ -197,6 +197,7 @@ export default {
       tableHeight:450, // 设置table滚动的高度
       timer:null, //监听器
       bordered:false, // 边框默认 false
+      selectedRowKeys: [] //选择的 keys
     };
   },
   watch: {
@@ -221,7 +222,7 @@ export default {
             JSON.stringify(newVal.tabledataArr)
           );
 
-          
+          this.selectedRowKeys = [];
 
           // 单元格宽度溢出处理
           this.$nextTick(function(){
@@ -396,6 +397,10 @@ export default {
     onSelectAll(selected, selectedRows, changeRows) {
       //table全选
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
+    },
+
+    onSelectChange (selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
     },
 
     getCheckboxProps(record){

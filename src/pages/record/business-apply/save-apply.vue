@@ -1,56 +1,143 @@
-<!-- template -->
+<!-- 档案存档申请审核 -->
 <template>
 <div class="outer">
       <TableView
           :initArrData="initArr"
           :totalCount="tableTotalNum"
            @searchTable="getTableData"
+           :loading="tableLoading"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
            <span slot="formAction">
-               
            </span>
 
            <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
            <div slot="tableAction" slot-scope="slotPropsData">
                <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-                   data-type="浏览"
-                   class="primaryBtnColor"
-               >浏览</a>
+                    v-if="String(slotPropsData.currRowdata.approvalState)  === '0'"
+                    href="javascript:;"
+                    @click="review(slotPropsData.currRowdata)"
+                    class="primaryBtnColor"
+               >审核</a>
                <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-                   data-type="编辑"
-               >编辑</a>"
+                    v-if="String(slotPropsData.currRowdata.approvalState)  === '1'"
+                    href="javascript:;"
+                    class="canNotClickBtnColor"
+               >已审核</a>
+
+               <a-popconfirm
+                   v-if="String(slotPropsData.currRowdata.backoutStatus)  === '1'"
+                   title="确定撤销吗?"
+                   okText="确定"
+                   cancelText="取消"
+                   @confirm="backOut(slotPropsData.currRowdata)"
+               >
+                    <a href="javascript:;" class="warnBtnColor">撤销</a>
+               </a-popconfirm>
+               <a
+                    v-if="String(slotPropsData.currRowdata.backoutStatus)  === '2'"
+                    href="javascript:;"
+                    class="canNotClickBtnColor"
+               >已撤销</a>
                <a-popconfirm
                    title="确定删除吗?"
                    okText="确定"
                    cancelText="取消"
-                   @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
+                   @confirm="deleteFun(slotPropsData.currRowdata)"
                >
                    <a href="javascript:;" class="errorBtnColor">删除</a>
                </a-popconfirm>
             </div>
       </TableView>
+
+      <!-- 审核弹层 -->
+      <div class="reviewModal">
+        <a-modal
+            centered
+            :visible="reviewModal"
+            :width="'90%'"
+            @cancel="handleCancel"
+            style="height:85%;overflow: hidden;"
+            :maskClosable='false'
+        >
+            <!-- footer solt -->
+            <template slot="footer">
+                <a-popconfirm
+                   title="确定拒绝通过吗?"
+                   okText="确定"
+                   cancelText="取消"
+                   @confirm="refuseOrallow('0')"
+               >
+                    <a-button key="cancel" :loading='refuseConfirmLoading'>拒绝通过审核</a-button>
+                </a-popconfirm>
+                <a-popconfirm
+                   title="确定允许通过吗?"
+                   okText="确定"
+                   cancelText="取消"
+                   @confirm="refuseOrallow('1')"
+               >
+                    <a-button key="submit" type="primary" :loading='allowConfirmLoading'>允许通过审核</a-button>
+                </a-popconfirm>
+            </template>
+
+            <!-- title -->
+            <div slot="title" class="titleSlot">
+                <p>档案转出申请审核</p>
+                <span>{{currentData && currentData.applyName}}</span>
+            </div>
+            <!-- content -->
+            <div class="content">
+                <FormHeader :formTitle='"档案转出申请信息"'></FormHeader>
+                <ShowBasicInfo :baseData="baseData"></ShowBasicInfo>
+                <FormHeader :formTitle='"审核信息"'></FormHeader>
+                <div class="reviewContent"><label>审核结果:</label><a-textarea
+                    placeholder="请输入审核结果 (300字以内...)" 
+                    v-model="reviewResult"
+                    allowClear
+                    maxlength='300'
+                /></div>
+            </div>
+        </a-modal>
+      </div>
 </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
+import FormHeader from "@/components/formHeader";
+import ShowBasicInfo from '@/components/showBasicInfo';
 export default {
     name:"SaveApply",
     //import引入的组件需要注入到对象中才能使用
-    components: {TableView},
+    components: {TableView,FormHeader,ShowBasicInfo},
     props:[""],
 
     data() {
         return {
-                            
             tableTotalNum: 0,   //总页数：默认为0
+            tableLoading:false,
             tempCondition:{},
+            reviewModal:false, // 审核弹层
+            currentData:null, // 当前行数据
+            allowConfirmLoading:false,
+            refuseConfirmLoading:false,
+            reviewResult:'',
+            baseData:[
+                { label:"申请人", val:void 0 ,name:'applyName'},
+                { label:"性别", val:void 0 ,name:'agent'},
+                { label:"身份号码/社保卡号", val:void 0 ,name:'applyIdNum'},
+                { label:"手机号", val:void 0 ,name:'applyTelNum'},
+                { label:"申请日期", val:void 0 ,name:'applyDate'},
+                { label:"毕业日期", val:void 0 ,name:'finishSchoolTime'},
+                { label:"现工作单位", val:void 0 ,name:'nowCompany'},
+                { label:"档案所在单位", val:void 0 ,name:'blongCompany'},
+                { label:"申请转入原因", val:void 0 ,name:'syncCause'},
+                { label:"身份证正面", val:void 0 ,name:'identityFront',isImg:true},
+                { label:"身份证反面", val:void 0 ,name:'identityReverse',isImg:true},
+                { label:"毕业证书", val:void 0 ,name:'doplomaCard',isImg:true},
+                { label:"合同", val:void 0 ,name:'applyFile',isImg:true},
+            ],
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
@@ -197,6 +284,7 @@ export default {
              * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
              * 参数：condition:form查询结果：{}
              **/
+            this.tableLoading = true;
             this.tempCondition = condition;
             this.$http.fetchPost('archStore@getArchStoreApplyList.action',{
                 page: pageNum,
@@ -216,14 +304,94 @@ export default {
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading = false;
             })
         },
+
+        // 审核
+        review(currRowdata){
+            this.currentData = currRowdata;
+            this.reviewModal = true;
+            // console.log(currRowdata);
+            this.baseData.forEach(item => {
+                Object.assign(item,{val:currRowdata[item.name]})
+            });
+            
+        },
+
+        //撤销
+        backOut(currRowdata){
+
+        },
+
+        // close modal
+        handleCancel(){
+            this.reviewModal = false;
+        },
+
+        // confirm review  
+        refuseOrallow(state){
+
+            const _this = this;
+
+            if(state === '1'){
+                this.allowConfirmLoading = true;
+            }else{
+                this.refuseConfirmLoading = true;
+            }
+
+            this.$http.fetchPost('archStore@archStoreApproval.action',{
+                archiveId:this.currentData.a01000,
+                isInware:this.currentData.isInware,
+                applyId:this.currentData.id,
+                approvalState: String(state),
+                approvalRemark:this.reviewResult,
+            })
+            .then(res => {
+                if(Number(res.code) === 0){
+                    _this.$message.success('审核成功!');
+                    _this.reviewModal = false;
+                    _this.getTableData(_this.tempCondition,1,10);
+                }else{
+                    _this.$message.warning('审核失败,请重试');
+                }
+            })
+            .catch(err => {
+                _this.$message.console.error('抱歉,网络异常,请稍后重试');
+            })
+            .finally(end => {
+                if(state === '1'){
+                    this.allowConfirmLoading = false;
+                }else{
+                    this.refuseConfirmLoading = false;
+                }
+            })
+        },
+        // 删除审核
+        deleteFun(currRowdata){
+            const _this = this;
+            this.$http.fetchPost('archTransferOut@deleteArchTransferOut.action',{
+                id:currRowdata.id
+            }).then(res => {
+                if(Number(res.code) === 0){
+                    _this.$message.success('删除成功!');
+                    _this.getTableData(_this.tempCondition,1,10);
+                }else{
+                    _this.$message.warning('删除失败,请重试');
+                }
+            }).catch(err => {
+                _this.$message.console.error('抱歉,网络异常,请稍后重试');
+            })
+        }
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
         // 初始化数据
-        this.getTableData(null,1,10);
+        // this.getTableData(null,1,10);
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）
@@ -250,5 +418,31 @@ export default {
 </script>
 
 <style scoped>
-
+    .titleSlot{
+        display: flex;
+    }
+    .titleSlot>p{
+        margin-right: 40px;
+    }
+    .titleSlot>span{
+        color:#2d8cf0;
+    }
+    .content{
+        height: 100%;
+        overflow-y: auto;
+        overflow-x:hidden;
+    }
+    .reviewContent{
+        display: flex;
+        margin-bottom: 20px;
+    }
+    .reviewContent > label{
+        width: 20%;
+        text-align: center;
+        line-height: 100px;
+    }
+    .reviewContent > textarea{
+        flex:1;
+        height: 100px;
+    }
 </style>

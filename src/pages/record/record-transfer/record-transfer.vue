@@ -6,6 +6,7 @@
           :totalCount="tableTotalNum"
           :filterTableCheck='filterTableCheck'
            @searchTable="getTableData"
+           :loading="tableLoading"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
@@ -42,6 +43,7 @@
 <script>
 
 import TableView from "@/components/tableView";
+import utils from '../../../utils/util';
 export default {
     name:"RecordTransfer",
     //import引入的组件需要注入到对象中才能使用
@@ -52,6 +54,7 @@ export default {
         return {
                             
             tableTotalNum: 0,   //总页数：默认为0
+            tableLoading:false,
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
@@ -208,11 +211,19 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "状态",
+                        title: "移交状态",
+                        dataIndex: "e0109",
+                        key: "e0109",
+                        fixed: "right",
+                        width: 150,
+                        // scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "接收状态",
                         dataIndex: "e0112",
                         key: "e0112",
                         fixed: "right",
-                        width: 100,
+                        width: 150,
                         // scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
@@ -260,7 +271,7 @@ export default {
         filterTableCheck(record){
             return { 
                 props: {
-                    disabled: record.e0112  !== '待移交', // Column configuration not to be checked
+                    disabled: record.e0109  !== '待移交', // Column configuration not to be checked
                 }
             }
         },
@@ -271,6 +282,7 @@ export default {
              * 参数：condition:form查询结果：{}
              **/
             this.tempCondition = condition;
+            this.tableLoading = true;
             this.$http.fetchPost('fileConnect@getConnectList.action',{
                 page: pageNum,
                 limit: limitNum,
@@ -285,45 +297,51 @@ export default {
                         Object.assign(element,{
                             key:element.e01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            e0112:element.e0112 === "1" ? "待接收" : element.e0112 === "0" ? "已接收" : "待移交",
+                            e0112:element.e0112 === "1" ? "待接收" : "已接收",
+                            e0109:element.e0109 === "1" ? "待移交" : "已移交",
                             isInware:element.isInware === "2" ? "已转出" : "在库", 
                         });
                     });
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading = false;
             })
         },
 
+        // 移交
         transfer(){
             const _this = this;
-            let strArr = [];
+            let strArr = "";
             // 抽取 id
             this.checkTableData.forEach(person => {
-                strArr.push(person.e01000)
+                strArr += person.e01000 + ","
             });
             // 提交 id 数组
             if(strArr.length > 0){
                 this.loading = true;
+                
                 this.$http.fetchPost('fileConnect@turnTakeOver.action',{
-                    strArr:JSON.stringify(strArr)
+                    strArr:strArr
                 }).then(res => {
                     if(Number(res.code) === 0){
-                        _this.message.success("移交成功");
+                        _this.$message.success("移交成功");
                         _this.getTableData(_this.tempCondition,1,10)
                     }else{
                         _this.$message.warning("抱歉,移交失败,请重试")
                     }
                 }).catch(err => {
-                    _this.$message.error("抱歉,网络错误,请稍后重试")
+                    _this.$message.error("抱歉,网络异常,请稍后重试")
                 }).finally(end => {
                     console.log(end);
                     _this.loading = false;
                 })
             }
-            
-
         },
+
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）

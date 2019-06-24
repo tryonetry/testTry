@@ -1,7 +1,7 @@
 <!-- template -->
 <template>
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
       <span slot="formAction">
         <a-button class="buttonOperate"  @click="rollOutFun">现场调转</a-button>
       </span>
@@ -15,14 +15,14 @@
         title="档案内部调转"
         :visible="visible"
         :width="'90%'"
-        :confirmLoading="confirmLoading"
-        okText="调转"
-        cancelText="取消"
-        @ok="rollOutApplyFun"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
         :maskClosable='false'
       >
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary" :loading='confirmLoading' @click="rollOutApplyFun">调 转</a-button>
+        </template>
         <div class="modalContent">
           <TransferOnSite 
             :isInner='true' 
@@ -172,6 +172,7 @@ export default {
       showRandom:Math.random(), // 点击更新数据
       tempCondition:{},
       tableTotalNum:0,
+      tableLoading:false,
     };
   },
 
@@ -196,6 +197,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
       **/
+      this.tableLoading = true;
       this.tempCondition = condition;
       this.$http.fetchPost('personalArch@getInternalTransferList.action',{
           page: pageNum,
@@ -217,6 +219,10 @@ export default {
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
           }
+      }).catch(err => {
+        _this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        _this.tableLoading = false;
       })
     },
 

@@ -2,7 +2,7 @@
 <template>
   <!-- 信息变更 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascrit:;"
@@ -15,13 +15,15 @@
       <a-modal
         centered 
         :visible="modalState"
-        okText="提交"
-        cancelText="取消"
-        @ok="handleOk"
         @cancel="handleCancel"
         :width="'90%'"
         :maskClosable='false'
-      >
+      > 
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="handleOk">提 交</a-button>
+        </template>
+
         <div slot="title" class="titleSlot">
           <p>信息变更</p>
           <span>{{currentPersonData && currentPersonData.a0101}}</span>
@@ -49,6 +51,8 @@ export default {
   data() {
     return {
       tableTotalNum:0,
+      tableLoading:false,
+      saveConfirmLoading:false,
       initArr: {
         treeflag: false, //左侧tree是否存在
         tableCheck: false,
@@ -171,6 +175,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
       **/
+     this.tableLoading = true;
       this.$http.fetchPost('personalArch@getPersonalArchList.action',{
           page: pageNum,
           limit: limitNum,
@@ -201,6 +206,10 @@ export default {
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
           }
+      }).catch(err => {
+        _this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        _this.tableLoading = false;
       })
     },
     // 点击进入
@@ -210,6 +219,7 @@ export default {
       this.modalState = true;
     },
     handleOk(){
+      this.saveConfirmLoading = true;
       // this.modalState = 
     },
     handleCancel(){

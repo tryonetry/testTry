@@ -2,7 +2,7 @@
 <template>
   <!-- 档案转出 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
       <div slot="tableAction" slot-scope="slotPropsData">
 
         <!-- 待出库状态 -->
@@ -90,14 +90,14 @@
         title="个人档案转出"
         :visible="visible"
         :width="'90%'"
-        :confirmLoading="confirmLoading"
-        :okText="confirmBtnTitle"
-        cancelText="取消"
-        @ok="rollOutApplyFun"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
         :maskClosable='false'
       >
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary" :loading='confirmLoading' @click="rollOutApplyFun">提 交</a-button>
+        </template>
         <TransferOnSite 
           :personData="currentPersonData" 
           :showRandom='showRandom' 
@@ -118,14 +118,14 @@
         centered
         :visible="sendModalShow"
         :width="'50%'"
-        :confirmLoading="sendConfirmLoading"
-        okText="保存"
-        cancelText="取消"
-        @ok="saveSendNum"
         @cancel="handleCancel"
         style="height:40%;overflow: hidden;"
         :maskClosable='false'
       >
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary" :loading='sendConfirmLoading' @click="saveSendNum">保 存</a-button>
+        </template>
         <!-- title -->
         <div slot="title" class="titleSlot">
           <p>邮寄编号填写</p>
@@ -395,6 +395,7 @@ export default {
       isAction:false,
       actionData:null,
       tableTotalNum: 0, //table数据量
+      tableLoading:false,
       tempCondition:{},
       visible: false, //模态框默认不可见
       sendModalShow:false, //邮寄编号弹层
@@ -428,6 +429,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
       **/
+      this.tableLoading = true;
       this.tempCondition = condition;
       this.$http.fetchPost('archTransferOut@getArchTransferOutApplyList.action',{
           page: pageNum,
@@ -448,6 +450,10 @@ export default {
           }else{
               _this.$message.warning("抱歉,暂时未查到数据!");
           }
+      }).catch(err => {
+        _this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        _this.tableLoading = false;
       })
     },
 

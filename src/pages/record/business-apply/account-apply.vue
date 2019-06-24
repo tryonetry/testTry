@@ -5,6 +5,7 @@
           :initArrData="initArr"
           :totalCount="tableTotalNum"
            @searchTable="getTableData"
+           :loading="tableLoading"
       >
 
            <!-- tableFormSearch里添加其他按钮 -->
@@ -99,8 +100,8 @@ export default {
 
     data() {
         return {
-                            
             tableTotalNum: 0,   //总页数：默认为0
+            tableLoading:false,
             tempCondition:{},
             reviewModal:false, // 审核弹层
             currentData:null, // 当前行数据
@@ -237,6 +238,7 @@ export default {
              * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
              * 参数：condition:form查询结果：{}
              **/
+            this.tableLoading = true;
             this.tempCondition = condition;
             this.$http.fetchPost('openAccountApproval@getopenAccountList.action',{
                 page: pageNum,
@@ -256,6 +258,10 @@ export default {
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.tableLoading = false;
             })
         },
 
