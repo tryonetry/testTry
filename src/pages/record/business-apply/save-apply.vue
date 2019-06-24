@@ -27,19 +27,19 @@
                >已审核</a>
 
                <a-popconfirm
-                   v-if="String(slotPropsData.currRowdata.backoutStatus)  === '1'"
+                   v-if="String(slotPropsData.currRowdata.approvalState)  === '1' && String(slotPropsData.currRowdata.backoutStatus)  === '1' && !backOutLoading"
                    title="确定撤销吗?"
                    okText="确定"
                    cancelText="取消"
                    @confirm="backOut(slotPropsData.currRowdata)"
-               >
+               >    
                     <a href="javascript:;" class="warnBtnColor">撤销</a>
                </a-popconfirm>
-               <a
-                    v-if="String(slotPropsData.currRowdata.backoutStatus)  === '2'"
-                    href="javascript:;"
-                    class="canNotClickBtnColor"
-               >已撤销</a>
+
+                <a-spin v-if="backOutLoading">
+                    <a-icon slot="indicator" type="loading" style="font-size: 18px" spin />
+                </a-spin>
+
                <a-popconfirm
                    title="确定删除吗?"
                    okText="确定"
@@ -83,12 +83,12 @@
 
             <!-- title -->
             <div slot="title" class="titleSlot">
-                <p>档案转出申请审核</p>
+                <p>档案存档申请审核</p>
                 <span>{{currentData && currentData.applyName}}</span>
             </div>
             <!-- content -->
             <div class="content">
-                <FormHeader :formTitle='"档案转出申请信息"'></FormHeader>
+                <FormHeader :formTitle='"档案存档申请信息"'></FormHeader>
                 <ShowBasicInfo :baseData="baseData"></ShowBasicInfo>
                 <FormHeader :formTitle='"审核信息"'></FormHeader>
                 <div class="reviewContent"><label>审核结果:</label><a-textarea
@@ -117,6 +117,7 @@ export default {
         return {
             tableTotalNum: 0,   //总页数：默认为0
             tableLoading:false,
+            backOutLoading:false,
             tempCondition:{},
             reviewModal:false, // 审核弹层
             currentData:null, // 当前行数据
@@ -250,7 +251,7 @@ export default {
                         title: "操作",
                         key: "action",
                         fixed:'right',
-                        width: 150,
+                        width: 250,
                         scopedSlots: { customRender: "action" }
                     }
                 ],
@@ -324,7 +325,23 @@ export default {
 
         //撤销
         backOut(currRowdata){
-
+            const _this = this;
+            this.backOutLoading = true;
+            this.$http.fetchPost('archStore@approveBackOut.action',{
+                id:currRowdata.id,
+                idCard:currRowdata.applyIdNum,
+            }).then(res => {
+                if(Number(res.code) === 0){
+                    _this.$message.success('撤销成功!');
+                    _this.getTableData(_this.tempCondition,1,10);
+                }else{
+                    _this.$message.warning('抱歉,撤销失败,请重试');
+                }
+            }).catch(err => {
+                _this.$message.error('抱歉,网络异常,请稍后重试');
+            }).finally(end => {
+                _this.backOutLoading = false;
+            })
         },
 
         // close modal
@@ -344,8 +361,6 @@ export default {
             }
 
             this.$http.fetchPost('archStore@archStoreApproval.action',{
-                archiveId:this.currentData.a01000,
-                isInware:this.currentData.isInware,
                 applyId:this.currentData.id,
                 approvalState: String(state),
                 approvalRemark:this.reviewResult,

@@ -133,7 +133,7 @@ input[readonly]{
   .warnBtnColor,
   .errorBtnColor,
   .canNotClickBtnColor{
-    padding:0 6px
+    padding:0 10px
   }
   .primaryBtnColor{
     color: #2d8cf0;
