@@ -1,7 +1,7 @@
 <!-- template -->
 <template>
   <div class="outer">
-    <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
+    <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
         <a-button class="buttonOperate" @click="sceneOperate('now')">现场查(借)阅</a-button>
@@ -71,7 +71,7 @@
       >
         <!-- 现场查借阅modal -->
         <div class="sceneBorrow" v-if="mulitipleOperateVal === 'now' || mulitipleOperateVal === 'batchNow'">
-           <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" @searchTable="getSceneTableData" ref="sceneTableView">
+           <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" :loading="sceneTableLoading" @searchTable="getSceneTableData" ref="sceneTableView">
             <span slot="formAction">
               <a-button class="buttonOperate" type="danger" @click="clearSceneTable">清除累计查询</a-button>
               <a-button class="buttonOperate" @click="multipleOperate('batchNow')">批量查(借)阅</a-button>
@@ -178,6 +178,7 @@ export default {
   data() {
     return {
       tableTotalNum: 0, //总页数：默认为0
+      tableLoading: false,  //table loading
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
@@ -410,6 +411,7 @@ export default {
       modalVisible: false,   //批量查借阅modal 默认false：不显示
       modalConfirmLoading: false,  //批量查借阅modal 默认false：不加载
       sceneTableTotalNum: 0,  //档案现场借出总页数：默认为0
+      sceneTableLoading: false,  //档案现场--table loading
       sceneLoanDataInitArr:{
         //档案现场借出传得tableView数据
         treeflag: false, //左侧tree是否存在
@@ -881,6 +883,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
        */
+      this.tableLoading = true;
       this.tempCondition = condition;
       this.$http.fetchPost('archBorrow@getArchBorrowApplyList.action', {
           page: pageNum,
@@ -925,7 +928,9 @@ export default {
           }
       }).catch(error => {
           this.$message.error('抱歉，网络异常！');
-        });
+      }).finally(end => {
+        this.tableLoading = false;
+      });
     },
 
     getSceneTableData(sceneCondition, pageNum, limitNum){
@@ -933,6 +938,7 @@ export default {
        * 功能：现场查借阅moda--查询操作：根据当前查询条件：sceneCondition，getTable数据
        * 参数：sceneCondition:form查询结果：{}
        */
+      this.sceneTableLoading = true;
       this.tempSceneCondition = sceneCondition;
       this.$http.fetchPost('archBorrow@getPersonalArchList.action', {
         page: pageNum,
@@ -967,7 +973,9 @@ export default {
         }
       }).catch(error => {
           this.$message.error('抱歉，网络异常！');
-        });
+      }).finally(end => {
+        this.sceneTableLoading = false;
+      });
     },
     
     clearSceneTable(){

@@ -5,7 +5,7 @@
       <OtherTree :treeDataObj="treeDataObj" @accepttreeNode="accepttreeNodeFun"></OtherTree>
     </div>
     <div class="rightContainer">
-      <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
+      <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
         <!-- tableFormSearch里添加其他按钮 -->
         <span slot="formAction">
           <a-button class="buttonOperate" type="primary" @click="operateFun(currentData={}, 1)">添加</a-button>
@@ -69,6 +69,7 @@ export default {
     return {
       utils,
       tableTotalNum: 0, //总页数：默认为0
+      tableLoading: false,  //table loading
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
@@ -325,6 +326,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
        * */
+      this.tableLoading = true;
       this.tempCondition = condition;
       this.$http
         .fetchPost("wareHouse@getWareHouseDetailList.action", {
@@ -361,6 +363,8 @@ export default {
           }
         }).catch(error => {
           this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.tableLoading = false;
         });
     },
     getInitTreeData() {
