@@ -19,6 +19,7 @@
           :scroll="isEditAndAdd ? {x:tableWidth} :{ x: tableWidth,y:tableHeight}"
           :pagination="false"
           :bordered="bordered"
+          :loading="loading"
         >
 
           <!-- 表格页脚 (添加时候显示) -->
@@ -179,7 +180,7 @@ export default {
     OrganTree,
     TableFromSearch,
   },
-  props: ["initArrData", "totalCount","filterTableCheck"],
+  props: ["initArrData", "totalCount","filterTableCheck","loading"],
   data() {
     return {
       formData: [], //表格上方form

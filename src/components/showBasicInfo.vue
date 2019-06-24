@@ -81,13 +81,13 @@ export default {
                 if(parseFloat(width) > 95){
                     return ;
                 }else{
-                     this.baseDataArr[index].imgWidth = parseFloat(width) * 110 / 100 + '%';
+                     this.baseDataArr[index].imgWidth = parseFloat(width) * 180 / 100 + '%';
                 }
             }else if(state === 1){
                 if(parseFloat(width) < 10){
                     return ;
                 }else{
-                    this.baseDataArr[index].imgWidth = parseFloat(width) * 100 / 110 + '%';
+                    this.baseDataArr[index].imgWidth = parseFloat(width) * 100 / 180 + '%';
                 }
             }else{
                 this.baseDataArr[index].imgWidth = '30%';
@@ -179,8 +179,8 @@ export default {
     .imgTools{
         display: none;
         position: absolute;
-        right: 20px;
-        bottom: 40px;
+        right: 0px;
+        bottom: 10px;
         flex-direction: column;
         transition: all 0.5s linear;
     }
