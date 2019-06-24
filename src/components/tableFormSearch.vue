@@ -159,12 +159,19 @@
         </a-form-item>
 
         <!-- other formItem -->
+        <!-- :label="item.title" -->
         <a-form-item
           v-if="!item.type && item.otherType === 'textarea'"
-          :label="item.title"
           :labelCol="layout && layout.textareaCon && layout.textareaCon.labelCol ? layout.textareaCon.labelCol : textareaCon.labelCol"
           :wrapperCol="layout && layout.textareaCon && layout.textareaCon.wrapperCol ? layout.textareaCon.wrapperCol : textareaCon.wrapperCol"
+          :validate-status = 'item.status ? item.status : "" '
+          :help = 'item.status === "error" ? (item.tip ? item.tip : false):"" '
+          hasFeedback
         >
+          <!-- label -->
+          <span slot="label" v-if="item.required"><i class="redDot">*</i> {{item.title}}</span>
+          <span slot="label" v-else>{{item.title}}</span> 
+
           <!-- v-decorator="[ item.name, {rules: [{ required: item.required}]}]" -->
           <a-textarea
             :placeholder="item.placeholder" 
@@ -172,6 +179,8 @@
             :disabled='item.disabled'
             :autosize="{ minRows: 3, maxRows: 6 }" 
             allowClear
+            :required="item.required"
+            @blur="inputBlur(item,index)"
           />
           
         </a-form-item>
