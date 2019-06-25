@@ -761,6 +761,31 @@ export default {
                     })
                   }
 
+                 //expectReturnDate 根据materialId即：a10000检索当前输入材料名称是否重复
+                 else if(input.type && resultObj && resultObj.operate === 'expectReturnDate'){
+                   if(resultObj['materialId']){
+                     _this.$http.fetchPost('materialBorrow@checkExpectReturnDate.action', {
+                       expectReturnDate: resultObj['data'],
+                       materialId: resultObj['materialId']
+                     }).then(res => {
+                       if(Number(res.code) === 0){
+                         //此材料可借出
+                         _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                       } else if(Number(res.code) === 5){
+                         //此材料已借出
+                        _this.formData.formInputs[index][resultObj.name] = void 0;
+                        _this.formData.formInputs[index]['status'] = 'error';
+                        _this.formData.formInputs[index]['tip'] = '此材料已借出，请勿重复借出！';
+                       } else{
+                         //异常
+                         _this.$message.error('抱歉，验证失败，请刷新后重试！')
+                       }
+                     }).catch(error => {
+                       _this.$message.error('抱歉，网络异常！')
+                     })
+                   }
+                 }
+
                   // 其他项
                   else if(!resultObj.operate){
                     console.log(resultObj.data)
