@@ -69,7 +69,7 @@ export default {
 
   data() {
     return {
-      isShowInput: false,   //可编辑input：默认为true
+      isShowInput: true,   //可编辑input：默认为true
       isShowDate: false,    //可编辑date: 默认为false
     };
   },
