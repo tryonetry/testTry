@@ -1,6 +1,6 @@
 <!-- template -->
 <template>
-  <div class="chartsContainer">
+  <div class="chartsContainer" ref="chartsContainer">
     <div class="chartHeader">
       <span>{{chartsData.title}}</span>
       <span v-if="chartsData.isSelectType">
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { setTimeout } from 'timers';
 export default {
   name: "RecordAnalysis",
   //import引入的组件需要注入到对象中才能使用
@@ -123,6 +124,11 @@ export default {
        * 功能：渲染出雷达图
        * 参数：indicatorArr:[]格式，x轴的值及最大值； valueArr：数据； title: 标题
        */
+      if(document.readyState === 'complete'){
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight - 32) + 'px';
+      } else{
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight + 68) + 'px';
+      }
       let radarChart = this.$echarts.init(this.$refs.chart_div);
       radarChart.clear();
       radarChart.setOption({
@@ -203,6 +209,13 @@ export default {
        * 功能：根据数据绘制柱状图
        * 参数：xData: x轴数据; yData:y轴数据
        */
+      //判断当前页面是否加载完成：
+      //readyState:complete(加载完成)/loading(正在加载，此处不考虑)/interactive(可交互，此时由于在dom渲染时，先把左侧菜单栏都没加载出来，占200px； 导致加载完获取得dom高度少了100，故当前dom增加100占满整个div；)
+      if(document.readyState === 'complete'){
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight - 32) + 'px';
+      } else{
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight + 68) + 'px';
+      }
       let columnarChart = this.$echarts.init(this.$refs.chart_div);
       columnarChart.clear();
       columnarChart.setOption({
@@ -272,6 +285,11 @@ export default {
       /***
        * 功能：绘制折线图
        */
+      if(document.readyState === 'complete'){
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight - 32) + 'px';
+      } else{
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight + 68) + 'px';
+      }
       let lineChart = this.$echarts.init(this.$refs.chart_div);
       lineChart.clear();
       lineChart.setOption({
@@ -329,6 +347,12 @@ export default {
       /***
        * 功能：绘制饼图
        */
+      if(document.readyState === 'complete'){
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight - 32) + 'px';
+      } else{
+        this.$refs.chart_div.style.height = (this.$refs.chartsContainer.clientHeight + 68) + 'px';
+      }
+
       let pieChart = this.$echarts.init(this.$refs.chart_div);
       pieChart.clear();
       pieChart.setOption({
@@ -376,12 +400,18 @@ export default {
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-    this.$nextTick(()=>{
-      //由于在dom渲染时，先把左侧菜单栏都没加载出来，占200px； 导致加载完获取得dom高度少了100，故当前dom增加100占满整个div；
-      this.$refs.chart_div.style.height = (this.$refs.chart_div.clientHeight + 100) + 'px';
-      this.chartsDataArr = this.chartsData;
-      this.getChartsData(this.chartsDataArr, this.chartsDataArr.chartsType);
-    });
+    const _this = this;
+    setTimeout(function(){
+      _this.$nextTick(()=>{
+        if(document.readyState === 'complete'){
+          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight - 32) + 'px';
+        } else{
+          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight + 68) + 'px';
+        }
+        _this.chartsDataArr = _this.chartsData;
+        _this.getChartsData(_this.chartsDataArr, _this.chartsDataArr.chartsType);
+      });
+    },0)
 
   },
 
@@ -405,7 +435,7 @@ export default {
 .chartHeader {
   display: flex;
   justify-content: space-between;
-  line-height: 30px;
+  line-height: 32px;
 }
 .chartsContainer {
   width: 100%;
@@ -413,10 +443,10 @@ export default {
 }
 .chartCon {
   width: 100%;
-  height: calc(100% - 30px);
+  height: calc(100% - 32px);
 }
 .charts {
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
 }
 </style>

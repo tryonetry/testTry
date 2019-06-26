@@ -6,10 +6,11 @@
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
       <div class="tableAnalysis">
-        <div class="tableTitle">
-          <a-button type="primary" size="small" class="buttonOperate">导出</a-button>
-        </div>
-        <a-table :columns="chartsColumns" :dataSource="tableData" :scroll="{ x: '120%'}"></a-table>
+        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
+          <span slot="formAction">
+            <a-button class="buttonOperate" type="primary" >导出</a-button>
+          </span>
+        </TableView>
       </div>
     </div>
     <div class="analysisTwo">
@@ -22,11 +23,13 @@
 
 <script>
 import RecordAnalysis from "@/components/recordAnalysis";
+import TableView from "@/components/tableView";
 export default {
   name: "PersonStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
-    RecordAnalysis
+    RecordAnalysis,
+    TableView
   },
   props: [""],
 
@@ -94,45 +97,64 @@ export default {
           ]
         }
       ],
-      chartsColumns: [
+      tableLoading: false, //table--loading
+      tableTotalNum: 0,
+      initArr:{
+        treeflag: false, //左侧tree是否存在
+        tableCheck: false, //table是否可以check,
+        bordered: true,  //table--边框
+        superimposeWidth: true,
+        formData:{
+          formInputs:[],
+          formBtns:[],
+        },
+        columnsArr:[],
+        tabledataArr: [],
+      },
+      ageColumns: [
         //年龄段分析表头
         {
           title: "所属机构",
           dataIndex: "organ",
           key: "organ",
-          fixed: "left",
+          fixed:'left',
           width: 200
         },
         {
           title: "18-25周岁",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "mail1", key: "mail1" },
-            { title: "女", dataIndex: "femail1", key: "femail1" }
+            { title: "男", dataIndex: "mail1", key: "mail1", width: 100 },
+            { title: "女", dataIndex: "femail1", key: "femail1", width: 100 }
           ]
         },
         {
           title: "26-35周岁",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "mail2", key: "mail2" },
-            { title: "女", dataIndex: "femail2", key: "femail2" }
+            { title: "男", dataIndex: "mail2", key: "mail2", width: 100 },
+            { title: "女", dataIndex: "femail2", key: "femail2", width: 100 }
           ]
         },
         {
           title: "36-45周岁",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "mail3", key: "mail3" },
-            { title: "女", dataIndex: "femail3", key: "femail3" }
+            { title: "男", dataIndex: "mail3", key: "mail3", width: 100 },
+            { title: "女", dataIndex: "femail3", key: "femail3", width: 100 }
           ]
         },
         {
           title: "46-60周岁",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "mail4", key: "mail4" },
-            { title: "女", dataIndex: "femail4", key: "femail4" }
+            { title: "男", dataIndex: "mail4", key: "mail4", width: 100 },
+            { title: "女", dataIndex: "femail4", key: "femail4", width: 100 }
           ]
         },
         {
           title: "60周岁以上",
+          // width: 200,
           children: [
             { title: "男", dataIndex: "mail5", key: "mail5" },
             { title: "女", dataIndex: "femail5", key: "femail5" }
@@ -141,7 +163,9 @@ export default {
         {
           title: "总计",
           dataIndex: "total",
-          key: "total"
+          key: "total",
+          fixed: 'right',
+          width: 200
         }
       ],
       eduColumns: [
@@ -150,21 +174,21 @@ export default {
           title: "所属机构",
           dataIndex: "",
           key: "",
-          fixed: "left",
-          width: "200"
+          // fixed: "left",
+          // width: "10%"
         },
         {
           title: "博士研究生",
           children: [
-            { title: "男", dataIndex: "doctorMale", key: "doctorMale" },
-            { title: "女", dataIndex: "doctorFemale", key: "doctorFemale" }
+            { title: "男", dataIndex: "doctorMale", key: "doctorMale"},
+            { title: "女", dataIndex: "doctorFemale", key: "doctorFemale"}
           ]
         },
         {
           title: "硕士研究生",
           children: [
             { title: "男", dataIndex: "masterMale", key: "masterMale" },
-            { title: "女", dataIndex: "masterFemale", key: "masterFemale" }
+            { title: "女", dataIndex: "masterFemale", key: "masterFemale"}
           ]
         },
         {
@@ -181,7 +205,7 @@ export default {
         {
           title: "大学专科",
           children: [
-            { title: "男", dataIndex: "specializeMale", key: "specializeMale" },
+            { title: "男", dataIndex: "specializeMale", key: "specializeMale"},
             {
               title: "女",
               dataIndex: "specializeFemale",
@@ -192,7 +216,7 @@ export default {
         {
           title: "中等专科",
           children: [
-            { title: "男", dataIndex: "middleSpeMale", key: "middleSpeMale" },
+            { title: "男", dataIndex: "middleSpeMale", key: "middleSpeMale"},
             {
               title: "女",
               dataIndex: "middleSpeFemale",
@@ -203,22 +227,22 @@ export default {
         {
           title: "职业高中",
           children: [
-            { title: "男", dataIndex: "speHighMale", key: "speHighMale" },
-            { title: "女", dataIndex: "speHighFemale", key: "speHighFemale" }
+            { title: "男", dataIndex: "speHighMale", key: "speHighMale"},
+            { title: "女", dataIndex: "speHighFemale", key: "speHighFemale"}
           ]
         },
         {
           title: "技工学校",
           children: [
-            { title: "男", dataIndex: "mechanicMale", key: "mechanicMale" },
-            { title: "女", dataIndex: "mechanicFemale", key: "mechanicFemale" }
+            { title: "男", dataIndex: "mechanicMale", key: "mechanicMale"},
+            { title: "女", dataIndex: "mechanicFemale", key: "mechanicFemale"}
           ]
         },
         {
           title: "普通高中",
           children: [
-            { title: "男", dataIndex: "highMale", key: "highMale" },
-            { title: "女", dataIndex: "highFemale", key: "highFemale" }
+            { title: "男", dataIndex: "highMale", key: "highMale"},
+            { title: "女", dataIndex: "highFemale", key: "highFemale"}
           ]
         },
         {
@@ -231,50 +255,50 @@ export default {
         {
           title: "小学",
           children: [
-            { title: "男", dataIndex: "primaryMale", key: "primaryMale" },
-            { title: "女", dataIndex: "primaryFemale", key: "primaryFemale" }
+            { title: "男", dataIndex: "primaryMale", key: "primaryMale"},
+            { title: "女", dataIndex: "primaryFemale", key: "primaryFemale"}
           ]
         },
         {
           title: "其他",
           children: [
-            { title: "男", dataIndex: "otherMale", key: "otherMale" },
-            { title: "女", dataIndex: "otherFemale", key: "otherFemale" }
+            { title: "男", dataIndex: "otherMale", key: "otherMale"},
+            { title: "女", dataIndex: "otherFemale", key: "otherFemale"}
           ]
         },
-        { title: "总计", dataIndex: "total", key: "total" }
+        { title: "总计", dataIndex: "total", key: "total"}
       ],
       professionColumns:[
         //专业技术资格分析
         {
           title: "所属机构",
-          dataIndex: "",
-          key: "",
+          dataIndex: "organ",
+          key: "organ",
           fixed: "left",
           width: "200"
         },
         {
           title: '高级',
           children: [
-            { title: '男', dataIndex: 'highMale', key: 'highMale'},
-            { title: '女', dataIndex: 'highFemale', key: 'highFemale'},
+            { title: '男', dataIndex: 'highMale', key: 'highMale', width: 100},
+            { title: '女', dataIndex: 'highFemale', key: 'highFemale', width: 100},
           ]
         },
         {
           title: '中级',
           children: [
-            { title: '男', dataIndex: 'midMale', key: 'midMale'},
-            { title: '女', dataIndex: 'midFemale', key: 'midFemale'},
+            { title: '男', dataIndex: 'midMale', key: 'midMale', width: 100},
+            { title: '女', dataIndex: 'midFemale', key: 'midFemale', width: 100},
           ]
         },
         {
           title: '初级',
           children: [
-            { title: '男', dataIndex: 'primaryMale', key: 'primaryMale'},
-            { title: '女', dataIndex: 'primaryFemale', key: 'primaryFemale'},
+            { title: '男', dataIndex: 'primaryMale', key: 'primaryMale', width: 100},
+            { title: '女', dataIndex: 'primaryFemale', key: 'primaryFemale', width: 100},
           ]
         },
-        { title: "总计", dataIndex: "total", key: "total" }
+        { title: "总计", dataIndex: "total", key: "total", fixed: 'right', width:150 }
       ],
       nationaColumns:[
         //民族分析
@@ -384,14 +408,32 @@ export default {
     },
     getTableData(typeVal){
       console.log(typeVal);
-      
+      const _this = this;
+      _this.tableLoading = true;
+      if(typeVal === 1){
+        //年龄段分析
+        _this.chartsColumns = _this.ageColumns;
+      } else if(typeVal === 2){
+        //学历分析
+        _this.chartsColumns = _this.eduColumns;
+      } else if(typeVal === 3){
+        //专业做技术资格分析
+        _this.chartsColumns = _this.professionColumns;
+      } else if(typeVal === 4){
+        //民族分析
+        _this.chartsColumns = _this.nationaColumns;
+      } else{
+        //政治面貌分析
+        _this.chartsColumns = _this.politicalColumns;
+      }
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.firstChartData = { ...this.personInfoData[0] };
+    this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
     this.firstChartData.chartsType = this.chartTypeArr[0];
+    this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
