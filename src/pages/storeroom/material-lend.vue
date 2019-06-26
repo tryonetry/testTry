@@ -33,23 +33,25 @@
           href="javascript:;"
           data-type="归还"
           class="infoBtnColor"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 'return')"
         >归还</a>
         <a 
           v-if="slotPropsData.currRowdata.isInware === '0' && slotPropsData.currRowdata.borrowState==='1'"
           href="javascript:;"
           data-type="打印预览"
+          @click="operateFun(currentData=slotPropsData.currRowdata, 'print')"
         >打印预览</a>
       </div>
     </TableView>
 
-    <!-- 查阅记录modal -->
+    <!-- 查阅记录、档案借出、归还modal -->
     <div class="addModal">
       <a-modal
         centered
-        :title="tempOperateVal==='checkRecord' ? '档案材料借阅':'借阅登记表'"
+        :title="tempOperateVal==='checkRecord' ? '档案材料借阅':(tempOperateVal === 'checkout'? '借阅登记表' : '档案材料归还')"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        width="80%"
+        :width="tempOperateVal !== 'return' ? '80%' : '40%'"
         @cancel="handleCancel"
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
@@ -61,8 +63,13 @@
         </div>
        
         <!-- 借阅登记表 -->
-        <div class="modalOverFlowAuto" v-else>
-          <TableFromSearch :formDataArr="borrowForm" :layout="borrowModal" ref="borrowForm"></TableFromSearch>
+        <div class="modalOverFlowAuto" v-if="tempOperateVal==='checkout'">
+          <TableFromSearch :formDataArr="borrowForm" :layout="borrowModal" ref="modalForm"></TableFromSearch>
+        </div>
+
+        <!-- 归还 -->
+        <div class="modalOverFlowAuto" v-if="tempOperateVal==='return'">
+          <TableFromSearch :formDataArr="returnForm" :layout="returnModal" ref="modalForm"></TableFromSearch>
         </div>
 
         <template slot="footer" v-if="tempOperateVal !== 'checkRecord'">
@@ -71,17 +78,58 @@
         </template>
       </a-modal>
     </div>
+
+    <!-- 打印预览--modal -->
+    <div class="addModal">
+      <a-modal
+        centered
+        title="交接清单预览"
+        :visible="printVisible"
+        :confirmLoading="printConfirmLoading"
+        :width="modalWidth"
+        @cancel="printCancel"
+        style="height:85%;overflow: hidden;"
+        :footer="null"
+        :maskClosable="false"
+      >
+        <div class="modalInnerContainer">
+            <div class="printContent">
+              <PrintTemplate :printDataObj="printTemplateData" ref="printPage"></PrintTemplate>
+            </div>
+            <div class="printBtn">
+              <a-button key="cancel" @click="printCancel">取消</a-button>
+              <a-button key="submit" type="primary" @click="printFun">打印</a-button>
+            </div> 
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
 import TableFromSearch from '@/components/tableFormSearch';
+import PrintTemplate from '@/components/printTemplate';
 import utils from '../../utils/util';
+
+let tableDataArr = [];
+let tempMaterialId = '';
+function  expectReturnDateFun(value){
+  /**
+   * 功能：验证借阅材料名称是否重复
+   * 参数：value：当前input输入的value
+   */
+  if(value){
+    return [{name: 'val', data: value, operate: 'expectReturnDate', materialId: tempMaterialId}]
+  } else{
+    return [{name: 'val', data: void 0}]
+  }
+}
+
 export default {
   name: "MaterialLend",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, TableFromSearch },
+  components: { TableView, TableFromSearch, PrintTemplate },
   props: [""],
 
   data() {
@@ -564,6 +612,8 @@ export default {
             postname:'expectReturnDate',
             status: '',
             colWidth: [12, 24],
+            connectTo:['expectReturnDate'], //关联到自己，验证自己是否重复
+            connectToFun:[expectReturnDateFun],
           },
           {
             title: "借阅备注",
@@ -640,10 +690,195 @@ export default {
           }
         },
       },
+      returnForm:{
+        formInputs:[
+          {
+            title: '归还人',
+            type: "text",
+            required: true,
+            placeholder: "请输入归还人",
+            key: "returner",
+            name: "returner",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: '',
+            tip: '请输入归还人',
+            postname:'returner',
+            status: '',
+            colWidth: [12, 24]
+          },
+          {
+              title: '归还日期',
+              otherType: 'date',  
+              required: true,
+              placeholder: '请选择归还日期',
+              key: "returnDate",
+              name: "returnDate",
+              val: void 0,
+              postname: "returnDate",
+              status: '',
+              colWidth: [12, 24],
+              disabled: true,
+          },
+          {
+            title: "归还备注",
+            otherType: "textarea",
+            required: false,
+            placeholder: "请输入归还备注",
+            key: "returnDesc",
+            name: "returnDesc",
+            val: void 0,
+            postname: "returnDesc",
+            maxlength: 200,
+            minlength: 0,
+            reg: "",
+            tip: "* 请输入归还备注",
+            status: "",
+            colWidth: [24, 24]
+          },
+          {
+            title: '归还经办人',
+            type: "text",
+            required: true,
+            placeholder: "请输入归还经办人",
+            key: "returnOperatorName",
+            name: "returnOperatorName",
+            val: void 0,
+            maxlength: 20,
+            minlength: 0,
+            reg: '',
+            tip: '请输入归还经办人',
+            postname:'returnOperatorName',
+            status: '',
+            colWidth: [12, 24],
+            disabled: true,
+          },
+        ]
+      },
+      returnModal:{
+        defaultCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 6 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 16 }
+          }
+        },
+        textareaCon: {
+          labelCol: {
+            sm: { span: 6 },
+            xl: { span: 6 },
+            xxl: { span: 3 }
+          },
+          wrapperCol: {
+            sm: { span: 18 },
+            xl: { span: 16 },
+            xxl: { span: 20 }
+          }
+        },
+      },
       tempOperateVal: null,  //临时：table--当前操作值
       tempPersonId: null,    //临时：table--key值 即personId
       tempAgentId: null,   //经办人id
       submitLoading: false, //modal--提交loading
+      tempRowId: null,  //临时：table--row-id值
+      printVisible: false, //打印modal
+      printConfirmLoading: false,  //打印modal
+      modalWidth: '',  //打印modal的宽度
+      printTemplateData: {
+        //打印模板数据
+        cardTitle: '江西省人才流动中心',
+        subTitle: '借条', 
+        isRightNum: true,
+        rightContent:{                   //如果有右侧内容：传值格式
+          title: 'NO：',                 
+          value: '',
+          className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
+            rightNumber: true,
+            rightNumberRed: true
+          }
+        },
+        otherContent: [   //日期及其他内容
+          {
+            title: '具借人',
+            name: 'borrower',
+            value: ''
+          },
+          {
+            title: '证件号',
+            name: 'borrowerIdNum',
+            value: ''
+          },
+          {
+            title: '联系电话',
+            name: 'borrowerTelNum',
+            value: ''
+          },
+          {
+            type: 'date',
+            title: '具借时间',
+            name: 'signTime',
+            value: ''
+          }
+        ],
+        content:[
+          {
+            type: 'other',
+            data: [
+              {
+                value: '今借到',
+              },
+              {
+                name: 'a0101',
+                value: '',
+                className: {
+                  otherFormatRed: true
+                }
+              },
+              {
+                value: '同志（档案管理编号：'
+              },
+              {
+                // type: 'input',
+                name: 'a0100a',
+                value: '',
+                className: {
+                  otherFormatRed: true
+                }
+              },
+              {
+                value: '）档案材料：'
+              },
+              {
+                name: 'expectReturnDate',
+                value: '',
+                className: {
+                  otherFormatRed: true
+                }
+              },
+              {
+                value: '供'
+              },
+              {
+                type: 'input',
+                name: 'useName',
+                value: '',
+                className: {
+                  otherFormatRed: true
+                }
+              },
+              {
+                value: '使用。'
+              },
+            ]
+          }
+        ]
+      }
     };
   },
 
@@ -687,6 +922,7 @@ export default {
             this.initArr.tabledataArr.push({
               num: (pageNum - 1) * limitNum + index + 1,
               key:  element.id ?  element.id : element.a01000,   //key值
+              a01000: element.a01000,
               a0100a: element.a0100a,
               a0101: element.a0101,
               applyName: element.a0101,
@@ -703,8 +939,9 @@ export default {
               returnDate: element.returnDate,
               isInware: element.isInware,
               borrowState: element.borrowState ? element.borrowState : '',
-
             })
+
+            tableDataArr = this.initArr.tabledataArr;
           });
         } else{
           this.$message.error('抱歉，获取数据失败，请刷新后重试！');
@@ -781,11 +1018,33 @@ export default {
        */
       const _this = this;
       _this.tempOperateVal = operateVal;
-      _this.tempPersonId = currData['key'];
-      if(operateVal === 'checkout'){
-        //借出操作
+      _this.tempPersonId = tempMaterialId = currData['a01000'];
+      if(operateVal === 'checkout' || operateVal === 'return'){
+        if(operateVal === 'checkout'){
+          //借出操作
+          _this.borrowForm.formInputs.forEach(element => {   
+            //清空modal--status
+            if(element.status || element.status === ''){
+              element.status = '';
+            }
+          });
+        } else{
+          //归还操作
+          _this.tempRowId = currData['key'];
+          _this.returnForm.formInputs.forEach(element => {   
+            //清空modal--status
+            if(element.status || element.status === ''){
+              element.status = '';
+            } 
+            element.val = void 0;
+          });
+        }
         _this.getAgentFun(currData);   //获取经办人
+      } else{
+        //打印预览操作
+        _this.printOperateFun(currData);
       }
+      
     },
     getAgentFun(currRowData){
       /**
@@ -801,15 +1060,28 @@ export default {
           personId: currRowData.key
         }).then(res => {
           if(Number(res.code) === 0){
-            currRowData.borrowOperatorName = res.data.borrowOperatorName;
             _this.tempAgentId = res.data.borrowOperatorId;
-            _this.visible = true;
-            for(let key in currRowData){
-              if(key === 'borrower' || key === 'borrowerIdNum' || key === 'borrowerTelNum' || key === 'expectReturnDate' || key ==='borrowReason'){ 
-                currRowData[key] = void 0; 
+            if(_this.tempOperateVal === 'checkout'){
+              //借出
+              currRowData.borrowOperatorName = res.data.borrowOperatorName;
+              for(let key in currRowData){
+                if(key === 'borrower' || key === 'borrowerIdNum' || key === 'borrowerTelNum' || key === 'expectReturnDate' || key ==='borrowReason'){ 
+                  currRowData[key] = void 0; 
+                }
               }
+              _this.borrowForm = utils.getNewFormSearch(currRowData, _this.borrowForm);
+            } else{
+              //归还
+              for(let key in currRowData){
+                if(key === 'returner' || key === 'returnDesc'){
+                  currRowData[key] = void 0;
+                }
+              }
+              currRowData.returnOperatorName = res.data.borrowOperatorName;
+              _this.returnForm = utils.getNewFormSearch(currRowData, _this.returnForm);
             }
-            _this.borrowForm = utils.getNewFormSearch(currRowData, _this.borrowForm);
+            _this.visible = true;
+            
           } else{
             _this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
@@ -824,7 +1096,7 @@ export default {
        * modal--提交功能
        */
       const _this = this;
-      let resultForm =  _this.$refs.borrowForm.getFormData();
+      let resultForm =  _this.$refs.modalForm.getFormData();
       if(resultForm['isRight']){
         _this.submitLoading = true;
         _this.confirmLoading = true;
@@ -833,15 +1105,12 @@ export default {
           //借出操作
           currPostObj.materialId = _this.tempPersonId;
           currPostObj.borrowOperatorId = _this.tempAgentId;
-          console.log(currPostObj);
           _this.$http.fetchPost('materialBorrow@saveCatalogBorrow.action', currPostObj).then(res => {
             if(Number(res.code) === 0){
               _this.$message.success('提交成功！');
               _this.getTableData(_this.tempCondition, 1, 10);
-              setTimeout(() => {
-                _this.visible = false;
-                _this.confirmLoading = false;
-              }, 2000);
+              _this.visible = false;
+              _this.confirmLoading = false;
             } else{
               _this.$message.error('抱歉，提交数据失败，请刷新后重试！');
             }
@@ -850,14 +1119,88 @@ export default {
           }).finally(end => {
             _this.submitLoading = false;
           })
+        } else{
+          //归还操作
+          currPostObj.returnOperatorId = _this.tempAgentId;
+          currPostObj.returnId  = _this.tempRowId;
+          currPostObj.e0115 = '0';
+          _this.$http.fetchPost('materialBorrow@saveCatalogBorrow.action', currPostObj).then(res => {
+            if(Number(res.code) === 0){
+              _this.$message.success('归还成功');
+              _this.getTableData(_this.tempCondition, 1, 10);
+              _this.visible = false;
+              _this.confirmLoading = false;
+            } else{
+              _this.$message.error('抱歉，操作失败，请刷新后重试！');
+            }
+          }).catch(error => {
+            _this.$message.error('抱歉，网络异常！');
+          }).finally(end => {
+            _this.submitLoading = false;
+          })
         }
       }
+    },
+
+    printCancel(){
+      //打印modal-- 取消显示
+      this.printVisible = false;
+    },
+
+    printOperateFun(currRowData){
+      /**
+       * 功能：打印操作
+       * 参数：currRowData：当前row数据
+       */
+      const _this = this;
+      _this.$http.fetchPost('materialBorrow@materialPrint.action',{
+        a0101: currRowData.a0101,
+        expectReturnDate: currRowData.expectReturnDate,
+        a0100a: currRowData.a0100a,
+        borrower:currRowData.borrower,
+        borrowerIdNum: currRowData.borrowerIdNum,
+        materialId: currRowData.a01000
+      }).then(res => {
+        if(Number(res.code) === 0){
+          _this.printTemplateData.rightContent.value = res.data.dueBillSerialNumber;
+          _this.printTemplateData.otherContent.forEach(element => {
+            for(let currKey in currRowData){
+              if(element.name === currKey){
+                element.value = currRowData[currKey];
+              }
+            }
+          });
+          _this.printTemplateData.content[0].data.forEach(element => {
+            for(let currKey in currRowData){
+              if(element.name && element.name === currKey){
+                element.value = currRowData[currKey];
+              }
+            }
+          });
+          _this.printVisible = true;
+
+
+        }else{
+          _this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        _this.$message.error('抱歉，网络异常！');
+      })
+    },
+
+    printFun(){
+      /**
+       * 功能：打印modal--打印操作
+       */
+      this.$refs.printPage.printFun();
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getTableData(null, 1, 10);
+    let dpiArr = utils.js_getDPI();
+    this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
@@ -886,5 +1229,25 @@ export default {
 }
 .checkRecordTable{
   height: 100%;
+}
+
+
+.modalInnerContainer{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.printContent{
+  flex:1;
+  overflow-y: auto;
+}
+.printBtn{
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+.printBtn button{
+  margin: 0 10px;
 }
 </style>
