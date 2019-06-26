@@ -217,7 +217,7 @@ input[readonly]{
   .analysisOne {
     padding: 20px;
     width: 100%;
-    height: 60%;
+    height: 75%;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -241,7 +241,7 @@ input[readonly]{
   
   .analysisTwo {
     width: 100%;
-    height: calc(100% - 60%);
+    height: calc(100% - 75%);
     /* overflow: hidden; */
     padding: 0 20px;
     display: flex;
@@ -249,7 +249,7 @@ input[readonly]{
   }
   
   .analysisTwoCon {
-    width: calc(100% / 4);
+    width: 16%;
     height: 100%;
     margin-right: 20px;
   }

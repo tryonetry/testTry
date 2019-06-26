@@ -13,7 +13,7 @@ import echarts from 'echarts'
 
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = http;
-Vue.prototype.$targetHost = 'http://192.168.1.215:8180/hasngcadrefile/'
+Vue.prototype.$targetHost = 'http://192.168.1.215:8181/hasngcadrefile/'
 Vue.use(antd);
 
 

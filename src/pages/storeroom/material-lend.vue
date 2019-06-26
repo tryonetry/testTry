@@ -283,7 +283,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "借阅人公民身份号码/社保卡号'",
+            title: "借阅人公民身份号码/社保卡号",
             dataIndex: "borrowerIdNum",
             key: "borrowerIdNum",
             width:300,
