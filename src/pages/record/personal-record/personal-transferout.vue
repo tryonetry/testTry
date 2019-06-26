@@ -79,7 +79,7 @@
 
       </div>
       <span slot="formAction">
-        <a-button class="buttonOperate" @click="rollOutFun()">现场转出申请</a-button>
+        <a-button class="buttonOperate" @click="rollOutFun">现场转出申请</a-button>
       </span>
     </TableView>
     

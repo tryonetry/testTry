@@ -141,7 +141,9 @@ input[readonly]{
   .primaryBtnColor:hover{
     color: #87b1df;
   }
-
+  .primaryBtnColor:visited{
+    text-decoration: none;
+  }
   .infoBtnColor{
     color:#2db7f5
   }

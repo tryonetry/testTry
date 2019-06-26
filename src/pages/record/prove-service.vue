@@ -1,39 +1,89 @@
 <!-- template -->
 <template>
 <div class="outer">
-      <TableView
-          :initArrData="initArr"
-          :totalCount="tableTotalNum"
-           @searchTable="getTableData"
+    
+    <!-- 档案转出弹层 -->
+    <div class="proofModal">
+      <a-modal
+        centered
+        title="现场开具证明"
+        :visible="visible"
+        :width="'90%'"
+        @cancel="handleCancel"
+        style="height:85%;overflow: hidden;"
+        :maskClosable='false'
+        :footer="null"
       >
+        <TableView
+            :initArrData="initArr1"
+            :totalCount="tableTotalNum1"
+            @searchTable="getTableData1"
+            :loading="tableLoading1"
+        >
+            <div slot="tableAction" slot-scope="slotPropsData" >
+                
+                <div class="actionClass" v-if="String(slotPropsData.currRowdata.isInware) === '0'">
+                    <a-select
+                        v-model="selectProofType"
+                        placeholder="请选择证明类型"
+                        allowClear
+                        class="actionSelect"
+                    >
+                        <a-select-option
+                            v-for="(el, index) in proofTypes"
+                            :key="index"
+                            :value="el.itemCode"
+                        >{{el.itemName}}</a-select-option>
+                    </a-select>
+                    <a
+                        href="javascript:;"
+                        class="primaryBtnColor"
+                    >预览打印</a>
+                </div>
+                <a
+                    v-if="String(slotPropsData.currRowdata.isInware) === '2'"
+                    href="javascript:;"
+                    class="canNotClickBtnColor"
+                >抱歉,档案已转出,不可进行打印操作</a>
+                <a
+                    v-if="String(slotPropsData.currRowdata.isInware) !== '0' && String(slotPropsData.currRowdata.isInware) !== '2'"
+                    href="javascript:;"
+                    class="canNotClickBtnColor"
+                >请完成其他正在进行的操作后进行打印</a>
 
-           <!-- tableFormSearch里添加其他按钮 -->
-           <span slot="formAction">
-           </span>
-
-           <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
-           <div slot="tableAction" slot-scope="slotPropsData">
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-                   data-type="浏览"
-                   class="primaryBtnColor"
-               >浏览</a>
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-                   data-type="编辑"
-               >编辑</a>"
-               <a-popconfirm
-                   title="确定删除吗?"
-                   okText="确定"
-                   cancelText="取消"
-                   @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
-               >
-                   <a href="javascript:;" class="errorBtnColor">删除</a>
-               </a-popconfirm>
             </div>
-      </TableView>
+            
+        </TableView>
+      </a-modal>
+    </div>
+
+    <TableView
+        :initArrData="initArr"
+        :totalCount="tableTotalNum"
+        @searchTable="getTableData"
+        :loading="tableLoading"
+    >
+
+        <!-- tableFormSearch里添加其他按钮 -->
+        <span slot="formAction">
+            <a-button @click="proofOnSite">现场开具证明</a-button>
+        </span>
+
+        <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
+        <div slot="tableAction" slot-scope="slotPropsData">
+            <a
+                v-if="slotPropsData.currRowdata.printState !== '已打印'"
+                href="javascript:;"
+                @click="showAndPrint(slotPropsData.currRowdata)"
+                class="primaryBtnColor"
+            >预览打印</a>
+            <a
+                href="javascript:;"
+                class="canNotClickBtnColor"
+            >预览打印</a>
+
+        </div>
+    </TableView>
 </div>
 </template>
 
@@ -47,12 +97,20 @@ export default {
 
     data() {
         return {
-                            
+            visible:false,                   
             tableTotalNum: 0,   //总页数：默认为0
+            tableTotalNum1: 0,
+            tempCondition:{},
+            tempCondition1:{},
+            tableLoading:false,
+            tableLoading1:false,
+            // 证明类型
+            proofTypes:[],
+            selectProofType:void 0,
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
-                tableCheck: true, //table是否可以check
+                tableCheck: false, //table是否可以check
                 // formInputs 传值方式
                 formData: {
                     //forminputs data
@@ -64,14 +122,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入姓名",
-                            key: "",
-                            name: "",
+                            key: "applyName",
+                            name: "applyName",
                             val: void 0,
                             maxlength: 20,
                             minlength: 0,
                             reg: '',
                             tip: '',
-                            postname:'',
+                            postname:'applyName',
                             status: '',
                         },
                         {
@@ -79,31 +137,14 @@ export default {
                             type: "text",
                             required: false,
                             placeholder: "请输入身份证号/社保卡号",
-                            key: "",
-                            name: "",
+                            key: "applyIdNum",
+                            name: "applyIdNum",
                             val: void 0,
                             maxlength: 20,
                             minlength: 0,
                             reg: '',
                             tip: '',
-                            postname:'',
-                            status: '',
-                        },
-                        // select/searchSelect
-                        {
-                            title: '证明材料类型',
-                            otherType: 'select',
-                            required: false,
-                            placeholder: "请选择证明材料类型",
-                            key: '',
-                            name: '',
-                            val: void 0,
-                            children: [
-                                {
-                                    itemCode: '',
-                                    itemName: '请选择证明材料类型'
-                                }
-                            ],
+                            postname:'applyIdNum',
                             status: '',
                         },
                     ],
@@ -126,51 +167,177 @@ export default {
                     },
                     {
                         title: "姓名",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        dataIndex: "applyName",
+                        key: "applyName",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "身份证号",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        dataIndex: "applyIdNum",
+                        key: "applyIdNum",
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系电话",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        dataIndex: "applyTelNum",
+                        key: "applyTelNum",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系地址",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        dataIndex: "applyContactAddress",
+                        key: "applyContactAddress",
+                        width: 220,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "证明材料类型",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        dataIndex: "proofType",
+                        key: "proofType",
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "申请日期",
-                        dataIndex: "",
-                        key: "",
-                        //width: 60,
+                        title: "打印日期",
+                        dataIndex: "printDate",
+                        key: "printDate",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    // {
-                    //     title: "操作",
-                    //     key: "action",
-                    //     scopedSlots: { customRender: "action" }
-                    // }
+                    {
+                        title: "数据来源",
+                        dataIndex: "sourceType",
+                        key: "sourceType",
+                        width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "打印状态",
+                        dataIndex: "printState",
+                        key: "printState",
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "操作",
+                        key: "action",
+                        width: 150,
+                        fixed:"right",
+                        scopedSlots: { customRender: "action" }
+                    }
+                ],
+                // table数据
+                tabledataArr: [],
+            },
+            initArr1:{
+                treeflag: false,   //左侧tree是否存在
+                tableCheck: false, //table是否可以check
+                // formInputs 传值方式
+                formData: {
+                    //forminputs data
+                    formInputs:[
+
+                        //input
+                        {
+                            title: '姓名',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入姓名",
+                            key: "a0101",
+                            name: "a0101",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'a0101',
+                            status: '',
+                        },
+                        {
+                            title: '身份证号/社保卡号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入身份证号/社保卡号",
+                            key: "a0184",
+                            name: "a0184",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'a0184',
+                            status: '',
+                        },
+                        {
+                            title: '存档编号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入存档编号",
+                            key: "a0100A",
+                            name: "a0100A",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'a0100A',
+                            status: '',
+                        },
+                    ],
+
+                    // form btns
+                    formBtns: [
+                        { title: "查询", htmltype: "submit", operate: "searchForm" },
+                        { title: "重置", htmltype: "button", operate: "resetForm" }
+                    ]
+                },
+                //table的表头
+                columnsArr: [
+                    {
+                        title: "序号",
+                        dataIndex: "num",
+                        key: "num",
+                        fixed: "left",
+                        width: 100,
+                        scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                    },
+                    {
+                        title: "姓名",
+                        dataIndex: "a0101",
+                        key: "a0101",
+                        width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "身份证号",
+                        dataIndex: "a0184",
+                        key: "a0184",
+                        width: 300,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "a0100A",
+                        key: "a0100A",
+                        width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "委托存档单位编号",
+                        dataIndex: "oldArchiveUnit",
+                        key: "oldArchiveUnit",
+                        // width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "选择证明类型打印",
+                        key: "action",
+                        width: 400,
+                        fixed:"right",
+                        scopedSlots: { customRender: "action" }
+                    }
                 ],
                 // table数据
                 tabledataArr: [],
@@ -196,12 +363,81 @@ export default {
     methods: {
 
         getTableData(condition, pageNum, limitNum) {
-          /***
-           * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
-           * 参数：condition:form查询结果：{}
-*         */
+            const _this = this;
+            /***
+             * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
+             * 参数：condition:form查询结果：{}
+             **/
+            this.tableLoading = true;
+            this.tempCondition = condition;
+            this.$http.fetchPost('archPrintProof@printProofService.action',{
+                page: pageNum,
+                limit: limitNum,
+                ...condition
+            }).then((res)=>{
+                if(Number(res.code) === 0){
+                    this.tableTotalNum = res.count;
+                    this.initArr.tabledataArr = res.data;
+                    this.initArr.tabledataArr.forEach((element, index) => {
+                        let tempState = String(element.transferOutState);
+                        Object.assign(element,{
+                            key:element.id,
+                            num: (pageNum - 1) * limitNum + index + 1,
+                            sourceType:String(element.sourceType) === '1' ? "现场打印" : String(element.sourceType) === '0' ? "网站申请" : "未知来源",
+                            printState:String(element.printState) === '1' ? "已打印" : "未打印",
+                        });
+                    });
+                }else{
+                    _this.$message.warning("抱歉,暂时未查到数据!");
+                }
+            }).catch(err => {
+                _this.$message.error("抱歉,网络异常,请稍后重试");
+            }).finally(end => {
+                _this.tableLoading = false;
+            })
+        },
+        getTableData1(condition, pageNum, limitNum) {
+            const _this = this;
+            /***
+             * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
+             * 参数：condition:form查询结果：{}
+             **/
+            this.tableLoading1 = true;
+            this.tempCondition1 = condition;
+            this.$http.fetchPost('personalArch@getPersonalArchProofList.action',{
+                page: pageNum,
+                limit: limitNum,
+                ...condition
+            }).then((res)=>{
+                if(Number(res.code) === 0){
+                    this.tableTotalNum1 = res.count;
+                    this.initArr1.tabledataArr = res.data;
+                    this.initArr1.tabledataArr.forEach((element, index) => {
+                        let tempState = String(element.transferOutState);
+                        Object.assign(element,{
+                            key:element.a01000,
+                            num: (pageNum - 1) * limitNum + index + 1,
+                        });
+                    });
+                }else{
+                    _this.$message.warning("抱歉,暂时未查到数据!");
+                }
+            }).catch(err => {
+                _this.$message.error("抱歉,网络异常,请稍后重试");
+            }).finally(end => {
+                _this.tableLoading1 = false;
+            })
+        },
 
+        // 现场开具证明
+        proofOnSite(){
+            this.visible = true;
+        },
+
+        handleCancel(){
+            this.visible = false;
         }
+
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
@@ -233,5 +469,12 @@ export default {
 </script>
 
 <style scoped>
-
+    .actionClass{
+        display: flex;
+        align-items: center;
+    }
+    .actionClass .actionSelect{
+        width: 180px;
+        margin-right: 10px;
+    }
 </style>
