@@ -91,7 +91,7 @@
 
               <!-- 普通可编辑列 -->
               <div :key="col" v-if='col.split("_")[1] === "editInput"'>
-                <a-input 
+                <a-input
                   v-if="record.inEdit"
                   v-model="record[col.split('_')[0]]"
                   class="editInput"></a-input>
