@@ -43,9 +43,10 @@
         :title="operateStatus==1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        :width="1600"
+        width="80%"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
+        :maskClosable="false"
       >
         <InfoOperate
           ref="operatePage"
