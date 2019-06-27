@@ -367,6 +367,38 @@ export default {
 
   //方法集合
   methods: {
+    getChartsData(){
+      /**
+       * 获取渲染图表的数据
+       */
+      // this.$http.fetchPost('statisticsAnalysis@archInfoStatistics.action').then(res => {
+      //   console.log(res);
+      // }).catch(error => {
+      //   this.$message.error('抱歉，网络异常！');
+      // })
+    },
+
+    getTableData(typeVal){
+      const _this = this;
+      // _this.tableLoading = true;
+      if(typeVal === 1){
+        //年龄段分析
+        _this.chartsColumns = _this.ageColumns;
+      } else if(typeVal === 2){
+        //学历分析
+        _this.chartsColumns = _this.eduColumns;
+      } else if(typeVal === 3){
+        //专业做技术资格分析
+        _this.chartsColumns = _this.professionColumns;
+      } else if(typeVal === 4){
+        //民族分析
+        _this.chartsColumns = _this.nationaColumns;
+      } else{
+        //政治面貌分析
+        _this.chartsColumns = _this.politicalColumns;
+      }
+    },
+
     otherChartsDataFun(currData) {
       /**
        * 功能：去掉数组里第一个，其余为新数组
@@ -379,6 +411,7 @@ export default {
         el.chartsType = this.chartTypeArr[index % 4];
       });
     },
+
     changeClick(currType,i, chartTypeVal) {
       /**
        * 功能：下面排列得点击函数， 点击：把当前点击在上面展示，原来在上面展示得在下面展示
@@ -398,7 +431,9 @@ export default {
       });
       this.otherChartsData.splice(tempIndex, 1, Object.assign({...temp},{chartsType:clickType}));
       // render
-      this.$refs.charts.getChartsData(this.firstChartData, this.firstChartData.chartsType);
+      
+      this.$refs.charts.getChartsData(this.firstChartData, this.$refs.charts.returnChangeSelect());
+
       this.otherChartsData.forEach((item,index) => {
         if(index === i){
            this.$refs.educharts[index].getChartsData(item, item.chartsType);
@@ -406,31 +441,12 @@ export default {
       });
       this.getTableData(currType);
     },
-    getTableData(typeVal){
-      console.log(typeVal);
-      const _this = this;
-      _this.tableLoading = true;
-      if(typeVal === 1){
-        //年龄段分析
-        _this.chartsColumns = _this.ageColumns;
-      } else if(typeVal === 2){
-        //学历分析
-        _this.chartsColumns = _this.eduColumns;
-      } else if(typeVal === 3){
-        //专业做技术资格分析
-        _this.chartsColumns = _this.professionColumns;
-      } else if(typeVal === 4){
-        //民族分析
-        _this.chartsColumns = _this.nationaColumns;
-      } else{
-        //政治面貌分析
-        _this.chartsColumns = _this.politicalColumns;
-      }
-    }
+
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
+    this.getChartsData();
     this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
     this.firstChartData.chartsType = this.chartTypeArr[0];
     this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头

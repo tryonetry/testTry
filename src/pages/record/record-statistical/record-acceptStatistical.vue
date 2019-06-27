@@ -3,7 +3,7 @@
   <div class="outer">
     <div class="searchForm">
       <a-form :form="form" class="formInputsContainer ant-row">
-        <a-col style="line-height:39.9999px;">查询日期：</a-col>
+        <a-col style="line-height:39.9999px;">查询：</a-col>
         <a-col>
           <a-radio-group
             @change="changeDateType"
@@ -16,10 +16,10 @@
         </a-col>
         <a-col :xl="6" :xxl="4" :xs="12" style="margin-left: 15px;">
           <a-form-item v-if="dateSearchType === 'date'">
-            <a-date-picker class="formSearchDate" placeholder="请选择日期" v-model="currDate"/>
+            <a-range-picker class="formSearchDate" format="YYYY-MM-DD"  v-model="currDate" />
           </a-form-item>
           <a-form-item v-else>
-            <a-month-picker class="formSearchDate" placeholder="请选择月份" v-model="currDate"/>
+            <a-range-picker  class="formSearchDate" format="YYYY-MM"  v-model="currDate" />
           </a-form-item>
         </a-col>
         <a-col style="margin-left: 15px;line-height:39.9999px;">
@@ -32,10 +32,11 @@
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
       <div class="tableAnalysis">
-        <div class="tableTitle">
-          <a-button type="primary" size="small" class="buttonOperate">导出</a-button>
-        </div>
-        <a-table :columns="chartsColumns" :dataSource="tableData" :scroll="{ x: '120%'}"></a-table>
+        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
+          <span slot="formAction">
+            <a-button class="buttonOperate" type="primary" >导出</a-button>
+          </span>
+        </TableView>
       </div>
     </div>
     <div class="analysisTwo">
@@ -53,44 +54,58 @@
 
 <script>
 import RecordAnalysis from "@/components/recordAnalysis";
+import TableView from "@/components/tableView";
+import moment from 'moment';
 export default {
   name: "RecordAcceptStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
-    RecordAnalysis
+    RecordAnalysis,
+    TableView
   },
   props: [""],
 
   data() {
     return {
       form: this.$form.createForm(this),
-      dateSearchType: "date",
+      dateSearchType: "date",    //默认选择--date类型时间
       firstChartData: null, //第一个图表渲染数据
       personInfoData: [
         {
           type: 1,
           isSelectType: true,
-          title: "档案接收统计分析",
+          title: "档案接收统计分析(单位:次)",
           data: [{ name: "档案接收", value: "36" }]
         },
         {
           type: 2,
           isSelectType: false,
-          title: "按经办人统计",
+          title: "按经办人统计(最近一年)(单位:次)",
           data: [{ name: "XXXX", value: "123" }]
         }
       ],
-      chartsColumns: [
-        { title: "所属机构", dataIndex: "organ", key: "organ" },
-        { title: "接收时间", dataIndex: "acceptDate", key: "acceptDate" },
-        { title: "转出单位", dataIndex: "rollOutUnit", key: "rollOutUnit" },
-        { title: "单位性质", dataIndex: "unitNature", key: "unitNature" },
-        { title: "单位归属地", dataIndex: "unitAddress", key: "unitAddress" }
-      ],
-      tableData: [],
+      tableTotalNum: 0,     //table--总条数
+      tableLoading: false,  //table--loading
+      initArr:{
+        treeflag: false, //左侧tree是否存在
+        tableCheck: false, //table是否可以check,
+        bordered: true,  //table--边框
+        superimposeWidth: true,
+        formData:{
+          formInputs:[],
+          formBtns:[],
+        },
+        columnsArr: [
+          { title: "所属机构", dataIndex: "organ", key: "organ", width: 200 },
+          { title: "接收时间", dataIndex: "acceptDate", key: "acceptDate", width: 150 },
+          { title: "转出单位", dataIndex: "rollOutUnit", key: "rollOutUnit", width: 200 },
+          { title: "单位归属地", dataIndex: "unitAddress", key: "unitAddress", width: 200 }
+        ],
+        tabledataArr: [],
+      },
       otherChartsData: [], //其他图表
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
-      currDate: null
+      currDate: [],
     };
   },
 
@@ -109,16 +124,32 @@ export default {
 
   //方法集合
   methods: {
+    getTableData(){
+      /**
+       * 功能：获取数据
+       */
+    },
     changeDateType(e) {
+      /**
+       * 功能：更换日期类型
+       * 参数：e：当前点击的类型
+       */
       this.dateSearchType = e.target.value;
     },
     handleSubmit(e) {
+      /**
+       * 功能：选择完时间：查询按钮功能
+       */
       e.preventDefault();
       let tempSearch = {};
-      if (this.dateSearchType === "date") {
-        tempSearch.currDate = this.dateZhuan("yyyy-MM-dd", this.currDate._d);
-      } else {
-          tempSearch.currDate = this.dateZhuan("yyyy-MM", this.currDate._d);
+      if(this.currDate.length > 0){
+        if (this.dateSearchType === "date") {
+            tempSearch.startDate = this.currDate[0] ?  moment(this.currDate[0]._d).format("YYYY-MM-DD") : '';
+            tempSearch.endDate = this.currDate[1] ?  moment(this.currDate[1]._d).format("YYYY-MM-DD") : '';
+        } else {
+            tempSearch.startDate = this.currDate[0] ? moment(this.currDate[0]._d).format("YYYY-MM") : '';
+            tempSearch.endDate = this.currDate[1] ? moment(this.currDate[1]._d).format("YYYY-MM") : '';
+        }
       }
       console.log(tempSearch);
     },
@@ -126,7 +157,7 @@ export default {
       /**
        * 功能：去掉数组里第一个，其余为新数组
        */
-      let len = currData.length;
+      let len = currData.length;   
       for (let i = 1; i < len; i++) {
         this.otherChartsData.push(currData[i]);
       }
@@ -162,7 +193,7 @@ export default {
       // render
       this.$refs.charts.getChartsData(
         this.firstChartData,
-        this.firstChartData.chartsType
+        this.$refs.charts.returnChangeSelect()
       );
       this.otherChartsData.forEach((item, index) => {
         if (index === i) {
@@ -171,35 +202,7 @@ export default {
       });
     //   this.getTableData(currType);
     },
-    dateZhuan: function(fmt, date) {
-      /***
-       * 功能：标准日期格式转化
-       * 参数：fmt:格式， date：日期
-       */
-      var o = {
-        "M+": date.getMonth() + 1, //月份
-        "d+": date.getDate(), //日
-        "h+": date.getHours(), //小时
-        "m+": date.getMinutes(), //分
-        "s+": date.getSeconds(), //秒
-        "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-        S: date.getMilliseconds() //毫秒
-      };
-      if (/(y+)/.test(fmt))
-        fmt = fmt.replace(
-          RegExp.$1,
-          (date.getFullYear() + "").substr(4 - RegExp.$1.length)
-        );
-      for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
-          fmt = fmt.replace(
-            RegExp.$1,
-            RegExp.$1.length == 1
-              ? o[k]
-              : ("00" + o[k]).substr(("" + o[k]).length)
-          );
-      return fmt;
-    }
+    
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -243,13 +246,13 @@ export default {
 }
 .analysisOne {
   padding: 0 20px;
-  height: 50%;
+  height: 65%;
 }
 .analysisTwo {
-  height: calc(100% - 50% - 78px);
+  height: calc(100% - 65% - 78px - 15px);
 }
 
 .analysisTwoCon {
-  width: calc(100% / 3);
+  width: calc(100% / 5);
 }
 </style>

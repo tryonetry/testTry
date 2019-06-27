@@ -5,16 +5,15 @@
       <span>{{chartsData.title}}</span>
       <span v-if="chartsData.isSelectType">
         选择类型：
+        <!-- v-model="chartsData.chartsType" -->
         <a-select
           defaultValue="bar"
           style="width: 120px"
           @change="changeChartType($event,chartsData)"
-          v-model="chartsData.chartsType"
         >
           <a-select-option
-            v-for="(item, index) in selectTypeArr"
-            :key="index"
-            :value="item.value"
+            v-for="item in selectTypeArr"
+            :key="item.value"
           >{{item.name}}</a-select-option>
         </a-select>
       </span>
@@ -35,7 +34,7 @@ export default {
 
   data() {
     return {
-      //   selectChartType: "bar", //默认图表类型为柱状图
+      selectTypeVal: 'bar',
       selectTypeArr: [
         //图表类型
         { value: "bar", name: "柱状图" },
@@ -66,9 +65,14 @@ export default {
       /***
        * 功能:chart图表类型选择，切换不同的图表
        */
-      this.selectChartType = val;
+      this.selectTypeVal = val;
       this.getChartsData(dataArr, val);
     },
+   
+    returnChangeSelect(){
+      return this.selectTypeVal;
+    },
+
     getChartsData(currData, chartType) {
       /***
        * 功能：图表根据type类型数据重组
@@ -396,7 +400,8 @@ export default {
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {

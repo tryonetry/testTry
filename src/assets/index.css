@@ -85,6 +85,11 @@ input[readonly]{
     background-color: #6699CC;
   }
 
+  .ant-layout-sider{
+    background: #fff !important;
+    margin-bottom: 48px;
+  }
+
   .ant-layout-sider-trigger{
     background: #336699;
     color: #fff;
