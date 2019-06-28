@@ -424,7 +424,7 @@ export default {
                 tableCheck: false,
                 noPagination:true, // 分页是否不显示
                 bordered:true, // 表格 border 是否显示
-                superimposeWidth:true, //表格宽度叠加
+                 
                 formData:{},
                 editableCol:[
                     'e0105_editSelectInput',
