@@ -2,10 +2,9 @@
 <template>
   <div class="chartsContainer" ref="chartsContainer">
     <div class="chartHeader">
-      <span class="chartTitle">{{chartsData.title}}</span>
-      <span v-if="chartsData.isSelectType">
+      <span class="chartTitle">{{chartsData && chartsData.title}}</span>
+      <span v-if="chartsData && chartsData.isSelectType">
         选择类型：
-        <!-- v-model="chartsData.chartsType" -->
         <a-select
           defaultValue="bar"
           style="width: 120px"
@@ -42,7 +41,6 @@ export default {
         { value: "radar", name: "雷达图" },
         { value: "pie", name: "饼图" }
       ],
-      chartsDataArr: [] //charts数据
     };
   },
 
@@ -57,6 +55,16 @@ export default {
     //    },
     //    deep:true,//深度监听
     //}
+    chartsData: {
+      immediate: true, 
+      deep: true,
+      handler(newVal){
+        if(newVal){
+          this.chartsData = newVal;
+          this.getChartsData(newVal, newVal.chartsType);
+        }
+      }
+    }
   },
 
   //方法集合
@@ -406,18 +414,29 @@ export default {
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     const _this = this;
-    setTimeout(function(){
-      _this.$nextTick(()=>{
-        if(document.readyState === 'complete'){
-          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight - 32) + 'px';
-        } else{
-          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight + 68) + 'px';
-        }
-        _this.chartsDataArr = _this.chartsData;
-        _this.getChartsData(_this.chartsDataArr, _this.chartsDataArr.chartsType);
-      });
-    },0)
-
+    console.log('xxx');
+    window.onresize = function(){
+      console.log(111);
+    }
+    // window.onresize = () => {//  根据窗口大小调整曲线大小
+      
+    //   let chartsDom = _this.$echarts.init(document.getElementById('charts'));
+      
+    //   // setTimeout(function(){
+    //     // _this.$nextTick(()=>{
+    //     //   if(document.readyState === 'complete'){
+    //     //     _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight - 32) + 'px';
+    //     //   } else{
+    //     //     _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight + 68) + 'px';
+    //     //   }
+    //     //   if(_this.chartsData && _this.chartsData.data && _this.chartsData.data.length > 0){
+    //     //     _this.getChartsData(_this.chartsData, _this.chartsData.chartsType);
+    //     //   }
+    //     // });
+    //   // },0)
+    //   chartsDom.resize();
+    // }
+    
   },
 
   beforeCreate() {}, //生命周期 - 创建之前
@@ -426,7 +445,11 @@ export default {
 
   beforeUpdate() {}, //生命周期 - 更新之前
 
-  updated() {}, //生命周期 - 更新之后
+  updated() {
+    // const _this = this;
+    
+    
+  }, //生命周期 - 更新之后
 
   beforeDestroy() {}, //生命周期 - 销毁之前
 

@@ -57,7 +57,7 @@ export default {
           type: 1,
           isSelectType: true,
           title: "档案转出统计分析(单位:次)",
-          data: [{ name: "档案接收", value: "36" }]
+          data: []
         }
       ],
       tableTotalNum: 0, //档案接收--table--总条数
@@ -73,10 +73,10 @@ export default {
           formBtns: []
         },
         columnsArr: [
-          { title: "公司名称", key: "", dataIndex: "", width: 200 },
-          { title: "立户日期", key: "", dataIndex: "", width: 150 },
-          { title: "单位性质", key: "", dataIndex: "", width: 150 },
-          { title: "代理人数", key: "", dataIndex: "", width: 150 },
+          { title: "公司名称", key: "companyName", dataIndex: "companyName", width: 350 },
+          { title: "立户日期", key: "tatsudoDate", dataIndex: "tatsudoDate", width: 250 },
+          { title: "单位性质", key: "companyNature", dataIndex: "companyNature", width: 200 },
+          { title: "代理人数", key: "companyEmployeesNumber", dataIndex: "companyEmployeesNumber" },
         ],
         tabledataArr: []
       },
@@ -100,10 +100,58 @@ export default {
 
   //方法集合
   methods: {
-    getTableData() {
+    getChartData() {
       /**
-       * 功能：获取数据
+       * 功能：获取图表数据
        */
+       this.$http.fetchPost('statisticsAnalysis@companyStatistics.action').then(res => {
+        if(Number(res.code) === 0){
+          let tempResData = res.data.companyStatistics;
+          tempResData.forEach(element => {
+           this.personInfoData[0].data.push({
+             name: element.name,
+             value: element.value
+           })            
+          }); 
+          this.firstChartData = {...this.personInfoData[0]};
+          this.firstChartData.chartsType = this.chartTypeArr[0];
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！')
+        }
+       }).catch(error => {
+         this.$message.error('抱歉，网络异常！');
+       })
+    },
+    getTableData(condition, pageNum, limitNum){
+      /**
+       * 功能：获取table数据
+       */
+      this.tableLoading = true;
+      this.$http.fetchPost('statisticsAnalysis@companyStatisticsViews.action',{
+        page: pageNum,
+        limt: limitNum
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.tableTotalNum = res.count;
+          this.initArr.tabledataArr = [];
+          let tempTableData = res.data;
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              key: element.id,
+              companyName: element.companyName,
+              companyNature: element.companyNature,
+              companyEmployeesNumber: element.companyEmployeesNumber,
+              tatsudoDate: element.tatsudoDate
+            })
+          });
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      }).finally(end => {
+        this.tableLoading = false;
+      })
     },
     handleSubmit(e) {
       /**
@@ -125,8 +173,8 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.firstChartData = { ...this.personInfoData[0] };
-    this.firstChartData.chartsType = this.chartTypeArr[0];
+    this.getChartData();   //获取图表数据
+    this.getTableData(null, 1, 10);   //获取表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
