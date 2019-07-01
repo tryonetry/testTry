@@ -271,7 +271,7 @@ export default {
     totalCount: {
       immediate: true,
       handler(newVal, oldVal) {
-        if (newVal) {
+        if (newVal || Number(newVal) === 0) {
           this.tableTotalCount = newVal;
         }
       }

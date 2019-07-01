@@ -2,7 +2,7 @@
 <template>
   <div class="chartsContainer" ref="chartsContainer">
     <div class="chartHeader">
-      <span class="chartTitle">{{chartsData && chartsData.title}}</span>
+      <span class="chartTitle">{{chartsData && chartsData.cardTitle}}</span>
       <span v-if="chartsData && chartsData.isSelectType">
         选择类型：
         <a-select
@@ -123,7 +123,7 @@ export default {
           });
           if (chartType === "bar") {
             //柱状图
-            this.columnarChart(columnarXData, columnarYData);
+            this.columnarChart(columnarXData, columnarYData, currData.title);
           } else {
             //折线图
             this.lineChart(columnarXData, columnarYData);
@@ -143,6 +143,7 @@ export default {
       }
       let radarChart = this.$echarts.init(this.$refs.chart_div);
       radarChart.clear();
+      radarChart.resize();
       radarChart.setOption({
         tooltip: {},
         legend: {
@@ -216,7 +217,7 @@ export default {
         ]
       });
     },
-    columnarChart(xData, yData) {
+    columnarChart(xData, yData, title) {
       /***
        * 功能：根据数据绘制柱状图
        * 参数：xData: x轴数据; yData:y轴数据
@@ -230,8 +231,8 @@ export default {
       }
       let columnarChart = this.$echarts.init(this.$refs.chart_div);
       columnarChart.clear();
+      columnarChart.resize();
       columnarChart.setOption({
-        color: ["#3398DB"],
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -284,13 +285,13 @@ export default {
         ],
         series: [
           {
-            name: "直接访问",
+            name: title,
             type: "bar",
             barWidth: "30%", //bar宽度
             data: yData
           }
         ],
-        color: ["#6eb5f5"]
+        color: ["#6eb5f5"],
       });
     },
     lineChart(xData, yData) {
@@ -304,6 +305,7 @@ export default {
       }
       let lineChart = this.$echarts.init(this.$refs.chart_div);
       lineChart.clear();
+      lineChart.resize();
       lineChart.setOption({
         tooltip: {
           trigger: "axis"
@@ -352,7 +354,7 @@ export default {
             smooth: false //是否平滑
           }
         ],
-        color: ["#90c7ae"]
+        color:['#6eb5f5']
       });
     },
     pieChart(pieData, title) {
@@ -367,6 +369,7 @@ export default {
 
       let pieChart = this.$echarts.init(this.$refs.chart_div);
       pieChart.clear();
+      pieChart.resize();
       pieChart.setOption({
         tooltip: {
           trigger: "item",
@@ -402,9 +405,27 @@ export default {
             },
             data: pieData
           }
-        ]
+        ],
+        color:['#99CC33', '#99CCFF', '#0099CC','#FFCC99', '#CCCCFF', '#006699']
       });
     },
+
+    resizeChartsFun(){
+      /**
+       * 当窗口变化时：echarts重绘
+       */
+      const _this = this;
+      _this.$nextTick(()=>{
+        if(document.readyState === 'complete'){
+          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight - 32) + 'px';
+        } else{
+          _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight + 68) + 'px';
+        }
+        if(_this.chartsData && _this.chartsData.data && _this.chartsData.data.length > 0){
+          _this.getChartsData(_this.chartsData, _this.chartsData.chartsType);
+        }
+      });
+    }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -414,28 +435,10 @@ export default {
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
     const _this = this;
-    console.log('xxx');
-    window.onresize = function(){
-      console.log(111);
-    }
-    // window.onresize = () => {//  根据窗口大小调整曲线大小
+    setTimeout(function(){
+      _this.resizeChartsFun();
+    },0)
       
-    //   let chartsDom = _this.$echarts.init(document.getElementById('charts'));
-      
-    //   // setTimeout(function(){
-    //     // _this.$nextTick(()=>{
-    //     //   if(document.readyState === 'complete'){
-    //     //     _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight - 32) + 'px';
-    //     //   } else{
-    //     //     _this.$refs.chart_div.style.height = (_this.$refs.chartsContainer.clientHeight + 68) + 'px';
-    //     //   }
-    //     //   if(_this.chartsData && _this.chartsData.data && _this.chartsData.data.length > 0){
-    //     //     _this.getChartsData(_this.chartsData, _this.chartsData.chartsType);
-    //     //   }
-    //     // });
-    //   // },0)
-    //   chartsDom.resize();
-    // }
     
   },
 
