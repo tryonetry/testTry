@@ -3,10 +3,10 @@
     <div class="outer">
     <div class="searchForm">
       <a-form :form="form" class="formInputsContainer ant-row">
-        <a-col style="line-height:39.9999px;">查询月份：</a-col>
+        <a-col style="line-height:39.9999px;">查询日期：</a-col>
         <a-col :xl="6" :xxl="4" :xs="12" style="margin-left: 15px;">
           <a-form-item>
-            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate"/>
+            <a-range-picker class="formSearchDate" format='YYYY-MM-DD' v-model="currDate"/>
           </a-form-item>
         </a-col>
         <a-col style="margin-left: 15px;line-height:39.9999px;">
@@ -26,7 +26,10 @@
           @searchTable="getTableData"
         >
           <span slot="formAction">
-            <a-button type="primary">导出</a-button>
+            <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name='fieldsName'>
+              <a-button type="primary">导出</a-button>
+            </JsonExcel>
+            
           </span>
         </TableView>
       </div>
@@ -38,12 +41,14 @@
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
 import moment from "moment";
+import JsonExcel from 'vue-json-excel'
 export default {
     name:"AgentUnitStatistical",
     //import引入的组件需要注入到对象中才能使用
     components: {
     RecordAnalysis,
-    TableView
+    TableView,
+    JsonExcel
   },
   props: [""],
 
@@ -56,7 +61,8 @@ export default {
         {
           type: 1,
           isSelectType: true,
-          title: "档案转出统计分析(单位:次)",
+          cardTitle: '档案转出统计分析(单位:次)',
+          title: "档案转出统计分析",
           data: []
         }
       ],
@@ -81,7 +87,14 @@ export default {
         tabledataArr: []
       },
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
-      currDate: []
+      currDate: [moment(moment().subtract(1, 'year'), 'YYYY-MM-DD'), moment(new Date(), 'YYYY-MM-DD')],   //默认查询日期
+      exportFiledsJson: {
+        "公司名称": "companyName",
+        "立户日期": "tatsudoDate",
+        "单位性质": "companyNature",
+        "代理人数": "companyEmployeesNumber"
+      },
+      fieldsName: '代理单位统计' + this.moment(new Date()).format('YYYY-MM-DD hh:mm:ss'),
     };
   },
 
@@ -100,13 +113,18 @@ export default {
 
   //方法集合
   methods: {
-    getChartData() {
+    moment,
+    getChartData(condition) {
       /**
        * 功能：获取图表数据
        */
-       this.$http.fetchPost('statisticsAnalysis@companyStatistics.action').then(res => {
+       this.$http.fetchPost('statisticsAnalysis@companyStatistics.action',{
+          startTime: (!condition || !condition.startDate) ? this.moment().subtract(1, 'year').format('YYYY-MM-DD')  : condition.startDate,
+          endTime: (!condition || !condition.endDate) ? this.moment(new Date()).format('YYYY-MM-DD') : condition.endDate
+       }).then(res => {
         if(Number(res.code) === 0){
           let tempResData = res.data.companyStatistics;
+          this.personInfoData[0].data = [];
           tempResData.forEach(element => {
            this.personInfoData[0].data.push({
              name: element.name,
@@ -129,7 +147,9 @@ export default {
       this.tableLoading = true;
       this.$http.fetchPost('statisticsAnalysis@companyStatisticsViews.action',{
         page: pageNum,
-        limt: limitNum
+        limt: limitNum,
+        startTime:(!condition || !condition.startDate) ? this.moment().subtract(1, 'year').format('YYYY-MM-DD') : condition.startDate,
+        endTime: (!condition || !condition.endDate) ? this.moment(new Date()).format('YYYY-MM-DD') : condition.endDate
       }).then(res => {
         if(Number(res.code) === 0){
           this.tableTotalNum = res.count;
@@ -161,24 +181,33 @@ export default {
       let tempSearch = {};
       if (this.currDate.length > 0) {
         tempSearch.startDate = this.currDate[0]
-          ? moment(this.currDate[0]._d).format("YYYY-MM")
-          : "";
+          ? this.moment(this.currDate[0]._d).format("YYYY-MM-DD")
+          : '';
         tempSearch.endDate = this.currDate[1]
-          ? moment(this.currDate[1]._d).format("YYYY-MM")
-          : "";
+          ? this.moment(this.currDate[1]._d).format("YYYY-MM-DD")
+          : '';
       }
-      console.log(tempSearch);
+      this.getChartData(tempSearch);
+      this.getTableData(tempSearch, 1, 10);
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartData();   //获取图表数据
+    this.getChartData(null);   //获取图表数据
     this.getTableData(null, 1, 10);   //获取表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {},
+  mounted() {
+    const _this = this;
+    window.onresize = function(){
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+      })
+      
+    }
+  },
 
   beforeCreate() {}, //生命周期 - 创建之前
 
