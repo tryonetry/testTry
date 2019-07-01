@@ -227,10 +227,14 @@ input[readonly]{
     justify-content: space-between;
     flex-wrap: wrap;
     flex-direction: row;
+    border-bottom: 1px dashed #ccc;
+    /* box-shadow: 10px 0 10px #ccc; */
   }
   .leftAnalysis {
     width: 450px;
     height: 100%;
+    border-right: 1px dashed #ccc;
+    padding-right: 20px;
   }
   
   .tableAnalysis {
@@ -251,6 +255,7 @@ input[readonly]{
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
+    padding-top: 15px;
   }
   
   .analysisTwoCon {

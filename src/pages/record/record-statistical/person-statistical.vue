@@ -8,7 +8,7 @@
       <div class="tableAnalysis">
         <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
           <span slot="formAction">
-            <a-button class="buttonOperate" type="primary" >导出</a-button>
+            <a-button type="primary" >导出</a-button>
           </span>
         </TableView>
       </div>
@@ -367,7 +367,7 @@ export default {
 
   //方法集合
   methods: {
-    getChartsData(){
+    getChartsDataFun(){
       /**
        * 获取渲染图表的数据
        */
@@ -383,19 +383,19 @@ export default {
       // _this.tableLoading = true;
       if(typeVal === 1){
         //年龄段分析
-        _this.chartsColumns = _this.ageColumns;
+        _this.initArr.columnsArr = _this.ageColumns;
       } else if(typeVal === 2){
         //学历分析
-        _this.chartsColumns = _this.eduColumns;
+        _this.initArr.columnsArr = _this.eduColumns;
       } else if(typeVal === 3){
         //专业做技术资格分析
-        _this.chartsColumns = _this.professionColumns;
+        _this.initArr.columnsArr = _this.professionColumns;
       } else if(typeVal === 4){
         //民族分析
-        _this.chartsColumns = _this.nationaColumns;
+        _this.initArr.columnsArr = _this.nationaColumns;
       } else{
         //政治面貌分析
-        _this.chartsColumns = _this.politicalColumns;
+        _this.initArr.columnsArr = _this.politicalColumns;
       }
     },
 
@@ -446,7 +446,7 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartsData();
+    this.getChartsDataFun();
     this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
     this.firstChartData.chartsType = this.chartTypeArr[0];
     this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头

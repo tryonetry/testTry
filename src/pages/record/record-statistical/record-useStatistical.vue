@@ -6,12 +6,11 @@
         <a-col style="line-height:39.9999px;">查询月份：</a-col>
         <a-col :xl="6" :xxl="4" :xs="12" style="margin-left: 15px;">
           <a-form-item>
-            <a-range-picker  class="formSearchDate" format="YYYY-MM"  v-model="currDate" />
+            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate"/>
           </a-form-item>
         </a-col>
         <a-col style="margin-left: 15px;line-height:39.9999px;">
           <a-button type="primary" @click="handleSubmit">查询</a-button>
-          <!-- <a-button type="primary">查看</a-button> -->
         </a-col>
       </a-form>
     </div>
@@ -19,17 +18,50 @@
       <div class="leftAnalysis">
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
-      <div class="tableAnalysis">
-        <TableView
-          :initArrData="initArr"
-          :totalCount="tableTotalNum"
-          :loading="tableLoading"
-          @searchTable="getTableData"
-        >
-          <span slot="formAction">
-            <a-button class="buttonOperate" type="primary">导出</a-button>
-          </span>
-        </TableView>
+      <div class="tableAnalysis" style="position:relative;">
+        <a-button type="primary" class="exportBtn">导出</a-button>
+        <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;" @change="tabChange">
+          <a-tab-pane tab="档案接收" key="1">
+            <TableView
+              :initArrData="initArr"
+              :totalCount="tableTotalNum"
+              :loading="tableLoading"
+              @searchTable="getTableData"
+            ></TableView>
+          </a-tab-pane>
+          <a-tab-pane tab="档案借出" key="2" forceRender>
+            <TableView
+              :initArrData="initArr"
+              :totalCount="tableTotalNum"
+              :loading="tableLoading"
+              @searchTable="getTableData"
+            ></TableView>
+          </a-tab-pane>
+          <a-tab-pane tab="档案转出" key="3">
+            <TableView
+              :initArrData="initArr"
+              :totalCount="tableTotalNum"
+              :loading="tableLoading"
+              @searchTable="getTableData"
+            ></TableView>
+          </a-tab-pane>
+          <a-tab-pane tab="材料接收" key="4">
+            <TableView
+              :initArrData="initArr"
+              :totalCount="tableTotalNum"
+              :loading="tableLoading"
+              @searchTable="getTableData"
+            ></TableView>
+          </a-tab-pane>
+          <a-tab-pane tab="材料借出" key="5">
+            <TableView
+              :initArrData="initArr"
+              :totalCount="tableTotalNum"
+              :loading="tableLoading"
+              @searchTable="getTableData"
+            ></TableView>
+          </a-tab-pane>
+        </a-tabs>
       </div>
     </div>
     <div class="analysisTwo">
@@ -77,9 +109,10 @@ export default {
           data: [{ name: "XXXX", value: "123" }]
         }
       ],
-      tableTotalNum: 0, //table--总条数
-      tableLoading: false, //table--loading
+      tableTotalNum: 0, //档案接收--table--总条数
+      tableLoading: false, //档案接收--table--loading
       initArr: {
+        //档案接收--tableView数据
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check,
         bordered: true, //table--边框
@@ -88,29 +121,132 @@ export default {
           formInputs: [],
           formBtns: []
         },
-        columnsArr: [
-          { title: "所属机构", dataIndex: "organ", key: "organ", width: 200 },
-          {
-            title: "接收时间",
-            dataIndex: "acceptDate",
-            key: "acceptDate",
-            width: 150
-          },
-          {
-            title: "转出单位",
-            dataIndex: "rollOutUnit",
-            key: "rollOutUnit",
-            width: 200
-          },
-          {
-            title: "单位归属地",
-            dataIndex: "unitAddress",
-            key: "unitAddress",
-            width: 200
-          }
-        ],
+        columnsArr: [],
         tabledataArr: []
       },
+      acceptColumnsArr: [
+        //档案接收表头
+        { title: "档案人名称", dataIndex: "", key: "", width: 150 },
+        {
+          title: "档案编号",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "档案接收单位",
+          dataIndex: "",
+          key: "",
+          width: 200
+        },
+        {
+          title: "单位性质",
+          dataIndex: "",
+          key: "",
+          width: 120
+        },
+        {
+          title: "档案接收时间",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "经办人",
+          dataIndex: "",
+          key: "",
+          width: 150
+        }
+      ],
+      lendColumnsArr: [
+        //档案借出表头
+        { title: "档案人名称", dataIndex: "", key: "", width: 150 },
+        {
+          title: "档案编号",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "档案借阅单位",
+          dataIndex: "",
+          key: "",
+          width: 200
+        },
+        {
+          title: "单位性质",
+          dataIndex: "",
+          key: "",
+          width: 120
+        },
+        {
+          title: "档案借出时间",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "经办人",
+          dataIndex: "",
+          key: "",
+          width: 150
+        }
+      ],
+      rolloutColumnsArr: [
+        //档案转出表头
+        { title: "档案人名称", dataIndex: "", key: "", width: 150 },
+        {
+          title: "档案编号",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "档案转出单位",
+          dataIndex: "",
+          key: "",
+          width: 200
+        },
+        {
+          title: "单位性质",
+          dataIndex: "",
+          key: "",
+          width: 120
+        },
+        {
+          title: "档案转出时间",
+          dataIndex: "",
+          key: "",
+          width: 150
+        },
+        {
+          title: "经办人",
+          dataIndex: "",
+          key: "",
+          width: 150
+        }
+      ],
+      materialAcceptColumnsArr: [
+        //材料接收表头
+        { title: "材料人名称", dataIndex: "", key: "", width: 150 },
+        { title: "档案编号", dataIndex: "", key: "", width: 200 },
+        { title: "材料名称", dataIndex: "", key: "", width: 150 },
+        { title: "材料接收单位", dataIndex: "", key: "", width: 200 },
+        { title: "单位性质", dataIndex: "", key: "", width: 150 },
+        { title: "材料接收时间", dataIndex: "", key: "", width: 150 },
+        { title: "经办人", dataIndex: "", key: "", width: 150 }
+      ],
+      materialLendColumnsArr: [
+        //材料借出表头
+        { title: "材料人名称", dataIndex: "", key: "", width: 150 },
+        { title: "档案编号", dataIndex: "", key: "", width: 200 },
+        { title: "材料名称", dataIndex: "", key: "", width: 150 },
+        { title: "材料借阅单位", dataIndex: "", key: "", width: 200 },
+        { title: "单位性质", dataIndex: "", key: "", width: 150 },
+        { title: "材料借出时间", dataIndex: "", key: "", width: 150 },
+        { title: "经办人", dataIndex: "", key: "", width: 150 }
+      ],
+
       otherChartsData: [], //其他图表
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
       currDate: []
@@ -118,7 +254,8 @@ export default {
   },
 
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+  },
 
   //监控data中的数据变化
   watch: {
@@ -143,9 +280,13 @@ export default {
        */
       e.preventDefault();
       let tempSearch = {};
-      if(this.currDate.length > 0){
-        tempSearch.startDate = this.currDate[0] ? moment(this.currDate[0]._d).format("YYYY-MM") : '';
-        tempSearch.endDate = this.currDate[1] ?  moment(this.currDate[1]._d).format("YYYY-MM") : '';
+      if (this.currDate.length > 0) {
+        tempSearch.startDate = this.currDate[0]
+          ? moment(this.currDate[0]._d).format("YYYY-MM")
+          : "";
+        tempSearch.endDate = this.currDate[1]
+          ? moment(this.currDate[1]._d).format("YYYY-MM")
+          : "";
       }
       console.log(tempSearch);
     },
@@ -197,6 +338,29 @@ export default {
         }
       });
       //   this.getTableData(currType);
+    },
+    tabChange(currKey){
+      /**
+       * 功能：tab切换：实现表头和数据切换
+       * 参数：currKey:当前tab的key值
+       */
+      const _this = this;
+      if(currKey === '1'){
+        //档案接收
+        _this.initArr.columnsArr = _this.acceptColumnsArr;
+      } else if(currKey === '2'){
+        //档案借出
+        _this.initArr.columnsArr = _this.lendColumnsArr;
+      } else if(currKey === '3'){
+        //档案转出
+        _this.initArr.columnsArr = _this.rolloutColumnsArr;
+      } else if(currKey === '4'){
+        //材料接收
+        _this.initArr.columnsArr = _this.materialAcceptColumnsArr;
+      } else{
+        //材料借出
+        _this.initArr.columnsArr = _this.materialLendColumnsArr;
+      }
     }
   },
 
@@ -204,6 +368,8 @@ export default {
   created() {
     this.firstChartData = { ...this.personInfoData[0] };
     this.firstChartData.chartsType = this.chartTypeArr[0];
+    this.initArr.columnsArr = this.acceptColumnsArr;
+
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
@@ -247,5 +413,11 @@ export default {
 
 .analysisTwoCon {
   width: calc(100% / 5);
+}
+
+.exportBtn {
+  position: absolute;
+  right: 34px;
+  top: -20px;
 }
 </style>

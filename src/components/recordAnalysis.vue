@@ -2,7 +2,7 @@
 <template>
   <div class="chartsContainer" ref="chartsContainer">
     <div class="chartHeader">
-      <span>{{chartsData.title}}</span>
+      <span class="chartTitle">{{chartsData.title}}</span>
       <span v-if="chartsData.isSelectType">
         选择类型：
         <!-- v-model="chartsData.chartsType" -->
@@ -442,6 +442,11 @@ export default {
   justify-content: space-between;
   line-height: 32px;
 }
+
+.chartTitle{
+  font-size: 14px;
+}
+
 .chartsContainer {
   width: 100%;
   height: 100%;

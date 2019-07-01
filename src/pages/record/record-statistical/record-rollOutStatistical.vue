@@ -39,7 +39,7 @@
           @searchTable="getTableData"
         >
           <span slot="formAction">
-            <a-button class="buttonOperate" type="primary">导出</a-button>
+            <a-button type="primary">导出</a-button>
           </span>
         </TableView>
       </div>
