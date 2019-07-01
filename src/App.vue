@@ -72,7 +72,6 @@ export default {
 
     // 获取公司数据
     getCompanyData(){
-
       this.$http.fetchGet("companyInfo@getCompanyList.action", {})
       .then(res => {
         if(Number(res.code) === 0){
@@ -80,6 +79,7 @@ export default {
         }
       });
     },
+    
     // 获取字典数据
     getDirectoryData(){
       this.$http.fetchPost("personalArch@personalArchAddSysDictItem.action", {})

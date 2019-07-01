@@ -347,16 +347,26 @@ export default {
     },
 
     //监听属性 类似于data概念
-    computed: {},
+    computed: {
+        directoryData:function(){
+            if(this.$store.getters.getDirectoryData){
+                this.splitDirectoryData(this.$store.getters.getDirectoryData);
+                return this.$store.getters.getDirectoryData;
+            }else{
+                return null;
+            }
+        }
+    },
 
     //监控data中的数据变化
     watch: {
-        //obj:{
-        //    handler:function(val,oldval){
-        //        
-        //    },
-        //    deep:true,//深度监听
-        //}
+        directoryData:{
+            // 改变数据
+            handler:function(newVal,oldVal){
+                this.splitDirectoryData(newVal)
+            },
+            deep:true,//深度监听
+        },
     },
 
     //方法集合
@@ -436,13 +446,18 @@ export default {
 
         handleCancel(){
             this.visible = false;
+        },
+        // 拆分字典数据
+        splitDirectoryData(Data){
+            if(!Data) return;
+            this.proofTypes = Data.proofTypeList;
         }
 
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-
+        
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

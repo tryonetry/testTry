@@ -788,9 +788,9 @@ export default {
 
                   // 其他项
                   else if(!resultObj.operate){
-                    console.log(resultObj.data)
+                    // console.log(resultObj.data)
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                    console.log(_this.formData.formInputs[index])
+                    // console.log(_this.formData.formInputs[index])
                   }
 
                 });

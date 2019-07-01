@@ -858,7 +858,7 @@ export default {
                 item.val = this.currentPersonData.companyId;
                 item.disabled = true;
               }
-            };
+            }
           });
         }else{
           //...
