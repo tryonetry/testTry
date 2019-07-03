@@ -246,7 +246,7 @@ export default {
             title: "档案人姓名",
             dataIndex: "a0101",
             key: "a0101",
-            width: 120,
+            width: 150,
             fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -254,7 +254,7 @@ export default {
             title: "性别",
             dataIndex: "a0104",
             key: "a0104",
-            width: 80,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -268,21 +268,21 @@ export default {
             title: "人员身份",
             dataIndex: "archivesIdentity",
             key: "archivesIdentity",
-            width: 100,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "库房位置",
             dataIndex: "shelvesNo",
             key: "shelvesNo",
-            width: 100,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "经办人",
             dataIndex: "inwareOperatorName",
             key: "inwareOperatorName",
-            width: 100,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

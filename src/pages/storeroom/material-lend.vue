@@ -89,18 +89,29 @@
         :width="modalWidth"
         @cancel="printCancel"
         style="height:85%;overflow: hidden;"
-        :footer="null"
         :maskClosable="false"
       >
         <div class="modalInnerContainer">
-            <div class="printContent">
-              <PrintTemplate :printDataObj="printTemplateData" ref="printPage"></PrintTemplate>
-            </div>
-            <div class="printBtn">
-              <a-button key="cancel" @click="printCancel">取消</a-button>
-              <a-button key="submit" type="primary" @click="printFun">打印</a-button>
-            </div> 
+            <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+              <div slot="printContent" class="printContent">
+                <p class="indent">
+                  今借到<span class="redSpan">{{currRow && currRow.a0101}}</span>同志（档案管理编号：<span class="noFontColorSpan">{{currRow && currRow.a0100a}}</span>)档案材料：<span class="redSpan">{{currRow && currRow.expectReturnDate}}</span>供<input type="text" v-model="printData.useName" style="width:150px;"/>使用。
+                </p>
+                <div class="bottom">
+                  <div class="bottomRight">
+                      <p>具借人:{{currRow && currRow.borrower}}</p>
+                      <p>证件号:{{currRow && currRow.borrowerIdNum}}</p>
+                      <p>联系电话:{{currRow && currRow.borrowerTelNum}}</p>
+                      <p>日期：{{nowData}}</p>
+                  </div>
+                </div>
+              </div>
+          </TemplateOfPrint>
         </div>
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary"  @click="print">打 印</a-button>
+        </template>
       </a-modal>
     </div>
   </div>
@@ -109,8 +120,9 @@
 <script>
 import TableView from "@/components/tableView";
 import TableFromSearch from '@/components/tableFormSearch';
-import PrintTemplate from '@/components/printTemplate';
+import TemplateOfPrint from '@/components/templateOfPrint';
 import utils from '../../utils/util';
+import moment from "moment";
 
 let tableDataArr = [];
 let tempMaterialId = '';
@@ -129,7 +141,7 @@ function  expectReturnDateFun(value){
 export default {
   name: "MaterialLend",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, TableFromSearch, PrintTemplate },
+  components: { TableView, TableFromSearch, TemplateOfPrint },
   props: [""],
 
   data() {
@@ -642,7 +654,6 @@ export default {
               postname: "borrowDate",
               status: '',
               colWidth: [12, 24],
-              disabled: true,
           },
           {
             title: '经办人',
@@ -790,95 +801,22 @@ export default {
       printVisible: false, //打印modal
       printConfirmLoading: false,  //打印modal
       modalWidth: '',  //打印modal的宽度
-      printTemplateData: {
-        //打印模板数据
-        cardTitle: '江西省人才流动中心',
-        subTitle: '借条', 
-        isRightNum: true,
-        rightContent:{                   //如果有右侧内容：传值格式
-          title: 'NO：',                 
-          value: '',
-          className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
-            rightNumber: true,
-            rightNumberRed: true
-          }
-        },
-        otherContent: [   //日期及其他内容
-          {
-            title: '具借人',
-            name: 'borrower',
-            value: ''
-          },
-          {
-            title: '证件号',
-            name: 'borrowerIdNum',
-            value: ''
-          },
-          {
-            title: '联系电话',
-            name: 'borrowerTelNum',
-            value: ''
-          },
-          {
-            type: 'date',
-            title: '具借时间',
-            name: 'signTime',
-            value: ''
-          }
-        ],
-        content:[
-          {
-            type: 'other',
-            data: [
-              {
-                value: '今借到',
-              },
-              {
-                name: 'a0101',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '同志（档案管理编号：'
-              },
-              {
-                // type: 'input',
-                name: 'a0100a',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '）档案材料：'
-              },
-              {
-                name: 'expectReturnDate',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '供'
-              },
-              {
-                type: 'input',
-                name: 'useName',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '使用。'
-              },
-            ]
-          }
-        ]
-      }
+
+      currRow: {
+        a0101: '',
+        a0100a: '',
+        expectReturnDate: '',
+        borrower: '',
+        borrowerIdNum: '',
+        borrowerTelNum: '',
+      },
+      printData:{
+        useName:'',
+      },
+      fileNum: '',  //打印---文件编号
+      firstTitle: '江西省人才流动中心', //打印--大标题
+      secondTitle: '借条',  //打印---小标题
+      nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
     };
   },
 
@@ -1162,24 +1100,14 @@ export default {
         materialId: currRowData.a01000
       }).then(res => {
         if(Number(res.code) === 0){
-          _this.printTemplateData.rightContent.value = res.data.dueBillSerialNumber;
-          _this.printTemplateData.otherContent.forEach(element => {
-            for(let currKey in currRowData){
-              if(element.name === currKey){
-                element.value = currRowData[currKey];
-              }
-            }
-          });
-          _this.printTemplateData.content[0].data.forEach(element => {
-            for(let currKey in currRowData){
-              if(element.name && element.name === currKey){
-                element.value = currRowData[currKey];
-              }
-            }
-          });
+          this.fileNum = res.data.dueBillSerialNumber;   //文件编号
+          for(let key in this.currRow){
+            this.currRow[key] = res.data[key];
+          }
+          this.currRow.borrower = currRowData.borrower;
+          this.currRow.borrowerIdNum = currRowData.borrowerIdNum;
+          this.currRow.borrowerTelNum = currRowData.borrowerTelNum;
           _this.printVisible = true;
-
-
         }else{
           _this.$message.error('抱歉，获取数据失败，请刷新后重试！');
         }
@@ -1188,11 +1116,11 @@ export default {
       })
     },
 
-    printFun(){
+    print(){
       /**
        * 功能：打印modal--打印操作
        */
-      this.$refs.printPage.printFun();
+      // this.$refs.printPage.printFun();
     }
   },
 

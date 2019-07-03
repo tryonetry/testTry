@@ -22,18 +22,28 @@
         :width="modalWidth"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
-        :footer="null"
         :maskClosable="false"
       >
         <div class="modalInnerContainer">
-            <div class="printContent">
-              <PrintTemplate :printDataObj="printTemplateData" ref="printPage"></PrintTemplate>
-            </div>
-            <div class="printBtn">
-              <a-button key="cancel" @click="handleCancel">取消</a-button>
-              <a-button key="submit" type="primary" @click="handleOk">打印</a-button>
-            </div> 
+          <!-- 打印模板 -->
+          <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+              <div slot="printContent" class="printContent">
+                <p class="indent">
+                  今收到<span class="redSpan">{{currRow && currRow.perName}}</span>同志（档案管理编号：<span class="noFontColorSpan">{{currRow && currRow.archNumber}}</span>)<span class="redSpan">{{currRow && currRow.materialNames}}</span>等材料，共（<span class="redSpan">{{currRow && currRow.materialNums}}</span>）份（套）
+                </p>
+                <div class="bottom">
+                  <div class="bottomRight">
+                      <p>签收人：{{currRow && currRow.signName}}</p>
+                      <p>日期：{{nowData}}</p>
+                  </div>
+                </div>
+              </div>
+          </TemplateOfPrint>
         </div>
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary"  @click="print">打 印</a-button>
+        </template>
       </a-modal>
     </div>
   </div>
@@ -41,13 +51,13 @@
 
 <script>
 import TableView from "@/components/tableView";
-import PrintTemplate from '@/components/printTemplate';
+import TemplateOfPrint from '@/components/templateOfPrint';
 import utils from '@/utils/util.js'
 import moment from "moment";
 export default {
   name: "MaterialHandover",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, PrintTemplate },
+  components: { TableView, TemplateOfPrint },
 
   props: [],
   
@@ -255,85 +265,18 @@ export default {
       visible: false, //模态框默认不显示
       confirmLoading: false, //确认加载状态 默认为false
       modalWidth: '',  //modal的宽度
-      printTemplateData: {
-        //打印模板数据
-        cardTitle: '江西省人才流动中心',
-        subTitle: '回执', 
-        isRightNum: true,
-        rightContent:{                   //如果有右侧内容：传值格式
-          title: 'NO：',                 
-          value: '',
-          className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
-            rightNumber: true,
-            rightNumberRed: true
-          }
-        },
-        otherContent: [   //日期及其他内容
-          {
-            title: '签收人',
-            name: 'signName',
-            value: ''
-          },
-          {
-            type: 'date',
-            title: '日期',
-            name: 'signTime',
-            value: ''
-          }
-        ],
-        content:[
-          {
-            type: 'other',
-            data: [
-              {
-                value: '今收到',
-              },
-              {
-                name: 'perName',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '同志（档案管理编号：'
-              },
-              {
-                // type: 'input',
-                name: 'archNumber',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              // {
-              //   type: 'date',
-              //   value: moment(new Date(), 'YYYY-MM-DD')
-              // },
-              {
-                value: '）'
-              },
-              {
-                name: 'materialNames',
-                value: '',
-                className: {
-                  otherFormatRed: true
-                }
-              },
-              {
-                value: '等材料，共（'
-              },
-              {
-                name: 'materialNums',
-                value: ''
-              },
-              {
-                value:'）份（套）'
-              }
-            ]
-          }
-        ]
-      }
+       
+      currRow: {
+        perName: '',
+        archNumber: '',
+        materialNames: '',
+        materialNums: '',
+        signName: ''
+      },
+      fileNum: '',  //打印---文件编号
+      firstTitle: '江西省人才流动中心', //打印--大标题
+      secondTitle: '回执',  //打印---小标题
+      nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
     };
   },
 
@@ -477,7 +420,6 @@ export default {
         let isPrint = this.isAccept(this.checkTableData, 'print');
         if(isPrint['isFlag']){
           if(this.checkTableData.length == 1){
-            console.log(this.checkTableData);
             this.getNewPrintData(this.checkTableData[0]);
           } else{
             this.$message.error('请选择一条已接收的文件信息进行打印！')
@@ -501,26 +443,13 @@ export default {
       }).then(res => {
         console.log(res);
         if(Number(res.code) === 0){
-          this.printTemplateData.rightContent.value = res.data.dueBillSerialNumber;
-          this.printTemplateData['otherContent'] = this.getFinishPrintData(this.printTemplateData['otherContent'],res.data);
-          this.printTemplateData.content[0].data = this.getFinishPrintData(this.printTemplateData.content[0].data, res.data);  
+          this.fileNum = res.data.dueBillSerialNumber;   //文件编号
+          for(let key in this.currRow){
+            this.currRow[key] = res.data[key];
+          } 
           this.visible = true;
         }
       })
-    },
-    getFinishPrintData(tempContent, postData){
-      /**
-       * 功能：把获取到的打印的data值塞入到printTemplateData对应的数据里面
-       * 参数：tempContent:塞入的具体的content； postData：后台根据check返回的具体的打印的data；
-       */
-        for(let key in postData){
-          tempContent.forEach(item => {
-            if(item.name &&  key == item.name){
-              item.value = postData[key]
-            }
-          });
-        }
-        return tempContent;
     },
     acceptRecordPostFun(currIdStr){
       /***
@@ -545,11 +474,11 @@ export default {
        */
       this.visible = false;
     },
-    handleOk(){
+    print(){
       /***
        * 功能：打印操作
        */
-      this.$refs.printPage.printFun();
+      // this.$refs.printPage.printFun();
     }
   },
 
@@ -586,10 +515,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.printContent{
-  flex:1;
-  overflow-y: auto;
-}
+
 .printBtn{
   height: 40px;
   display: flex;

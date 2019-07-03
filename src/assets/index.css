@@ -116,9 +116,6 @@ input[readonly]{
   .buttonOperate {
     margin-right: 15px;
   }
-  .ant-table-body {
-    overflow-x: auto !important;
-  }
   
   .ant-table-thead > tr > th,
   .ant-table-tbody > tr > td {
@@ -331,6 +328,12 @@ input{
   color: red;
   padding: 0 10px;
 }
+
+.printContent .noFontColorSpan{
+  text-align: center;
+  padding: 0 10px;
+}
+
 .printContent .redUL{
   border-bottom: 1px solid red;
 }

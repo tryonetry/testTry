@@ -22,18 +22,25 @@
         :width="modalWidth"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
-        :footer="null"
         :maskClosable="false"
       >
         <div class="modalInnerContainer">
-            <div class="printContent">
-              <PrintTemplate :printDataObj="printTemplateData" ref="printPage"></PrintTemplate>
-            </div>
-            <div class="printBtn">
-              <a-button key="cancel" @click="handleCancel">取消</a-button>
-              <a-button key="submit" type="primary" @click="handleOk">打印</a-button>
-            </div> 
+          <!-- 打印模板 -->
+          <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+              <div slot="printContent" class="printContent">
+                <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
+                <div class="bottom">
+                  <div class="bottomRight">
+                      <p>日期：{{nowData}}</p>
+                  </div>
+                </div>
+              </div>
+          </TemplateOfPrint>
         </div>
+        <template slot="footer">
+            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="submit" type="primary"  @click="print">打 印</a-button>
+        </template>
       </a-modal>
     </div>
   </div>
@@ -41,13 +48,13 @@
 
 <script>
 import TableView from "@/components/tableView";
-import PrintTemplate from '@/components/printTemplate';
+import TemplateOfPrint from '@/components/templateOfPrint';
 import moment from "moment";
 import utils from '@/utils/util.js'
 export default {
   name: "RecordHandover",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, PrintTemplate },
+  components: { TableView, TemplateOfPrint },
   props: [""],
 
   data() {
@@ -221,99 +228,67 @@ export default {
             title: "接收日期",
             dataIndex: "e0106a",
             key: "e0106a",
-            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/\-/g,'')) - Number(b.e0106a.replace(/\-/g,'')),
+            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
         // table数据
         tabledataArr: []
       },
-      printTemplateData:{
-        //打印模板数据
-        cardTitle: '江西省人才流动中心',   //大标题
-        subTitle: '档案交接清单',         //小标题
-        isRightNum: false,               //是否有右侧编号/内容
-        // rightContent:{                   //如果有右侧内容：传值格式
-        //   title: 'NO：',                 
-        //   value: '360000B1905300010',
-        //   className: {                   //样式：备注：用之前把样式名写在PrintTemplate组件里；
-        //     rightNumber: true,
-        //     rightNumberRed: true
-        //   }
-        // },
-        otherContent: [                  //日期及其他内容
-          // {
-          //   title: 'AAAAA人',
-          //   value: 'ZZZZZ'
-          // },
-          {
-            type: 'date',
-            title: '日期',
-            value: ''
-          }
-        ],
-        content:[                        //内容部分
-          {
-            type: 'table',
-            data:{
-              columnsArr: [
-                {
-                  title: "序号",
-                  dataIndex: "num",
-                  key: "num",
-                  width: '10%',
-                },
-                {
-                  title: "存档编号",
-                  dataIndex: "e0101",
-                  key: "e0101",
-                  width: '20%',
-                },
-                {
-                  title: "姓名",
-                  dataIndex: "e0102",
-                  key: "e0102",
-                  width: '10%',
-                },
-                {
-                  title: "性别",
-                  dataIndex: "e0103",
-                  key: "e0103",
-                  width: '10%',
-                },
-                {
-                  title: "身份证号/社保卡号",
-                  dataIndex: "e0104",
-                  key: "e0104",
-                  width: '20%',
-                },
-                {
-                  title: "经办人",
-                  dataIndex: "e0108a",
-                  key: "e0108a",
-                  width: '10%',
-                },
-                {
-                  title: "状态",
-                  dataIndex: "e0112Name",
-                  key: "e0112Name",
-                  width: '10%',
-                },
-                {
-                  title: "接收日期",
-                  dataIndex: "e0106a",
-                  key: "e0106a",
-                },
-              ],
-              tableDataArr: []
-            }
-          }
-        ],
-      },
+
       tempCondition: {}, //当前查询条件
       visible: false, //模态框默认不显示
       confirmLoading: false, //确认加载状态 默认为false
       modalWidth: '',  //modal的宽度
+
+      fileNum: 'XXXXX91295295161',  //打印---文件编号
+      firstTitle: '江西省人才流动中心', //打印--大标题
+      secondTitle: '档案交接清单',  //打印---小标题
+      nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
+      printTableColumns: [
+        //打印--表格-表头
+        {
+          title: "序号",
+          dataIndex: "num",
+          key: "num",
+        },
+        {
+          title: "存档编号",
+          dataIndex: "e0101",
+          key: "e0101",
+        },
+        {
+          title: "姓名",
+          dataIndex: "e0102",
+          key: "e0102",
+        },
+        {
+          title: "性别",
+          dataIndex: "e0103",
+          key: "e0103",
+        },
+        {
+          title: "身份证号/社保卡号",
+          dataIndex: "e0104",
+          key: "e0104",
+        },
+        {
+          title: "经办人",
+          dataIndex: "e0108a",
+          key: "e0108a",
+        },
+        {
+          title: "状态",
+          dataIndex: "e0112Name",
+          key: "e0112Name",
+        },
+        {
+          title: "接收日期",
+          dataIndex: "e0106a",
+          key: "e0106a",
+        },
+      ], 
+      printTableData: [],  //打印--表格数据
     };
   },
 
@@ -411,7 +386,6 @@ export default {
        */
       if(this.checkTableData.length > 0){
         let isAccept = this.isAccept(this.checkTableData, 'accept');
-        console.log(isAccept);
         if(isAccept['isFlag']){
           this.acceptRecordPostFun(isAccept['currIdStr']);
         } else{
@@ -472,11 +446,9 @@ export default {
        */
       if(this.checkTableData.length > 0) {
         let isPrint = this.isAccept(this.checkTableData, 'print');
-        console.log(isPrint);
         if(isPrint.isFlag){
-          console.log(this.checkTableData);
           this.visible = true;
-          this.printTemplateData.content[0].data.tableDataArr = this.checkTableData;
+          this.printTableData = this.checkTableData;
         } else{
           this.$message.error('请选择已接收的文件信息进行打印！')
         }
@@ -490,11 +462,12 @@ export default {
        */
       this.visible = false;
     },
-    handleOk(){
+    print(){
       /***
        * 功能：打印操作
        */
-      this.$refs.printPage.printFun();
+      console.log('打印');
+      // this.$refs.print.printFun();
     }
   },
 
@@ -532,10 +505,6 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-.printContent{
-  flex:1;
-  overflow-y: auto;
 }
 .printBtn{
   height: 40px;
