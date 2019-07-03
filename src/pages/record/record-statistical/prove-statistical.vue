@@ -3,15 +3,18 @@
   <div class="outer">
     <div class="searchForm">
       <a-form :form="form" class="formInputsContainer ant-row">
-        <a-col style="line-height:39.9999px;">查询月份：</a-col>
-        <a-col :xl="6" :xxl="4" :xs="12" style="margin-left: 15px;">
-          <a-form-item>
-            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate"/>
+        <a-col :xs="{ span: 12 }" :xl="{span: 8}" :xxl="{span: 5}">
+          <a-form-item
+            label="查询日期"
+            :label-col="defaultLayout.labelCon"
+            :wrapper-col="defaultLayout.wrapperCol"
+          >
+            <a-range-picker class="formSearchDate" format="YYYY-MM-DD" v-model="currDate"/>
           </a-form-item>
         </a-col>
-        <a-col style="margin-left: 15px;line-height:39.9999px;">
+        <a-form-item  :wrapper-col="{ span: 14, offset: 4 }">
           <a-button type="primary" @click="handleSubmit">查询</a-button>
-        </a-col>
+        </a-form-item>
       </a-form>
     </div>
     <div class="analysisOne">
@@ -26,7 +29,9 @@
           @searchTable="getTableData"
         >
           <span slot="formAction">
-            <a-button type="primary">导出</a-button>
+            <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
+              <a-button type="primary" @click="exportFun">导出</a-button>
+            </JsonExcel>
           </span>
         </TableView>
       </div>
@@ -38,28 +43,31 @@
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
 import moment from "moment";
+import JsonExcel from "vue-json-excel";
 export default {
   name: "ProveStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
     RecordAnalysis,
-    TableView
+    TableView,
+    JsonExcel
   },
   props: [""],
 
   data() {
     return {
       form: this.$form.createForm(this),
-      dateRangeMode: ["month", "month"],
-      firstChartData: null, //第一个图表渲染数据
-      personInfoData: [
-        {
-          type: 1,
-          isSelectType: true,
-          title: "档案转出统计分析(单位:次)",
-          data: [{ name: "档案接收", value: "36" }]
-        }
+      defaultLayout: {  //查询layout
+        labelCon: { sm: { span: 8 }, xl: { span: 6 }, xxl: { span: 5 } },
+        wrapperCol: { sm: {span: 16}, xl: {span: 18}, xxl: {span: 19} }
+      },
+      currDate: [
+        //默认查询日期
+        moment(moment().subtract(1, "year"), "YYYY-MM-DD"),
+        moment(new Date(), "YYYY-MM-DD")
       ],
+      tempSearch: {},  //临时：当前查询条件
+      
       tableTotalNum: 0, //档案接收--table--总条数
       tableLoading: false, //档案接收--table--loading
       initArr: {
@@ -75,12 +83,31 @@ export default {
         columnsArr: [
           { title: "证明类别", key: "", dataIndex: "", width: 200 },
           { title: "出具时间", key: "", dataIndex: "", width: 150 },
-          { title: "经办人", key: "", dataIndex: "", width: 150 }
+          { title: "经办人", key: "", dataIndex: "" }
         ],
         tabledataArr: []
       },
+      
+      
+      firstChartData: null, //第一个图表渲染数据
+      personInfoData: [
+        {
+          type: 1,
+          isSelectType: true,
+          cardTitle: '证明出具统计分析(单位:次)',
+          title: "证明出具统计分析",
+          data: []
+        }
+      ],
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
-      currDate: []
+      
+      exportFiledsJson: {
+        //导出excel表：字段名对应
+        证明类别: '',
+        出具时间: '',
+        经办人: ''
+      },
+      fieldsName:"证明出具统计" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
   },
 
@@ -99,37 +126,114 @@ export default {
 
   //方法集合
   methods: {
-    getTableData() {
+    moment,
+    getChartData(condition){
+      this.$http.fetchPost("statisticsAnalysis@proofIssueStatistics.action", {
+        startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
+        endTime: (!condition || !condition.endDate) ? '' : condition.endDate
+      }).then(res => {
+        if (Number(res.code) === 0) {
+          let tempResData = res.data.proofChartData;
+          this.personInfoData[0].data = [];
+          tempResData.forEach(element => {
+            this.personInfoData[0].data.push({
+              name: element.name,
+              value: element.value
+            });
+          });
+          this.firstChartData = { ...this.personInfoData[0] };
+          this.firstChartData.chartsType = this.chartTypeArr[0];
+        } else {
+          this.$message.error("抱歉，获取数据失败，请刷新后重试！");
+        }
+      }).catch(error => {
+        this.$message.error("抱歉，网络异常！");
+      });
+    },
+    getTableData(condition, pageNum, limitNum) {
       /**
        * 功能：获取数据
        */
+      let newCondition = {};
+      if(condition){
+        newCondition = condition;
+      } else{
+        newCondition = this.tempSearch;
+      }
+      this.tableLoading = true;
+      // this.$http.fetchPost("statisticsAnalysis@proofIssueStatistics.action", {
+      //   page: pageNum,
+      //   limt: limitNum,
+      //   startTime: (!newCondition || !newCondition.startDate) ? '' : newCondition.startDate,
+      //   endTime: (!newCondition || !newCondition.endDate) ? '' : newCondition.endDate
+      // }).then(res => {
+      //   if (Number(res.code) === 0) {
+      //     console.log(res);
+      //     this.tableTotalNum = res.count;
+      //     this.initArr.tabledataArr = [];
+      //     let tempTableData = res.data;
+      //     tempTableData.forEach((element, index) => {
+      //       this.initArr.tabledataArr.push({
+      //         key: element.id,
+      //         num: (pageNum - 1) * limitNum + index + 1,
+      //         companyName: element.companyName,
+      //         companyNature: element.companyNature,
+      //         companyEmployeesNumber: element.companyEmployeesNumber,
+      //         tatsudoDate: element.tatsudoDate
+      //       });
+      //     });
+      //   } else {
+      //     this.$message.error("抱歉，获取数据失败，请刷新后重试！");
+      //   }
+      // }).catch(error => {
+      //   this.$message.error("抱歉，网络异常！");
+      // }).finally(end => {
+      //   this.tableLoading = false;
+      // });
     },
     handleSubmit(e) {
       /**
        * 功能：选择完时间：查询按钮功能
        */
       e.preventDefault();
-      let tempSearch = {};
+      this.tempSearch = {};
       if (this.currDate.length > 0) {
-        tempSearch.startDate = this.currDate[0]
-          ? moment(this.currDate[0]._d).format("YYYY-MM")
-          : "";
-        tempSearch.endDate = this.currDate[1]
-          ? moment(this.currDate[1]._d).format("YYYY-MM")
-          : "";
+        this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
+        this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
+        this.getChartData(this.tempSearch);
+        this.getTableData(this.tempSearch, 1, 10);
+      } else{
+        this.$message.error('查询日期不能为空！')
       }
-      console.log(tempSearch);
+    },
+    exportFun() {
+      //导出操作
+      if (this.initArr.tabledataArr.length === 0) {
+        this.$message.error("暂无可导出的数据！");
+      }
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.firstChartData = { ...this.personInfoData[0] };
-    this.firstChartData.chartsType = this.chartTypeArr[0];
+    this.getChartData(null); //获取图表数据
+    this.getTableData(null, 1, 10); //获取表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {},
+  mounted() {
+    const _this = this;
+    setTimeout(function(){
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+      });
+    },0)
+    window.onresize = function() {
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+      });
+    };
+  },
 
   beforeCreate() {}, //生命周期 - 创建之前
 
