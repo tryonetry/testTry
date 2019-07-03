@@ -3,15 +3,18 @@
   <div class="outer">
     <div class="searchForm">
       <a-form :form="form" class="formInputsContainer ant-row">
-        <a-col style="line-height:39.9999px;">查询月份：</a-col>
-        <a-col :xl="6" :xxl="4" :xs="12" style="margin-left: 15px;">
-          <a-form-item>
-            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate"/>
+        <a-col :xs="{ span: 12 }" :xl="{span: 8}" :xxl="{span: 5}">
+          <a-form-item
+            label="查询日期"
+            :label-col="defaultLayout.labelCon"
+            :wrapper-col="defaultLayout.wrapperCol"
+          >
+            <a-range-picker class="formSearchDate" format="YYYY-MM-DD" v-model="currDate"/>
           </a-form-item>
         </a-col>
-        <a-col style="margin-left: 15px;line-height:39.9999px;">
+        <a-form-item  :wrapper-col="{ span: 14, offset: 4 }">
           <a-button type="primary" @click="handleSubmit">查询</a-button>
-        </a-col>
+        </a-form-item>
       </a-form>
     </div>
     <div class="analysisOne">
@@ -19,7 +22,9 @@
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
       <div class="tableAnalysis" style="position:relative;">
-        <a-button type="primary" class="exportBtn">导出</a-button>
+        <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
+          <a-button type="primary" @click="exportFun" class="exportBtn">导出</a-button>
+        </JsonExcel>
         <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;" @change="tabChange">
           <a-tab-pane tab="档案接收" key="1">
             <TableView
@@ -81,34 +86,31 @@
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
 import moment from "moment";
+import JsonExcel from "vue-json-excel";
 export default {
   name: "RecordUseStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
     RecordAnalysis,
-    TableView
+    TableView,
+    JsonExcel
   },
   props: [""],
 
   data() {
     return {
       form: this.$form.createForm(this),
-      dateRangeMode: ["month", "month"],
-      firstChartData: null, //第一个图表渲染数据
-      personInfoData: [
-        {
-          type: 1,
-          isSelectType: true,
-          title: "档案转出统计分析(单位:次)",
-          data: [{ name: "档案接收", value: "36" }]
-        },
-        {
-          type: 2,
-          isSelectType: false,
-          title: "按经办人统计(最近一年)(单位:次)",
-          data: [{ name: "XXXX", value: "123" }]
-        }
+      defaultLayout: {  //查询layout
+        labelCon: { sm: { span: 8 }, xl: { span: 6 }, xxl: { span: 5 } },
+        wrapperCol: { sm: {span: 16}, xl: {span: 18}, xxl: {span: 19} }
+      },
+      currDate: [
+        //默认查询日期
+        moment(moment().subtract(1, "year"), "YYYY-MM-DD"),
+        moment(new Date(), "YYYY-MM-DD")
       ],
+      tempSearch: {},  //临时：当前查询条件
+
       tableTotalNum: 0, //档案接收--table--总条数
       tableLoading: false, //档案接收--table--loading
       initArr: {
@@ -247,9 +249,30 @@ export default {
         { title: "经办人", dataIndex: "", key: "", width: 150 }
       ],
 
+      firstChartData: null, //第一个图表渲染数据
+      personInfoData: [
+        {
+          type: 1,
+          isSelectType: true,
+          cardTitle: '档案转出统计分析(单位:次)',
+          title: "档案转出统计分析",
+          data: [{ name: "档案接收", value: "36" }]
+        },
+        {
+          type: 2,
+          isSelectType: false,
+          cardTitle: '按经办人统计(最近一年)(单位:次)',
+          title: "按经办人统计(最近一年)",
+          data: [{ name: "XXXX", value: "123" }]
+        }
+      ],
       otherChartsData: [], //其他图表
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
-      currDate: []
+
+      exportFiledsJson: {
+        //导出excel表：字段名对应
+      },
+      fieldsName:"档案利用统计分析" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
   },
 
@@ -269,26 +292,36 @@ export default {
 
   //方法集合
   methods: {
-    getTableData() {
+    moment,
+    getChartData(condition){
+
+    },
+    getTableData(condition, pageNum, limitNum) {
       /**
        * 功能：获取数据
        */
+      let newCondition = {};
+      if(condition){
+        newCondition = condition;
+      } else{
+        newCondition = this.tempSearch;
+      }
+      this.tableLoading = true;
     },
     handleSubmit(e) {
       /**
        * 功能：选择完时间：查询按钮功能
        */
       e.preventDefault();
-      let tempSearch = {};
+      this.tempSearch = {};
       if (this.currDate.length > 0) {
-        tempSearch.startDate = this.currDate[0]
-          ? moment(this.currDate[0]._d).format("YYYY-MM")
-          : "";
-        tempSearch.endDate = this.currDate[1]
-          ? moment(this.currDate[1]._d).format("YYYY-MM")
-          : "";
+        this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
+        this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
+        // this.getChartData(this.tempSearch);
+        // this.getTableData(this.tempSearch, 1, 10);
+      } else{
+        this.$message.error('查询日期不能为空！')
       }
-      console.log(tempSearch);
     },
     otherChartsDataFun(currData) {
       /**
@@ -361,6 +394,12 @@ export default {
         //材料借出
         _this.initArr.columnsArr = _this.materialLendColumnsArr;
       }
+    },
+    exportFun() {
+      //导出操作
+      if (this.initArr.tabledataArr.length === 0) {
+        this.$message.warning("暂无可导出的数据！");
+      }
     }
   },
 
@@ -370,10 +409,32 @@ export default {
     this.firstChartData.chartsType = this.chartTypeArr[0];
     this.initArr.columnsArr = this.acceptColumnsArr;
 
+    this.getChartData(null); //获取图表数据
+    this.getTableData(null, 1, 10); //获取表格数据
+
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
+    const _this = this;
+    setTimeout(function(){
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+        let educhartsList = _this.$refs.educharts, len = _this.$refs.educharts.length;
+        for(let i = 0; i <len; i++){
+          _this.$refs.educharts[i].resizeChartsFun();
+        }
+      });                                                                 
+    },0)
+    window.onresize = function() {
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+        let educhartsList = _this.$refs.educharts, len = _this.$refs.educharts.length;
+        for(let i = 0; i <len; i++){
+          _this.$refs.educharts[i].resizeChartsFun();
+        }
+      });
+    };
     this.otherChartsDataFun(this.personInfoData);
   },
 

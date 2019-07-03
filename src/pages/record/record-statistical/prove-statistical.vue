@@ -209,7 +209,7 @@ export default {
     exportFun() {
       //导出操作
       if (this.initArr.tabledataArr.length === 0) {
-        this.$message.error("暂无可导出的数据！");
+        this.$message.warning("暂无可导出的数据！");
       }
     }
   },

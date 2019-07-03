@@ -137,7 +137,7 @@ export default {
           isSelectType: true,
           cardTitle: '档案转出统计分析(单位:次)',
           title: "档案转出统计分析",
-          data: [{ name: "档案接收", value: "36" }]
+          data: [{ name: "档案转出", value: "36" }]
         },
         {
           type: 2,
@@ -153,7 +153,7 @@ export default {
       exportFiledsJson: {
         //导出excel表：字段名对应
       },
-      fieldsName:"代理单位统计" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
+      fieldsName:"档案转出统计" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
   },
 
@@ -319,6 +319,9 @@ export default {
     },
     exportFun(){
       //导出
+      if (this.initArr.tabledataArr.length === 0) {
+        this.$message.warning("暂无可导出的数据！");
+      }
     }
   },
 

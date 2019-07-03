@@ -8,7 +8,9 @@
       <div class="tableAnalysis">
         <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
           <span slot="formAction">
-            <a-button type="primary" >导出</a-button>
+            <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
+              <a-button type="primary" @click="exportFun">导出</a-button>
+            </JsonExcel>
           </span>
         </TableView>
       </div>
@@ -24,79 +26,20 @@
 <script>
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
+import JsonExcel from "vue-json-excel";
+import moment from "moment";
 export default {
   name: "PersonStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
     RecordAnalysis,
-    TableView
+    TableView,
+    JsonExcel
   },
   props: [""],
 
   data() {
     return {
-      personInfoData: [
-        {
-          type: 1,
-          isSelectType: true,
-          title: "年龄段分析",
-          data: [
-            { name: "18-25周岁", value: "2" },
-            { name: "26-35周岁", value: "23" },
-            { name: "36-45周岁", value: "35" },
-            { name: "46-60周岁", value: "12" },
-            { name: "60周岁以上", value: "6" }
-          ]
-        },
-        {
-          type: 2,
-          isSelectType: false,
-          title: "学历分析",
-          data: [
-            { name: "博士研究生", value: "2" },
-            { name: "硕士研究生", value: "1" },
-            { name: "大学本科", value: "30" },
-            { name: "大学专科", value: "2" },
-            { name: "技工学校", value: "1" }
-          ]
-        },
-        {
-          type: 3,
-          isSelectType: false,
-          title: "专业做技术资格分析(按人次)",
-          data: [
-            { name: "高级", value: "30" },
-            { name: "中级", value: "7" },
-            { name: "初级", value: "3" }
-          ]
-        },
-        {
-          type: 4,
-          isSelectType: false,
-          title: "民族分析",
-          data: [
-            { name: "汉族", value: "25" },
-            { name: "傣族", value: "7" },
-            { name: "蒙古族", value: "3" },
-            { name: "维吾尔族", value: "13" },
-            { name: "回族", value: "15" },
-            { name: "满族", value: "8" },
-            { name: "傣族", value: "1" }
-          ]
-        },
-        {
-          type: 5,
-          title: "政治面貌分析",
-          isSelectType: false,
-          data: [
-            { name: "中共党员", value: "30" },
-            { name: "中共预备党员", value: "7" },
-            { name: "共青团员", value: "2" },
-            { name: "群众", value: "13" },
-            { name: "其他", value: "8" }
-          ]
-        }
-      ],
       tableLoading: false, //table--loading
       tableTotalNum: 0,
       initArr:{
@@ -345,10 +288,82 @@ export default {
         { title: "总计", dataIndex: "total", key: "total" }
       ],
       tableData: [], //table数据
+
+      personInfoData: [
+        {
+          type: 1,
+          isSelectType: true,
+          cardTitle: '年龄段分析',
+          title: "年龄段分析",
+          data: [
+            { name: "18-25周岁", value: "2" },
+            { name: "26-35周岁", value: "23" },
+            { name: "36-45周岁", value: "35" },
+            { name: "46-60周岁", value: "12" },
+            { name: "60周岁以上", value: "6" }
+          ]
+        },
+        {
+          type: 2,
+          isSelectType: false,
+          cardTitle: '学历分析',
+          title: "学历分析",
+          data: [
+            { name: "博士研究生", value: "2" },
+            { name: "硕士研究生", value: "1" },
+            { name: "大学本科", value: "30" },
+            { name: "大学专科", value: "2" },
+            { name: "技工学校", value: "1" }
+          ]
+        },
+        {
+          type: 3,
+          isSelectType: false,
+          cardTitle: '专业做技术资格分析(按人次)',
+          title: "专业做技术资格分析",
+          data: [
+            { name: "高级", value: "30" },
+            { name: "中级", value: "7" },
+            { name: "初级", value: "3" }
+          ]
+        },
+        {
+          type: 4,
+          isSelectType: false,
+          cardTitle: '民族分析',
+          title: "民族分析",
+          data: [
+            { name: "汉族", value: "25" },
+            { name: "傣族", value: "7" },
+            { name: "蒙古族", value: "3" },
+            { name: "维吾尔族", value: "13" },
+            { name: "回族", value: "15" },
+            { name: "满族", value: "8" },
+            { name: "傣族", value: "1" }
+          ]
+        },
+        {
+          type: 5,
+          cardTitle: '政治面貌分析',
+          title: "政治面貌分析",
+          isSelectType: false,
+          data: [
+            { name: "中共党员", value: "30" },
+            { name: "中共预备党员", value: "7" },
+            { name: "共青团员", value: "2" },
+            { name: "群众", value: "13" },
+            { name: "其他", value: "8" }
+          ]
+        }
+      ],
       firstChartData: null, //第一个图表渲染数据
       otherChartsData: [], //其他图表
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
-      selectChartType: 'bar'
+      selectChartType: 'bar',
+
+      exportFiledsJson:{
+      },
+      fieldsName:"工作量统计分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
   },
 
@@ -367,7 +382,7 @@ export default {
 
   //方法集合
   methods: {
-    getChartsDataFun(){
+    getChartData(){
       /**
        * 获取渲染图表的数据
        */
@@ -441,12 +456,17 @@ export default {
       });
       this.getTableData(currType);
     },
-
+    exportFun(){
+      //导出操作
+      if (this.initArr.tabledataArr.length === 0) {
+        this.$message.warning("暂无可导出的数据！");
+      }
+    }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartsDataFun();
+    this.getChartData();
     this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
     this.firstChartData.chartsType = this.chartTypeArr[0];
     this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头
@@ -454,7 +474,26 @@ export default {
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-      this.otherChartsDataFun(this.personInfoData)
+    const _this = this;
+    setTimeout(function(){
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+        let educhartsList = _this.$refs.educharts, len = _this.$refs.educharts.length;
+        for(let i = 0; i <len; i++){
+          _this.$refs.educharts[i].resizeChartsFun();
+        }
+      });                                                                 
+    },0)
+    window.onresize = function() {
+      _this.$nextTick(() => {
+        _this.$refs.charts.resizeChartsFun();
+        let educhartsList = _this.$refs.educharts, len = _this.$refs.educharts.length;
+        for(let i = 0; i <len; i++){
+          _this.$refs.educharts[i].resizeChartsFun();
+        }
+      });
+    };
+    this.otherChartsDataFun(this.personInfoData)
   },
 
   beforeCreate() {}, //生命周期 - 创建之前
