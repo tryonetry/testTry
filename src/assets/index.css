@@ -51,7 +51,7 @@ input[readonly]{
     font-size: 0;
     height: 0;
 }
-/* .clear{clear: both;} */
+.clear{clear: both;}
 .fl{ float: left; }
 .fr{float: right;}
 
@@ -318,4 +318,33 @@ input{
 
 .ant-select{
   width: 100%;
+}
+
+.printContent{
+  font-size: 20px;
+}
+.printContent>p{
+  margin: 10px 0;
+}
+.printContent .redSpan{
+  text-align: center;
+  color: red;
+  padding: 0 10px;
+}
+.printContent .redUL{
+  border-bottom: 1px solid red;
+}
+.printContent .indent{
+  text-indent: 40px;
+}
+.printContent input{
+  text-align:center;
+  background:#e8e8e8;
+}
+.printContent .bottomRight{
+  float: right;
+  padding: 40px 0 20px;
+}
+.commonFont{
+  font-family:'Microsoft Yahei','simsun','arial','tahoma';
 }

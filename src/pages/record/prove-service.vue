@@ -38,6 +38,7 @@
                     <a
                         href="javascript:;"
                         class="primaryBtnColor"
+                        @click="printPreview(slotPropsData.currRowdata)"
                     >预览打印</a>
                 </div>
                 <a
@@ -50,10 +51,80 @@
                     href="javascript:;"
                     class="canNotClickBtnColor"
                 >请完成其他正在进行的操作后进行打印</a>
-
             </div>
-            
         </TableView>
+
+
+        <!-- 此处为打印预览模板开始 -->
+
+            <!-- 打印弹层 -->
+            <div class="printEditModal">
+                <a-modal
+                    centered
+                    title="预览打印"
+                    :visible="printVisiable"
+                    @cancel="cancelPrint"
+                    :width="'80%'"
+                    style="height:95%;overflow: hidden;"
+                    :maskClosable='false'
+                >
+                    <template slot="footer">
+                        <a-button key="back" @click="cancelPrint">取 消</a-button>
+                        <a-button key="submit" type="primary" :loading='printLoading' @click="print">打 印</a-button>
+                    </template>
+
+                    <!-- 打印模板 -->
+
+
+                    <!-- 个人存档证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+
+                    <!-- 档案记载证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+
+                    <!-- 档案记载空白证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+
+                    <!-- 单位存档证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+
+                    <!-- 现实表现证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+
+                    <!-- 档案记载证明 -->
+                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                        <div slot="printContent" class="printContent">
+                            
+                        </div>
+                    </TemplateOfPrint>
+                    
+
+                </a-modal>
+            </div>
+
+        <!-- 此处为打印预览模板结束 -->
+
+
       </a-modal>
     </div>
 
@@ -88,22 +159,27 @@
 </template>
 
 <script>
+import moment from "moment";
+import utils from '@/utils/util';
 import TableView from "@/components/tableView";
+import TemplateOfPrint from '@/components/templateOfPrint';
 export default {
     name:"ProveService",
     //import引入的组件需要注入到对象中才能使用
-    components: {TableView},
+    components: {TableView,TemplateOfPrint},
     props:[""],
 
     data() {
         return {
-            visible:false,                   
+            visible:false,    
+            printVisiable:false,               
             tableTotalNum: 0,   //总页数：默认为0
             tableTotalNum1: 0,
             tempCondition:{},
             tempCondition1:{},
             tableLoading:false,
             tableLoading1:false,
+            printLoading:false,
             // 证明类型
             proofTypes:[],
             selectProofType:void 0,
@@ -332,7 +408,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "选择证明类型打印",
+                        title: "选择证明类型预览打印",
                         key: "action",
                         width: 400,
                         fixed:"right",
@@ -341,7 +417,8 @@ export default {
                 ],
                 // table数据
                 tabledataArr: [],
-            }
+            },
+            fileNum:'360000B180000963',
 
         };
     },
@@ -406,6 +483,7 @@ export default {
                 _this.tableLoading = false;
             })
         },
+
         getTableData1(condition, pageNum, limitNum) {
             const _this = this;
             /***
@@ -447,22 +525,41 @@ export default {
         handleCancel(){
             this.visible = false;
         },
+
+        cancelPrint(){
+            this.printVisiable = false;
+        },
+
         // 拆分字典数据
         splitDirectoryData(Data){
             if(!Data) return;
             this.proofTypes = Data.proofTypeList;
-        }
+        },
 
+        // 打印预览
+        printPreview(currRowdata){
+            console.log(this.selectProofType)
+            if(this.selectProofType || String(this.selectProofType) === '0' ){
+                this.printVisiable = true;
+            }else{
+                this.$message.warning('请选择打印类型后进行打印预览操作!');
+            }
+            
+        },
+
+        print(){
+
+        },
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-        
+        this.getTableData(null,1,10);
+        this.getTableData1(null,1,10);
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
-
     },
 
     beforeCreate() {}, //生命周期 - 创建之前

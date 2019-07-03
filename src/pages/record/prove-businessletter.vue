@@ -1,6 +1,6 @@
 <!-- template -->
 <template>
-<div class="outer">
+<div class="outer" >
     <TableView
         :initArrData="initArr"
         :totalCount="tableTotalNum"
@@ -83,6 +83,59 @@
         </a-modal>
     </div>
 
+    <!-- 打印弹层 -->
+    <div class="printEditModal">
+        <a-modal
+            centered
+            title="预览打印"
+            :visible="printVisiable"
+            @cancel="handleCancel"
+            :width="'80%'"
+            style="height:95%;overflow: hidden;"
+            :maskClosable='false'
+        >
+            <template slot="footer">
+                <a-button key="back" @click="handleCancel">取 消</a-button>
+                <a-button key="submit" type="primary" :loading='saveAddLoading' @click="print">打 印</a-button>
+            </template>
+
+            <!-- 打印模板 -->
+            <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+                <div slot="printContent" class="printContent">
+                    <p><span class="redSpan redUL" style="width:200px;display:inline-block;">{{currRow && currRow.ycdjg}}</span><span class="redSpan">:</span></p>
+                    <p class="indent">现在你处的<span class="redSpan">{{currRow && currRow.name}}</span>同志（身份证号:<span class="redSpan">{{currRow && currRow.idNum}}</span>），要求（委托存档/调出档案），经研究请按下列第（<input type="text" v-model="printData.selectOption" style="width:100px;"/>）项办理。</p>
+                    <p class="indent">一、如同意调出，请将该同志人事档案、现实表现等材料通过机要转递寄来。档案需装订成册、有完整档案目录，请附档案转递通知单。</p>
+                    <p class="indent">二、同意调入，请办理调动手续，于<input type="text" v-model="printData.year" style="width:80px;"/>年<input type="text" v-model="printData.month" style="width:40px;"/>月<input type="text" v-model="printData.day" style="width:40px;"/>日前介绍到我中心报到。</p>
+                    <p class="indent">三、经研究同意调出档案，你处能否接收，请复函。</p>
+                    <p class="indent">四、经研究，暂不同意调出档案，特此函告。</p>
+                    <p class="indent">五、</p>
+                    <div class="bottom">
+                        <div class="bottomRight">
+                            <p>{{nowData}}</p>
+                        </div>
+                        <div class="commonFont clear" style="margin-bottom:20px;font-size:16px;">
+                            <p>档案寄往：江西省人才流动中心（代理服务部收）</p>
+                            <p>地&nbsp;&nbsp;址：南昌市二七北路266号</p>
+                            <p>邮&nbsp;&nbsp;编：330046</p>
+                            <p>电&nbsp;&nbsp;话：0791-86371944</p>
+                            <p>到档查询：http://news.jxrcw.com/rsdl/ddxx.asp</p>
+                        </div>
+                        <div class="otherDashCont">
+                            <p style="font-size:14px;font-weight:bold;text-align:center">请沿此线剪下，将线下部分贴于档案背面，否则不予接收，谢谢配合！</p>
+                            <div class="bottomRight">
+                                <span class="redSpan" style="font-size:22px;font-weight:bold;">NO: {{fileNum}}</span>
+                            </div>
+                            <div class="dashCont clear">
+                                <p>档案人姓名: <span class="redSpan">{{currRow && currRow.name}}</span></p>
+                                <p>{{nowData}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </TemplateOfPrint>
+        </a-modal>
+    </div>
+
 </div>
 </template>
 
@@ -119,12 +172,15 @@ function companyNumToName(numVal){
 }
 
 import moment from "moment";
+import utils from '@/utils/util';
+import TemplateOfPrint from '@/components/templateOfPrint';
+// import PrintEdit from '@/components/printEdit';
 import TableView from "@/components/tableView";
 import TableFromSearch from "@/components/tableFormSearch";
 export default {
     name:"ProveBusinessletter",
     //import引入的组件需要注入到对象中才能使用
-    components: { TableView,TableFromSearch },
+    components: { TableView,TableFromSearch,TemplateOfPrint},
     props:[""],
 
     data() {
@@ -303,6 +359,7 @@ export default {
             },
             editVisiable:false,
             addVisiable:false,
+            printVisiable:false,
             saveEditLoading:false,
             saveAddLoading:false,
             talentWord:'',
@@ -566,6 +623,17 @@ export default {
                 }
                 },
             },
+
+            fileNum:'360000A180000318',
+            firstTitle:'江西省人才流动中心',
+            secondTitle:'调(档)函',
+            nowData:moment(new Date()).format("YYYY年MM月DD日"),
+            printData:{
+                selectOption:"",
+                year:"",
+                month:"",
+                day:"",
+            },
         };
     },
 
@@ -687,6 +755,7 @@ export default {
         handleCancel(){
             this.editVisiable = false;
             this.addVisiable = false;
+            this.printVisiable = false;
         },
 
         // 保存编辑
@@ -773,16 +842,33 @@ export default {
                         _this.$message.error('抱歉,网络异常,请稍后重试!');
                     })
             }
-        }
+        },
+
+        // 预览打印
+        previewPrint(currRowdata){
+            this.printVisiable = true;
+            this.currRow = currRowdata;
+            console.log(utils.printModalWidth);
+        },
+
+        // 打印
+        print(){
+            // this.$refs.print.printFun();
+            this.$http.fetchPost('archPrintProof@findBusinessLetter.action',{name:'1'})
+                .then(res => {
+                    console.log(res);
+                })
+        },
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-
+        this.getTableData(null,1,10);
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
+        
     },
 
     beforeCreate() {}, //生命周期 - 创建之前
@@ -805,6 +891,7 @@ export default {
 
 <style scoped>
 .editModalForm,.addModalForm{
+    padding-top: 10px;
     height: 100%;
     overflow-y: auto;
 }
@@ -816,5 +903,12 @@ export default {
 }
 .titleSlot>span{
     color:#2d8cf0;
+}
+.otherDashCont{
+    border-top: 2px dashed #333333;
+}
+.dashCont{
+    display: flex;
+    justify-content: space-between;
 }
 </style>

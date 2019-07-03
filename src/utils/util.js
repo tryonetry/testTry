@@ -16,6 +16,23 @@ function searchName(codeArr, dataArr, deep, result) {
     });
     return result;
 }
+function getDPI() {
+    var arrDPI = new Array();
+    if (window.screen.deviceXDPI != undefined) {
+        arrDPI[0] = window.screen.deviceXDPI;
+        arrDPI[1] = window.screen.deviceYDPI;
+    }
+    else {
+        var tmpNode = document.createElement("DIV");
+        tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
+        document.body.appendChild(tmpNode);
+        arrDPI[0] = parseInt(tmpNode.offsetWidth);
+        arrDPI[1] = parseInt(tmpNode.offsetHeight);
+        tmpNode.parentNode.removeChild(tmpNode);
+    }
+    console.log(arrDPI)
+    return arrDPI;
+}
 
 const utils = {
     // 数组去掉空
@@ -133,20 +150,7 @@ const utils = {
       },
 
     js_getDPI() {
-        var arrDPI = new Array();
-        if (window.screen.deviceXDPI != undefined) {
-            arrDPI[0] = window.screen.deviceXDPI;
-            arrDPI[1] = window.screen.deviceYDPI;
-        }
-        else {
-            var tmpNode = document.createElement("DIV");
-            tmpNode.style.cssText = "width:1in;height:1in;position:absolute;left:0px;top:0px;z-index:99;visibility:hidden";
-            document.body.appendChild(tmpNode);
-            arrDPI[0] = parseInt(tmpNode.offsetWidth);
-            arrDPI[1] = parseInt(tmpNode.offsetHeight);
-            tmpNode.parentNode.removeChild(tmpNode);
-        }
-        return arrDPI;
+        return getDPI();
     },
 
     // 监听浏览器缩放比例
@@ -172,7 +176,9 @@ const utils = {
         }
           
          return ratio;
-      }
+      },
+
+      printModalWidth:Math.ceil(getDPI()[0] * 8.27 * 1.2 + 300),
     
 }
 export default utils;
