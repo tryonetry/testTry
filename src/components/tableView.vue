@@ -31,7 +31,6 @@
 
           <!-- ####################################### 此处是自定义列 ############################### -->
           
-
           <!-- 操作按钮 -->
           <span slot="action" slot-scope="text, record, index" class="actionContainer">
             <!-- 可编辑按钮 -->
@@ -47,7 +46,7 @@
                 <a href="javascript:;" class="errorBtnColor">删 除</a>
               </a-popconfirm>
             </p>
-            <slot name="tableAction" :currRowdata="record" :currTableData="tabledata">table操作按钮</slot>
+            <slot name="tableAction" :currRowdata="record" :currTableData="tabledata"></slot>
           </span>
 
           <!-- 鼠标放上去显示当前行数据 -->
@@ -60,13 +59,17 @@
             </a-tooltip>
           </span>
 
+          <template slot="customize" slot-scope="text, record">
+              <slot name="customizeInner" :currRowdata="record"></slot>
+          </template>
+
           <!-- 连接 -->
           <span slot="nameLink" slot-scope="text, record">
             <a
               href="javascript:void(false);"
               class="tableLink"
               :currRowdata="record"
-            >{{record.name}}</a>
+            >{{record.name || record.a0101}}</a>
           </span>
 
           <!-- 图片 -->
@@ -284,25 +287,28 @@ export default {
   mounted() {
     const _this = this;
     
-    // 监听窗口改变 - setTimeout 阻塞
     setTimeout(function(){
-      _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
-      
-      let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
-      let tempWidth = 0;
-      
-      _this.initArrData.columnsArr.forEach(el => {
-        if(el.width){
-          tempWidth += Number(el.width);
+      _this.$nextTick(function(){
+        
+        let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
+        
+        let tempWidth = 0;
+        _this.initArrData.columnsArr.forEach(el => {
+          if(el.width){
+            tempWidth += Number(el.width);
+          }
+        });
+        tempWidth +=  200;
+        if(tempWidth > currScreenWidth){
+          currScreenWidth = tempWidth
         }
-      });
-      tempWidth +=  200;
-      if(tempWidth > currScreenWidth || _this.superimposeWidth){
-        currScreenWidth = tempWidth
-      }
-      _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
-    },0);
 
+        _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
+        console.log(_this.tableHeight)
+        _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+      });
+    },0);
+    // 监听窗口改变 
     window.onresize = function(){
       _this.$nextTick(function(){
         
@@ -320,6 +326,7 @@ export default {
         }
 
         _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
+        console.log(_this.tableHeight)
         _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
       });
     }

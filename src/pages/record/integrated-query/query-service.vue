@@ -8,33 +8,61 @@
             :loading="tableLoading"
         >
 
-           <!-- tableFormSearch里添加其他按钮 -->
-           <span slot="formAction">
-           </span>
+            <!-- tableFormSearch里添加其他按钮 -->
+            <span slot="formAction">
+            </span>
 
-           <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
-           <div slot="tableAction" slot-scope="slotPropsData">
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
-                   data-type="浏览"
-                   class="primaryBtnColor"
-               >浏览</a>
-               <a
-                   href="javascript:;"
-                   @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
-                   data-type="编辑"
-               >编辑</a>"
-               <a-popconfirm
-                   title="确定删除吗?"
-                   okText="确定"
-                   cancelText="取消"
-                   @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
-               >
-                   <a href="javascript:;" class="errorBtnColor">删除</a>
-               </a-popconfirm>
+            <!-- 自定义列 -->
+            <div slot="customizeInner" slot-scope="slotPropsData">
+                <span @click="openDetails(slotPropsData.currRowdata)" class="primaryBtnColor">{{slotPropsData.currRowdata.a0101}}</span>
             </div>
-      </TableView>
+
+        </TableView>
+
+        <!-- 查看详情 -->
+        <a-modal
+            centered
+            title="查看详情"
+            :visible="visiable"
+            @cancel="cancel"
+            :width="'96%'"
+            style="height:96%;overflow: hidden;"
+            :maskClosable='false'
+            :footer="null"
+            class="detailModal"
+        >
+            <div class="detailModalCont">
+                <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;" @change="tabChange">
+                    <a-tab-pane tab="基础信息" key="1" forceRender>
+
+                    </a-tab-pane>
+                    <a-tab-pane tab="委托存档单位信息" key="2" >
+                        <TableView
+                            :initArrData="initArr1"
+                            :totalCount="tableTotalNum1"
+                            @searchTable="getTableData1"
+                            :loading="tableLoading1"
+                        ></TableView>
+                    </a-tab-pane>
+                    <a-tab-pane tab="转入信息" key="3" >
+                        <TableView
+                            :initArrData="initArr2"
+                            :totalCount="tableTotalNum1"
+                            @searchTable="getTableData1"
+                            :loading="tableLoading1"
+                        ></TableView>
+                    </a-tab-pane>
+                    <a-tab-pane tab="转出信息" key="4" >
+                        <TableView
+                            :initArrData="initArr3"
+                            :totalCount="tableTotalNum1"
+                            @searchTable="getTableData1"
+                            :loading="tableLoading1"
+                        ></TableView>
+                    </a-tab-pane>
+                </a-tabs>
+            </div>
+        </a-modal>
 </div>
 </template>
 
@@ -50,7 +78,10 @@ export default {
         return {
                             
             tableTotalNum: 0,   //总页数：默认为0
+            tableTotalNum1:0,
             tableLoading:false,
+            tableLoading1:false,
+            visiable:true,
             // tableView传值方式
             initArr:{
                 treeflag: false,   //左侧tree是否存在
@@ -141,7 +172,7 @@ export default {
                         dataIndex: "a0101",
                         key: "a0101",
                         width: 150,
-                        scopedSlots: { customRender: "cursorTitle" }
+                        scopedSlots: { customRender: "customize" }
                     },
                     {
                         title: "身份证号",
@@ -199,7 +230,75 @@ export default {
                 ],
                 // table数据
                 tabledataArr: [],
-            }
+            },
+            initArr1:{
+                treeflag: false,
+                tableCheck: false,
+                noPagination:true,
+                columnsArr:[
+                    {
+                        title: "序号",
+                        dataIndex: "num",
+                        key: "num",
+                        fixed: "left",
+                        width: 100,
+                    },
+                    {
+                        title: "单位立户号",
+                        dataIndex: "b0102",
+                        key: "b0102",
+                        width: 150,
+                    },
+                    {
+                        title: "委托存档单位名称",
+                        dataIndex: "b0101",
+                        key: "b0101",
+                        width: 250,
+                    },
+                    {
+                        title: "组织机构代码",
+                        dataIndex: "b0114",
+                        key: "b0114",
+                        width: 150,
+                    },
+                    {
+                        title: "单位性质",
+                        dataIndex: "b0103",
+                        key: "b0103",
+                        width: 150,
+                    },
+                    {
+                        title: "所属行业",
+                        dataIndex: "b0134",
+                        key: "b0134",
+                        width: 200,
+                    },
+                    {
+                        title: "经济类型",
+                        dataIndex: "b0105",
+                        key: "b0105",
+                        width: 200,
+                    },
+                    {
+                        title: "行政区划",
+                        dataIndex: "b0107",
+                        key: "b0107",
+                    },
+                ],
+                tabledataArr:[],
+            },
+            initArr2:{
+                treeflag: false, 
+                tableCheck: false, 
+                columnsArr:[],
+                tabledataArr:[],
+            },
+            initArr3:{
+                treeflag: false, 
+                tableCheck: false, 
+                columnsArr:[],
+                tabledataArr:[],
+            },
 
         };
     },
@@ -263,7 +362,22 @@ export default {
             }).finally(end => {
                 _this.tableLoading = false;
             })
+        },
+
+        getTableData1(){
+
+        },
+
+        // 查看详情
+        openDetails(){
+            this.visiable = true;
+        },
+
+        // close modal
+        cancel(){
+            this.visiable = false;
         }
+
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）

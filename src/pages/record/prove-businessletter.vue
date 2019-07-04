@@ -172,9 +172,7 @@ function companyNumToName(numVal){
 }
 
 import moment from "moment";
-import utils from '@/utils/util';
 import TemplateOfPrint from '@/components/templateOfPrint';
-// import PrintEdit from '@/components/printEdit';
 import TableView from "@/components/tableView";
 import TableFromSearch from "@/components/tableFormSearch";
 export default {
@@ -848,7 +846,6 @@ export default {
         previewPrint(currRowdata){
             this.printVisiable = true;
             this.currRow = currRowdata;
-            console.log(utils.printModalWidth);
         },
 
         // 打印
