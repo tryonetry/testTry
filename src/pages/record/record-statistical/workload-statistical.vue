@@ -38,7 +38,6 @@
           :initArrData="initArr"
           :totalCount="tableTotalNum"
           :loading="tableLoading"
-          @searchTable="getTableData"
         >
           <span slot="formAction">
             <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
@@ -95,6 +94,7 @@ export default {
         tableCheck: false, //table是否可以check,
         bordered: true, //table--边框
         superimposeWidth: true,
+        noPagination: true,  //table--无分页
         formData: {
           formInputs: [],
           formBtns: []
@@ -199,7 +199,7 @@ export default {
               });
             });
             this.firstChartData = { ...this.personInfoData[0] };
-            this.firstChartData.chartsType = this.chartTypeArr[0];
+            this.firstChartData.chartsType = this.$refs.charts.returnChangeSelect();
           } else {
             this.$message.error("抱歉，获取数据失败，请刷新后重试！");
           }
@@ -208,22 +208,16 @@ export default {
         });
     },
 
-    getTableData(condition, pageNum, limitNum) {
+    getTableData(condition) {
       /**
        * 功能：获取图表数据
        */
-      let newCondition = {};
-      if(condition){
-        newCondition = condition;
-      } else{
-        newCondition = this.tempSearch;
-      }
       this.tableLoading = true;
       this.$http.fetchPost('statisticsAnalysis@workAnalyseCheck.action',{
         Browse: 'Browse',
-        startTime: (!newCondition || !newCondition.startDate) ? '' : newCondition.startDate,
-        endTime: (!newCondition || !newCondition.endDate) ? '' : newCondition.endDate,
-        personId: (!newCondition || !newCondition.personId) ? '' : newCondition.personId
+        startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
+        endTime: (!condition || !condition.endDate) ? '' : condition.endDate,
+        personId: (!condition || !condition.personId) ? '' : condition.personId
       }).then(res => {
         if(Number(res.code) === 0){
           this.tableTotalNum = res.count;
@@ -232,7 +226,7 @@ export default {
           tempTableData.forEach((element,index) => {
             this.initArr.tabledataArr.push({
               key: index,
-              num: (pageNum - 1) * limitNum + index + 1,
+              num: index + 1,
               data2: element.data2,
               data3: element.data3,
               data4: element.data4,
@@ -283,7 +277,7 @@ export default {
         this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
         this.tempSearch.personId = this.agentId;
         this.getChartData(this.tempSearch);
-        this.getTableData(this.tempSearch, 1, 10);
+        this.getTableData(this.tempSearch);
       } else{
         this.$message.error('查询日期不能为空！')
       }
@@ -320,7 +314,7 @@ export default {
     };
     _this.getAgentFun(null); //查询经办人
     _this.getChartData(null);  //图表数据渲染
-    _this.getTableData(null, 1, 10);
+    _this.getTableData(null);   //table数据
   },
 
   beforeCreate() {}, //生命周期 - 创建之前

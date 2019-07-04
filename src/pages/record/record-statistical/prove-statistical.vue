@@ -26,7 +26,6 @@
           :initArrData="initArr"
           :totalCount="tableTotalNum"
           :loading="tableLoading"
-          @searchTable="getTableData"
         >
           <span slot="formAction">
             <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
@@ -81,9 +80,10 @@ export default {
           formBtns: []
         },
         columnsArr: [
-          { title: "证明类别", key: "", dataIndex: "", width: 200 },
-          { title: "出具时间", key: "", dataIndex: "", width: 150 },
-          { title: "经办人", key: "", dataIndex: "" }
+          { title: '序号', key: 'num', dataIndex: 'num', width: 120 },
+          { title: "证明类别", key: "poorfType", dataIndex: "poorfType", width: 300 },
+          { title: "经办人", key: "poorName", dataIndex: "poorName", width: 200  },
+          { title: "出具时间", key: "poorDate", dataIndex: "poorDate"},
         ],
         tabledataArr: []
       },
@@ -103,9 +103,10 @@ export default {
       
       exportFiledsJson: {
         //导出excel表：字段名对应
-        证明类别: '',
-        出具时间: '',
-        经办人: ''
+        序号: 'num',
+        证明类别: 'poorfType',
+        经办人: 'poorName',
+        出具时间: 'poorDate',
       },
       fieldsName:"证明出具统计" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
@@ -127,12 +128,31 @@ export default {
   //方法集合
   methods: {
     moment,
-    getChartData(condition){
+    getTableData(condition) {
+      /**
+       * 功能：获取图表和表格数据
+       */
+      this.tableLoading = true;
       this.$http.fetchPost("statisticsAnalysis@proofIssueStatistics.action", {
         startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
         endTime: (!condition || !condition.endDate) ? '' : condition.endDate
       }).then(res => {
         if (Number(res.code) === 0) {
+          //table数据
+          this.tableTotalNum = res.count;
+          this.initArr.tabledataArr = [];
+          let tempTableData = res.data.chartData;
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              key: index,
+              num: index + 1,
+              poorDate: element.poorDate,
+              poorName: element.poorName,
+              poorfType: element.poorfType
+            });
+          });
+
+          //charts数据
           let tempResData = res.data.proofChartData;
           this.personInfoData[0].data = [];
           tempResData.forEach(element => {
@@ -142,54 +162,15 @@ export default {
             });
           });
           this.firstChartData = { ...this.personInfoData[0] };
-          this.firstChartData.chartsType = this.chartTypeArr[0];
+          this.firstChartData.chartsType = this.$refs.charts.returnChangeSelect();
         } else {
           this.$message.error("抱歉，获取数据失败，请刷新后重试！");
         }
       }).catch(error => {
         this.$message.error("抱歉，网络异常！");
+      }).finally(end => {
+        this.tableLoading = false;
       });
-    },
-    getTableData(condition, pageNum, limitNum) {
-      /**
-       * 功能：获取数据
-       */
-      let newCondition = {};
-      if(condition){
-        newCondition = condition;
-      } else{
-        newCondition = this.tempSearch;
-      }
-      this.tableLoading = true;
-      // this.$http.fetchPost("statisticsAnalysis@proofIssueStatistics.action", {
-      //   page: pageNum,
-      //   limt: limitNum,
-      //   startTime: (!newCondition || !newCondition.startDate) ? '' : newCondition.startDate,
-      //   endTime: (!newCondition || !newCondition.endDate) ? '' : newCondition.endDate
-      // }).then(res => {
-      //   if (Number(res.code) === 0) {
-      //     console.log(res);
-      //     this.tableTotalNum = res.count;
-      //     this.initArr.tabledataArr = [];
-      //     let tempTableData = res.data;
-      //     tempTableData.forEach((element, index) => {
-      //       this.initArr.tabledataArr.push({
-      //         key: element.id,
-      //         num: (pageNum - 1) * limitNum + index + 1,
-      //         companyName: element.companyName,
-      //         companyNature: element.companyNature,
-      //         companyEmployeesNumber: element.companyEmployeesNumber,
-      //         tatsudoDate: element.tatsudoDate
-      //       });
-      //     });
-      //   } else {
-      //     this.$message.error("抱歉，获取数据失败，请刷新后重试！");
-      //   }
-      // }).catch(error => {
-      //   this.$message.error("抱歉，网络异常！");
-      // }).finally(end => {
-      //   this.tableLoading = false;
-      // });
     },
     handleSubmit(e) {
       /**
@@ -200,8 +181,7 @@ export default {
       if (this.currDate.length > 0) {
         this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
         this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
-        this.getChartData(this.tempSearch);
-        this.getTableData(this.tempSearch, 1, 10);
+        this.getTableData(this.tempSearch);
       } else{
         this.$message.error('查询日期不能为空！')
       }
@@ -216,8 +196,7 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartData(null); //获取图表数据
-    this.getTableData(null, 1, 10); //获取表格数据
+    this.getTableData(null); //获取图表和表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
