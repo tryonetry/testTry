@@ -308,6 +308,7 @@ export default {
         _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
       });
     },0);
+    
     // 监听窗口改变 
     window.onresize = function(){
       _this.$nextTick(function(){
