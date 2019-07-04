@@ -299,7 +299,7 @@ export default {
           }
         });
         tempWidth +=  200;
-        if(tempWidth > currScreenWidth){
+        if(tempWidth > currScreenWidth || _this.superimposeWidth){
           currScreenWidth = tempWidth
         }
 
@@ -321,7 +321,7 @@ export default {
           }
         });
         tempWidth +=  200;
-        if(tempWidth > currScreenWidth){
+        if(tempWidth > currScreenWidth || _this.superimposeWidth){
           currScreenWidth = tempWidth
         }
 
