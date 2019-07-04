@@ -303,6 +303,7 @@ export default {
       _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
     },0);
 
+    
     window.onresize = function(){
       _this.$nextTick(function(){
         
