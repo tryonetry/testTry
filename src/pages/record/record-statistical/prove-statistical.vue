@@ -80,7 +80,7 @@ export default {
           formBtns: []
         },
         columnsArr: [
-          { title: '序号', key: 'num', dataIndex: 'num', width: 120 },
+          { title: '序号', key: 'num', dataIndex: 'num', width: 120, fixed: 'left' },
           { title: "证明类别", key: "poorfType", dataIndex: "poorfType", width: 300 },
           { title: "经办人", key: "poorName", dataIndex: "poorName", width: 200  },
           { title: "出具时间", key: "poorDate", dataIndex: "poorDate"},

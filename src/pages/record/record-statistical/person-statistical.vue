@@ -6,7 +6,7 @@
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
       <div class="tableAnalysis">
-        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
+        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading">
           <span slot="formAction">
             <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
               <a-button type="primary" @click="exportFun">导出</a-button>
@@ -24,6 +24,33 @@
 </template>
 
 <script>
+const renderContent = (value, row, index, colSpan, data) => {
+  if(index === data.length - 1 ){
+      return{
+        children: value,
+        attrs: {
+          colSpan: colSpan,
+        },
+      }
+  } else{
+    return  value;
+  }
+};
+
+
+
+// const renderContent = (value, row, index, data) => {
+//   const obj = {
+//     children: value,
+//     attrs: {},
+//   };
+//   if (index === data.length - 1 ) {
+//     obj.attrs.colSpan = 0;
+//   }
+//   return obj;
+// };
+
+
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
 import JsonExcel from "vue-json-excel";
@@ -47,6 +74,7 @@ export default {
         tableCheck: false, //table是否可以check,
         bordered: true,  //table--边框
         superimposeWidth: true,
+        noPagination: true,  //table--无分页
         formData:{
           formInputs:[],
           formBtns:[],
@@ -56,236 +84,308 @@ export default {
       },
       ageColumns: [
         //年龄段分析表头
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+          }
+        },
         {
           title: "所属机构",
-          dataIndex: "organ",
-          key: "organ",
+          dataIndex: "data1",
+          key: "data1",
           fixed:'left',
-          width: 200
+          width: 200,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+          }
         },
         {
           title: "18-25周岁",
           width: 200,
+          dataIndex: 'eighteen',
           children: [
-            { title: "男", dataIndex: "mail1", key: "mail1", width: 100 },
-            { title: "女", dataIndex: "femail1", key: "femail1", width: 100 }
-          ]
+            { title: "男", dataIndex: "data2", key: "data2", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data3", key: "data3", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
+          ],
+          
         },
         {
           title: "26-35周岁",
           width: 200,
           children: [
-            { title: "男", dataIndex: "mail2", key: "mail2", width: 100 },
-            { title: "女", dataIndex: "femail2", key: "femail2", width: 100 }
-          ]
+            { title: "男", dataIndex: "data4", key: "data4", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data5", key: "data5", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
+          ],
         },
         {
           title: "36-45周岁",
           width: 200,
           children: [
-            { title: "男", dataIndex: "mail3", key: "mail3", width: 100 },
-            { title: "女", dataIndex: "femail3", key: "femail3", width: 100 }
-          ]
+            { title: "男", dataIndex: "data6", key: "data6", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data7", key: "data7", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
+          ],
         },
         {
           title: "46-60周岁",
           width: 200,
           children: [
-            { title: "男", dataIndex: "mail4", key: "mail4", width: 100 },
-            { title: "女", dataIndex: "femail4", key: "femail4", width: 100 }
-          ]
+            { title: "男", dataIndex: "data8", key: "data8", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data9", key: "data9", width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
+          ],
         },
         {
           title: "60周岁以上",
-          // width: 200,
           children: [
-            { title: "男", dataIndex: "mail5", key: "mail5" },
-            { title: "女", dataIndex: "femail5", key: "femail5" }
-          ]
+            { title: "男", dataIndex: "data10", key: "data10",
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data11", key: "data11",
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
+          ],
         },
         {
           title: "总计",
-          dataIndex: "total",
-          key: "total",
+          dataIndex: "sum1",
+          key: "sum1",
           fixed: 'right',
-          width: 200
+          width: 150,
         }
       ],
       eduColumns: [
         //学历分析表头
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100},
         {
           title: "所属机构",
-          dataIndex: "",
-          key: "",
-          // fixed: "left",
-          // width: "10%"
+          dataIndex: "data1",
+          key: "data1",
+          fixed: "left",
+          width: 200
         },
         {
           title: "博士研究生",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "doctorMale", key: "doctorMale"},
-            { title: "女", dataIndex: "doctorFemale", key: "doctorFemale"}
+            { title: "男", dataIndex: "data2", key: "data2", width: 100},
+            { title: "女", dataIndex: "data3", key: "data3", width: 100}
           ]
         },
         {
           title: "硕士研究生",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "masterMale", key: "masterMale" },
-            { title: "女", dataIndex: "masterFemale", key: "masterFemale"}
+            { title: "男", dataIndex: "data4", key: "data4", width: 100 },
+            { title: "女", dataIndex: "data5", key: "data5", width: 100}
           ]
         },
         {
           title: "大学本科",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "universityMale", key: "universityMale" },
+            { title: "男", dataIndex: "data6", key: "data6", width: 100 },
             {
               title: "女",
-              dataIndex: "universityFemale",
-              key: "universityFemale"
+              dataIndex: "data7",
+              key: "data7", 
+              width: 100
             }
           ]
         },
         {
           title: "大学专科",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "specializeMale", key: "specializeMale"},
+            { title: "男", dataIndex: "data8", key: "data8", width: 100},
             {
               title: "女",
-              dataIndex: "specializeFemale",
-              key: "specializeFemale"
+              dataIndex: "data9",
+              key: "data9", 
+              width: 100
             }
           ]
         },
         {
           title: "中等专科",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "middleSpeMale", key: "middleSpeMale"},
+            { title: "男", dataIndex: "data10", key: "data10", width: 100},
             {
               title: "女",
-              dataIndex: "middleSpeFemale",
-              key: "middleSpeFemale"
+              dataIndex: "data11",
+              key: "data11", 
+              width: 100
             }
           ]
         },
         {
           title: "职业高中",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "speHighMale", key: "speHighMale"},
-            { title: "女", dataIndex: "speHighFemale", key: "speHighFemale"}
+            { title: "男", dataIndex: "data12", key: "data12", width: 100},
+            { title: "女", dataIndex: "data13", key: "data13", width: 100}
           ]
         },
         {
           title: "技工学校",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "mechanicMale", key: "mechanicMale"},
-            { title: "女", dataIndex: "mechanicFemale", key: "mechanicFemale"}
+            { title: "男", dataIndex: "data14", key: "data14", width: 100},
+            { title: "女", dataIndex: "data15", key: "data15", width: 100}
           ]
         },
         {
           title: "普通高中",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "highMale", key: "highMale"},
-            { title: "女", dataIndex: "highFemale", key: "highFemale"}
+            { title: "男", dataIndex: "data16", key: "data16", width: 100},
+            { title: "女", dataIndex: "data17", key: "data17", width: 100}
           ]
         },
         {
           title: "初中",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "juniorMale", key: "juniorMale" },
-            { title: "女", dataIndex: "juniorFemale", key: "juniorFemale" }
+            { title: "男", dataIndex: "data18", key: "data18", width: 100 },
+            { title: "女", dataIndex: "data19", key: "data19", width: 100 }
           ]
         },
         {
           title: "小学",
+          width: 200,
           children: [
-            { title: "男", dataIndex: "primaryMale", key: "primaryMale"},
-            { title: "女", dataIndex: "primaryFemale", key: "primaryFemale"}
+            { title: "男", dataIndex: "data20", key: "data20", width: 100},
+            { title: "女", dataIndex: "data21", key: "data21", width: 100}
           ]
         },
         {
           title: "其他",
           children: [
-            { title: "男", dataIndex: "otherMale", key: "otherMale"},
-            { title: "女", dataIndex: "otherFemale", key: "otherFemale"}
+            { title: "男", dataIndex: "data22", key: "data22"},
+            { title: "女", dataIndex: "data23", key: "data23"}
           ]
         },
-        { title: "总计", dataIndex: "total", key: "total"}
+        { title: "总计", dataIndex: "sum14", key: "sum14", fixed: 'right', width: 150}
       ],
       professionColumns:[
         //专业技术资格分析
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100},
         {
           title: "所属机构",
-          dataIndex: "organ",
-          key: "organ",
+          dataIndex: "data7",
+          key: "data7",
           fixed: "left",
-          width: "200"
+          width: 200
         },
         {
           title: '高级',
+          width: 200,
           children: [
-            { title: '男', dataIndex: 'highMale', key: 'highMale', width: 100},
-            { title: '女', dataIndex: 'highFemale', key: 'highFemale', width: 100},
+            { title: '男', dataIndex: 'data1', key: 'data1', width: 100},
+            { title: '女', dataIndex: 'data2', key: 'data2', width: 100},
           ]
         },
         {
           title: '中级',
+          width: 200,
           children: [
-            { title: '男', dataIndex: 'midMale', key: 'midMale', width: 100},
-            { title: '女', dataIndex: 'midFemale', key: 'midFemale', width: 100},
+            { title: '男', dataIndex: 'data3', key: 'data3', width: 100},
+            { title: '女', dataIndex: 'data4', key: 'data4', width: 100},
           ]
         },
         {
           title: '初级',
           children: [
-            { title: '男', dataIndex: 'primaryMale', key: 'primaryMale', width: 100},
-            { title: '女', dataIndex: 'primaryFemale', key: 'primaryFemale', width: 100},
+            { title: '男', dataIndex: 'data5', key: 'data5'},
+            { title: '女', dataIndex: 'data6', key: 'data6'},
           ]
         },
-        { title: "总计", dataIndex: "total", key: "total", fixed: 'right', width:150 }
+        { title: "总计", dataIndex: "sum14", key: "sum14", fixed: 'right', width:150 }
       ],
       nationaColumns:[
         //民族分析
-        { title: '民族', dataIndex: 'national', key: 'national'},
-        { title: "总计", dataIndex: "total", key: "total" }
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 150},
+        { title: '民族', dataIndex: 'data1', key: 'data1', width: 300},
+        { title: "总计", dataIndex: "data2", key: "data2"}
       ],
       politicalColumns:[
         //政治面貌分析
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100},
         {
           title: '中共党员',
+          width: 200,
           children:[
-            { title: '男', dataIndex: 'partyMale', key: 'partyMale'},
-            { title: '女', dataIndex: 'partyFemale', key: 'partyFemale'},
+            { title: '男', dataIndex: 'data1', key: 'data1', width: 100},
+            { title: '女', dataIndex: 'data2', key: 'data2', width: 100},
           ]
         },
         {
           title: '中共预备党员',
+          width: 200,
           children:[
-            { title: '男', dataIndex: 'prepareMale', key: 'prepareMale'},
-            { title: '女', dataIndex: 'prepareFemale', key: 'prepareFemale'},
+            { title: '男', dataIndex: 'data3', key: 'data3', width: 100},
+            { title: '女', dataIndex: 'data4', key: 'data4', width: 100},
           ]
         },
         {
           title: '共青团员',
+          width: 200,
           children:[
-            { title: '男', dataIndex: 'leagueMale', key: 'leagueMale'},
-            { title: '女', dataIndex: 'leagueFemale', key: 'leagueFemale'},
+            { title: '男', dataIndex: 'data5', key: 'data5', width: 100},
+            { title: '女', dataIndex: 'data6', key: 'data6', width: 100},
           ]
         },
         {
           title: '群众',
+          width: 200,
           children:[
-            { title: '男', dataIndex: 'crowdMale', key: 'crowdMale'},
-            { title: '女', dataIndex: 'crowdFemale', key: 'crowdFemale'},
+            { title: '男', dataIndex: 'data7', key: 'data7', width: 100},
+            { title: '女', dataIndex: 'data8', key: 'data8', width: 100},
           ]
         },
         {
           title: '其他',
           children:[
-            { title: '男', dataIndex: 'otherMale', key: 'otherMale'},
-            { title: '女', dataIndex: 'otherFemale', key: 'otherFemale'},
+            { title: '男', dataIndex: 'data9', key: 'data9'},
+            { title: '女', dataIndex: 'data10', key: 'data10'},
           ]
         },
-        { title: "总计", dataIndex: "total", key: "total" }
+        { title: "总计", dataIndex: "sum0", key: "sum0", fixed:'right', width: 150 }
       ],
       tableData: [], //table数据
 
@@ -293,67 +393,37 @@ export default {
         {
           type: 1,
           isSelectType: true,
-          cardTitle: '年龄段分析',
+          cardTitle: '年龄段分析(按人次)',
           title: "年龄段分析",
-          data: [
-            { name: "18-25周岁", value: "2" },
-            { name: "26-35周岁", value: "23" },
-            { name: "36-45周岁", value: "35" },
-            { name: "46-60周岁", value: "12" },
-            { name: "60周岁以上", value: "6" }
-          ]
+          data: []
         },
         {
           type: 2,
           isSelectType: false,
-          cardTitle: '学历分析',
+          cardTitle: '学历分析(按人次)',
           title: "学历分析",
-          data: [
-            { name: "博士研究生", value: "2" },
-            { name: "硕士研究生", value: "1" },
-            { name: "大学本科", value: "30" },
-            { name: "大学专科", value: "2" },
-            { name: "技工学校", value: "1" }
-          ]
+          data: []
         },
         {
           type: 3,
           isSelectType: false,
           cardTitle: '专业做技术资格分析(按人次)',
           title: "专业做技术资格分析",
-          data: [
-            { name: "高级", value: "30" },
-            { name: "中级", value: "7" },
-            { name: "初级", value: "3" }
-          ]
+          data: []
         },
         {
           type: 4,
           isSelectType: false,
-          cardTitle: '民族分析',
+          cardTitle: '民族分析(按人次)',
           title: "民族分析",
-          data: [
-            { name: "汉族", value: "25" },
-            { name: "傣族", value: "7" },
-            { name: "蒙古族", value: "3" },
-            { name: "维吾尔族", value: "13" },
-            { name: "回族", value: "15" },
-            { name: "满族", value: "8" },
-            { name: "傣族", value: "1" }
-          ]
+          data: []
         },
         {
           type: 5,
-          cardTitle: '政治面貌分析',
+          cardTitle: '政治面貌分析(按人次)',
           title: "政治面貌分析",
           isSelectType: false,
-          data: [
-            { name: "中共党员", value: "30" },
-            { name: "中共预备党员", value: "7" },
-            { name: "共青团员", value: "2" },
-            { name: "群众", value: "13" },
-            { name: "其他", value: "8" }
-          ]
+          data: []
         }
       ],
       firstChartData: null, //第一个图表渲染数据
@@ -363,7 +433,7 @@ export default {
 
       exportFiledsJson:{
       },
-      fieldsName:"工作量统计分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
+      fieldsName:"人员信息统计分析-年龄段分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
   },
 
@@ -386,32 +456,223 @@ export default {
       /**
        * 获取渲染图表的数据
        */
-      // this.$http.fetchPost('statisticsAnalysis@archInfoStatistics.action').then(res => {
-      //   console.log(res);
-      // }).catch(error => {
-      //   this.$message.error('抱歉，网络异常！');
-      // })
+      this.$http.fetchPost('statisticsAnalysis@archInfoStatistics.action').then(res => {
+        if(Number(res.code) === 0){
+          let tempResData = res.data;
+          this.personInfoData.forEach(element => {
+            if(Number(element.type) === 1){
+              //年龄段分析
+              element.data = tempResData.ageChartData;
+            } else if(Number(element.type) === 2){
+              //学历分析
+              element.data = tempResData.degreeChartData;
+            } else if(Number(element.type) === 3){
+              //专业做技术资格分析
+              element.data = tempResData.titleChartData;
+            } else if(Number(element.type) === 4){
+              //民族分析
+              element.data = tempResData.ethnicChartData;
+            } else if(Number(element.type) === 5){
+              //政治面貌分析
+              element.data = tempResData.PoliticalStatusData;
+            }
+          });
+          this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
+          this.firstChartData.chartsType = this.$refs.charts.returnChangeSelect();  //默认选择得图表--绘制类型bar
+        } else{
+          this.$message.error("抱歉，获取数据失败，请刷新后重试！");
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
     },
 
-    getTableData(typeVal){
+    getTableColumnData(typeVal){
+      /**
+       * 功能：根据当前点击得charts---判断table--表头
+       * 参数：typeVal: 当前点击得charts--类型
+       */
       const _this = this;
-      // _this.tableLoading = true;
       if(typeVal === 1){
         //年龄段分析
         _this.initArr.columnsArr = _this.ageColumns;
+        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.ageColumns);
+        _this.fieldsName = "人员信息统计分析-年龄段分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 2){
         //学历分析
         _this.initArr.columnsArr = _this.eduColumns;
+        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.eduColumns);
+        _this.fieldsName = "人员信息统计分析-学历分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 3){
         //专业做技术资格分析
         _this.initArr.columnsArr = _this.professionColumns;
+        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.professionColumns);
+        _this.fieldsName = "人员信息统计分析-专业做技术资格分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 4){
         //民族分析
         _this.initArr.columnsArr = _this.nationaColumns;
+        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.nationaColumns);
+        _this.fieldsName = "人员信息统计分析-民族分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else{
         //政治面貌分析
         _this.initArr.columnsArr = _this.politicalColumns;
+        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.politicalColumns);
+        _this.fieldsName = "人员信息统计分析-政治面貌分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       }
+      _this.getTableData(typeVal);
+    },
+
+    getTableData(currVal){
+      this.tableLoading = true;
+      this.$http.fetchPost('statisticsAnalysis@getAnalysisdata.action', {
+        cktype: Number(currVal) === 1 ? 'age' : (Number(currVal) === 2 ? 'degree' : (Number(currVal) === 3 ? 'major': (Number(currVal) === 4 ? 'ethnic': 'PoliticalStatus')))
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.initArr.tabledataArr =  this.UpdateTableDataFun(currVal, res);
+        } else{
+          this.$message.error("抱歉，获取数据失败，请刷新后重试！");
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      }).finally(end => {
+        this.tableLoading = false;
+      })
+    },
+    
+
+    UpdateTableDataFun(currVal, responseObj){
+      let resultTableDataArr = [],
+          tempTableData = responseObj.data;
+      if(Number(currVal) === 1){
+        //年龄段分析
+        let totalRowObj = {
+          data1:0,
+          data2: 0,
+          data3: 0,
+          data4: 0,
+          data5: 0,
+          data6: 0,
+        };
+        tempTableData.forEach((element, index) => {
+          resultTableDataArr.push({
+            key: index,
+            num: index + 1,
+            data1: element.data1 ? element.data1 : '',
+            data2: element.data2 ? element.data2 : '',
+            data3: element.data3 ? element.data3 : '',
+            data4: element.data4 ? element.data4 : '',
+            data5: element.data5 ? element.data5 : '',
+            data6: element.data6 ? element.data6 : '',
+            data7: element.data7 ? element.data7 : '',
+            data8: element.data8 ? element.data8 : '',
+            data9: element.data9 ? element.data9 : '',
+            data10: element.data10 ? element.data10 : '',
+            data11: element.data11 ? element.data11 : '',
+            sum1: element.sum1 ? element.sum1 : ''
+          })
+          for(let i = 1; i <= 5; i++){
+            totalRowObj['data' + i] += Number(element['data' + (i*2)]) + Number(element['data' + (i*2+1) ]);
+            
+          }
+          totalRowObj.data6 += Number(element.sum1);
+        });
+        resultTableDataArr.push({
+          key: resultTableDataArr.length,
+          num: '合计',
+          data1: '',
+          data2: totalRowObj.data1,
+          data3: '',
+          data4:totalRowObj.data2,
+          data5: '',
+          data6: totalRowObj.data3,
+          data7: '',
+          data8: totalRowObj.data4,
+          data9: '',
+          data10: totalRowObj.data5 ,
+          data11: '',
+          sum1: totalRowObj.data6
+        });
+      } else if(Number(currVal) === 2){
+        //学历分析
+        tempTableData.forEach((element, index) => {
+          resultTableDataArr.push({
+            key: index,
+            num: index + 1,
+            data1: element.data1 ? element.data1 : '',
+            data2: element.data2 ? element.data2 : '',
+            data3: element.data3 ? element.data3 : '',
+            data4: element.data4 ? element.data4 : '',
+            data5: element.data5 ? element.data5 : '',
+            data6: element.data6 ? element.data6 : '',
+            data7: element.data7 ? element.data7 : '',
+            data8: element.data8 ? element.data8 : '',
+            data9: element.data9 ? element.data9 : '',
+            data10: element.data10 ? element.data10 : '',
+            data11: element.data11 ? element.data11 : '',
+            data12: element.data12 ? element.data12 : '',
+            data13: element.data13 ? element.data13 : '',
+            data14: element.data14 ? element.data14 : '',
+            data15: element.data15 ? element.data15 : '',
+            data16: element.data16 ? element.data16 : '',
+            data17: element.data17 ? element.data17 : '',
+            data18: element.data18 ? element.data18 : '',
+            data19: element.data19 ? element.data19 : '',
+            data20: element.data20 ? element.data20 : '',
+            data21: element.data21 ? element.data21 : '',
+            data22: element.data22 ? element.data22 : '',
+            data23: element.data23 ? element.data23 : '',
+            sum14: element.sum14 ? element.sum14 : ''
+          })
+        });
+      } else if(Number(currVal) === 3){
+        //专业做技术资格分析
+        tempTableData.forEach((element, index) => {
+          resultTableDataArr.push({
+            key: index,
+            num: index + 1,
+            data1: element.data1 ? element.data1 : '',
+            data2: element.data2 ? element.data2 : '',
+            data3: element.data3 ? element.data3 : '',
+            data4: element.data4 ? element.data4 : '',
+            data5: element.data5 ? element.data5 : '',
+            data6: element.data6 ? element.data6 : '',
+            data7: element.data7 ? element.data7 : '',
+            sum14: element.sum14 ? element.sum14 : ''
+          })
+        });
+      } 
+      else if(Number(currVal) === 4){
+        //民族分析
+        tempTableData.forEach((element, index) => {
+          resultTableDataArr.push({
+            key: index,
+            num: index + 1,
+            data1: element.data1 ? element.data1 : '',
+            data2: element.data2 ? element.data2 : ''
+          })
+        });
+      } else{
+        //政治面貌分析
+        tempTableData.forEach((element, index) => {
+          resultTableDataArr.push({
+            key: index,
+            num: index + 1,
+            data1: element.data1 ? element.data1 : '',
+            data2: element.data2 ? element.data2 : '',
+            data3: element.data3 ? element.data3 : '',
+            data4: element.data4 ? element.data4 : '',
+            data5: element.data5 ? element.data5 : '',
+            data6: element.data6 ? element.data6 : '',
+            data7: element.data7 ? element.data7 : '',
+            data8: element.data8 ? element.data8 : '',
+            data9: element.data9 ? element.data9 : '',
+            data10: element.data10 ? element.data10 : '',
+            sum0: element.sum0 ? element.sum0 : ''
+          })
+        });
+      }
+      console.log(resultTableDataArr);
+      return resultTableDataArr;
     },
 
     otherChartsDataFun(currData) {
@@ -439,7 +700,7 @@ export default {
       this.otherChartsData.forEach((el, index) => {
         if (el.type === currType) {
           el.isSelectType = true;
-          this.firstChartData = Object.assign({ ...el},{chartsType:temp.chartsType});
+          this.firstChartData = Object.assign({ ...el},{chartsType: this.$refs.charts.returnChangeSelect()});
           tempIndex = index;
           clickType = el.chartsType;
         }
@@ -454,10 +715,32 @@ export default {
            this.$refs.educharts[index].getChartsData(item, item.chartsType);
         }
       });
-      this.getTableData(currType);
+      this.getTableColumnData(currType);
     },
+    
+    exportFiledsJsonFun(dataArr){
+      /**
+       * 功能：根据当前table表头重组：导出excel数据--表头
+       * 参数：dataArr：当前table--Column
+       */
+      let resultObj = {};
+      // dataArr.forEach(element => {
+      //   if(element.dataIndex){
+      //     resultObj[element.title] = element.dataIndex;
+      //   }else{
+      //     element.children.forEach(item => {
+      //       resultObj.children
+      //     });
+      //   }
+        
+      // });
+
+      return resultObj;
+    },
+
     exportFun(){
       //导出操作
+      console.log(this.exportFiledsJson);
       if (this.initArr.tabledataArr.length === 0) {
         this.$message.warning("暂无可导出的数据！");
       }
@@ -466,10 +749,10 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartData();
-    this.firstChartData = { ...this.personInfoData[0] };   //默认给的是年龄段
-    this.firstChartData.chartsType = this.chartTypeArr[0];
+    this.getChartData(); //图表数据
+    this.getTableData(1); //table数据--默认为年龄
     this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头
+    this.exportFiledsJson = this.exportFiledsJsonFun(this.ageColumns);  //默认导出excel表为年龄段分析
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）

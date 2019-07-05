@@ -41,7 +41,6 @@
           :initArrData="initArr"
           :totalCount="tableTotalNum"
           :loading="tableLoading"
-          @searchTable="getTableData"
         >
           <span slot="formAction">
             <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
@@ -94,6 +93,7 @@ export default {
         moment(new Date(), "YYYY-MM-DD")
       ],
       tempSearch: {},  //临时：当前查询条件
+      tempTiemval:1,  //临时： 默认查询为：date格式
       
       tableTotalNum: 0, //table--总条数
       tableLoading: false, //table--loading
@@ -102,28 +102,30 @@ export default {
         tableCheck: false, //table是否可以check,
         bordered: true, //table--边框
         superimposeWidth: true,
+        noPagination: true,  //table--无分页
         formData: {
           formInputs: [],
           formBtns: []
         },
         columnsArr: [
-          { title: "所属机构", dataIndex: "organ", key: "organ", width: 200 },
+          { title: '序号', dataIndex: 'num', key: 'num', width: 100},
+          { title: "所属机构", dataIndex: "OrgManage", key: "OrgManage", width: 200 },
           {
             title: "接收时间",
-            dataIndex: "acceptDate",
-            key: "acceptDate",
+            dataIndex: "tfDate",
+            key: "tfDate",
             width: 150
           },
           {
             title: "转出单位",
-            dataIndex: "rollOutUnit",
-            key: "rollOutUnit",
+            dataIndex: "companyName",
+            key: "companyName",
             width: 200
           },
           {
             title: "单位归属地",
-            dataIndex: "unitAddress",
-            key: "unitAddress",
+            dataIndex: "AREANAME",
+            key: "AREANAME",
             width: 200
           }
         ],
@@ -137,14 +139,14 @@ export default {
           isSelectType: true,
           cardTitle: '档案转出统计分析(单位:次)',
           title: "档案转出统计分析",
-          data: [{ name: "档案转出", value: "36" }]
+          data: []
         },
         {
           type: 2,
           isSelectType: false,
           cardTitle: '按经办人统计(最近一年)(单位:次)',
           title: "按经办人统计",
-          data: [{ name: "XXXX", value: "123" }]
+          data: []
         }
       ],
       otherChartsData: [], //其他图表
@@ -152,6 +154,11 @@ export default {
  
       exportFiledsJson: {
         //导出excel表：字段名对应
+        序号: 'num',
+        所属机构: 'OrgManage',
+        接收时间: 'tfDate',
+        转出单位: 'companyName',
+        单位归属地: 'AREANAME'
       },
       fieldsName:"档案转出统计" + this.moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
     };
@@ -178,21 +185,27 @@ export default {
        * 功能：获取图表数据
        */
       this.$http.fetchPost("statisticsAnalysis@archOutStatistics.action", {
+        tiemval: this.tempTiemval,
         startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
         endTime: (!condition || !condition.endDate) ? '' : condition.endDate
       }).then(res => {
         if (Number(res.code) === 0) {
-          console.log(res);
-          // let tempResData = res.data.companyStatistics;
-          // this.personInfoData[0].data = [];
-          // tempResData.forEach(element => {
-          //   this.personInfoData[0].data.push({
-          //     name: element.name,
-          //     value: element.value
-          //   });
-          // });
-          // this.firstChartData = { ...this.personInfoData[0] };
-          // this.firstChartData.chartsType = this.chartTypeArr[0];
+          //清空personInfoData--data数据
+          this.personInfoData.forEach(element => {
+            element.data = [];
+          });
+          //档案转出数据
+          for(let i = 0; i < res.data.archTransferArchData.length; i++){
+            this.personInfoData[0].data.push({
+              name: res.data.archTransferArch[i],
+              value: res.data.archTransferArchData[i].value
+            });
+          }
+          //经办人
+          this.personInfoData[1].data = res.data.creatorChartData;
+
+          this.firstChartData = { ...this.personInfoData[0] };
+          this.firstChartData.chartsType = this.$refs.charts.returnChangeSelect();
         } else {
           this.$message.error("抱歉，获取数据失败，请刷新后重试！");
         }
@@ -200,46 +213,40 @@ export default {
         this.$message.error("抱歉，网络异常！");
       });
     },
-    getTableData(condition, pageNum, limitNum) {
+    getTableData(condition) {
       /**
        * 功能：获取数据
        */
-      let newCondition = {};
-      if(condition){
-        newCondition = condition;
-      } else{
-        newCondition = this.tempSearch;
-      }
       this.tableLoading = true;
-      // this.$http.fetchPost("statisticsAnalysis@proofIssueStatistics.action", {
-      //   page: pageNum,
-      //   limt: limitNum,
-      //   startTime: (!newCondition || !newCondition.startDate) ? '' : newCondition.startDate,
-      //   endTime: (!newCondition || !newCondition.endDate) ? '' : newCondition.endDate
-      // }).then(res => {
-      //   if (Number(res.code) === 0) {
-      //     console.log(res);
-      //     this.tableTotalNum = res.count;
-      //     this.initArr.tabledataArr = [];
-      //     let tempTableData = res.data;
-      //     tempTableData.forEach((element, index) => {
-      //       this.initArr.tabledataArr.push({
-      //         key: element.id,
-      //         num: (pageNum - 1) * limitNum + index + 1,
-      //         companyName: element.companyName,
-      //         companyNature: element.companyNature,
-      //         companyEmployeesNumber: element.companyEmployeesNumber,
-      //         tatsudoDate: element.tatsudoDate
-      //       });
-      //     });
-      //   } else {
-      //     this.$message.error("抱歉，获取数据失败，请刷新后重试！");
-      //   }
-      // }).catch(error => {
-      //   this.$message.error("抱歉，网络异常！");
-      // }).finally(end => {
-      //   this.tableLoading = false;
-      // });
+      this.$http.fetchPost("statisticsAnalysis@archOutStatistics.action", {
+        tiemval: this.tempTiemval,
+        Browse: 'Browse',
+        startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
+        endTime: (!condition || !condition.endDate) ? '' : condition.endDate
+      }).then(res => {
+        if (Number(res.code) === 0) {
+          this.tableTotalNum = res.data.archTransferArchData[0].value;  //总数
+          this.initArr.tabledataArr = [];
+          let tempTableData = res.data.browseChartData;
+          tempTableData.forEach((element, index) => {
+            this.initArr.tabledataArr.push({
+              key: index,
+              num: index + 1,
+              OrgManage: !element.OrgManage ? '' : element.OrgManage,
+              tfDate: !element.tfDate ? '' : element.tfDate,
+              companyName: !element.companyName ? '' : element.companyName,
+              AREANAME: !element.AREANAME ? '' : element.AREANAME
+            });
+          });
+          
+        } else {
+          this.$message.error("抱歉，获取数据失败，请刷新后重试！");
+        }
+      }).catch(error => {
+        this.$message.error("抱歉，网络异常！");
+      }).finally(end => {
+        this.tableLoading = false;
+      });
     },
     changeDateType(e) {
       /**
@@ -249,8 +256,10 @@ export default {
       this.dateSearchType = e.target.value;
       if(e.target.value === 'date'){
         this.dateRangeFormat  = 'YYYY-MM-DD';
+        this.tempTiemval = 1;
       } else{
         this.dateRangeFormat = 'YYYY-MM';
+        this.tempTiemval = 2;
       }
     },
     handleSubmit(e) {
@@ -262,8 +271,8 @@ export default {
       if (this.currDate.length > 0) {
         this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
         this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
-        // this.getChartData(this.tempSearch);
-        // this.getTableData(this.tempSearch, 1, 10);
+        this.getChartData(this.tempSearch);
+        this.getTableData(this.tempSearch);
       } else{
         this.$message.error('查询日期不能为空！')
       }
@@ -294,7 +303,7 @@ export default {
           el.isSelectType = true;
           this.firstChartData = Object.assign(
             { ...el },
-            { chartsType: temp.chartsType }
+            { chartsType: this.$refs.charts.returnChangeSelect() }
           );
           tempIndex = index;
           clickType = el.chartsType;
@@ -327,9 +336,8 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.firstChartData = { ...this.personInfoData[0] };
-    this.firstChartData.chartsType = this.chartTypeArr[0];
-    // this.getChartsData(null);
+    this.getChartsData(null);
+    this.getTableData(null);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
