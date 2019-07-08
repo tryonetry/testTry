@@ -218,7 +218,7 @@ import regs from '../../src/utils/regexp';
 
 export default {
   name: "TableFromSearch",
-  props: ["formDataArr", 'getCapacityDataFun','layout'],
+  props: ["formDataArr", 'getCapacityDataFun','layout',"tableBodyRize"],
   data() {
     return {
       regs,
@@ -858,8 +858,12 @@ export default {
 
     // 搜索选择框改变
     searchSelectChange (select) {
+      
       this.bundleLinkage(select);
       this.listeningChange();
+      this.$nextTick(function(){
+        this.tableBodyRize();
+      })
     },
 
     // 普通的必填表单项失去焦点

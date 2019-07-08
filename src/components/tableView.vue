@@ -4,7 +4,7 @@
       <OrganTree @sendTreeValue="acceptTreeValue"></OrganTree>
     </div>
     <div :class="treeFlag ? 'viewContent' : 'noviewContent'">
-      <TableFromSearch :formDataArr="formData" @searchForm="searchFormFun" @bundleChange="bundleChangeFun">
+      <TableFromSearch :formDataArr="formData" @searchForm="searchFormFun" @bundleChange="bundleChangeFun" :layout="layout" :tableBodyRize="tableBodyRize">
         <slot name="formAction"></slot>
       </TableFromSearch>
 
@@ -183,7 +183,7 @@ export default {
     OrganTree,
     TableFromSearch,
   },
-  props: ["initArrData", "totalCount","filterTableCheck","loading"],
+  props: ["initArrData", "totalCount","filterTableCheck","loading","layout","initHeight"],
   data() {
     return {
       formData: [], //表格上方form
@@ -282,53 +282,23 @@ export default {
 
   },
   created() {
-
+    if(this.initHeight){
+      this.tableHeight = Number(this.initHeight);
+    }
   },
   mounted() {
     const _this = this;
     
     setTimeout(function(){
       _this.$nextTick(function(){
-        
-        let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
-        
-        let tempWidth = 0;
-        _this.initArrData.columnsArr.forEach(el => {
-          if(el.width){
-            tempWidth += Number(el.width);
-          }
-        });
-        tempWidth +=  200;
-        if(tempWidth > currScreenWidth || _this.superimposeWidth){
-          currScreenWidth = tempWidth
-        }
-
-        _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
-        console.log(_this.tableHeight)
-        _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+        _this.tableBodyRize();
       });
     },0);
-    
+
     // 监听窗口改变 
     window.onresize = function(){
       _this.$nextTick(function(){
-        
-        let currScreenWidth = _this.treeFlag ? 1920-280-240 : 1920-280;
-        
-        let tempWidth = 0;
-        _this.initArrData.columnsArr.forEach(el => {
-          if(el.width){
-            tempWidth += Number(el.width);
-          }
-        });
-        tempWidth +=  200;
-        if(tempWidth > currScreenWidth || _this.superimposeWidth){
-          currScreenWidth = tempWidth
-        }
-
-        _this.tableHeight = _this.$refs.tableCon.clientHeight - 52;
-        console.log(_this.tableHeight)
-        _this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+        _this.tableBodyRize();
       });
     }
 
@@ -342,6 +312,27 @@ export default {
     getCondition(){
       return this.condition;
     },
+
+    // table 宽高重新渲染
+    tableBodyRize(){
+        let currScreenWidth = this.treeFlag ? 1920-280-240 : 1920-280;
+        let tempHeight = this.$refs.tableCon.clientHeight - 53;
+        let tempWidth = 0;
+        this.initArrData.columnsArr.forEach(el => {
+          if(el.width){
+            tempWidth += Number(el.width);
+          }
+        });
+        tempWidth +=  200;
+        if(tempWidth > currScreenWidth || this.superimposeWidth){
+          currScreenWidth = tempWidth
+        }
+
+        this.tableHeight = tempHeight > 0 ? tempHeight : this.tableHeight;
+        console.log(this.tableHeight)
+        this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
+    },
+    
     bundleChangeFun(value){
       /**
        * 监听子组件：tableFormSearch上值是否发生变化；当发生变化则修改this.condition的值；
@@ -363,6 +354,7 @@ export default {
       console.log(this.tabledata)
     },
 
+    // 通过form获取数据
     searchFormFun(data) {
       /***
        * 功能：调用父组件的searchTable函数，重新获取tableData值
@@ -395,6 +387,8 @@ export default {
       // this.tabledata = this.$parent.initArr.tabledataArr;
       this.currentPageNum = 1;
     },
+
+    // check table 选择
     onSelect(record,selected,selectedRows) {
       /***
        * 功能：checbox-table选择表格数据
@@ -402,15 +396,19 @@ export default {
        */
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
+
+    // check table 全选
     onSelectAll(selected, selectedRows, changeRows) {
       //table全选
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
 
+    // check table 改变
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
 
+    // 过滤可选择条件
     getCheckboxProps(record){
       if(this.filterTableCheck && this.filterTableCheck instanceof Function){
         return this.filterTableCheck(record);
@@ -425,6 +423,7 @@ export default {
       //更新table
       this.tabledata = this.$parent.initArr.tabledataArr;
     },
+
     changePagination(page, pageSize){
       //换页：page:当前page; pageSize:当前页得显示数据数量
       this.$emit('searchTable', this.condition, page, pageSize);
