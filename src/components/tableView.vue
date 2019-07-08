@@ -251,11 +251,11 @@ export default {
               [].forEach.call(item.childNodes,(td,tdIndex) => {
                 
                 if(newVal.tableCheck){
-                  if(tdIndex !== 0 && td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
+                  if(tdIndex !== 0 && td.getAttribute && td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
                     td.style.maxWidth = theadWidthArr[tdIndex-fixedLeftNum]+'px';
                   }
                 }else {
-                  if(td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
+                  if(td.getAttribute && td.getAttribute('class') !== 'ant-table-fixed-columns-in-body' && theadWidthArr[tdIndex-fixedLeftNum]){
                     td.style.maxWidth = theadWidthArr[tdIndex-fixedLeftNum]+'px';
                   }
                 }
