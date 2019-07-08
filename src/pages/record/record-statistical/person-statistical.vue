@@ -6,7 +6,7 @@
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
       </div>
       <div class="tableAnalysis">
-        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading">
+        <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" ref="infoStaticsTable">
           <span slot="formAction">
             <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
               <a-button type="primary" @click="exportFun">导出</a-button>
@@ -25,7 +25,8 @@
 
 <script>
 const renderContent = (value, row, index, colSpan, data) => {
-  if(index === data.length - 1 ){
+  //表格列--根据当前传的colspan值重新render；
+  if(index === data.length - 1 && data.length > 1 ){
       return{
         children: value,
         attrs: {
@@ -36,20 +37,6 @@ const renderContent = (value, row, index, colSpan, data) => {
     return  value;
   }
 };
-
-
-
-// const renderContent = (value, row, index, data) => {
-//   const obj = {
-//     children: value,
-//     attrs: {},
-//   };
-//   if (index === data.length - 1 ) {
-//     obj.attrs.colSpan = 0;
-//   }
-//   return obj;
-// };
-
 
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
@@ -102,7 +89,6 @@ export default {
         {
           title: "18-25周岁",
           width: 200,
-          dataIndex: 'eighteen',
           children: [
             { title: "男", dataIndex: "data2", key: "data2", width: 100,
               customRender: (text, row, index) => {
@@ -190,157 +176,288 @@ export default {
       ],
       eduColumns: [
         //学历分析表头
-        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100},
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+          }
+        },
         {
           title: "所属机构",
           dataIndex: "data1",
           key: "data1",
           fixed: "left",
-          width: 200
+          width: 200,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+          }
         },
         {
           title: "博士研究生",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data2", key: "data2", width: 100},
-            { title: "女", dataIndex: "data3", key: "data3", width: 100}
+            { title: "男", dataIndex: "data2", key: "data2", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data3", key: "data3", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "硕士研究生",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data4", key: "data4", width: 100 },
-            { title: "女", dataIndex: "data5", key: "data5", width: 100}
+            { title: "男", dataIndex: "data4", key: "data4", width: 70, 
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data5", key: "data5", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "大学本科",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data6", key: "data6", width: 100 },
+            { title: "男", dataIndex: "data6", key: "data6", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
             {
               title: "女",
               dataIndex: "data7",
               key: "data7", 
-              width: 100
+              width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
             }
           ]
         },
         {
           title: "大学专科",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data8", key: "data8", width: 100},
+            { title: "男", dataIndex: "data8", key: "data8", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
             {
               title: "女",
               dataIndex: "data9",
               key: "data9", 
-              width: 100
+              width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
             }
           ]
         },
         {
           title: "中等专科",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data10", key: "data10", width: 100},
+            { title: "男", dataIndex: "data10", key: "data10", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
             {
               title: "女",
               dataIndex: "data11",
               key: "data11", 
-              width: 100
+              width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
             }
           ]
         },
         {
           title: "职业高中",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data12", key: "data12", width: 100},
-            { title: "女", dataIndex: "data13", key: "data13", width: 100}
+            { title: "男", dataIndex: "data12", key: "data12", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data13", key: "data13", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "技工学校",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data14", key: "data14", width: 100},
-            { title: "女", dataIndex: "data15", key: "data15", width: 100}
+            { title: "男", dataIndex: "data14", key: "data14", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data15", key: "data15", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "普通高中",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data16", key: "data16", width: 100},
-            { title: "女", dataIndex: "data17", key: "data17", width: 100}
+            { title: "男", dataIndex: "data16", key: "data16", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data17", key: "data17", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "初中",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data18", key: "data18", width: 100 },
-            { title: "女", dataIndex: "data19", key: "data19", width: 100 }
+            { title: "男", dataIndex: "data18", key: "data18", width: 70, 
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data19", key: "data19", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "小学",
-          width: 200,
+          width: 140,
           children: [
-            { title: "男", dataIndex: "data20", key: "data20", width: 100},
-            { title: "女", dataIndex: "data21", key: "data21", width: 100}
+            { title: "男", dataIndex: "data20", key: "data20", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data21", key: "data21", width: 70,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         {
           title: "其他",
           children: [
-            { title: "男", dataIndex: "data22", key: "data22"},
-            { title: "女", dataIndex: "data23", key: "data23"}
+            { title: "男", dataIndex: "data22", key: "data22",
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: "女", dataIndex: "data23", key: "data23",
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            }
           ]
         },
         { title: "总计", dataIndex: "sum14", key: "sum14", fixed: 'right', width: 150}
       ],
       professionColumns:[
         //专业技术资格分析
-        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100},
+        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 100,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+          }
+        },
         {
           title: "所属机构",
           dataIndex: "data7",
           key: "data7",
           fixed: "left",
-          width: 200
+          width: 200,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+          }
         },
         {
           title: '高级',
           width: 200,
           children: [
-            { title: '男', dataIndex: 'data1', key: 'data1', width: 100},
-            { title: '女', dataIndex: 'data2', key: 'data2', width: 100},
+            { title: '男', dataIndex: 'data1', key: 'data1', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data2', key: 'data2', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '中级',
           width: 200,
           children: [
-            { title: '男', dataIndex: 'data3', key: 'data3', width: 100},
-            { title: '女', dataIndex: 'data4', key: 'data4', width: 100},
+            { title: '男', dataIndex: 'data3', key: 'data3', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data4', key: 'data4', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '初级',
           children: [
-            { title: '男', dataIndex: 'data5', key: 'data5'},
-            { title: '女', dataIndex: 'data6', key: 'data6'},
+            { title: '男', dataIndex: 'data5', key: 'data5',
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data6', key: 'data6',
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         { title: "总计", dataIndex: "sum14", key: "sum14", fixed: 'right', width:150 }
       ],
       nationaColumns:[
         //民族分析
-        { title: '序号', dataIndex: 'num', key: 'num', fixed: 'left' ,width: 150},
-        { title: '民族', dataIndex: 'data1', key: 'data1', width: 300},
+        { title: '序号', dataIndex: 'num', key: 'num', width: 150,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+          }
+        },
+        { title: '民族', dataIndex: 'data1', key: 'data1', width: 300,
+          customRender: (text, row, index) => {
+            return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+          }
+        },
         { title: "总计", dataIndex: "data2", key: "data2"}
       ],
       politicalColumns:[
@@ -350,39 +467,79 @@ export default {
           title: '中共党员',
           width: 200,
           children:[
-            { title: '男', dataIndex: 'data1', key: 'data1', width: 100},
-            { title: '女', dataIndex: 'data2', key: 'data2', width: 100},
+            { title: '男', dataIndex: 'data1', key: 'data1', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data2', key: 'data2', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '中共预备党员',
           width: 200,
           children:[
-            { title: '男', dataIndex: 'data3', key: 'data3', width: 100},
-            { title: '女', dataIndex: 'data4', key: 'data4', width: 100},
+            { title: '男', dataIndex: 'data3', key: 'data3', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data4', key: 'data4', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '共青团员',
           width: 200,
           children:[
-            { title: '男', dataIndex: 'data5', key: 'data5', width: 100},
-            { title: '女', dataIndex: 'data6', key: 'data6', width: 100},
+            { title: '男', dataIndex: 'data5', key: 'data5', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data6', key: 'data6', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '群众',
           width: 200,
           children:[
-            { title: '男', dataIndex: 'data7', key: 'data7', width: 100},
-            { title: '女', dataIndex: 'data8', key: 'data8', width: 100},
+            { title: '男', dataIndex: 'data7', key: 'data7', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data8', key: 'data8', width: 100,
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         {
           title: '其他',
           children:[
-            { title: '男', dataIndex: 'data9', key: 'data9'},
-            { title: '女', dataIndex: 'data10', key: 'data10'},
+            { title: '男', dataIndex: 'data9', key: 'data9',
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 2, this.initArr.tabledataArr);
+              }
+            },
+            { title: '女', dataIndex: 'data10', key: 'data10',
+              customRender: (text, row, index) => {
+                return renderContent(text, row, index, 0, this.initArr.tabledataArr);
+              }
+            },
           ]
         },
         { title: "总计", dataIndex: "sum0", key: "sum0", fixed:'right', width: 150 }
@@ -529,6 +686,7 @@ export default {
       }).then(res => {
         if(Number(res.code) === 0){
           this.initArr.tabledataArr =  this.UpdateTableDataFun(currVal, res);
+          this.$refs.infoStaticsTable.tableBodyRize();
         } else{
           this.$message.error("抱歉，获取数据失败，请刷新后重试！");
         }
@@ -541,138 +699,245 @@ export default {
     
 
     UpdateTableDataFun(currVal, responseObj){
-      let resultTableDataArr = [],
+      if(responseObj.data.length > 0){
+        let resultTableDataArr = [],
           tempTableData = responseObj.data;
-      if(Number(currVal) === 1){
-        //年龄段分析
-        let totalRowObj = {
-          data1:0,
-          data2: 0,
-          data3: 0,
-          data4: 0,
-          data5: 0,
-          data6: 0,
-        };
-        tempTableData.forEach((element, index) => {
+        if(Number(currVal) === 1){
+          //年龄段分析
+          let totalRowObj = {
+            data1:0,
+            data2: 0,
+            data3: 0,
+            data4: 0,
+            data5: 0,
+            data6: 0,
+          };
+          tempTableData.forEach((element, index) => {
+            resultTableDataArr.push({
+              key: index,
+              num: index + 1,
+              data1: element.data1 ? element.data1 : '',
+              data2: element.data2 ? element.data2 : '',
+              data3: element.data3 ? element.data3 : '',
+              data4: element.data4 ? element.data4 : '',
+              data5: element.data5 ? element.data5 : '',
+              data6: element.data6 ? element.data6 : '',
+              data7: element.data7 ? element.data7 : '',
+              data8: element.data8 ? element.data8 : '',
+              data9: element.data9 ? element.data9 : '',
+              data10: element.data10 ? element.data10 : '',
+              data11: element.data11 ? element.data11 : '',
+              sum1: element.sum1 ? element.sum1 : ''
+            })
+            for(let i = 1; i <= 5; i++){
+              totalRowObj['data' + i] += Number(element['data' + (i*2)]) + Number(element['data' + (i*2+1) ]);
+            }
+            totalRowObj.data6 += Number(element.sum1);
+          });
           resultTableDataArr.push({
-            key: index,
-            num: index + 1,
-            data1: element.data1 ? element.data1 : '',
-            data2: element.data2 ? element.data2 : '',
-            data3: element.data3 ? element.data3 : '',
-            data4: element.data4 ? element.data4 : '',
-            data5: element.data5 ? element.data5 : '',
-            data6: element.data6 ? element.data6 : '',
-            data7: element.data7 ? element.data7 : '',
-            data8: element.data8 ? element.data8 : '',
-            data9: element.data9 ? element.data9 : '',
-            data10: element.data10 ? element.data10 : '',
-            data11: element.data11 ? element.data11 : '',
-            sum1: element.sum1 ? element.sum1 : ''
-          })
-          for(let i = 1; i <= 5; i++){
-            totalRowObj['data' + i] += Number(element['data' + (i*2)]) + Number(element['data' + (i*2+1) ]);
-            
+            key: resultTableDataArr.length,
+            num: '合计',
+            data1: '',
+            data2: totalRowObj.data1,
+            data3: '',
+            data4:totalRowObj.data2,
+            data5: '',
+            data6: totalRowObj.data3,
+            data7: '',
+            data8: totalRowObj.data4,
+            data9: '',
+            data10: totalRowObj.data5 ,
+            data11: '',
+            sum1: totalRowObj.data6
+          });
+        } else if(Number(currVal) === 2){
+          //学历分析
+          let totalRowObj = {
+            data1:0,
+            data2: 0,
+            data3: 0,
+            data4: 0,
+            data5: 0,
+            data6: 0,
+            data7: 0,
+            data8: 0,
+            data9: 0,
+            data10: 0,
+            data11: 0,
+            data12: 0
           }
-          totalRowObj.data6 += Number(element.sum1);
-        });
-        resultTableDataArr.push({
-          key: resultTableDataArr.length,
-          num: '合计',
-          data1: '',
-          data2: totalRowObj.data1,
-          data3: '',
-          data4:totalRowObj.data2,
-          data5: '',
-          data6: totalRowObj.data3,
-          data7: '',
-          data8: totalRowObj.data4,
-          data9: '',
-          data10: totalRowObj.data5 ,
-          data11: '',
-          sum1: totalRowObj.data6
-        });
-      } else if(Number(currVal) === 2){
-        //学历分析
-        tempTableData.forEach((element, index) => {
+          tempTableData.forEach((element, index) => {
+            resultTableDataArr.push({
+              key: index,
+              num: index + 1,
+              data1: element.data1 ? element.data1 : '',
+              data2: element.data2 ? element.data2 : '',
+              data3: element.data3 ? element.data3 : '',
+              data4: element.data4 ? element.data4 : '',
+              data5: element.data5 ? element.data5 : '',
+              data6: element.data6 ? element.data6 : '',
+              data7: element.data7 ? element.data7 : '',
+              data8: element.data8 ? element.data8 : '',
+              data9: element.data9 ? element.data9 : '',
+              data10: element.data10 ? element.data10 : '',
+              data11: element.data11 ? element.data11 : '',
+              data12: element.data12 ? element.data12 : '',
+              data13: element.data13 ? element.data13 : '',
+              data14: element.data14 ? element.data14 : '',
+              data15: element.data15 ? element.data15 : '',
+              data16: element.data16 ? element.data16 : '',
+              data17: element.data17 ? element.data17 : '',
+              data18: element.data18 ? element.data18 : '',
+              data19: element.data19 ? element.data19 : '',
+              data20: element.data20 ? element.data20 : '',
+              data21: element.data21 ? element.data21 : '',
+              data22: element.data22 ? element.data22 : '',
+              data23: element.data23 ? element.data23 : '',
+              sum14: element.sum14 ? element.sum14 : ''
+            })
+            for(let i = 1; i <= 11; i++){
+              totalRowObj['data'+ i]  = Number(element['data' + (i * 2)]) + Number(element['data' + (i * 2 + 1)]);
+            }
+            totalRowObj.data12 += Number(element.sum14);
+          });
           resultTableDataArr.push({
-            key: index,
-            num: index + 1,
-            data1: element.data1 ? element.data1 : '',
-            data2: element.data2 ? element.data2 : '',
-            data3: element.data3 ? element.data3 : '',
-            data4: element.data4 ? element.data4 : '',
-            data5: element.data5 ? element.data5 : '',
-            data6: element.data6 ? element.data6 : '',
-            data7: element.data7 ? element.data7 : '',
-            data8: element.data8 ? element.data8 : '',
-            data9: element.data9 ? element.data9 : '',
-            data10: element.data10 ? element.data10 : '',
-            data11: element.data11 ? element.data11 : '',
-            data12: element.data12 ? element.data12 : '',
-            data13: element.data13 ? element.data13 : '',
-            data14: element.data14 ? element.data14 : '',
-            data15: element.data15 ? element.data15 : '',
-            data16: element.data16 ? element.data16 : '',
-            data17: element.data17 ? element.data17 : '',
-            data18: element.data18 ? element.data18 : '',
-            data19: element.data19 ? element.data19 : '',
-            data20: element.data20 ? element.data20 : '',
-            data21: element.data21 ? element.data21 : '',
-            data22: element.data22 ? element.data22 : '',
-            data23: element.data23 ? element.data23 : '',
-            sum14: element.sum14 ? element.sum14 : ''
+            key: resultTableDataArr.length,
+            num: '合计',
+            data1: '',
+            data2: totalRowObj.data1,
+            data3: '',
+            data4: totalRowObj.data2,
+            data5: '',
+            data6: totalRowObj.data3,
+            data7: '',
+            data8: totalRowObj.data4,
+            data9: '',
+            data10: totalRowObj.data5,
+            data11: '',
+            data12: totalRowObj.data6,
+            data13: '',
+            data14: totalRowObj.data7,
+            data15: '',
+            data16: totalRowObj.data8,
+            data17: '',
+            data18: totalRowObj.data9,
+            data19: '',
+            data20: totalRowObj.data10,
+            data21: '',
+            data22: totalRowObj.data11,
+            data23: '',
+            sum14:totalRowObj.data12
           })
-        });
-      } else if(Number(currVal) === 3){
-        //专业做技术资格分析
-        tempTableData.forEach((element, index) => {
+        } else if(Number(currVal) === 3){
+          //专业做技术资格分析
+          let totalRowObj ={
+            data1: 0,
+            data2: 0,
+            data3: 0,
+            data4: 0
+          }
+          tempTableData.forEach((element, index) => {
+            resultTableDataArr.push({
+              key: index,
+              num: index + 1,
+              data1: element.data1 ? element.data1 : '',
+              data2: element.data2 ? element.data2 : '',
+              data3: element.data3 ? element.data3 : '',
+              data4: element.data4 ? element.data4 : '',
+              data5: element.data5 ? element.data5 : '',
+              data6: element.data6 ? element.data6 : '',
+              data7: element.data7 ? element.data7 : '',
+              sum14: element.sum14 ? element.sum14 : ''
+            })
+            for(let i = 1; i <= 3; i++){
+              totalRowObj['data' + i] += Number(element['data' + (i*2 - 1)]) + Number(element['data' + (i * 2)]);
+            }
+            totalRowObj.data4 += Number(element.sum14);
+          });
           resultTableDataArr.push({
-            key: index,
-            num: index + 1,
-            data1: element.data1 ? element.data1 : '',
-            data2: element.data2 ? element.data2 : '',
-            data3: element.data3 ? element.data3 : '',
-            data4: element.data4 ? element.data4 : '',
-            data5: element.data5 ? element.data5 : '',
-            data6: element.data6 ? element.data6 : '',
-            data7: element.data7 ? element.data7 : '',
-            sum14: element.sum14 ? element.sum14 : ''
+            key: resultTableDataArr.length,
+            num: '合计',
+            data1: totalRowObj.data1,
+            data2: '',
+            data3: totalRowObj.data2,
+            data4: '',
+            data5: totalRowObj.data3,
+            data6: '',
+            data7: '',
+            sum14: totalRowObj.data4
           })
-        });
-      } 
-      else if(Number(currVal) === 4){
-        //民族分析
-        tempTableData.forEach((element, index) => {
+        } 
+        else if(Number(currVal) === 4){
+          //民族分析
+          let totalRowObj = {
+            data1: 0
+          }
+          tempTableData.forEach((element, index) => {
+            resultTableDataArr.push({
+              key: index,
+              num: index + 1,
+              data1: element.data1 ? element.data1 : '',
+              data2: element.data2 ? element.data2 : ''
+            })
+            totalRowObj.data1 += Number(element.data2);
+          });
           resultTableDataArr.push({
-            key: index,
-            num: index + 1,
-            data1: element.data1 ? element.data1 : '',
-            data2: element.data2 ? element.data2 : ''
+            key: resultTableDataArr.length, 
+            num: '合计',
+            data1: '',
+            data2: totalRowObj.data1
           })
-        });
+        } else{
+          //政治面貌分析
+          let totalRowObj ={
+            data1: 0,
+            data2: 0,
+            data3: 0,
+            data4: 0,
+            data5: 0,
+            data6: 0
+          }
+          tempTableData.forEach((element, index) => {
+            resultTableDataArr.push({
+              key: index,
+              num: index + 1,
+              data1: element.data1 ? element.data1 : '',
+              data2: element.data2 ? element.data2 : '',
+              data3: element.data3 ? element.data3 : '',
+              data4: element.data4 ? element.data4 : '',
+              data5: element.data5 ? element.data5 : '',
+              data6: element.data6 ? element.data6 : '',
+              data7: element.data7 ? element.data7 : '',
+              data8: element.data8 ? element.data8 : '',
+              data9: element.data9 ? element.data9 : '',
+              data10: element.data10 ? element.data10 : '',
+              sum0: element.sum0 ? element.sum0 : ''
+            })
+            for(let i = 1; i <= 5; i++){
+              totalRowObj['data' + i] += Number(element['data' + (i*2 - 1)]) + Number(element['data' + (i * 2)]);
+            }
+            totalRowObj.data6 += Number(element.sum0);
+          });
+          resultTableDataArr.push({
+            key: resultTableDataArr.length,
+            num: '合计',
+            data1: totalRowObj.data1,
+            data2: '',
+            data3: totalRowObj.data2,
+            data4: '',
+            data5: totalRowObj.data3,
+            data6: '',
+            data7: totalRowObj.data4,
+            data8: '',
+            data9: totalRowObj.data5,
+            data10: '',
+            sum0: totalRowObj.data6
+          })
+        }
+        return resultTableDataArr;
       } else{
-        //政治面貌分析
-        tempTableData.forEach((element, index) => {
-          resultTableDataArr.push({
-            key: index,
-            num: index + 1,
-            data1: element.data1 ? element.data1 : '',
-            data2: element.data2 ? element.data2 : '',
-            data3: element.data3 ? element.data3 : '',
-            data4: element.data4 ? element.data4 : '',
-            data5: element.data5 ? element.data5 : '',
-            data6: element.data6 ? element.data6 : '',
-            data7: element.data7 ? element.data7 : '',
-            data8: element.data8 ? element.data8 : '',
-            data9: element.data9 ? element.data9 : '',
-            data10: element.data10 ? element.data10 : '',
-            sum0: element.sum0 ? element.sum0 : ''
-          })
-        });
+        return [];
       }
-      console.log(resultTableDataArr);
-      return resultTableDataArr;
     },
 
     otherChartsDataFun(currData) {
@@ -724,23 +989,20 @@ export default {
        * 参数：dataArr：当前table--Column
        */
       let resultObj = {};
-      // dataArr.forEach(element => {
-      //   if(element.dataIndex){
-      //     resultObj[element.title] = element.dataIndex;
-      //   }else{
-      //     element.children.forEach(item => {
-      //       resultObj.children
-      //     });
-      //   }
-        
-      // });
-
+      dataArr.forEach(element => {
+        if(element.dataIndex){
+          resultObj[element.title] = element.dataIndex;
+        }else{
+          element.children.forEach(item => {
+            resultObj[element.title + item.title ] = item.dataIndex;
+          });
+        }
+      });
       return resultObj;
     },
 
     exportFun(){
       //导出操作
-      console.log(this.exportFiledsJson);
       if (this.initArr.tabledataArr.length === 0) {
         this.$message.warning("暂无可导出的数据！");
       }
