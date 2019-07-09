@@ -40,10 +40,10 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="operateStatus==1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')"
+        :title="operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        width="80%"
+        :width="operateStatus == 1 ? '80%': '96%'"
         @cancel="handleCancel"
         style="height:85%;overflow: hidden;"
         :maskClosable="false"

@@ -2,7 +2,7 @@
   <!-- 人才信息总库操作:查看详情、编辑、添加 -->
   <div class="outerContainer">
     <a-tabs class="tabContainer" defaultActiveKey="1">
-      <a-tab-pane class="tabView" tab="人员信息浏览" :key="1">
+      <a-tab-pane class="tabView" tab="人员信息浏览" key="1">
         <div class="left_anchor" v-show="operateStatusVal !== 1">
           <a
             href="javascript:void(0)"
@@ -12,9 +12,7 @@
             :class="{left_anchorClick: index == currClickAnchor}"
           >{{item.name}}</a>
         </div>
-        <div
-          :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']"
-        >
+        <div :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']">
           <!-- 1-基本信息 -->
           <div class="basicInfo" id="anchor_basicInfo" ref="anchor_basicInfo">
             <table class="infoTable" border="1">
@@ -60,7 +58,7 @@
                     ></a-input>
                   </td>
                   <td colspan="2" rowspan="4">
-                    <img :src="imgUrl" alt="avatar" style="width: 130px;height: 180px;">
+                    <img :src="imgUrl" alt="avatar" style="width: 130px;height: 180px;" />
                   </td>
                 </tr>
 
@@ -76,7 +74,6 @@
                     >{{personBasicInfo.a0104==='1'?'男': '女'}}</span>
                     <a-radio-group
                       :options="genderOptions"
-                      @change="genderChange"
                       v-model="personBasicInfo.a0104"
                       v-show="operateStatusVal !== 2"
                     />
@@ -93,7 +90,6 @@
                     >{{this.conVersionData('a0117', personBasicInfo.a0117)}}</span>
                     <a-select
                       class="info_select"
-                      @change="nationalChange"
                       placeholder="请选择"
                       v-model="personBasicInfo.a0117"
                       v-show="operateStatusVal !== 2"
@@ -177,7 +173,6 @@
                     >{{this.conVersionData('a0131', personBasicInfo.a0131)}}</span>
                     <a-select
                       class="info_select"
-                      @change="nationalChange"
                       placeholder="请选择"
                       v-model="personBasicInfo.a0131"
                       v-show="operateStatusVal !== 2"
@@ -271,10 +266,9 @@
                         :showUploadList="false"
                         :beforeUpload="beforeUpload"
                         @change="uploadPhoto"
-                        action = "http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
+                        action="http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
                       >
                         <a-button type="primary">上传照片</a-button>
-                        
                       </a-upload>
                       <a-button type="default" style="margin-left: 15px;" @click="clearImgUrl">清空</a-button>
                     </div>
@@ -577,413 +571,79 @@
                 </tr>
               </tbody>
             </table>
-            <div style="display:none" >{{ exitsVal }}</div>
+            <div style="display:none">{{ exitsVal }}</div>
           </div>
           <div class="otherInfo" v-show="operateStatusVal !== 1">
             <!-- 2-工作经历 -->
             <div id="workExperience" class="otherinfo">
               <p class="title">工作经历</p>
-              <a-table
-                v-show="operateStatusVal == 2"
-                :dataSource="workTableData"
-                :columns="workColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="workTableData"
-                  :columns="workColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'workExperience' , 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('workExperience', currentData=record)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'workExperience', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="workInitArr"  :loading="workTableLoading"></TableView>
               </div>
             </div>
             <!-- 3-教育经历 -->
             <div id="educationExperience" class="otherinfo">
               <p class="title">教育经历</p>
-              <a-table
-                v-show="operateStatusVal == 2"
-                :dataSource="educationTableData"
-                :columns="educationColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="educationTableData"
-                  :columns="educationColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'educationExperience' , 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('educationExperience', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'educationExperience' ,0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="eduInitArr" :loading="eduTableLoading"></TableView>
               </div>
             </div>
             <!-- 4-家庭情况 -->
             <div id="familySta" class="otherinfo">
               <p class="title">家庭情况</p>
-              <a-table
-                v-show="operateStatusVal == 2"
-                :dataSource="familyTableData"
-                :columns="familyColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="familyTableData"
-                  :columns="familyColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'familySta' , 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('familySta', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'familySta' ,0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="familyInitArr" :loading="familyTableLoading"></TableView>
               </div>
             </div>
             <!-- 5-奖惩历史 -->
             <div id="rewordsHistory" class="otherinfo">
               <p class="title">奖惩历史</p>
-              <a-table
-                v-show="operateStatusVal == 2"
-                :dataSource="historyTableData"
-                :columns="historyColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="historyTableData"
-                  :columns="historyColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'rewordsHistory', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('rewordsHistory', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'rewordsHistory', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="rewordInitArr" :loading="rewordTableLoading"></TableView>
               </div>
             </div>
             <!-- 6-语言能力 -->
             <div id="languageAbility" class="otherinfo">
               <p class="title">语言能力</p>
-              <a-table
-                v-show="operateStatusVal == 2"
-                :dataSource="languageTableData"
-                :columns="languageColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="languageTableData"
-                  :columns="languageColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'languageAbility', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('languageAbility', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'languageAbility', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="languageInitArr" :loading="languageTableLoading"></TableView>
               </div>
             </div>
             <!-- 7-培训经历 -->
             <div id="trainExperience" class="otherinfo">
               <p class="title">人员培训信息</p>
-              <a-table
-                v-show="operateStatusVal === 2"
-                :dataSource="trainTableData"
-                :columns="trainColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="trainTableData"
-                  :columns="trainColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'trainExperience', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('trainExperience', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'trainExperience', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="trainerInitArr" :loading="trainerTableLoading"></TableView>
               </div>
             </div>
             <!-- 8-专业与职业技术 -->
             <div id="professional" class="otherinfo">
               <p class="title">专业与职业技术</p>
-              <a-table
-                v-show="operateStatusVal === 2"
-                :dataSource="professionalTableData"
-                :columns="professionalColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="professionalTableData"
-                  :columns="professionalColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'professional', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('professional', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'professional', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="professionalInitArr" :loading="professionalTableLoading"></TableView>
               </div>
             </div>
             <!-- 9-委托单位存档数据 -->
             <div id="delagateData" class="otherinfo">
               <p class="title">委托单位存档数据</p>
-              <a-table
-                v-show="operateStatusVal === 2"
-                :dataSource="delagateTableData"
-                :columns="delagateColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="delagateTableData"
-                  :columns="delagateColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'delagateData', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('delagateData', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'delagateData', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="delagateInitArr" :loading="delagateTableLoading"></TableView>
               </div>
             </div>
             <!-- 10-档案接转数据 -->
             <div id="archiveData" class="otherinfo">
               <p class="title">档案接转数据</p>
-              <a-table
-                v-show="operateStatusVal === 2"
-                :dataSource="archiveTableData"
-                :columns="archiveColumns"
-                :pagination="false"
-                bordered
-              ></a-table>
-              <div v-show="operateStatusVal !== 2">
-                <a-table
-                  :dataSource="archiveTableData"
-                  :columns="archiveColumnsEdit"
-                  :pagination="false"
-                  bordered
-                >
-                  <div slot="action" slot-scope="text, record">
-                    <a
-                      href="javascript:;"
-                      data-type="编辑"
-                      @click="personOtherInfoOperate(currentData=record, 'archiveData', 1)"
-                    >编辑</a>
-                    <a-popconfirm
-                      title="确定删除吗?"
-                      okText="确定"
-                      cancelText="取消"
-                      @confirm="editInOperateDelete('archiveData', currentData=record,)"
-                    >
-                      <a href="javascript:;" class="errorBtnColor">删除</a>
-                    </a-popconfirm>
-                  </div>
-                </a-table>
-                <a
-                  href="javascript:void(0);"
-                  class="primaryBtnColor add_info_btn"
-                  @click="personOtherInfoOperate(currentData={}, 'archiveData', 0)"
-                >
-                  <a-icon type="plus" style="color: #9b9797;font-size:24px;line-height: 50px;"/>
-                </a>
+              <div class="tableViewsCon">
+                <TableView :initArrData="archiveInitArr" :loading="archiveTableLoading"></TableView>
               </div>
             </div>
           </div>
         </div>
       </a-tab-pane>
       <a-tab-pane class="tabView" tab="人员档案目录" key="2" v-if="operateStatusVal == 2">
-        <DocDirectory :userId="currRowDataId" :ramdomKey='ramdomKey'></DocDirectory>
+        <DocDirectory :userId="currRowDataId" :ramdomKey="ramdomKey"></DocDirectory>
       </a-tab-pane>
     </a-tabs>
-   
-    <!-- 当为编辑状态时：添加或编辑操作 -->
-    <div class="addModal">
-      <a-modal
-        centered
-        :title="operateStatus == 0 ? '添加': '编辑'"
-        :visible="visible"
-        :confirmLoading="confirmLoading"
-        :width="1600"
-        @cancel="handleCancel"
-        style="height:85%;overflow: hidden;"
-      >
-        <TableFromSearch :formDataArr="personInfoForm" ref="infoForm"></TableFromSearch>
-        <template slot="footer">
-          <a-button key="cancel" @click="handleCancel">取消</a-button>
-          <a-button key="submit" type="primary" @click="handleOk">提交</a-button>
-        </template>
-      </a-modal>
-    </div>
   </div>
 </template>
 <script>
@@ -993,8 +653,7 @@ import DocDirectory from "./docDirectory";
 import regs from "../utils/regexp.js";
 import utils from "../utils/util.js";
 import TableFromSearch from "../components/tableFormSearch";
-import { format } from 'path';
-import axios from 'axios'
+import TableView from "@/components/tableView";
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -1002,21 +661,27 @@ function getBase64(img, callback) {
 }
 export default {
   name: "InfoOperate",
-  props: ["operateStatusVal", "currRowDataId", "addSelectTreeNode",'ramdomKey'],
+  props: [
+    "operateStatusVal",
+    "currRowDataId",
+    "addSelectTreeNode",
+    "ramdomKey"
+  ],
   components: {
     DocDirectory,
-    TableFromSearch
+    TableFromSearch,
+    TableView
   },
-  created() {
-    this.getBasicInfoOther(); //获取基本信息里面selct对应得数组
-  },
+  created() {},
   mounted() {
     if (this.operateStatusVal !== 1) {
       this.getBasicInfo(this.currRowDataId); //人员基本信息
       this.getPersonOtherInfo(this.currRowDataId);
+      this.getColumnDataFun(this.operateStatusVal);   //根据当前操作值--替换表头
     } else {
       this.addTreeNode = this.addSelectTreeNode;
     }
+    
 
     let scrollListener = document.getElementsByClassName("right_container");
     window.addEventListener(
@@ -1141,966 +806,866 @@ export default {
       saveRecordNatureArr: [], //存档性质
       inReasonArr: [], //转入原因
       outReasonArr: [], //传出原因
-      workColumns: [
-        //工作经历--列
-        { title: "所在工作单位名称", dataIndex: "a0157a", key: "a0157a" },
-        { title: "工作起始日期", dataIndex: "a4801", key: "a4801" },
-        { title: "工作终止日期", dataIndex: "a4804", key: "a4804" },
-        { title: "从事工作或担任职务", dataIndex: "a0215a", key: "a0215a" },
-        { title: "单位证明人", dataIndex: "a0202d", key: "a0202d" }
-      ],
-      workColumnsEdit: [
-        //工作经历:编辑/添加--列
-        {
-          title: "所在工作单位名称",
-          dataIndex: "a0157a",
-          key: "a0157a"
-        },
-        {
-          title: "工作起始日期",
-          dataIndex: "a4801",
-          key: "a4801"
-        },
-        {
-          title: "工作终止日期",
-          dataIndex: "a4804",
-          key: "a4804"
-        },
-        {
-          title: "从事工作或担任职务",
-          dataIndex: "a0215a",
-          key: "a0215a"
-        },
-        {
-          title: "单位证明人",
-          dataIndex: "a0202d",
-          key: "a0202d"
-        },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      workTableData: [], //工作经历table
-      educationColumns: [
-        //教育经历-列
-        { title: "所在学校", dataIndex: "a0814", key: "a0814" },
-        { title: "教育类别", dataIndex: "a0837", key: "a0837" },
-        { title: "学习形式", dataIndex: "a0838", key: "a0838" },
-        {
-          title: "所学专业名称",
-          dataIndex: "a0824",
-          key: "a0824"
-        },
-        { title: "所获学位", dataIndex: "a0901a", key: "a0901a" },
-        {
-          title: "所获学历",
-          dataIndex: "a0801a",
-          key: "a0801a"
-        },
-        { title: "学习起始日期", dataIndex: "a0804", key: "a0804" },
-        { title: "学习终止日期", dataIndex: "a0807", key: "a0807" }
-      ],
-      educationColumnsEdit: [
-        //教育经历--编辑列
-        { title: "所在学校", dataIndex: "a0814", key: "a0814" },
-        { title: "教育类别", dataIndex: "a0837", key: "a0837" },
-        { title: "学习形式", dataIndex: "a0838", key: "a0838" },
-        {
-          title: "所学专业名称",
-          dataIndex: "a0824",
-          key: "a0824"
-        },
-        { title: "所获学位", dataIndex: "a0901a", key: "a0901a" },
-        {
-          title: "所获学历",
-          dataIndex: "a0801a",
-          key: "a0801a"
-        },
-        { title: "学习起始日期", dataIndex: "a0804", key: "a0804" },
-        { title: "学习终止日期", dataIndex: "a0807", key: "a0807" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      educationTableData: [], //教育经历--tableDate
-      familyColumns: [
-        //家庭情况--列
-        { title: "姓名", dataIndex: "a3601", key: "a3601" },
-        { title: "与本人关系", dataIndex: "a3604a", key: "a3604a" },
-        { title: "单位及职务", dataIndex: "a3611", key: "a3611" }
-      ],
-      familyColumnsEdit: [
-        //家庭情况编辑--列
-        { title: "姓名", dataIndex: "a3601", key: "a3601" },
-        { title: "与本人关系", dataIndex: "a3604a", key: "a3604a" },
-        { title: "单位及职务", dataIndex: "a3611", key: "a3611" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      familyTableData: [], //家庭情况--tableData
-      historyColumns: [
-        //奖惩历史--列
-        { title: "奖励名称", dataIndex: "a14Z204a", key: "a14Z204a" },
-        { title: "奖励批准日期", dataIndex: "a14Z211", key: "a14Z211" },
-        { title: "奖励批准单位名称", dataIndex: "a14Z214a", key: "a14Z214a" },
-        { title: "处分名称", dataIndex: "a14Z304a", key: "a14Z304a" },
-        { title: "处分批准日期", dataIndex: "a14Z307", key: "a14Z307" },
-        { title: "处分批准单位名称", dataIndex: "a14Z311a", key: "a14Z311a" }
-      ],
-      historyColumnsEdit: [
-        //奖惩历史--编辑列
-        { title: "奖励名称", dataIndex: "a14Z204a", key: "a14Z204a" },
-        { title: "奖励批准日期", dataIndex: "a14Z211", key: "a14Z211" },
-        { title: "奖励批准单位名称", dataIndex: "a14Z214a", key: "a14Z214a" },
-        { title: "处分名称", dataIndex: "a14Z304a", key: "a14Z304a" },
-        { title: "处分批准日期", dataIndex: "a14Z307", key: "a14Z307" },
-        { title: "处分批准单位名称", dataIndex: "a14Z311a", key: "a14Z311a" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      historyTableData: [], //奖惩历史--tableData
-      languageColumns: [
-        //语言能力--列
-        { title: "语种", dataIndex: "dc010701", key: "dc010701" },
-        { title: "熟练程度", dataIndex: "dc010702", key: "dc010702" },
-        { title: "备注", dataIndex: "remark", key: "remark" }
-      ],
-      languageColumnsEdit: [
-        //语言能力--列
-        { title: "语种", dataIndex: "dc010701", key: "dc010701" },
-        { title: "熟练程度", dataIndex: "dc010702", key: "dc010702" },
-        { title: "备注", dataIndex: "remark", key: "remark" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      languageTableData: [], //语言能力--tableData
-      trainColumns: [
-        //培训经历--列
-        { title: "培训班名称", dataIndex: "a1131", key: "a1131" },
-        { title: "培训起始日期", dataIndex: "a1107", key: "a1107" },
-        { title: "培训终止日期", dataIndex: "a1111", key: "a1111" },
-        { title: "培训主办单位名称", dataIndex: "a1114A", key: "a1114A" }
-      ],
-      trainColumnsEdit: [
-        //培训经历--编辑列
-        { title: "培训班名称", dataIndex: "a1131", key: "a1131" },
-        { title: "培训起始日期", dataIndex: "a1107", key: "a1107" },
-        { title: "培训终止日期", dataIndex: "a1111", key: "a1111" },
-        { title: "培训主办单位名称", dataIndex: "a1114A", key: "a1114A" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      trainTableData: [], //培训经历--tabledate
-      professionalColumns: [
-        //专业与职业技术--列
-        { title: "职业(工种)资格名称", dataIndex: "a0601", key: "a0601" },
-        { title: "资格等级(技能人员等级)", dataIndex: "a0602", key: "a0602" },
-        { title: "专业技术职务名", dataIndex: "a0215a", key: "a0215a" },
-        { title: "专业技术职务级别", dataIndex: "a0215c", key: "a0215c" },
-        { title: "取得专技资格日期", dataIndex: "a0604", key: "a0604" },
-        { title: "职业(工种)资格日期", dataIndex: "a0603", key: "a0603" }
-      ],
-      professionalColumnsEdit: [
-        //专业与职业技术--编辑--列
-        { title: "职业(工种)资格名称", dataIndex: "a0601", key: "a0601" },
-        { title: "资格等级(技能人员等级)", dataIndex: "a0602", key: "a0602" },
-        { title: "专业技术职务名", dataIndex: "a0215a", key: "a0215a" },
-        { title: "专业技术职务级别", dataIndex: "a0215c", key: "a0215c" },
-        { title: "取得专技资格日期", dataIndex: "a0604", key: "a0604" },
-        { title: "职业(工种)资格日期", dataIndex: "a0603", key: "a0603" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      professionalTableData: [], //专业与职业技术--tableDate
-      delagateColumns: [
-        //委托单位存档数据--列
-        { title: "单位立户号", dataIndex: "b0102", key: "b0102" },
-        { title: "单位名称", dataIndex: "b0101", key: "b0101" },
-        { title: "组织机构代码", dataIndex: "b0114", key: "b0114" },
-        { title: "单位机构类型", dataIndex: "b0103", key: "b0103" },
-        { title: "单位所属行业", dataIndex: "b0134", key: "b0134" },
-        { title: "经济行业", dataIndex: "b0105", key: "b0105" }
-      ],
-      delagateColumnsEdit: [
-        //委托单位存档数据--编辑--列
-        { title: "单位立户号", dataIndex: "b0102", key: "b0102" },
-        { title: "单位名称", dataIndex: "b0101", key: "b0101" },
-        { title: "组织机构代码", dataIndex: "b0114", key: "b0114" },
-        { title: "单位机构类型", dataIndex: "b0103", key: "b0103" },
-        { title: "单位所属行业", dataIndex: "b0134", key: "b0134" },
-        { title: "经济行业", dataIndex: "b0105", key: "b0105" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      delagateTableData: [], //委托单位存档数据--tableData
-      archiveColumns: [
-        //档案接转数据--列
-        { title: "存档编号", dataIndex: "dc030001", key: "dc030001" },
-        {
-          title: "现档案管理机构名称",
-          dataIndex: "a3807a",
-          key: "a3807a"
-        },
-        { title: "转入日期", dataIndex: "a3801", key: "a3801" },
-        { title: "转入原因", dataIndex: "a3803", key: "a3803" }
-      ],
-      archiveColumnsEdit: [
-        //档案接转数据--编辑--列
-        { title: "存档编号", dataIndex: "dc030001", key: "dc030001" },
-        {
-          title: "现档案管理机构名称",
-          dataIndex: "a3807a",
-          key: "a3807a"
-        },
-        { title: "转入日期", dataIndex: "a3801", key: "a3801" },
-        { title: "转入原因", dataIndex: "a3803", key: "a3803" },
-        {
-          title: "操作",
-          key: "action",
-          scopedSlots: { customRender: "action" }
-        }
-      ],
-      archiveTableData: [], //档案接转数据--tableData
+
+      workInitArr:null,  //工作经历表头
+      workTableLoading: false,
+      workViewInitArr:{
+        //浏览--工作经历
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr:[
+          { title: "所在工作单位名称", dataIndex: "a0157a", key: "a0157a", width: 350 },
+          { title: "从事工作或担任职务", dataIndex: "a0215a", key: "a0215a", width: 300 },
+          { title: "工作起始日期", dataIndex: "a4801", key: "a4801", width: 200 },
+          { title: "工作终止日期", dataIndex: "a4804", key: "a4804", width: 200 },
+          { title: "单位证明人", dataIndex: "a0202d", key: "a0202d" }
+        ],
+        tabledataArr:[]
+      },
+      workEditInitArr: {
+        //编辑--工作经历
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          "a0157a_editInput",
+          "a4801_editDateInput",
+          "a4804_editDateInput",
+          "a0215a_editInput",
+          "a0215a_editInput",
+          "a0202d_editInput",
+          "所在工作单位名称_requireTitle",
+          "工作起始日期_requireTitle",
+          "工作终止日期_requireTitle",
+          "从事工作或担任职务_requireTitle"
+        ],
+        columnsArr: [
+          {
+            dataIndex: "a0157a",
+            key: "a0157a",
+            width: 350,
+            slots: { title: "所在工作单位名称_requireTitle" },
+            scopedSlots: { customRender: "a0157a_editInput" }
+          },
+          {
+            dataIndex: "a0215a",
+            key: "a0215a",
+            width: 300,
+            slots: { title: "从事工作或担任职务_requireTitle" },
+            scopedSlots: { customRender: "a0215a_editInput" }
+          },
+          {
+            dataIndex: "a4801",
+            key: "a4801",
+            width: 200,
+            slots: { title: "工作起始日期_requireTitle" },
+            scopedSlots: { customRender: "a4801_editDateInput" },
+            dateFormat: "YYYY-MM-DD"
+          },
+          {
+            dataIndex: "a4804",
+            key: "a4804",
+            width: 250,
+            slots: { title: "工作终止日期_requireTitle" },
+            scopedSlots: { customRender: "a4804_editDateInput" },
+            dateFormat: "YYYY-MM-DD"
+          },
+          {
+            title: "单位证明人",
+            dataIndex: "a0202d",
+            key: "a0202d",
+            scopedSlots: { customRender: "a0202d_editInput" }
+          },
+          {
+            title: "操作",
+            key: "action",
+            fixed: "right",
+            width: 200,
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr: []
+      },
+
+      eduInitArr: null, //教育经历表头
+      eduTableLoading: false,
+      eduViewInitArr: {
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "所在学校", dataIndex: "a0814", key: "a0814", width: 300 },
+          { title: "教育类别", dataIndex: "a0837", key: "a0837", width: 150 },
+          { title: "学习形式", dataIndex: "a0838", key: "a0838", width: 150 },
+          {
+            title: "所学专业名称",
+            dataIndex: "a0824",
+            key: "a0824",
+            width: 200 
+          },
+          { title: "所获学位", dataIndex: "a0901a", key: "a0901a", width: 150  },
+          {
+            title: "所获学历",
+            dataIndex: "a0801a",
+            key: "a0801a",
+            width: 150 
+          },
+          { title: "学习起始日期", dataIndex: "a0804", key: "a0804", width: 150  },
+          { title: "学习终止日期", dataIndex: "a0807", key: "a0807" }
+        ],
+        tabledataArr:[]
+      },
+      eduEditInitArr: {
+        //编辑--教育经历--tableView
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          "a0814_editInput", 
+          'a0837_editSelectInput',
+          'a0838_editSelectInput',
+          'a0824_editSelectInput',
+          'a0901a_editSelectInput',
+          'a0801a_editSelectInput',
+          'a0804_editDateInput',
+          'a0807_editDateInput',
+          "所在学校_requireTitle",
+          '教育类别_requireTitle',
+          '学习形式_requireTitle',
+          '所学专业名称_requireTitle',
+          '所获学位_requireTitle',
+          '所获学历_requireTitle',
+          '学习起始日期_requireTitle',
+          '学习终止日期_requireTitle'
+        ],
+        columnsArr: [
+          {
+            dataIndex: "a0814",
+            key: "a0814",
+            width: 200,
+            slots: { title: "所在学校_requireTitle" },
+            scopedSlots: { customRender: "a0814_editInput" }
+          },
+          {
+            dataIndex: "a0837",
+            key: "a0837",
+            width: 150,
+            slots: { title: "教育类别_requireTitle" },
+            scopedSlots: { customRender: "a0837_editSelectInput" },
+            itemChildren: []
+          },
+          {
+            dataIndex: "a0838",
+            key: "a0838",
+            width: 150,
+            slots: { title: "学习形式_requireTitle" },
+            scopedSlots: { customRender: "a0838_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a0824",
+            key: "a0824",
+            width: 200,
+            slots: { title: "所学专业名称_requireTitle" },
+            scopedSlots: { customRender: "a0824_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a0901a",
+            key: "a0901a",
+            width: 200,
+            slots: { title: "所获学位_requireTitle" },
+            scopedSlots: { customRender: "a0901a_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a0801a",
+            key: "a0801a",
+            width: 200,
+            slots: { title: "所获学历_requireTitle" },
+            scopedSlots: { customRender: "a0801a_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a0804",
+            key: "a0804",
+            width: 200,
+            slots: { title: "学习起始日期_requireTitle" },
+            scopedSlots: { customRender: "a0804_editDateInput" },
+            dateFormat: "YYYY-MM-DD"
+          },
+          {
+            dataIndex: "a0807",
+            key: "a0807",
+            slots: { title: "学习终止日期_requireTitle" },
+            scopedSlots: { customRender: "a0807_editDateInput" },
+            dateFormat: "YYYY-MM-DD"
+          },
+          {
+            title: "操作",
+            key: "action",
+            fixed: "right",
+            width: 200,
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr: []
+      },
+
+      familyInitArr: null,  //家庭情况表头
+      familyTableLoading: false,
+      familyViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "姓名", dataIndex: "a3601", key: "a3601", width: 400 },
+          { title: "与本人关系", dataIndex: "a3604a", key: "a3604a", width: 400 },
+          { title: "单位及职务", dataIndex: "a3611", key: "a3611" }
+        ],
+        tabledataArr:[]
+      },
+      familyEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          'a3601_editInput',
+          'a3604a_editSelectInput',
+          'a3611_editInput',
+          '姓名_requireTitle',
+          '与本人关系_requireTitle'
+        ],
+        columnsArr: [
+          { 
+            dataIndex: "a3601", 
+            key: "a3601",
+            width:400,
+            slots: { title: "姓名_requireTitle" },
+            scopedSlots: { customRender: "a3601_editInput" }
+          },
+          { 
+            dataIndex: "a3604a", 
+            key: "a3604a",
+            width:400,
+            slots: { title: "与本人关系_requireTitle" },
+            scopedSlots: { customRender: "a3604a_editSelectInput" },
+            itemChildren: []
+          },
+          { 
+            title: "单位及职务", 
+            dataIndex: "a3611", 
+            key: "a3611",
+            scopedSlots: { customRender: "a3611_editInput" }
+          },
+          {
+            title: "操作",
+            key: "action",
+            width:150,
+            fixed:'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
+
+      rewordInitArr: null,  //奖惩历史
+      rewordTableLoading: false,
+      rewordViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "奖励名称", dataIndex: "a14Z204a", key: "a14Z204a", width: 200 },
+          { title: "奖励批准日期", dataIndex: "a14Z211", key: "a14Z211", width: 200 },
+          { title: "奖励批准单位名称", dataIndex: "a14Z214a", key: "a14Z214a", width: 300 },
+          { title: "处分名称", dataIndex: "a14Z304a", key: "a14Z304a", width: 200 },
+          { title: "处分批准日期", dataIndex: "a14Z307", key: "a14Z307", width: 200 },
+          { title: "处分批准单位名称", dataIndex: "a14Z311a", key: "a14Z311a" }
+        ],
+        tabledataArr:[]
+      },
+      rewordEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          'a14Z204a_editSelectInput',
+          'a14Z211_editDateInput',
+          'a14Z214a_editInput',
+          'a14Z304a_editSelectInput',
+          'a14Z307_editDateInput',
+          'a14Z311a_editInput'
+        ],
+        columnsArr:[
+          { 
+            title: "奖励名称", 
+            dataIndex: "a14Z204a", 
+            key: "a14Z204a",
+            width: 300,
+            scopedSlots: {customRender: "a14Z204a_editSelectInput" },
+            itemChildren:[]
+          },
+          { 
+            title: "奖励批准日期", 
+            dataIndex: "a14Z211", 
+            key: "a14Z211",
+            width: 200,
+            scopedSlots: { customRender: "a14Z211_editDateInput" } 
+          },
+          { 
+            title: "奖励批准单位名称",
+            dataIndex: "a14Z214a", 
+            key: "a14Z214a",
+            width: 250,
+            scopedSlots: { customRender: "a14Z214a_editInput" } 
+          },
+          { 
+            title: "处分名称", 
+            dataIndex: "a14Z304a", 
+            key: "a14Z304a",
+            width: 300,
+            scopedSlots: { customRender: "a14Z304a_editSelectInput" },
+            itemChildren:[]  
+          },
+          { 
+            title: "处分批准日期", 
+            dataIndex: "a14Z307", 
+            key: "a14Z307",
+            width: 200,
+            scopedSlots: { customRender: "a14Z307_editDateInput" }  
+          },
+          { 
+            title: "处分批准单位名称", 
+            dataIndex: "a14Z311a", 
+            key: "a14Z311a",
+            scopedSlots: { customRender: "a14Z311a_editInput" }  
+          },
+          {
+            title: "操作",
+            key: "action",
+            fixed: 'right',
+            width: 150,
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
+
+      languageInitArr:null,  //语言能力
+      languageTableLoading: false,
+      languageViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "语种", dataIndex: "dc010701", key: "dc010701", width: 350 },
+          { title: "熟练程度", dataIndex: "dc010702", key: "dc010702", width: 350 },
+          { title: "备注", dataIndex: "remark", key: "remark" }
+        ],
+        tabledataArr:[]
+      },
+      languageEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          'dc010701_editSelectInput',
+          'dc010702_editSelectInput',
+          'remark_editInput',
+          '语种_requireTitle',
+          '熟练程度_requireTitle',
+          '备注_requireTitle'
+        ],
+        columnsArr:[
+          {  
+            dataIndex: "dc010701", 
+            key: "dc010701",
+            width: 300,
+            slots: { title: "语种_requireTitle" },
+            scopedSlots: {customRender: "dc010701_editSelectInput" },
+            itemChildren:[]
+          },
+          {  
+            dataIndex: "dc010702", 
+            key: "dc010702",
+            width: 300,
+            slots: { title: "熟练程度_requireTitle" },
+            scopedSlots: {customRender: "dc010702_editSelectInput" },
+            itemChildren:[] 
+          },
+          {  
+            dataIndex: "remark", 
+            key: "remark",
+            slots: { title: "备注_requireTitle" },
+            scopedSlots: { customRender: "remark_editInput" }  
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150,
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
+
+      trainerInitArr: null, //培训经历
+      trainerTableLoading: false,
+      trainerViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "培训班名称", dataIndex: "a1131", key: "a1131", width: 400 },
+          { title: "培训起始日期", dataIndex: "a1107", key: "a1107", width: 300 },
+          { title: "培训终止日期", dataIndex: "a1111", key: "a1111", width: 300 },
+          { title: "培训主办单位名称", dataIndex: "a1114A", key: "a1114A" }
+        ],
+        tabledataArr:[]
+      },
+      trainerEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol:[
+          'a1131_editInput',
+          'a1107_editDateInput',
+          'a1111_editDateInput',
+          'a1114A_editInput',
+          '培训班名称_requireTitle',
+          '培训主办单位名称_requireTitle'
+        ],
+        columnsArr:[
+          {  
+            dataIndex: "a1131", 
+            key: "a1131",
+            width: 400,
+            slots: { title: "培训班名称_requireTitle" },
+            scopedSlots: { customRender: "a1131_editInput" }  
+          },
+          { 
+            title: "培训起始日期", 
+            dataIndex: "a1107", 
+            key: "a1107",
+            width: 300,
+            scopedSlots: { customRender: "a1107_editDateInput" } 
+          },
+          { 
+            title: "培训终止日期", 
+            dataIndex: "a1111", 
+            key: "a1111",
+            width: 300,
+            scopedSlots: { customRender: "a1111_editDateInput" }  
+          },
+          { 
+            title: "培训主办单位名称", 
+            dataIndex: "a1114A", 
+            key: "a1114A",
+            slots: { title: "培训主办单位名称_requireTitle" },
+            scopedSlots: { customRender: "a1114A_editInput" }   
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150,
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr: []
+      },
+
+      professionalInitArr: null,  //专业与职业技术
+      professionalTableLoading: false,
+      professionalViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "职业(工种)资格名称", dataIndex: "a0601", key: "a0601", width: 300 },
+          { title: "资格等级(技能人员等级)", dataIndex: "a0602", key: "a0602", width: 300 },
+          { title: "专业技术职务名", dataIndex: "a0215a", key: "a0215a", width: 300 },
+          { title: "专业技术职务级别", dataIndex: "a0215c", key: "a0215c", width: 300 },
+          { title: "取得专技资格日期", dataIndex: "a0604", key: "a0604", width: 200 },
+          { title: "职业(工种)资格日期", dataIndex: "a0603", key: "a0603" }
+        ],
+        tabledataArr:[]
+      },
+      professionalEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          'a0601_editSelectInput',
+          'a0602_editSelectInput',
+          'a0215a_editSelectInput',
+          'a0215c_editSelectInput',
+          'a0604_editDateInput',
+          'a0603_editDateInput'
+        ],
+        columnsArr: [
+          { 
+            title: "职业(工种)资格名称", 
+            dataIndex: "a0601", 
+            key: "a0601",
+            width: 250,
+            scopedSlots: {customRender: "a0601_editSelectInput" },
+            itemChildren:[]
+          },
+          { 
+            title: "资格等级(技能人员等级)", 
+            dataIndex: "a0602",
+            key: "a0602",
+            width: 250,
+            scopedSlots: {customRender: "a0602_editSelectInput" },
+            itemChildren:[] 
+          },
+          { 
+            title: "专业技术职务名", 
+            dataIndex: "a0215a", 
+            key: "a0215a",
+            width: 250,
+            scopedSlots: {customRender: "a0215a_editSelectInput" },
+            itemChildren:[] 
+          },
+          { 
+            title: "专业技术职务级别", 
+            dataIndex: "a0215c", 
+            key: "a0215c",
+            width: 250,
+            scopedSlots: {customRender: "a0215c_editSelectInput" },
+            itemChildren:[] 
+          },
+          { 
+            title: "取得专技资格日期", 
+            dataIndex: "a0604", 
+            key: "a0604",
+            width: 200,
+            scopedSlots: { customRender: "a0604_editDateInput" }  
+          },
+          { 
+            title: "职业(工种)资格日期",
+            dataIndex: "a0603", 
+            key: "a0603",
+            scopedSlots: { customRender: "a0603_editDateInput" }  
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150, 
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
+
+      delagateInitArr: null, //委托单位存档数据
+      delagateTableLoading: false,
+      delagateViewInitArr: {
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "单位立户号", dataIndex: "b0102", key: "b0102", width: 300 },
+          { title: "单位名称", dataIndex: "b0101", key: "b0101", width: 300 },
+          { title: "组织机构代码", dataIndex: "b0114", key: "b0114", width: 300 },
+          { title: "单位机构类型", dataIndex: "b0103", key: "b0103", width: 200 },
+          { title: "单位所属行业", dataIndex: "b0134", key: "b0134", width: 200 },
+          { title: "经济行业", dataIndex: "b0105", key: "b0105" }
+        ],
+        tabledataArr:[]
+      },
+      delagateEditInitArr: {
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol: [
+          'b0102_editInput',
+          'b0101_editInput',
+          'b0114_editInput',
+          'b0103_editSelectInput',
+          'b0134_editSelectInput',
+          'b0105_editSelectInput',
+          'b0107_editAddressInput',
+          '委托存档单位名称_requireTitle',
+          '单位机构类型_requireTitle',
+          '单位所属行业_requireTitle',
+          '经济行业_requireTitle'
+        ],
+        columnsArr: [
+          { 
+            title: "委托存档单位编号", 
+            dataIndex: "b0102",
+            key: "b0102",
+            width: 200,
+            scopedSlots: { customRender: "b0102_editInput" }    
+          },
+          { 
+            dataIndex: "b0101", 
+            key: "b0101", 
+            width: 300,
+            slots: { title: "委托存档单位名称_requireTitle" },
+            scopedSlots: { customRender: "b0101_editInput" } 
+          },
+          { 
+            title: "委托存档单位组织机构代码", 
+            dataIndex: "b0114", 
+            key: "b0114",
+            width: 300,
+            scopedSlots: { customRender: "b0114_editInput" } 
+          },
+          {  
+            dataIndex: "b0103", 
+            key: "b0103",
+            width: 200,
+            slots: { title: "单位机构类型_requireTitle" },
+            scopedSlots: { customRender: "b0103_editSelectInput" },
+            itemChildren:[]
+          },
+          {  
+            dataIndex: "b0134", 
+            key: "b0134",
+            width: 200,
+            slots: { title: "单位所属行业_requireTitle" },
+            scopedSlots: { customRender: "b0134_editSelectInput" },
+            itemChildren:[]  
+          },
+          { 
+            dataIndex: "b0105", 
+            key: "b0105",
+            width: 200,
+            slots: { title: "经济行业_requireTitle" },
+            scopedSlots: { customRender: "b0105_editSelectInput" },
+            itemChildren:[]
+          },
+          { 
+            title: '行政区划',
+            dataIndex: "b0107", 
+            key: "b0107",
+            scopedSlots: { customRender: "b0107_editAddressInput" },
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150,
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr: []
+      },
+
+      archiveInitArr: null, //档案接转数据
+      archiveTableLoading: false,
+      archiveViewInitArr:{
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        columnsArr: [
+          { title: "存档编号", dataIndex: "dc030001", key: "dc030001", width: 300 },
+          {
+            title: "现档案管理机构名称",
+            dataIndex: "a3807a",
+            key: "a3807a",
+            width: 400
+          },
+          { title: "转入日期", dataIndex: "a3801", key: "a3801", width: 300 },
+          { title: "转入原因", dataIndex: "a3803", key: "a3803" }
+        ],
+        tabledataArr:[]
+      },
+      archiveEditInitArr:{
+        isEditAndAdd: true,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        formData: {},
+        editableCol:[
+          'b0114_editInput',
+          'a0002_editInput',
+          'dc030003_editSelectInput',
+          'dc030004_editSelectInput',
+          'b0114_editInput',
+          'a3801_editDateInput',
+          'a3803_editSelectInput',
+          'a3802_editInput',
+          'dc030009_editAddressInput',
+          'dc030010_editDateInput',
+          'dc030011_editSelectInput',
+          'dc030012_editInput',
+          'dc030013_editAddressInput',
+          '存档编号_requireTitle',
+          '存档状态_requireTitle',
+          '存档性质_requireTitle',
+          '现档案管理机构名称_requireTitle',
+          '转入原因_requireTitle',
+          '原存档单位名称_requireTitle',
+          '转出原因_requireTitle',
+          '转往档案单位名称_requireTitle'
+        ],
+        columnsArr:[
+          { 
+            dataIndex: "dc030001", 
+            key: "dc030001",
+            width: 250,
+            slots: { title: "存档编号_requireTitle" },
+            scopedSlots: { customRender: "b0114_editInput" } 
+          },
+          { 
+            title: '索引号',
+            dataIndex: "a0002", 
+            key: "a0002",
+            width: 150,
+            scopedSlots: { customRender: "a0002_editInput" } 
+          },
+          { 
+            dataIndex: "dc030003", 
+            key: "dc030003",
+            width: 200,
+            slots: { title: "存档状态_requireTitle" },
+            scopedSlots: { customRender: "dc030003_editSelectInput" },
+            itemChildren:[],
+          },
+          { 
+            dataIndex: "dc030004", 
+            key: "dc030004",
+            width: 200,
+            slots: { title: "存档性质_requireTitle" },
+            scopedSlots: { customRender: "dc030004_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a3807a",
+            key: "a3807a",
+            width: 300,
+            slots: { title: "现档案管理机构名称_requireTitle" },
+            scopedSlots: { customRender: "b0114_editInput" } 
+          },
+          { 
+            title: "转入日期", 
+            dataIndex: "a3801", 
+            key: "a3801",
+            width: 200,
+            scopedSlots: { customRender: "a3801_editDateInput" } 
+          },
+          {  
+            dataIndex: "a3803", 
+            key: "a3803",
+            width: 300,
+            slots: { title: "转入原因_requireTitle" },
+            scopedSlots: { customRender: "a3803_editSelectInput" },
+            itemChildren:[]  
+          },
+          {
+            dataIndex: "a3802",
+            key: "a3802",
+            width: 300,
+            slots: { title: "原存档单位名称_requireTitle" },
+            scopedSlots: { customRender: "a3802_editInput" } 
+          },
+          { 
+            title: '原存档单位行政区划',
+            dataIndex: "dc030009", 
+            key: "dc030009",
+            width: 350,
+            scopedSlots: { customRender: "dc030009_editAddressInput" },
+          },
+          { 
+            title: "转出日期", 
+            dataIndex: "dc030010", 
+            key: "dc030010",
+            width: 200,
+            scopedSlots: { customRender: "dc030010_editDateInput" } 
+          },
+          {  
+            dataIndex: "dc030011", 
+            key: "dc030011",
+            width: 300,
+            slots: { title: "转出原因_requireTitle" },
+            scopedSlots: { customRender: "dc030011_editSelectInput" },
+            itemChildren:[]  
+          },
+          {
+            dataIndex: "dc030012",
+            key: "dc030012",
+            width: 300,
+            slots: { title: "转往档案单位名称_requireTitle" },
+            scopedSlots: { customRender: "dc030012_editInput" } 
+          },
+          { 
+            title: '转往档案单位行政区划',
+            dataIndex: "dc030013", 
+            key: "dc030013",
+            scopedSlots: { customRender: "dc030013_editAddressInput" },
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150,
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
+      
+      
       imgUrl: "", //照片地址
       statusVal: null, //人才信息总库页面：操作状态： 1-添加， 2-浏览， 3-编辑
       birthday: moment(new Date(), "YYYY-MM-DD"), //出生日期
       graduateDate: moment(new Date(), "YYYY-MM-DD"), //最高学历毕业日期
       workDate: moment(new Date(), "YYYY-MM-DD"), //参加工作年月
       addTreeNode: "", //当为添加操作时，选择的treeNode值
-      visible: false, //编辑/添加状态时： 模态框默认不可见
-      confirmLoading: false, //编辑/添加状态时： 模态框确认按钮加载：默认不加载
-      operateStatus: null, //编辑/添加状态时： 添加或编辑状态
-      personInfoForm: {}, //tableformSearch默认值
-      currOperatePersonInfo: "", //添加或编辑状态时： 针对具体某一个信息进行添加或编辑
-      currentData: {}, //编辑状态时： 编辑信息：当前数据
-      familyStaForm: {
-        //工作经历：tableformSearch
-        formInputs: [
-          {
-            title: "家庭成员姓名",
-            type: "text",
-            required: true,
-            placeholder: "请输入家庭成员姓名",
-            key: "a3601",
-            name: "a3601",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "与该人关系",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择与该人关系",
-            key: "a3604a_Code",
-            name: "a3604a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "工作单位及职务 ",
-            type: "text",
-            required: false,
-            placeholder: "请输入工作单位及职务",
-            key: "a3611",
-            name: "a3611",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          }
-        ]
-      },
-      workForm: {
-        //工作经历--tableFormSearch
-        formInputs: [
-          {
-            title: "所在工作单位名称",
-            type: "text",
-            required: true,
-            placeholder: "请输入所在工作单位名称",
-            key: "a0157a",
-            name: "a0157a",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "工作起始日期",
-            otherType: "date",
-            required: true,
-            placeholder: "请选择工作起始日期",
-            key: "a4801",
-            name: "a4801",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "工作终止日期",
-            otherType: "date",
-            required: true,
-            placeholder: "请选择工作终止日期",
-            key: "a4804",
-            name: "a4804",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "从事工作或担任职务",
-            type: "text",
-            required: true,
-            placeholder: "请输入从事工作或担任职务 ",
-            key: "a0215a",
-            name: "a0215a",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "单位证明人",
-            type: "text",
-            required: false,
-            placeholder: "请输入单位证明人",
-            key: "a0202d",
-            name: "a0202d",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          }
-        ]
-      },
-      educationForm: {
-        //教育经历--tableFormsearch
-        formInputs: [
-          {
-            title: "学校(单位)名称",
-            type: "text",
-            required: true,
-            placeholder: "请输入学校(单位)名称",
-            key: "a0814",
-            name: "a0814",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "学习起始日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择学习起始日期 ",
-            key: "a0804",
-            name: "a0804",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "学习终止日期",
-            otherType: "date",
-            required: true,
-            placeholder: "请选择工作终止日期",
-            key: "a0807",
-            name: "a0807",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "教育类别",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择教育类别",
-            key: "a0837_Code",
-            name: "a0837_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "所获学历",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择所获学历",
-            key: "a0801a_Code",
-            name: "a0801a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "所获学位 ",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择所获学位",
-            key: "a0901a_Code",
-            name: "a0901a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "所学专业",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择所学专业",
-            key: "a0824_Code",
-            name: "a0824_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "学习形式",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择学习形式",
-            key: "a0838_Code",
-            name: "a0838_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          }
-        ]
-      },
-      rewordHistoryForm: {
-        //奖惩历史---tableFormSearch
-        formInputs: [
-          {
-            title: "奖励名称",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择奖励名称",
-            key: "a14Z204a_Code",
-            name: "a14Z204a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "奖励批准日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择奖励批准日期",
-            key: "a14Z211",
-            name: "a14Z211",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "奖励批准单位名称",
-            type: "text",
-            required: false,
-            placeholder: "请输入奖励批准单位名称",
-            key: "a14Z214a",
-            name: "a14Z214a",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "处分名称",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择处分名称",
-            key: "a14Z304a_Code",
-            name: "a14Z304a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "处分批准日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择处分批准日期",
-            key: "a14Z307",
-            name: "a14Z307",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "处分批准单位名称",
-            type: "text",
-            required: false,
-            placeholder: "请输入处分批准单位名称",
-            key: "a14Z311a",
-            name: "a14Z311a",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          }
-        ]
-      },
-      languageForm: {
-        //语言能力---tableFormSearch
-        formInputs: [
-          {
-            title: "语种",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择语种",
-            key: "dc010701_Code",
-            name: "dc010701_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "语种熟练程度",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择语种熟练程度",
-            key: "dc010702_Code",
-            name: "dc010702_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "备注",
-            type: "text",
-            required: true,
-            placeholder: "请输入备注",
-            key: "remark",
-            name: "remark",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          }
-        ]
-      },
-      trainerForm: {
-        formInputs: [
-          {
-            title: "培训班名称",
-            type: "text",
-            required: true,
-            placeholder: "请输入培训班名称",
-            key: "a1131",
-            name: "a1131",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "培训起始日期 ",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择培训起始日期 ",
-            key: "a1107",
-            name: "a1107",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "培训终止日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择培训终止日期",
-            key: "a1111",
-            name: "a1111",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "培训主办单位名称 ",
-            type: "text",
-            required: true,
-            placeholder: "请输入培训主办单位名称 ",
-            key: "a1114A",
-            name: "a1114A",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          }
-        ]
-      },
-      professionalForm: {
-        formInputs: [
-          {
-            title: "专业技术职务名称",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择专业技术职务名称",
-            key: "a0215a_Code",
-            name: "a0215a_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "专业技术职务级别",
-            otherType: "select",
-            required: false,
-            placeholder: "请选择专业技术职务级别",
-            key: "a0215c_Code",
-            name: "a0215c_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "取得专技资格日期 ",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择取得专技资格日期",
-            key: "a0604",
-            name: "a0604",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "职业（工种）资格日期  ",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择职业（工种）资格日期 ",
-            key: "a0603",
-            name: "a0603",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "职业（工种）资格名称",
-            otherType: "searchSelect",
-            required: false,
-            placeholder: "请选择职业（工种）资格名称",
-            key: "a0601_Code",
-            name: "a0601_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "职业资格等级（技能人员等级）",
-            otherType: "select",
-            required: false,
-            placeholder: "请选择职业资格等级（技能人员等级）",
-            key: "a0602_Code",
-            name: "a0602_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          }
-        ]
-      },
-      delagateForm: {
-        formInputs: [
-          {
-            title: "委托存档单位编号 ",
-            type: "text",
-            required: false,
-            placeholder: "请输入委托存档单位编号 ",
-            key: "b0102",
-            name: "b0102",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "委托存档单位名称",
-            type: "text",
-            required: true,
-            placeholder: "请输入委托存档单位名称",
-            key: "b0101",
-            name: "b0101",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "单位机构类型",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择单位机构类型",
-            key: "b0103_Code",
-            name: "b0103_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "委托存档单位组织机构代码",
-            type: "text",
-            required: false,
-            placeholder: "请输入委托存档单位组织机构代码",
-            key: "b0114",
-            name: "b0114",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "单位所属行业",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择单位所属行业",
-            key: "b0134_Code",
-            name: "b0134_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "单位经济类型",
-            otherType: "searchSelect",
-            required: true,
-            placeholder: "请选择单位经济类型",
-            key: "b0105_Code",
-            name: "b0105_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "行政区划 ",
-            otherType: "addressSelect",
-            required: false,
-            placeholder: "请选择行政区划",
-            key: "b0107",
-            name: "b0107",
-            val: void 0,
-            children: [],
-            status: ""
-          }
-        ]
-      },
-      archiveForm: {
-        formInputs: [
-          {
-            title: "存档编号 ",
-            type: "text",
-            required: true,
-            placeholder: "请输入存档编号",
-            key: "dc030001",
-            name: "dc030001",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "索引号",
-            type: "text",
-            required: false,
-            placeholder: "请输入索引号",
-            key: "a0002",
-            name: "a0002",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "存档状态",
-            otherType: "select",
-            required: true,
-            placeholder: "请选择存档状态",
-            key: "dc030003",
-            name: "dc030003",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "存档性质",
-            otherType: "select",
-            required: true,
-            placeholder: "请选择存档性质",
-            key: "dc030004",
-            name: "dc030004",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "现档案管理机构名称",
-            type: "text",
-            required: true,
-            placeholder: "请输入现档案管理机构名称",
-            key: "a3807a",
-            name: "a3807a",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "转入日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择转入日期",
-            key: "a3801",
-            name: "a3801",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "转入原因",
-            otherType: "select",
-            required: true,
-            placeholder: "请选择转入原因",
-            key: "a3803_Code",
-            name: "a3803_Code",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "原存档单位名称 ",
-            type: "text",
-            required: true,
-            placeholder: "请输入原存档单位名称 ",
-            key: "a3802",
-            name: "a3802",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "原存档单位行政区划 ",
-            otherType: "addressSelect",
-            required: false,
-            placeholder: "请选择原存档单位行政区划",
-            key: "dc030009",
-            name: "dc030009",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "转出日期",
-            otherType: "date",
-            required: false,
-            placeholder: "请选择转出日期",
-            key: "dc030010",
-            name: "dc030010",
-            val: void 0,
-            postname: "",
-            status: ""
-          },
-          {
-            title: "转出原因",
-            otherType: "select",
-            required: true,
-            placeholder: "请选择转出原因",
-            key: "dc030011",
-            name: "dc030011",
-            val: void 0,
-            children: [],
-            status: ""
-          },
-          {
-            title: "转往档案单位名称  ",
-            type: "text",
-            required: true,
-            placeholder: "请输入转往档案单位名称",
-            key: "dc030012",
-            name: "dc030012",
-            val: void 0,
-            maxlength: 20,
-            minlength: 0,
-            reg: "",
-            tip: "",
-            status: ""
-          },
-          {
-            title: "转往档案单位行政区划  ",
-            otherType: "addressSelect",
-            required: false,
-            placeholder: "请选择转往档案单位行政区划 ",
-            key: "dc030013",
-            name: "dc030013",
-            val: void 0,
-            children: [],
-            status: ""
-          }
-        ]
-      },
       hjCode: [], //户籍行政区划
       birthdayCode: [], //出生地行政区划
-      workCode: [],//工作地行政区划
+      workCode: [] //工作地行政区划
     };
   },
   updated() {},
@@ -2108,377 +1673,150 @@ export default {
     address() {
       return address;
     },
-    exitsVal(){
-      if(this.personBasicInfo){
-            return  this.ifExist = Number(Boolean(this.personBasicInfo.a0101)) + 
-            Number(Boolean(this.personBasicInfo.a0184)) +
-            Number(Boolean(this.personBasicInfo.a0104)) +
-            Number(Boolean(this.personBasicInfo.a0117)) + 
-            Number(Boolean(this.personBasicInfo.a0107)) +
-            Number(Boolean(this.personBasicInfo.a0141)) +
-            Number(Boolean(this.personBasicInfo.a0914)) +
-            Number(Boolean(this.personBasicInfo.a0834)) +
-            Number(Boolean(this.personBasicInfo.a0888)) +
-            Number(Boolean(this.personBasicInfo.a0807)) +
-            Number(Boolean(this.personBasicInfo.a0824)) +
-            Number(Boolean(this.personBasicInfo.a0827)) +
-            Number(Boolean(this.personBasicInfo.a0202a)) +
-            Number(Boolean(this.personBasicInfo.a0202b)) +
-            Number(Boolean(this.personBasicInfo.a0202c)) +
-            Number(Boolean(this.personBasicInfo.a0202d)) +
-            Number(Boolean(this.personBasicInfo.a0211));
-      } else{
-        return this.ifExist = 0;
+    exitsVal() {
+      if (this.personBasicInfo) {
+        return (this.ifExist =
+          Number(Boolean(this.personBasicInfo.a0101)) +
+          Number(Boolean(this.personBasicInfo.a0184)) +
+          Number(Boolean(this.personBasicInfo.a0104)) +
+          Number(Boolean(this.personBasicInfo.a0117)) +
+          Number(Boolean(this.personBasicInfo.a0107)) +
+          Number(Boolean(this.personBasicInfo.a0141)) +
+          Number(Boolean(this.personBasicInfo.a0914)) +
+          Number(Boolean(this.personBasicInfo.a0834)) +
+          Number(Boolean(this.personBasicInfo.a0888)) +
+          Number(Boolean(this.personBasicInfo.a0807)) +
+          Number(Boolean(this.personBasicInfo.a0824)) +
+          Number(Boolean(this.personBasicInfo.a0827)) +
+          Number(Boolean(this.personBasicInfo.a0202a)) +
+          Number(Boolean(this.personBasicInfo.a0202b)) +
+          Number(Boolean(this.personBasicInfo.a0202c)) +
+          Number(Boolean(this.personBasicInfo.a0202d)) +
+          Number(Boolean(this.personBasicInfo.a0211)));
+      } else {
+        return (this.ifExist = 0);
+      }
+    },
+    directoryData: function() {
+      //字典数据
+      if (this.$store.getters.getDirectoryData) {
+        this.getBasicInfoOther(this.$store.getters.getDirectoryData);
+        return this.$store.getters.getDirectoryData;
+      } else {
+        return null;
       }
     }
   },
   methods: {
     moment,
-    getBasicInfoOther() {
-      /***
-       * 功能：基本信息选择项对应得value
+    getColumnDataFun(operateVal){
+      /**
+       * 功能：根据操作替换当前table--表头 
+       * 参数：operateVal -- 当前传过来的操作值； 1---添加；  2--浏览； 3---编辑
        */
-      //民族
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "Ethnic"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.nationalArr = res.data;
-          }
+      if(Number(operateVal) === 1 || Number(operateVal) === 3){
+        //添加、编辑tableview传值
+        //教育经历edit--表头
+        this.eduEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'a0837')  el.itemChildren = this.educationTypeArr;  //教育类别
+          if(el.key === 'a0838')  el.itemChildren = this.studyFormArr;      //学习形式
+          if(el.key === 'a0824')  el.itemChildren = this.professionalArr;   //所学专业名称
+          if(el.key === 'a0901a') el.itemChildren = this.degreeArr;         //所获学位
+          if(el.key === 'a0801a') el.itemChildren = this.educationArr;      //所获学历
         });
-      //健康状况
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "HealthState"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.healthArr = res.data;
-          }
+        //家庭情况edit--表头
+        this.familyEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'a3604a') el.itemChildren = this.relationshipArr;   //与本人关系
         });
-      //婚姻状况
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "MaritalStatus"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.marriageArr = res.data;
-          }
+
+        //奖惩历史--表头
+        this.rewordEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'a14Z204a') el.itemChildren = this.rewordNameArr;    //奖励名称
+          if(el.key === 'a14Z304a') el.itemChildren = this.punishmentNameArr;    //处分名称
         });
-      //政治面貌
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "PoliticalStatus"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.politicsStatusArr = res.data;
-          }
+
+        //语言能力--表头
+        this.languageEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'dc010701')  el.itemChildren = this.languageTypeArr;  //语言
+          if(el.key === 'dc010702') el.itemChildren = this.languageProficiencyArr;  //语言熟练程度
         });
-      //最高学历
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "EducationBackground"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.educationArr = res.data;
-          }
+
+        //专业与职业技术
+        this.professionalEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'a0601') el.itemChildren = this.positionArr ; //职业(工种)资格名称
+          if(el.key === 'a0602') el.itemChildren = this.occupationLevelArr;  //资格等级(技能人员等级)
+          if(el.key === 'a0215a') el.itemChildren = this.positionNameArr;  //专业技术职务名
+          if(el.key === 'a0215c') el.itemChildren = this.positionLevelArr; //专业技术职务级别
         });
-      //最高学位
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "Degree"
+
+        //委托单位存档数据
+        this.delagateEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'b0103')  el.itemChildren = this.workUnitArr; //单位机构类型
+          if(el.key === 'b0134')  el.itemChildren = this.industryArr;  //单位所属行业
+          if(el.key === 'b0105')  el.itemChildren = this.economicArr; //单位经济行业
         })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.degreeArr = res.data;
-          }
+    
+        //档案转接数据
+        this.archiveEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
+          if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
+          if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
+          if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
         });
-      //工作单位经济类型
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "EconomicType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.economicArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //工作单位所属行业
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "BelongIndustry"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.industryArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //工作单位机构类型
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "OrganizationType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.workUnitArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //最高学历所学专业类别
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "Major"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            this.professionalArr = res.data;
-          }
-        });
-      //工作职位(岗位)类型
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "PositionType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.positionArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //与本人关系
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "FamilyRelations"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.relationshipArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-            this.familyStaForm.formInputs[1].children = this.relationshipArr;
-          }
-        });
-      //学习形式
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "StudyForm"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.studyFormArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //教育类别
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "EducationType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.educationTypeArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //奖励名称
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "RewardName"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.rewordNameArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //处罚名称
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "PunishmentName"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.punishmentNameArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //语言
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "LanguageType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.languageTypeArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //语种熟练程度
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "ProficiencyValue"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.languageProficiencyArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //职业资格等级（技能人员等级）
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "Technique"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.occupationLevelArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //专业技术职务名称
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "TechnicalCode"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.positionNameArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //专业技术职务级别
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "Professorlevel"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.positionLevelArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //存档状态
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "IsInware"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.saveRecordStaArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //存档性质
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "ArchivingType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.saveRecordNatureArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //转入原因
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "ArchReceiveType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.inReasonArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
-      //转出原因
-      this.$http
-        .fetchGet("dictItem@getDictItemByDictCode.action", {
-          dictCode: "ArchTransferType"
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            res.data.forEach(element => {
-              this.outReasonArr.push({
-                itemCode: element.itemCode,
-                itemName: element.itemName
-              });
-            });
-          }
-        });
+
+        this.workInitArr = this.workEditInitArr;  //工作经历
+        this.eduInitArr = this.eduEditInitArr;  //教育经历
+        this.familyInitArr = this.familyEditInitArr;  //家庭情况
+        this.rewordInitArr = this.rewordEditInitArr;  //奖惩历史
+        this.languageInitArr = this.languageEditInitArr;  //语言能力
+        this.trainerInitArr = this.trainerEditInitArr;  //培训经历
+        this.professionalInitArr = this.professionalEditInitArr;  //专业与职业技术
+        this.delagateInitArr = this.delagateEditInitArr;  //委托单位存档数据
+        this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据
+      } else{
+        //浏览--tableview传值
+        this.workInitArr = this.workViewInitArr;  //工作经历
+        this.eduInitArr = this.eduViewInitArr;  //教育经历
+        this.familyInitArr = this.familyViewInitArr;  //家庭情况
+        this.rewordInitArr = this.rewordViewInitArr;  //奖惩历史
+        this.languageInitArr = this.languageViewInitArr;  //语言能力
+        this.trainerInitArr = this.trainerViewInitArr;  //培训经历
+        this.professionalInitArr = this.professionalViewInitArr;  //专业与职业技术
+        this.delagateInitArr = this.delagateViewInitArr;  //委托单位存档数据
+        this.archiveInitArr = this.archiveViewInitArr;  //档案转接数据
+      }
+    },
+
+    getBasicInfoOther(directoryData) {
+      /***
+       * 功能：字典数据：放到对应的下拉选择数据里；
+       * 参数：directoryData:当前字典数据
+       */
+      this.nationalArr = directoryData["ethnicList"]; //民族
+      this.healthArr = directoryData["healList"]; //健康状况
+      this.marriageArr = directoryData["maritalList"]; //婚姻状况
+      this.politicsStatusArr = directoryData["politicalList"]; //政治面貌
+      this.educationArr = directoryData["educationList"]; //最高学历
+      this.degreeArr = directoryData["degreeList"]; //最高学位
+      this.economicArr = directoryData["economicTypeList"]; //工作单位经济类型
+      this.industryArr = directoryData["belongIndustryList"]; //工作单位所属行业
+      this.workUnitArr = directoryData["organizationTypeList"]; //工作单位机构类型
+      this.professionalArr = directoryData["MajorList"]; //最高学历所学专业类别
+      this.positionArr = directoryData["positionTypeList"]; //工作职位(岗位)类型
+      this.relationshipArr = directoryData["familyRelationsList"]; //与本人关系
+      this.studyFormArr = directoryData["studyFormList"]; //学习形式
+      this.educationTypeArr = directoryData["educationTypeList"]; //教育类别
+      this.rewordNameArr = directoryData["rewardNameList"]; //奖励名称
+      this.punishmentNameArr = directoryData["punishmentNameList"]; //处罚名称
+      this.languageTypeArr = directoryData["languageTypeList"]; //语言
+      this.languageProficiencyArr = directoryData["proficiencyValueList"]; //语种熟练程度
+      this.occupationLevelArr = directoryData["techniqueList"]; //职业资格等级（技能人员等级）
+      this.positionNameArr = directoryData["technicalCodeList"]; //专业技术职务名称
+      this.positionLevelArr = directoryData["professorlevelList"]; //专业技术职务级别
+      this.saveRecordStaArr = directoryData["isInwareList"]; //存档状态
+      this.saveRecordNatureArr = directoryData["archiveTypeList"]; //存档性质
+      this.inReasonArr = directoryData["inComeReasonList"]; //转入原因
+      this.outReasonArr = directoryData["archTransferTypeList"]; //转出原因
     },
     getBasicInfo(currId) {
       /***
@@ -2512,8 +1850,10 @@ export default {
       this.getUnitSaveRecord(currId);
       this.getArchiveTableData(currId);
     },
+
     getWork(currId) {
       //获取工作经历
+      this.workTableLoading = true;
       this.$http
         .fetchGet("informationPool@findA02List.action", {
           a01Id: currId
@@ -2521,9 +1861,9 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.workTableData = [];
+            this.workInitArr.tabledataArr = [];
             currTempData.forEach(element => {
-              this.workTableData.push({
+              this.workInitArr.tabledataArr.push({
                 key: element.a02000,
                 a0157a: element.a0157a,
                 a4801: element.a4801,
@@ -2532,12 +1872,25 @@ export default {
                 a0202d: element.a0202d
               });
             });
+            if(this.operateStatusVal !== 2){
+              //编辑
+              this.workInitArr.tabledataArr.forEach(el => {
+                el.inEdit = false;
+              })
+            }
+          } else{
+            this.$message.error('抱歉，数据加载失败！请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.workTableLoading = false;
+        });
     },
     getEducation(currId) {
       //获取教育经历
+      this.eduTableLoading = true;
       this.$http
         .fetchGet("informationPool@findA08List.action", {
           a01Id: currId
@@ -2545,28 +1898,54 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.educationTableData = [];
-            currTempData.forEach(element => {
-              this.educationTableData.push({
-                key: element.a08000,
-                a0801a: element.a0801a,
-                a0801a_Code: element.a0801a_Code,
-                a0804: element.a0804,
-                a0807: element.a0807,
-                a0814: element.a0814,
-                a0824: element.a0824,
-                a0824_Code: element.a0824_Code,
-                a0837: element.a0837,
-                a0837_Code: element.a0837_Code,
-                a0838: element.a0838,
-                a0838_Code: element.a0838_Code,
-                a0901a: element.a0901a,
-                a0901a_Code: element.a0901a_Code
+            this.eduInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.eduInitArr.tabledataArr.push({
+                  key: element.a08000,
+                  a0801a: element.a0801a,
+                  a0801a_Code: element.a0801a_Code,
+                  a0804: element.a0804,
+                  a0807: element.a0807,
+                  a0814: element.a0814,
+                  a0824: element.a0824,
+                  a0824_Code: element.a0824_Code,
+                  a0837: element.a0837,
+                  a0837_Code: element.a0837_Code,
+                  a0838: element.a0838,
+                  a0838_Code: element.a0838_Code,
+                  a0901a: element.a0901a,
+                  a0901a_Code: element.a0901a_Code
+                });
               });
-            });
+            } else {
+              //编辑
+              currTempData.forEach(element => {
+                this.eduInitArr.tabledataArr.push({
+                  key: element.a08000,
+                  a0814: element.a0814,
+                  a0804: element.a0804,
+                  a0807: element.a0807,
+                  a0837: {code: element.a0837_Code, name: element.a0837},
+                  a0801a: {code: element.a0801a_Code, name: element.a0801a},
+                  a0824: {code: element.a0824_Code, name: element.a0824},
+                  a0838: {code: element.a0838_Code, name: element.a0838},
+                  a0901a: {code: element.a0901a_Code, name: element.a0901a},
+                  inEdit: false
+                })
+              });
+            }
+            
+          } else{
+            this.$message.error('抱歉，数据加载失败！请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.eduTableLoading = false;
+        });
     },
     getFamily(currId) {
       //获取家庭情况
@@ -2577,22 +1956,36 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.familyTableData = [];
-            currTempData.forEach(element => {
-              this.familyTableData.push({
-                key: element.a36000,
-                a3601: element.a3601,
-                a3604a: element.a3604a,
-                a3604a_Code: element.a3604a_Code,
-                a3611: element.a3611
+            this.familyInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.familyInitArr.tabledataArr.push({
+                  key: element.a36000,
+                  a3601: element.a3601,
+                  a3604a: element.a3604a,
+                  a3604a_Code: element.a3604a_Code,
+                  a3611: element.a3611
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.familyInitArr.tabledataArr.push({
+                  key: element.a36000,
+                  a3601: element.a3601,
+                  a3604a: {code: element.a3604a_Code, name: element.a3604a},
+                  a3611: element.a3611,
+                  inEdit: false
+                });
+              });
+            }
           }
         })
         .catch(err => {});
     },
     getAward(currId) {
       //获取奖惩情况
+      this.rewordTableLoading = true;
       this.$http
         .fetchGet("informationPool@findA14List.action", {
           a01Id: currId
@@ -2600,26 +1993,49 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.historyTableData = [];
-            currTempData.forEach(element => {
-              this.historyTableData.push({
-                key: element.a14000,
-                a14Z204a: element.a14Z204a,
-                a14Z204a_Code: element.a14Z204a_Code,
-                a14Z211: element.a14Z211,
-                a14Z214a: element.a14Z214a,
-                a14Z304a: element.a14Z304a,
-                a14Z304a_Code: element.a14Z304a_Code,
-                a14Z307: element.a14Z307,
-                a14Z311a: element.a14Z311a
+            this.rewordInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              currTempData.forEach(element => {
+                this.rewordInitArr.tabledataArr.push({
+                  key: element.a14000,
+                  a14Z204a: element.a14Z204a,
+                  a14Z204a_Code: element.a14Z204a_Code,
+                  a14Z211: element.a14Z211,
+                  a14Z214a: element.a14Z214a,
+                  a14Z304a: element.a14Z304a,
+                  a14Z304a_Code: element.a14Z304a_Code,
+                  a14Z307: element.a14Z307,
+                  a14Z311a: element.a14Z311a
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.rewordInitArr.tabledataArr.push({
+                  key: element.a14000,
+                  a14Z204a: {code: a14Z204a_Code, name: element.a14Z204a},
+                  a14Z211: element.a14Z211,
+                  a14Z214a: element.a14Z214a,
+                  a14Z304a: {code: a14Z304a_Code, name: element.a14Z304a},
+                  a14Z307: element.a14Z307,
+                  a14Z311a: element.a14Z311a,
+                  inEdit: false
+                });
+              });
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        })
+        .finally(end => {
+          this.rewordTableLoading = false;
+        });
     },
     getLanguage(currId) {
       //语言能力
+      this.languageTableLoading = true;
       this.$http
         .fetchGet("informationPool@findDC0107ByA01Id.action", {
           a01Id: currId
@@ -2627,23 +2043,43 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.languageTableData = [];
-            currTempData.forEach(element => {
-              this.languageTableData.push({
-                key: element.dc0107000,
-                dc010701: element.dc010701,
-                dc010701_Code: element.dc010701_Code,
-                dc010702: element.dc010702,
-                dc010702_Code: element.dc010702_Code,
-                remark: element.remark
+            this.languageInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.languageInitArr.tabledataArr.push({
+                  key: element.dc0107000,
+                  dc010701: element.dc010701,
+                  dc010701_Code: element.dc010701_Code,
+                  dc010702: element.dc010702,
+                  dc010702_Code: element.dc010702_Code,
+                  remark: element.remark
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.languageInitArr.tabledataArr.push({
+                  key: element.dc0107000,
+                  dc010701: {code: element.dc010701_Code, name: element.dc010701},
+                  dc010702: {code: element.dc010702_Code, name: element.dc010702},
+                  remark: element.remark,
+                  inEdit: false
+                });
+              });
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.languageTableLoading = false;
+        });
     },
     getTrainer(currId) {
       //获取培训经历
+      this.trainerTableLoading = true;
       this.$http
         .fetchGet("informationPool@findA11List.action", {
           a01Id: currId
@@ -2651,9 +2087,9 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.trainTableData = [];
+            this.trainerInitArr.tabledataArr = [];
             currTempData.forEach(element => {
-              this.trainTableData.push({
+              this.trainerInitArr.tabledataArr.push({
                 key: element.a11000,
                 a1107: element.a1107,
                 a1111: element.a1111,
@@ -2661,12 +2097,25 @@ export default {
                 a1131: element.a1131
               });
             });
+            if(this.operateStatusVal !== 2){
+              //编辑
+              this.trainerInitArr.tabledataArr.forEach(el => {
+                el.inEdit = false;
+              })
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.trainerTableLoading = false;
+        });
     },
     getProfessional(currId) {
       //获取专业与职业技术
+      this.professionalTableLoading = true;
       this.$http
         .fetchGet("informationPool@findA06List.action", {
           a01Id: currId
@@ -2674,27 +2123,50 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.professionalTableData = [];
-            currTempData.forEach(element => {
-              this.professionalTableData.push({
-                key: element.a06000,
-                a0215a: element.a0215a,
-                a0215a_Code: element.a0215a_Code,
-                a0215c: element.a0215c,
-                a0215c_Code: element.a0215c_Code,
-                a0601: element.a0601,
-                a0601_Code: element.a0601_Code,
-                a0603: element.a0603,
-                a0604: element.a0604,
-                a0602: element.a0602
+            this.professionalInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.professionalInitArr.tabledataArr.push({
+                  key: element.a06000,
+                  a0215a: element.a0215a,
+                  a0215a_Code: element.a0215a_Code,
+                  a0215c: element.a0215c,
+                  a0215c_Code: element.a0215c_Code,
+                  a0601: element.a0601,
+                  a0601_Code: element.a0601_Code,
+                  a0603: element.a0603,
+                  a0604: element.a0604,
+                  a0602: element.a0602
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.professionalInitArr.tabledataArr.push({
+                  key: element.a06000,
+                  a0215a: {code: element.a0215a_Code, name: element.a0215a},
+                  a0215c: {code: element.a0215c_Code, name: element.a0215c},
+                  a0601: {code: element.a0601_Code, name: element.a0601},
+                  a0602: {code: element.a0602_Code, name: element.a0602},    //缺code值
+                  a0603: element.a0603,
+                  a0604: element.a0604,
+                  inEdit: false
+                });
+              });
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.professionalTableLoading = false;
+        });
     },
     getUnitSaveRecord(currId) {
       //委托单位存档数据
+      this.delagateTableLoading = true;
       this.$http
         .fetchGet("informationPool@findB0A01ByA01Id.action", {
           a01Id: currId
@@ -2702,62 +2174,115 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             let currTempData = res.data;
-            this.delagateTableData = [];
-            currTempData.forEach(element => {
-              this.delagateTableData.push({
-                key: element.b01000,
-                b0101: element.b0101,
-                b0102: element.b0102,
-                b0103: element.b0103,
-                b0103_Code: element.b0103_Code,
-                b0105: element.b0105,
-                b0105_Code: element.b0105_Code,
-                b0114: element.b0114,
-                b0134: element.b0134,
-                b0134_Code: element.b0134_Code,
-                b0107: element.b0107
+            this.delagateInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.delagateInitArr.tabledataArr.push({
+                  key: element.b01000,
+                  b0101: element.b0101,
+                  b0102: element.b0102,
+                  b0103: element.b0103,
+                  b0103_Code: element.b0103_Code,
+                  b0105: element.b0105,
+                  b0105_Code: element.b0105_Code,
+                  b0114: element.b0114,
+                  b0134: element.b0134,
+                  b0134_Code: element.b0134_Code,
+                  b0107: element.b0107
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.delagateInitArr.tabledataArr.push({
+                  key: element.b01000,
+                  b0101: element.b0101,
+                  b0102: element.b0102,
+                  b0114: element.b0114,
+                  b0103: {code: element.b0103_Code, name: element.b0103},
+                  b0105: {code: element.b0105_Code, name: element.b0105},
+                  b0134: {code: element.b0134_Code, name: element.b0134},
+                  b0107: {code: element.b0107 ? element.b0107.split('.') : [], name: element.b0107}   //区划代码
+                });
+              });
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.delagateTableLoading = false;
+        });
     },
     getArchiveTableData(currId) {
       //档案转接数据
+      this.archiveTableLoading = false;
       this.$http
         .fetchGet("informationPool@findA38ByA01Id.action", {
           a01Id: currId
         })
         .then(res => {
           if (Number(res.code) === 0) {
-            this.archiveTableData = [];
-            res.data.forEach(element => {
-              this.archiveTableData.push({
-                key: element.dc38000,
-                dc030001: element.dc030001,
-                a3807a: element.a3807a,
-                a3801: element.a3801,
-                a3803: element.a3803,
-                a3803_Code: element.a3803_Code,
-                a0002: element.a0002,
-                dc030003: element.dc030003,
-                dc030004: element.dc030004,
-                a3802: element.a3802,
-                dc030009: element.dc030009,
-                dc030010: element.dc030010,
-                dc030011: element.dc030011,
-                dc030012: element.dc030012,
-                dc030013: element.dc030013
+            let currTempData = res.data;
+            this.archiveInitArr.tabledataArr = [];
+            if(this.operateStatusVal === 2){
+              //浏览
+              currTempData.forEach(element => {
+                this.archiveInitArr.tabledataArr.push({
+                  key: element.dc38000,
+                  dc030001: element.dc030001,
+                  a3807a: element.a3807a,
+                  a3801: element.a3801,
+                  a3803: element.a3803,
+                  a3803_Code: element.a3803_Code,
+                  a0002: element.a0002,
+                  dc030003: element.dc030003,
+                  dc030004: element.dc030004,
+                  a3802: element.a3802,
+                  dc030009: element.dc030009,
+                  dc030010: element.dc030010,
+                  dc030011: element.dc030011,
+                  dc030012: element.dc030012,
+                  dc030013: element.dc030013
+                });
               });
-            });
+            } else{
+              currTempData.forEach(element => {
+                this.archiveInitArr.tabledataArr.push({
+                  key: element.dc38000,
+                  dc030001: element.dc030001,
+                  a3807a: element.a3807a,
+                  a3801: element.a3801,
+                  a3803: {code: element.a3803_Code, name: element.a3803},
+                  a0002: element.a0002,
+                  dc030003: {code: element.dc030003, name: element.dc030003},      //缺code,name
+                  dc030004: {code: element.dc030004, name: element.dc030004},      //缺code,name
+                  a3802: element.a3802,
+                  dc030009: {code: element.dc030009 ? element.dc030009.split('.') : [], name: element.dc030009},      //行政区划区划
+                  dc030010: element.dc030010,
+                  dc030011: {code: element.dc030011, name: element.dc030011},      //缺code,name
+                  dc030012: element.dc030012,
+                  dc030013: {code: element.dc030013 ? element.dc030013.split('.') : [], name: element.dc030013}       //行政区划区划
+                });
+              });
+            }
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.archiveTableLoading = false;
+        });
     },
 
     conVersionData(keyVal, data) {
       /***
-       * 功能：根据当前的属性值，查找对应的数组，判断匹配的data（拿到的itemCode）返回value
+       * 功能：浏览页面:根据当前的属性值itemCode，查找对应的数组，判断匹配的data（拿到的itemCode）返回value（itemName）
+       * 参数：keyVal: 当前在哪个数组里查找；data:当前itemCode
        */
       let tempData = [];
       let tempName = "";
@@ -2806,12 +2331,6 @@ export default {
       }
       return tempName;
     },
-    nationalChange(value) {
-      console.log(`selected ${value}`);
-    },
-    genderChange(e) {
-      console.log("性别:", e.target.value);
-    },
     birthdayChange(date, dateString) {
       //出生日期修改
       for (let key in this.personBasicInfo) {
@@ -2838,7 +2357,6 @@ export default {
     },
     hujiCodeChange(value) {
       //户籍行政区划
-      console.log(value);
       this.personBasicInfo["a0111d"] = value.join(".");
     },
     birthdayCodeChange(value) {
@@ -2853,9 +2371,10 @@ export default {
       //上传照片
       if (info.file.status === "done") {
         console.log(info);
-        let currResImgUrl = info.fileList, len = info.fileList.length;
+        let currResImgUrl = info.fileList,
+          len = info.fileList.length;
         this.personBasicInfo.imgPath = currResImgUrl[len - 1].response;
-        
+
         getBase64(info.file.originFileObj, imgUrl => {
           this.imgUrl = imgUrl;
         });
@@ -2863,7 +2382,7 @@ export default {
     },
     beforeUpload(file) {
       //上传照片前--照片格式校验
-      
+
       const isJPG = file.type === "image/jpeg";
       if (!isJPG) {
         this.$message.error("请上传JPEG格式!");
@@ -2943,7 +2462,7 @@ export default {
         this.$message.error("必填项不能为空");
         isCloseModel = false;
       }
-      return  isCloseModel;
+      return isCloseModel;
     },
     anchorClick(anchorId, indexVal) {
       //左侧锚点点击
@@ -2974,756 +2493,7 @@ export default {
       });
       this.currClickAnchor = tempAnchor;
     },
-    //从这里开始时模态框里的操作
-    handleCancel() {
-      /***
-       * 功能：模态框取消操作
-       */
-      this.visible = false;
-    },
-    personOtherInfoOperate(data, curr, statusVal) {
-      /***
-       * 功能：通过操作状态和当前行数据，返回传给子组件tableFormSearch的值；
-       * 参数：data:当前行数据； curr:当前信息； statusVal：当前操作状态
-       */
-      this.operateStatus = statusVal;
-      this.currOperatePersonInfo = curr;
-      this.visible = true;
-      let initData = {};
-      if (curr === "familySta") {
-        if (statusVal === 0) {
-          initData = {
-            a3601: "",
-            a3604a: "",
-            a3611: "",
-            a3604a_Code: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.familyStaForm
-        );
-      } else if (curr === "workExperience") {
-        if (statusVal === 0) {
-          //添加
-          initData = {
-            a0157a: "",
-            a0202d: "",
-            a0215a: "",
-            a4801: "",
-            a4804: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(initData, this.workForm);
-      } else if (curr === "educationExperience") {
-        this.educationForm.formInputs.forEach(item => {
-          if (item.key === "a0837_Code") {
-            //教育类别
-            item.children = this.educationTypeArr;
-          } else if (item.key === "a0801a_Code") {
-            //所获学历
-            item.children = this.educationArr;
-          } else if (item.key === "a0901a_Code") {
-            //所获学位
-            item.children = this.degreeArr;
-          } else if (item.key === "a0824_Code") {
-            //最高学历所学专业
-            item.children = this.professionalArr;
-          } else if (item.key === "a0838_Code") {
-            //学习形式
-            item.children = this.studyFormArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            a0801a: "",
-            a0801a_Code: "",
-            a0804: "",
-            a0807: "",
-            a0814: "",
-            a0824: "",
-            a0824_Code: "",
-            a0837: "",
-            a0837_Code: "",
-            a0838: "",
-            a0838_Code: "",
-            a0901a: "",
-            a0901a_Code: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        console.log(initData);
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.educationForm
-        );
-      } else if (curr === "rewordsHistory") {
-        this.rewordHistoryForm.formInputs.forEach(item => {
-          if (item.key === "a14Z204a_Code") {
-            item.children = this.rewordNameArr;
-          } else if (item.key === "a14Z304a_Code") {
-            item.children = this.punishmentNameArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            a14Z204a: "",
-            a14Z204a_Code: "",
-            a14Z211: "",
-            a14Z214a: "",
-            a14Z304a: "",
-            a14Z304a_Code: "",
-            a14Z307: "",
-            a14Z311a: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.rewordHistoryForm
-        );
-      } else if (curr === "languageAbility") {
-        this.languageForm.formInputs.forEach(item => {
-          if (item.key === "dc010701_Code") {
-            item.children = this.languageTypeArr;
-          } else if (item.key === "dc010702_Code") {
-            item.children = this.languageProficiencyArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            dc010701: "",
-            dc010701_Code: "",
-            dc010702: "",
-            dc010702_Code: "",
-            remark: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        console.log(this.languageForm);
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.languageForm
-        );
-      } else if (curr === "trainExperience") {
-        if (statusVal === 0) {
-          initData = {
-            a1107: "",
-            a1111: "",
-            a1114A: "",
-            a1131: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(initData, this.trainerForm);
-      } else if (curr === "professional") {
-        this.professionalForm.formInputs.forEach(item => {
-          if (item.key === "a0602_Code") {
-            item.children = this.occupationLevelArr;
-          } else if (item.key === "a0215a_Code") {
-            item.children = this.positionNameArr;
-          } else if (item.key === "a0215c_Code") {
-            item.children = this.positionLevelArr;
-          } else if (item.key === "a0601_Code") {
-            item.children = this.positionArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            a0215a: "",
-            a0215c: "",
-            a0601: "",
-            a0602: "",
-            a0603: "",
-            a0604: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        console.log(this.professionalForm);
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.professionalForm
-        );
-      } else if (curr === "delagateData") {
-        this.delagateForm.formInputs.forEach(item => {
-          if (item.key === "b0103_Code") {
-            item.children = this.workUnitArr;
-          } else if (item.key === "b0105_Code") {
-            item.children = this.economicArr;
-          } else if (item.key === "b0134_Code") {
-            item.children = this.industryArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            b0101: "",
-            b0102: "",
-            b0103: "",
-            b0103_Code: "",
-            b0105: "",
-            b0105_Code: "",
-            b0107: "",
-            b0114: "",
-            b0134: "",
-            b0134_Code: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(
-          initData,
-          this.delagateForm
-        );
-      } else if (curr === "archiveData") {
-        this.archiveForm.formInputs.forEach(item => {
-          if (item.key === "a3803_Code") {
-            item.children = this.inReasonArr;
-          } else if (item.key === "dc030011") {
-            item.children = this.outReasonArr;
-          } else if (item.key === "dc030003") {
-            item.children = this.saveRecordStaArr;
-          } else if (item.key === "dc030004") {
-            item.children = this.saveRecordNatureArr;
-          }
-        });
-        if (statusVal === 0) {
-          initData = {
-            dc030001: "",
-            a3807a: "",
-            a3801: "",
-            a3803: "",
-            a3803_Code: "",
-            a0002: "",
-            dc030003: "",
-            dc030004: "",
-            a3802: "",
-            dc030009: "",
-            dc030010: "",
-            dc030011: "",
-            dc030012: "",
-            dc030013: ""
-          };
-        } else {
-          initData = data;
-          this.currentId = data["key"];
-        }
-        this.personInfoForm = this.utils.getNewFormSearch(initData, this.archiveForm);
-        console.log(this.personInfoForm);
-      }
-    },
-
-    handleOk() {
-      /***
-       * 功能：模态框点击提交按钮：当前获取的表单内容，把值为空的赋值为''; 不为空的为原值;
-       */
-      let formDataObj = this.$refs.infoForm.getFormData();
-      let submitFormData =this.utils.transferFormToObj(formDataObj['resultData']);
-      if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
-        this.operateSubmitData(submitFormData);
-      }
-    },
-    operateSubmitData(dataObj) {
-      /***
-       * 功能:点击模态框得确认操作功能：提交数据
-       */
-      dataObj = this.transformDataObj(dataObj);
-      if (this.operateStatus === 0) {
-        //添加
-        dataObj = Object.assign({}, dataObj, { a01000: this.currRowDataId });
-        if (this.currOperatePersonInfo === "familySta") {
-          this.$http
-            .fetchPost("familyInformationEditor@doAddFamily.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getFamily(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "workExperience") {
-          this.$http
-            .fetchPost("workInfomationEditor@doAddWork.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getWork(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "educationExperience") {
-          this.$http
-            .fetchPost("informationEditor@doAddEducation.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getEducation(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "rewordsHistory") {
-          this.$http
-            .fetchPost("rewardInfomationEditor@doAddReward.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getAward(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "languageAbility") {
-          this.$http
-            .fetchPost("languageAbility@doLanguageAbilityInfo.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getLanguage(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "trainExperience") {
-          this.$http
-            .fetchPost("trainInformationEditor@doAddTrain.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getTrainer(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "professional") {
-          this.$http
-            .fetchPost("technologyInformation@doAddTechnology.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getProfessional(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "delagateData") {
-          this.$http
-            .fetchPost("ArchCompany@doAddarchCompany.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getUnitSaveRecord(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        } else if (this.currOperatePersonInfo === "archiveData") {
-          this.$http
-            .fetchPost(
-              "archReceiveAndOut@doAddarchReceiveAndOut.action",
-              dataObj
-            )
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("添加成功");
-                this.getArchiveTableData(this.currRowDataId);
-              } else {
-                this.$message.error("添加失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("添加失败");
-            });
-        }
-      } else {
-        //编辑
-        if (this.currOperatePersonInfo === "familySta") {
-          dataObj = Object.assign({}, dataObj, { a36000: this.currentId });
-          this.$http
-            .fetchPost("familyInformationEditor@updataFamily.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getFamily(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "workExperience") {
-          dataObj = Object.assign({}, dataObj, { a02000: this.currentId });
-          this.$http
-            .fetchPost("workInfomationEditor@updateWork.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getWork(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "educationExperience") {
-          dataObj = Object.assign({}, dataObj, { a08000: this.currentId });
-          this.$http
-            .fetchPost("informationEditor@updataEducation.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getEducation(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "rewordsHistory") {
-          dataObj = Object.assign({}, dataObj, { a14000: this.currentId });
-          this.$http
-            .fetchPost("rewardInfomationEditor@updataReward.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getAward(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "languageAbility") {
-          dataObj = Object.assign({}, dataObj, { dc0107000: this.currentId });
-          this.$http
-            .fetchPost(
-              "languageAbility@updataLanguageAbilityInfo.action",
-              dataObj
-            )
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getLanguage(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "trainExperience") {
-          dataObj = Object.assign({}, dataObj, { a11000: this.currentId });
-          this.$http
-            .fetchPost("trainInformationEditor@updataTrain.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getTrainer(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "professional") {
-          dataObj = Object.assign({}, dataObj, { a06000: this.currentId });
-          this.$http
-            .fetchPost("technologyInformation@updateTechnology.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getProfessional(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "delagateData") {
-          dataObj = Object.assign({}, dataObj, { b01000: this.currentId });
-          this.$http
-            .fetchPost("ArchCompany@updateCompanyInfo.action", dataObj)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getUnitSaveRecord(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        } else if (this.currOperatePersonInfo === "archiveData") {
-          dataObj = Object.assign({}, dataObj, { dc38000: this.currentId });
-          this.$http
-            .fetchPost(
-              "archReceiveAndOut@updateArchReceiveAndOut.action",
-              dataObj
-            )
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("编辑成功");
-                this.getArchiveTableData(this.currRowDataId);
-              } else {
-                this.$message.error("编辑提交失败");
-              }
-            })
-            .catch(err => {
-              this.$message.error("编辑提交失败");
-            });
-        }
-      }
-      setTimeout(() => {
-        this.visible = false;
-        this.confirmLoading = false;
-      }, 2000);
-    },
-
-    transformDataObj(currDataObj) {
-      /***
-       * 功能：当前提交对象，属性为时间的修改为字符串格式，return回去
-       * 参数：currDataObj:当前提交的对象
-       */
-      if (currDataObj) {
-        for (let i in currDataObj) {
-          if (
-            i === "a4801" ||
-            i === "a4804" ||
-            i === "a0804" ||
-            i === "a0807" ||
-            i === "a14Z211" ||
-            i === "a14Z307" ||
-            i === "a1107" ||
-            i === "a1111" ||
-            i === "a0603" ||
-            i === "a0604" ||
-            i === "a3801" ||
-            i === "dc030010"
-          ) {
-            currDataObj[i] = this.moment(currDataObj[i]).format("YYYY-MM-DD");
-          } else if (i === "dc030009" || i === "dc030013" || i === "b0107") {
-            console.log(currDataObj[i]);
-            let tempAddressStr = "";
-            currDataObj[i].forEach(item => {
-              tempAddressStr += item + ".";
-            });
-            currDataObj[i] = tempAddressStr.substring(
-              0,
-              tempAddressStr.length - 1
-            );
-          } else {
-            let tempKey = i.split("_");
-            if (tempKey.length > 1) {
-              currDataObj[tempKey[0]] = currDataObj[i];
-            } else {
-              currDataObj[i] = currDataObj[i];
-            }
-          }
-        }
-        return currDataObj;
-      }
-    },
-
-    editInOperateDelete(currInfo, data) {
-      /***
-       * 编辑状态下：表格里面的删除操作
-       * currInfo：操作的哪一个信息； data:当前的值
-       */
-      if (currInfo === "familySta") {
-        this.$http
-          .fetchGet("familyInformationEditor@delFamily.action", {
-            a36000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getFamily(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "workExperience") {
-        this.$http
-          .fetchGet("workInfomationEditor@delWork.action", {
-            a02000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getWork(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "educationExperience") {
-        this.$http
-          .fetchGet("informationEditor@delEducation.action", {
-            a08000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getEducation(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "rewordsHistory") {
-        this.$http
-          .fetchGet("rewardInfomationEditor@delReward.action", {
-            a14000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getAward(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "languageAbility") {
-        this.$http
-          .fetchGet("languageAbility@delLanguageAbilityInfo.action", {
-            dc0107000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getLanguage(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "trainExperience") {
-        this.$http
-          .fetchGet("trainInformationEditor@delTrain.action", {
-            a11000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getTrainer(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "professional") {
-        this.$http
-          .fetchGet("technologyInformation@delTechnology.action", {
-            a06000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getProfessional(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "delagateData") {
-        this.$http
-          .fetchGet("ArchCompany@deleteById.action", {
-            b01000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getUnitSaveRecord(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      } else if (currInfo === "archiveData") {
-        this.$http
-          .fetchGet("archReceiveAndOut@deleteById.action", {
-            dc38000: data.key
-          })
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("删除成功");
-              this.getArchiveTableData(this.currRowDataId);
-            } else {
-              this.$message.success("删除失败");
-            }
-          })
-          .catch(err => {
-            this.$message.error("删除失败");
-          });
-      }
-    }
+    
   },
   watch: {
     operateStatusVal: {
@@ -3734,6 +2504,8 @@ export default {
         } else {
           //浏览或编辑操作
           this.getBasicInfo(this.currRowDataId);
+          this.getColumnDataFun(newVal);
+          this.getPersonOtherInfo(this.currRowDataId);
         }
       }
     },
@@ -3764,17 +2536,27 @@ export default {
         this.currentId = newVal;
       }
     },
-    ifExist:{
+    ifExist: {
       immediate: true,
-      handler(newVal){
-        console.log('newVal:'+ Number(newVal));
-        if(Number(newVal) === 17){  //required全有值
+      handler(newVal) {
+        if (Number(newVal) === 17) {
+          //required全有值
           this.isRight = true;
-        } else{
+        } else {
           //至少有一个没值
           this.isRight = false;
         }
       }
+    },
+    directoryData: {
+      // 监听：字典数据
+      immediate: true,
+      handler: function(newVal, oldVal) {
+        if (newVal) {
+          this.getBasicInfoOther(newVal);
+        }
+      },
+      deep: true //深度监听
     }
   }
 };
@@ -3888,5 +2670,7 @@ export default {
   border: 1px solid #e8e8e8;
   border-top: none;
 }
+
+
 </style>
 
