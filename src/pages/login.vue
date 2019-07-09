@@ -51,7 +51,7 @@ export default {
                 userCode:user,
                 userPassword:password,
             },{withCredentials:true}).then(res => {
-                if(Number(res.code) === 0){
+                if(res.bo){
                     this.$message.success("登录成功");
                     this.loginBtnText = "跳转中...";
                     this.$router.push('/');
@@ -62,6 +62,7 @@ export default {
                 this.$message.error("抱歉,网络错误,请稍后重试!");
             }).finally(end => {
                 this.loading = false;
+                this.loginBtnText = "登 录";
             })
         },
     },
