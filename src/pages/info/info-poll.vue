@@ -314,11 +314,12 @@ export default {
       this.confirmLoading = true;
       let isCloseModelFlag = this.$refs.operatePage.getFinishData();
       if(isCloseModelFlag){
-        this.getTableData(this.tempCondition, 1, 10);
-        setTimeout(() => {
-          this.visible = false;
-          this.confirmLoading = false;
-        }, 2000);
+        console.log('提交完了，更新页面！');
+        // this.getTableData(this.tempCondition, 1, 10);
+        // setTimeout(() => {
+        //   this.visible = false;
+        //   this.confirmLoading = false;
+        // }, 2000);
       } else{
         this.visible = true;
       }
