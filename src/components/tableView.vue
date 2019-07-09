@@ -1,5 +1,6 @@
 <template>
   <div :class="editableCol && editableCol.length > 0 ? 'editViewContainer' : 'viewContainer'">
+    
     <div class="organ_tree" v-if="treeFlag">
       <OrganTree @sendTreeValue="acceptTreeValue"></OrganTree>
     </div>
@@ -9,8 +10,7 @@
       </TableFromSearch>
 
       <div class="tableCon" v-if="!isHasNotTable" ref="tableCon">
-
-
+        
         <!-- checkbox -->
         <a-table
           :columns="columns"
@@ -22,6 +22,7 @@
           :loading="loading"
         >
 
+          
           <!-- 表格页脚 (添加时候显示) -->
           <template v-if="isEditAndAdd" slot="footer" slot-scope="currentPageData">
             <div class="addBtn" @click="addList">
@@ -48,7 +49,8 @@
             </p>
             <slot name="tableAction" :currRowdata="record" :currTableData="tabledata"></slot>
           </span>
-
+          
+          
           <!-- 鼠标放上去显示当前行数据 -->
           <span slot="cursorTitle" slot-scope="text, record">
             <a-tooltip :currRowdata="record" placement="bottom">
@@ -77,19 +79,23 @@
             <img :src="record.photo" alt="">
           </div>
 
+          
+
           <!-- 必填项表头 -->
           <template  v-for="col in editCol" :slot="col">
             <p :key="col" v-if='col.split("_")[1] === "requireTitle"'>
-              {{col.split("_")[0]}}
+               {{col.split("_")[0]}}
               <span class="redSpan">*</span>
             </p>
+           
           </template>
 
           <!-- <span slot="材料类型_requireTitle" ><a-icon type="smile-o" /> Name</span> -->
 
           <!-- 此处未知 bug 只能同时存在一个 v-for 循环的 solt,所以将不同的类型分置同一个 for 中 -->
           <template  v-for="col in editCol" :slot="col" slot-scope="text, record ,index">
-
+            
+             
               <!-- <span :key="col" v-if='col.split("_")[1] === "requireTitle"'>{{col.split("_")[0]}}<span>*</span></p> -->
 
               <!-- 普通可编辑列 -->
@@ -200,7 +206,8 @@ export default {
       tableHeight:450, // 设置table滚动的高度
       timer:null, //监听器
       bordered:false, // 边框默认 false
-      selectedRowKeys: [] //选择的 keys
+      selectedRowKeys: [], //选择的 keys
+      editCol: [],
     };
   },
   watch: {
@@ -224,6 +231,8 @@ export default {
             "hctabledata",
             JSON.stringify(newVal.tabledataArr)
           );
+
+          this.editCol =  this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
 
           this.selectedRowKeys = [];
 
@@ -267,10 +276,9 @@ export default {
           });
 
         }
-        
       }
-
     },
+
     totalCount: {
       immediate: true,
       handler(newVal, oldVal) {
@@ -329,7 +337,7 @@ export default {
         }
 
         this.tableHeight = tempHeight > 0 ? tempHeight : this.tableHeight;
-        console.log(this.tableHeight)
+        // console.log(this.tableHeight)
         this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
     },
     
@@ -510,15 +518,16 @@ export default {
         addressName += " " + item.name
       })
       this.tabledata[index][col].name = addressName;
-    }
+    },
+    
 
   },
 
 
   computed:{
     // 解决 v-if v-for 同时存在的问题 
-    editCol:function(){
-      return this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
+    editColComputed:function(){
+      return this.editCol =  this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
     },
     address(){
       return address;
