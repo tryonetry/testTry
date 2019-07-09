@@ -9,6 +9,9 @@ Vue.use(vueRouter);
 
 const routes = [
     {
+        path: '/login',name:'login',component:resolve => require(['../pages/login.vue'],resolve)
+    },
+    {
         path: '/', name: 'headernav', component: resolve => require(['../components/headerNav.vue'], resolve),
 
         children:[
@@ -693,11 +696,12 @@ let router = new vueRouter({ routes });
 
 // 路由拦截
 router.beforeEach((to,from,next)=>{
-    if(to.path === '/'){
+    if(to.path === '/' || to.matched.length <= 0){
         router.push({path:'/talentinfo/infopoll'});
     }else{
         next();
     }
 });
 
+// export default router;
 export default router;

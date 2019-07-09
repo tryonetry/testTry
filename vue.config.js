@@ -10,7 +10,7 @@ module.exports = {
     // publicPath: '/',
     devServer: {
         open: false, //浏览器自动打开页面
-        host: "localhost", //如果是真机测试，就使用这个IP
+        host: "192.168.1.206", //如果是真机测试，就使用这个IP
         port: 8088,
         https: false,
         hotOnly: false, //热更新（webpack已实现了，这里false即可）
@@ -18,12 +18,12 @@ module.exports = {
         inline:true,
         proxy: {
             //配置跨域
-            '/api': {
+            '/': {
                 target: "http://192.168.1.215:8181",
-                ws: true,
+                ws: false,
                 changOrigin: true,
                 pathRewrite: {
-                    '^/api': '/'
+                    '^/': '/'
                 }
             }
         }

@@ -3,7 +3,8 @@ import qs from 'qs'
 
 // axios.defaults.timeout = 20000; 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-axios.defaults.baseURL = 'api/hasngcadrefile/';   //配置接口地址
+axios.defaults.baseURL = 'hasngcadrefile/';   //配置接口地址
+axios.defaults.withCredentials=true; // 带cookie
 
 axios.interceptors.request.use(
     config => {
@@ -73,6 +74,7 @@ export function fetchPost(url, params, config) {
     return new Promise((resolve, reject) => {
         axios.post(url, params, config)
             .then(response => {
+                // console.log(response)
                 resolve(response.data);
             }, err => {
                 reject(err);

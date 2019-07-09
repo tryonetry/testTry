@@ -12,12 +12,14 @@ import * as http from '@/http';
 import echarts from 'echarts'
 import printJS from 'print-js'
 import print from './utils/print';
+import VueParticles from 'vue-particles';
 Vue.prototype.printJS = printJS;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = http;
 Vue.prototype.$targetHost = 'http://192.168.1.215:8181/hasngcadrefile/'
 Vue.use(antd);
 Vue.use(print);
+Vue.use(VueParticles);
 Vue.config.productionTip = false;
 
 new Vue({

@@ -633,8 +633,19 @@ export default {
         },
         
         // 恢复
-        restore(){
-
+        restore(currRow){
+            this.$http.fetchPost('multipleQuery@changeCompanyStatus.action',{
+                id:currRow.id
+            }).then(res => {
+                if(Number(res.coed) === 0){
+                    this.$message.success('恢复成功!');
+                    this.getTableData(this.tempCondition,1,10);
+                }else{
+                    this.$message.warning('抱歉,恢复失败,请重试!');
+                }
+            }).catch(err => {
+                this.$message.error('抱歉,网络异常,请稍后重试!');
+            })
         },
 
         // 导出列表
