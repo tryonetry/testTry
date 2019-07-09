@@ -3,7 +3,8 @@
   <div class="outerContainer">
     <a-tabs class="tabContainer" defaultActiveKey="1">
       <a-tab-pane class="tabView" tab="人员信息浏览" key="1">
-        <div class="left_anchor" v-show="operateStatusVal !== 1">
+         <!-- v-show="operateStatusVal !== 1" -->
+        <div class="left_anchor">
           <a
             href="javascript:void(0)"
             v-for="(item, index) in anchorList"
@@ -12,7 +13,8 @@
             :class="{left_anchorClick: index == currClickAnchor}"
           >{{item.name}}</a>
         </div>
-        <div :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']">
+        <!-- :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']" -->
+        <div class="right_container right_containerWidth">
           <!-- 1-基本信息 -->
           <div class="basicInfo" id="anchor_basicInfo" ref="anchor_basicInfo">
             <table class="infoTable" border="1">
@@ -573,7 +575,8 @@
             </table>
             <div style="display:none">{{ exitsVal }}</div>
           </div>
-          <div class="otherInfo" v-show="operateStatusVal !== 1">
+          <!-- v-show="operateStatusVal !== 1" -->
+          <div class="otherInfo">
             <!-- 2-工作经历 -->
             <div id="workExperience" class="otherinfo">
               <p class="title">工作经历</p>
@@ -674,14 +677,16 @@ export default {
   },
   created() {},
   mounted() {
+    this.getColumnDataFun(this.operateStatusVal);   //根据当前操作值--替换表头
     if (this.operateStatusVal !== 1) {
+      //浏览、编辑
       this.getBasicInfo(this.currRowDataId); //人员基本信息
       this.getPersonOtherInfo(this.currRowDataId);
-      this.getColumnDataFun(this.operateStatusVal);   //根据当前操作值--替换表头
     } else {
+      //添加
       this.addTreeNode = this.addSelectTreeNode;
+      this.getPersonOtherInfo(null);
     }
-    
 
     let scrollListener = document.getElementsByClassName("right_container");
     window.addEventListener(
@@ -1840,15 +1845,30 @@ export default {
 
     getPersonOtherInfo(currId) {
       // 获取个人信息的其他信息：工作经历等
-      this.getWork(currId);
-      this.getEducation(currId);
-      this.getFamily(currId);
-      this.getLanguage(currId);
-      this.getAward(currId);
-      this.getTrainer(currId);
-      this.getProfessional(currId);
-      this.getUnitSaveRecord(currId);
-      this.getArchiveTableData(currId);
+      if(currId){
+        //浏览/编辑
+        this.getWork(currId);
+        this.getEducation(currId);
+        this.getFamily(currId);
+        this.getLanguage(currId);
+        this.getAward(currId);
+        this.getTrainer(currId);
+        this.getProfessional(currId);
+        this.getUnitSaveRecord(currId);
+        this.getArchiveTableData(currId);
+      } else{
+        //添加
+        this.workInitArr.tabledataArr = [];
+        this.eduInitArr.tabledataArr = [];
+        this.familyInitArr.tabledataArr = [];
+        this.rewordInitArr.tabledataArr = [];
+        this.languageInitArr.tabledataArr = [];
+        this.trainerInitArr.tabledataArr = [];
+        this.professionalInitArr.tabledataArr = [];
+        this.delagateInitArr.tabledataArr = [];
+        this.archiveInitArr.tabledataArr = [];
+      }
+      
     },
 
     getWork(currId) {
@@ -2426,37 +2446,50 @@ export default {
       if (this.isRight) {
         if (this.operateStatusVal !== 1) {
           //编辑
-          this.$http
-            .fetchPost("informationPool@upDataPersonInfo.action", tempBasicInfo)
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("提交成功");
-                isCloseModel = true;
-              }
-            })
-            .catch(err => {
-              this.$message.error("提交失败");
-              isCloseModel = false;
-            });
+          console.log(tempBasicInfo);
+          // this.$http
+          //   .fetchPost("informationPool@upDataPersonInfo.action", tempBasicInfo)
+          //   .then(res => {
+          //     if (Number(res.code) === 0) {
+          //       this.$message.success("提交成功");
+          //       isCloseModel = true;
+          //     }
+          //   })
+          //   .catch(err => {
+          //     this.$message.error("提交失败");
+          //     isCloseModel = false;
+          //   });
         } else {
           //添加
           tempBasicInfo.upUnitId = this.addTreeNode["key"];
-          this.$http
-            .fetchPost(
-              "informationPool@personInfoAdd.action?upUnitId=" +
-                this.addTreeNode["key"],
-              tempBasicInfo
-            )
-            .then(res => {
-              if (Number(res.code) === 0) {
-                this.$message.success("提交成功");
-                isCloseModel = true;
-              }
-            })
-            .catch(err => {
-              this.$message.error("提交失败");
-              isCloseModel = false;
-            });
+          tempBasicInfo.dataArr = [];
+          tempBasicInfo.dataArr.push(
+            this.familyInitArr.tabledataArr, 
+            this.eduInitArr.tabledataArr, 
+            this.workInitArr.tabledataArr,
+            this.trainerInitArr.tabledataArr,
+            this.rewordInitArr.tabledataArr,
+            this.languageInitArr.tabledataArr,
+            this.professionalInitArr.tabledataArr,
+            this.archiveInitArr.tabledataArr)
+          console.log(tempBasicInfo);
+
+          // this.$http
+          //   .fetchPost(
+          //     "informationPool@personInfoAdd.action?upUnitId=" +
+          //       this.addTreeNode["key"],
+          //     tempBasicInfo
+          //   )
+          //   .then(res => {
+          //     if (Number(res.code) === 0) {
+          //       this.$message.success("提交成功");
+          //       isCloseModel = true;
+          //     }
+          //   })
+          //   .catch(err => {
+          //     this.$message.error("提交失败");
+          //     isCloseModel = false;
+          //   });
         }
       } else {
         this.$message.error("必填项不能为空");
@@ -2504,9 +2537,9 @@ export default {
         } else {
           //浏览或编辑操作
           this.getBasicInfo(this.currRowDataId);
-          this.getColumnDataFun(newVal);
           this.getPersonOtherInfo(this.currRowDataId);
         }
+        this.getColumnDataFun(newVal);
       }
     },
     currRowDataId: {
