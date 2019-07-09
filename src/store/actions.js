@@ -20,6 +20,9 @@ const actions = {
     },
     getNavData(context,data){
         context.commit('_getNavData',data);
+    },
+    changeLoginState(context,data){
+        context.commit('_changeLoginState',data);
     }
 };
 

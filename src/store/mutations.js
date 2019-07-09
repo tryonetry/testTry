@@ -19,6 +19,9 @@ export default {
     },
     _getNavData(state,data){
         state.navData = data;
+    },
+    _changeLoginState(state,data){
+        state.loginData = data;
     }
     
 }

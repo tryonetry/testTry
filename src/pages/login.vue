@@ -1,10 +1,10 @@
 <!-- template -->
 <template>
-<div class="loginOut">
+<div class="loginOut" @keyup.enter="handleLogin">
     <vue-particles color="#dedede" :clickEffect="false"></vue-particles>
     <div class="loginInputContainer">
-        <a-input type="text" class="loginInput" placeholder="请输入用户名" v-model="user"></a-input>
-        <a-input type="password" class="loginInput" placeholder="请输入密码" v-model="password"></a-input>
+        <a-input type="text" class="loginInput" placeholder="请输入用户名" v-model="user" ref="userInput"></a-input>
+        <a-input type="password" class="loginInput" placeholder="请输入密码" v-model="password" ref="passInput"></a-input>
         <a-button type="primary" class="loginBtn" @click="handleLogin" :loading="loading">{{loginBtnText}}</a-button>
     </div>
 </div>
@@ -44,6 +44,19 @@ export default {
     methods: {
         handleLogin(){
             console.log(1)
+            if(!this.user){
+                this.$message.warning("请输入用户名");
+                this.$nextTick(function(){
+                    this.$refs.userInput.focus();
+                })
+                return ;
+            }else if(!this.password){
+                this.$message.warning("请输入密码");
+                this.$nextTick(function(){
+                    this.$refs.passInput.focus();
+                })
+                return ;
+            }
             const {user,password} = this;
             this.loading = true;
             this.loginBtnText = "登陆中...";
@@ -54,6 +67,8 @@ export default {
                 if(res.bo){
                     this.$message.success("登录成功");
                     this.loginBtnText = "跳转中...";
+                    this.$store.dispatch('changeLoginState',{isLogin:true,loginUser:res.userInfo});
+                    sessionStorage.setItem("isLogin", "1");
                     this.$router.push('/');
                 }else{
                     this.$message.warning("登录失败,请重试");
@@ -74,7 +89,10 @@ export default {
 
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
-
+        sessionStorage.removeItem("isLogin");
+        this.$nextTick(function(){
+            this.$refs.userInput.focus();
+        });
     },
 
     beforeCreate() {}, //生命周期 - 创建之前

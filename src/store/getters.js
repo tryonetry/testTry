@@ -35,6 +35,9 @@ const getters = {
     // 获取导航栏数据
     getNavData(state){
         return state.navData;
+    },
+    getLoginState(state){
+        return state.loginData;
     }
 }
 

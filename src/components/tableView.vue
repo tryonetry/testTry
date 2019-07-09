@@ -335,9 +335,7 @@ export default {
         if(tempWidth > currScreenWidth || this.superimposeWidth){
           currScreenWidth = tempWidth
         }
-
         this.tableHeight = tempHeight > 0 ? tempHeight : this.tableHeight;
-        // console.log(this.tableHeight)
         this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
     },
     

@@ -1,21 +1,136 @@
 <template>
   <a-layout id="components-layout-demo-top-side-2" class="header_nav">
+
+    <!-- 修改密码弹层 -->
+    <a-modal
+      centered
+      title="修改密码"
+      :visible="changePswVisiable"
+      width="40%"
+      @ok="handleChange"
+      @cancel="handleCancel"
+      style="height:38%;overflow: hidden;"
+      :maskClosable='false'
+    >
+      <div class="changePswCont">
+        <div class="changePswInputCont">
+          <label for="">原始密码:</label>
+          <div class="inputInnerContainer">
+            <a-input v-model="oldPsw" placeholder="请输入原始密码" type="password" class="changePswInput">
+              <a-icon v-if="oldPsw" slot="suffix" type="close" @click="emptyInput('oldPsw')" />
+            </a-input>
+            <p>{{oldPswTip}}</p>
+          </div>
+        </div>
+
+        <div class="changePswInputCont">
+          <label for="">新密码:</label>
+          <div class="inputInnerContainer">
+            <a-input  v-model="newPsw"  placeholder="请输入新密码" type="password" class="changePswInput">
+              <a-icon v-if="newPsw" slot="suffix" type="close"  @click="emptyInput('newPsw')" />
+            </a-input>
+            <p>{{newPswTip}}</p>
+          </div>
+        </div>
+
+        <div class="changePswInputCont">
+          <label for="">确认密码:</label>
+          <div class="inputInnerContainer">
+            <a-input  v-model="confirmPsw"  placeholder="请确认新密码" type="password" class="changePswInput">
+              <a-icon v-if="confirmPsw" slot="suffix" type="close"  @click="emptyInput('confirmPsw')" />
+            </a-input>
+            <p>{{confirmPswTip}}</p>
+          </div>
+        </div>
+
+      </div>
+    </a-modal>
+
+    <!-- 系统提示弹层 -->
+    <a-modal
+      title="系统提示信息"
+      :visible="systemTipVisiable"
+      width="24%"
+      @cancel="systemTipCancel"
+      style="height:30%;overflow: hidden;bottom:10px;right:10px;"
+      :maskClosable="false"
+      :mask="false"
+    >
+      <template slot="footer">
+          <a-button key="back" @click="systemTipCancel">知道了</a-button>
+      </template>
+      <div class="systemTipContainer">
+        {{systemTips}}
+      </div>
+    </a-modal>
+
     <!-- 头部 -->
     <a-layout-header class="header">
-      <div class="logo"/>
-      <a-menu
-        theme="dark"
-        mode="horizontal"
-        :defaultSelectedKeys="menuDefaultSelect"
-        :selectedKeys="menuDefaultSelect"
-        :style="{ lineHeight: '64px' }"
-      >
-        <a-menu-item
-          v-for="(item,index) in menuArr"
-          :key="'top'+item.orderno"
-          v-on:click="changeMenu(item.id, 'top'+ item.orderno, item.path,index)"
-        >{{item.name}}</a-menu-item>
-      </a-menu>
+      <div class="left">
+        <div class="logo"/>
+        <a-menu
+          theme="dark"
+          mode="horizontal"
+          :defaultSelectedKeys="menuDefaultSelect"
+          :selectedKeys="menuDefaultSelect"
+          :style="{ lineHeight: '64px' }"
+        >
+          <a-menu-item
+            v-for="(item,index) in menuArr"
+            :key="'top'+item.orderno"
+            v-on:click="changeMenu(item.id, 'top'+ item.orderno, item.path,index)"
+          >{{item.name}}</a-menu-item>
+        </a-menu>
+      </div>
+      <div class="right">
+
+
+        <a-popover
+          :title="null" 
+          placement="bottom"
+          trigger="hover"
+          :visible="hovered"
+          @visibleChange="handleHoverChange"
+        >
+          <div slot="content">
+            <div class="loginText"  v-if="loginData && loginData.isLogin">
+                <p @click="changePassword" class="primaryBtnColor">修改密码</p>
+                <p @click="signOutSystem" class="primaryBtnColor">退出系统</p>
+            </div>
+            <div class="loginText" v-else>
+                <p>尚未登录</p>
+            </div>
+          </div>
+
+          <a-popover
+            :title="null" 
+            placement="bottom"
+            trigger="click"
+            :visible="clicked"
+            @visibleChange="handleClickChange"
+          >
+            <div slot="content">
+              <div class="loginText"  v-if="loginData && loginData.isLogin">
+                <p @click="changePassword" class="primaryBtnColor">修改密码</p>
+                <p @click="signOutSystem"  class="primaryBtnColor">退出系统</p>
+              </div>
+              <div class="loginText" v-else>
+                  <p>尚未登录</p>
+              </div>
+            </div>
+
+            <div class="showCont">
+              <a class="userIcon" :style="loginData && loginData.isLogin ? 'background:#ffffff;margin-right:10px;':''">
+                <span v-if="loginData && loginData.isLogin" class="loginedText">{{loginData && loginData.loginUser && loginData.loginUser.userName.substr(0,1).toUpperCase()}}</span>
+                <a-icon type="user" v-else/>
+              </a>
+              <span>{{loginData && loginData.loginUser && loginData.loginUser.userName}}</span>
+            </div>
+            
+          </a-popover>
+        </a-popover>
+        
+      </div>
     </a-layout-header>
 
     <!-- 内容 -->
@@ -78,7 +193,11 @@
   </a-layout>
 </template>
 <script>
+let timer = null;
+const tipKey = "tipKey";
+
 import utils from "../utils/util";
+import { setInterval, clearInterval } from 'timers';
 
 export default {
   name: "HeaderNav",
@@ -93,12 +212,27 @@ export default {
       defaultOpenKeys: [],  //默认展开
       collapsed: false,  
       menuId: "",
-      currentMainIndex:0,
+      currentMainIndex:0, //当前顶部 index
+      clicked: false,
+      hovered: false,
+      changePswVisiable:false, //修改密码弹层显示
+      oldPsw:"",
+      oldPswTip:"",
+      newPsw:"",
+      newPswTip:"",
+      confirmPsw:"",
+      confirmPswTip:"",
+      systemTipVisiable:false, //系统提示弹层显示
+      systemTips:null, //系统提示
     };
   },
   computed: {
     navData(){
       return this.$store.getters.getNavData;
+    },
+    loginData(){
+      console.log(this.$store.getters.getLoginState)
+      return this.$store.getters.getLoginState;
     },
     breadcrumb() {
       return this.$route.meta.breadcrumbList;
@@ -108,21 +242,126 @@ export default {
       return this.$store.getters.getCount;
     }
   },
+
   created() {
     // 改变导航
     this.getMenuData();
     this.currentPath = this.$route.path;
     // this.routeChange(this.currentPath);
+    
   },
+
   updated() {
     this.currentPath = this.$route.path;
   },
+
   mounted() {
-    this.routerData = this.$route.meta.breadcrumb
-      ? this.$route.meta.breadcrumb
-      : "";
+    const _this = this;
+
+    _this.systemTip();
+    this.routerData = this.$route.meta.breadcrumb ? this.$route.meta.breadcrumb : "";
+    timer = setInterval(function(){
+        _this.systemTip();
+    },1*30*1000);
   },
+
+  beforeDestroy(){
+    clearInterval(timer);
+    timer = null;
+  },
+
   methods: {
+
+    // 系统提示
+    systemTip(){
+      this.$http.fetchPost("sysNotice@sysNoniceLists.action")
+      .then(res => {
+        console.log(res);
+        if(Number(res.code) === 0){
+          
+          this.systemTips = res.data;
+          // 提示弹框
+          this.$notification.open({
+            message: '系统提示信息',
+            description:<div>xxxxxxxxxxx</div>,
+            duration: null,
+            placement:"bottomRight",
+            icon: <a-icon type="smile" style="color: #108ee9" />,
+            btn: (h)=>{
+              return h('a-button', {
+                props: {
+                  type: 'primary',
+                  size: 'default',
+                },
+                on: {
+                  click: () => this.$notification.close(tipKey)
+                }
+              }, '知道了')
+            },
+            key:tipKey,
+            onClose: close,
+            
+          });
+        }
+      })
+      .catch(err => {
+
+      })
+    },
+
+    // 鼠标hover样式
+    handleHoverChange (visible) {
+      this.clicked = false
+      this.hovered = visible
+    },
+
+    // 点击样式
+    handleClickChange (visible) {
+      this.clicked = visible
+      this.hovered = false
+    },
+
+    // 清空 input
+    emptyInput(str){
+      this[str] = "";
+    },
+
+    // 修改密码
+    changePassword(){
+      const {loginData} = this;
+      console.log(loginData)
+      if(!loginData.isLogin || !loginData.loginUser) return ;
+      this.changePswVisiable = true;
+    },
+
+    // 确认修改密码
+    handleChange(){
+
+    },
+
+    handleCancel(){
+      this.changePswVisiable = false;
+    },
+
+    systemTipCancel(){
+      this.systemTipVisiable = false;
+    },
+
+    // 退出系统
+    signOutSystem(){
+      this.$http.fetchPost("login@logout.action",null)
+      .then(res => {
+        if(Number(res.code) === 0){
+          this.$message.success("退出成功!");
+          this.$router.push('/login');
+        }else{
+          this.$message.warning("抱歉,退出失败,请重试!");
+        }
+      })
+      .catch(err => {
+        this.$message.console.error("抱歉,网络错误,请稍后重试!");
+      })
+    },
     getMenuData() {
       /***
        * 功能：获取菜单总数据； 然后拆分出一级菜单数据以及二级菜单(包含子)数据
@@ -319,6 +558,87 @@ export default {
 }
 ::-webkit-scrollbar-thumb {
   background: #aaaaaa;
+}
+.header{
+  display: flex;
+}
+.header .left{
+  flex: 1;
+}
+.header .right{
+  padding: 0 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+.right .showCont{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.right .showCont>span{
+  color: #ffffff;
+}
+.loginText{
+  display: flex;
+  width: 90px;
+  cursor: pointer;
+  flex-wrap: wrap
+}
+.loginText p{
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+}
+.header .right .userIcon{
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  justify-content: center;
+  align-items: center;
+  background: #eeeeee;
+}
+.header .right .userIcon:hover{
+  color: #666666;
+  opacity: .95;
+}
+.header .right i{
+  font-size: 20px;
+}
+.loginedText{
+  font-size: 18px;
+}
+.changePswCont{
+  height: 100%;
+  overflow-y: auto;
+}
+.changePswInputCont{
+  display: flex;
+  justify-content:space-around;
+  align-items: center;
+}
+.changePswInputCont label{
+  width: 12%;
+  text-align: right;
+  padding-right: 20px;
+}
+.inputInnerContainer{
+  flex: 1;
+}
+.inputInnerContainer p{
+  color: red;
+  font-size: 14px;
+  height: 20px;
+  line-height: 20px;
+}
+.changePswInput{
+  width: 100%;
+}
+.changePswInput i{
+  cursor: pointer;
 }
 </style>
 

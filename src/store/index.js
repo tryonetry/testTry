@@ -11,6 +11,7 @@ Vue.use(Vuex);
 
 // 此处存放初始化的全局的 state
 const state = {
+    loginData:null,
     count: 1,
     testArr:[1,2,3],
     menu:null,

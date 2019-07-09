@@ -224,6 +224,16 @@ const regs = {
       }
     },
 
+    // 密码: 6-16 位的数字字母下划线
+    testPassword:function(val){
+      let reg = new RegExp('^[_0-9a-zA-Z]{6,16}$');
+      if(reg.test(val)){
+        return 1;
+      }else{
+        return 0;
+      }
+    }
+
 }
 
 export default regs;
