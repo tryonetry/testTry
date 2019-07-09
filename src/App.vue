@@ -20,12 +20,12 @@ export default {
   },
   name: "app",
   created(){
-    // this.getNavData();
-    // this.getTreeData();
-    // this.getCompanyData();
+    this.getNavData();
+    this.getTreeData();
+    this.getCompanyData();
   },
   mounted(){
-    // this.getDirectoryData();
+    this.getDirectoryData();
   },
   methods:{
     // 获取导航栏的数据(保证最先加载)

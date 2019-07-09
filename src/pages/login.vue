@@ -5,7 +5,7 @@
     <div class="loginInputContainer">
         <a-input type="text" class="loginInput" placeholder="请输入用户名" v-model="user"></a-input>
         <a-input type="password" class="loginInput" placeholder="请输入密码" v-model="password"></a-input>
-        <a-button type="primary" class="loginBtn" @click="handleLogin">{{loginBtnText}}</a-button>
+        <a-button type="primary" class="loginBtn" @click="handleLogin" :loading="loading">{{loginBtnText}}</a-button>
     </div>
 </div>
 </template>
@@ -23,6 +23,7 @@ export default {
             user:"",
             password:"",
             loginBtnText:"登 录",
+            loading:false,
         };
     },
 
@@ -44,15 +45,23 @@ export default {
         handleLogin(){
             console.log(1)
             const {user,password} = this;
+            this.loading = true;
+            this.loginBtnText = "登陆中...";
             this.$http.fetchPost("login@checkLogin.action",{
                 userCode:user,
                 userPassword:password,
             },{withCredentials:true}).then(res => {
                 if(Number(res.code) === 0){
-                    // this.$route('')
+                    this.$message.success("登录成功");
+                    this.loginBtnText = "跳转中...";
+                    this.$router.push('/');
+                }else{
+                    this.$message.warning("登录失败,请重试");
                 }
             }).catch(err => {
                 this.$message.error("抱歉,网络错误,请稍后重试!");
+            }).finally(end => {
+                this.loading = false;
             })
         },
     },
