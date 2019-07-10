@@ -358,6 +358,6 @@ input{
   padding-bottom: 0;
 }
 
-..ant-notification{
+.ant-notification{
   z-index: 999;
 }
