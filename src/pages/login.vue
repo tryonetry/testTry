@@ -67,8 +67,8 @@ export default {
                 if(res.bo){
                     this.$message.success("登录成功");
                     this.loginBtnText = "跳转中...";
-                    this.$store.dispatch('changeLoginState',{isLogin:true,loginUser:res.userInfo});
-                    sessionStorage.setItem("isLogin", "1");
+                    // this.$store.dispatch('changeLoginState',{isLogin:true,loginUser:res.userInfo});
+                    sessionStorage.setItem("loginData", JSON.stringify({isLogin:true,loginUser:res.userInfo}));
                     this.$router.push('/');
                 }else{
                     this.$message.warning("登录失败,请重试");
@@ -89,7 +89,7 @@ export default {
 
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
-        sessionStorage.removeItem("isLogin");
+        sessionStorage.removeItem("loginData");
         this.$nextTick(function(){
             this.$refs.userInput.focus();
         });

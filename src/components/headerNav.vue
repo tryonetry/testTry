@@ -6,42 +6,44 @@
       centered
       title="修改密码"
       :visible="changePswVisiable"
-      width="40%"
+      width="32%"
       @ok="handleChange"
       @cancel="handleCancel"
       style="height:38%;overflow: hidden;"
       :maskClosable='false'
+      :confirmLoading="confirmLoading"
     >
       <div class="changePswCont">
         <div class="changePswInputCont">
           <label for="">原始密码:</label>
           <div class="inputInnerContainer">
-            <a-input v-model="oldPsw" placeholder="请输入原始密码" type="password" class="changePswInput">
-              <a-icon v-if="oldPsw" slot="suffix" type="close" @click="emptyInput('oldPsw')" />
+            <a-input v-model="oldPsw" placeholder="请输入原始密码" :type="oldEye ? 'text' : 'password'" class="changePswInput" @blur="pswInputBlur(null,oldPsw)">
+              <a-icon class="eyeIcon" v-show="oldPsw" slot="suffix" :type="oldEye ? 'eye' : 'eye-invisible'" @click="changeEyes('oldEye')" />
             </a-input>
-            <p>{{oldPswTip}}</p>
           </div>
         </div>
+        <p class="pswTip"><span></span>{{oldPswTip}}</p>
 
         <div class="changePswInputCont">
           <label for="">新密码:</label>
           <div class="inputInnerContainer">
-            <a-input  v-model="newPsw"  placeholder="请输入新密码" type="password" class="changePswInput">
-              <a-icon v-if="newPsw" slot="suffix" type="close"  @click="emptyInput('newPsw')" />
+            <a-input  v-model="newPsw"  placeholder="请输入新密码" :type="newEye ? 'text' : 'password'"  class="changePswInput" @blur="pswInputBlur(0,newPsw)">
+              <a-icon class="eyeIcon" v-show="newPsw" slot="suffix" :type="newEye ? 'eye' : 'eye-invisible'"  @click="changeEyes('newEye')" />
             </a-input>
-            <p>{{newPswTip}}</p>
+            
           </div>
         </div>
-
+        <p class="pswTip"><span></span>{{newPswTip}}</p>
+        
         <div class="changePswInputCont">
           <label for="">确认密码:</label>
           <div class="inputInnerContainer">
-            <a-input  v-model="confirmPsw"  placeholder="请确认新密码" type="password" class="changePswInput">
-              <a-icon v-if="confirmPsw" slot="suffix" type="close"  @click="emptyInput('confirmPsw')" />
+            <a-input  v-model="confirmPsw"  placeholder="请确认新密码" :type="confirmEye ? 'text' : 'password'" class="changePswInput" @blur="pswInputBlur(1,confirmPsw)">
+              <a-icon class="eyeIcon" v-show="confirmPsw" slot="suffix" :type="confirmEye ? 'eye' : 'eye-invisible'"  @click="changeEyes('confirmEye')" />
             </a-input>
-            <p>{{confirmPswTip}}</p>
           </div>
         </div>
+        <p class="pswTip"><span></span>{{confirmPswTip}}</p>
 
       </div>
     </a-modal>
@@ -197,6 +199,7 @@ let timer = null;
 const tipKey = "tipKey";
 
 import utils from "../utils/util";
+import reg from "../utils/regexp";
 import { setInterval, clearInterval } from 'timers';
 
 export default {
@@ -216,9 +219,13 @@ export default {
       clicked: false,
       hovered: false,
       changePswVisiable:false, //修改密码弹层显示
+      confirmLoading:false,
       oldPsw:"",
       oldPswTip:"",
       newPsw:"",
+      oldEye:false,
+      newEye:false,
+      confirmEye:false,
       newPswTip:"",
       confirmPsw:"",
       confirmPswTip:"",
@@ -231,8 +238,8 @@ export default {
       return this.$store.getters.getNavData;
     },
     loginData(){
-      console.log(this.$store.getters.getLoginState)
-      return this.$store.getters.getLoginState;
+      let loginData = JSON.parse(sessionStorage.getItem("loginData"));
+      return loginData;
     },
     breadcrumb() {
       return this.$route.meta.breadcrumbList;
@@ -262,51 +269,105 @@ export default {
     this.routerData = this.$route.meta.breadcrumb ? this.$route.meta.breadcrumb : "";
     timer = setInterval(function(){
         _this.systemTip();
-    },1*30*1000);
+    },3*60*1000);
   },
 
   beforeDestroy(){
     clearInterval(timer);
     timer = null;
+    this.$notification.close(tipKey);
   },
 
   methods: {
+
+    // password blur
+    pswInputBlur(status,val){
+      if(status === 0){
+        // 新密码
+        if(!reg.testPassword(val)){
+          this.newPswTip = "* 请输入6-16位(只可包含数字、字母、下划线)的密码"
+        }else{
+          this.newPswTip = "";
+        }
+      }else if(status === 1){
+        // 确认密码
+        if(val !== this.confirmPsw){
+          this.confirmPswTip = "* 两次密码不一致";
+        }else{
+          this.confirmPswTip = "";
+        }
+      }else{
+        // 原始密码
+        if(!val){
+          this.oldPswTip = "* 请输入原始密码"
+        }else{
+          this.oldPswTip = "";
+        }
+      }
+    },
+
+    // changeEyes open
+    changeEyes(str){
+      this[str] = !this[str];
+    },
 
     // 系统提示
     systemTip(){
       this.$http.fetchPost("sysNotice@sysNoniceLists.action")
       .then(res => {
-        console.log(res);
         if(Number(res.code) === 0){
           
           this.systemTips = res.data;
-          // 提示弹框
-          this.$notification.open({
-            message: '系统提示信息',
-            description:<div>xxxxxxxxxxx</div>,
-            duration: null,
-            placement:"bottomRight",
-            icon: <a-icon type="smile" style="color: #108ee9" />,
-            btn: (h)=>{
-              return h('a-button', {
-                props: {
-                  type: 'primary',
-                  size: 'default',
-                },
-                on: {
-                  click: () => this.$notification.close(tipKey)
-                }
-              }, '知道了')
-            },
-            key:tipKey,
-            onClose: close,
-            
-          });
+
+          if(this.systemTips.length > 0){
+            // 提示弹框
+            this.$notification.open({
+              message: '系统提示信息',
+              description:(h) => {
+                return h(
+                  "div",
+                  {
+                    style: {
+                      maxHeight: '300px',
+                      overflowY: 'auto'
+                    },
+                  },
+                  [
+                    h("p",this.systemTips.map(function(item,index){
+                      return (index+1) + "、" +item.message;
+                    }))
+                  ],
+                );
+              },
+              duration: null,
+              placement:"bottomRight",
+              icon: <a-icon type="smile" style="color: #108ee9" />,
+              btn: (h)=>{
+                return h('a-button', {
+                  props: {
+                    type: 'primary',
+                    size: 'default',
+                  },
+                  on: {
+                    click: () => this.$notification.close(tipKey)
+                  }
+                }, '知道了')
+              },
+              key:tipKey,
+              onClose: close,
+            });
+          }
+
         }
       })
       .catch(err => {
 
       })
+    },
+
+    hide () {
+      this.clicked = false
+      this.hovered = false
     },
 
     // 鼠标hover样式
@@ -329,14 +390,28 @@ export default {
     // 修改密码
     changePassword(){
       const {loginData} = this;
-      console.log(loginData)
       if(!loginData.isLogin || !loginData.loginUser) return ;
       this.changePswVisiable = true;
+      this.hide();
     },
 
+    
     // 确认修改密码
     handleChange(){
+      const { oldPswTip, newPswTip, confirmPswTip, oldPsw, newPsw } = this;
+      if(!oldPswTip && !newPswTip && !confirmPswTip){
+        this.confirmLoading = true;
+        this.$http.fetchPost("user@updateSysUserPwd.action",{
+          originalPassword:oldPsw,
+          newPassword:newPsw,
+        }).then(res => {
+          console.log(res)
+        }).catch(err => {
 
+        }).finally(end => {
+          this.confirmLoading = false;
+        })
+      }
     },
 
     handleCancel(){
@@ -355,7 +430,8 @@ export default {
           this.$message.success("退出成功!");
           this.$router.push('/login');
         }else{
-          this.$message.warning("抱歉,退出失败,请重试!");
+          // this.$message.warning("抱歉,退出失败,请重试!");
+          this.$router.push('/login');
         }
       })
       .catch(err => {
@@ -621,24 +697,38 @@ export default {
   align-items: center;
 }
 .changePswInputCont label{
-  width: 12%;
+  width: 20%;
   text-align: right;
   padding-right: 20px;
 }
 .inputInnerContainer{
   flex: 1;
 }
-.inputInnerContainer p{
+.pswTip{
   color: red;
   font-size: 14px;
-  height: 20px;
-  line-height: 20px;
+  height: 30px;
+  line-height: 30px;
+}
+.pswTip span{
+  display: inline-block;
+  width: 12%;
 }
 .changePswInput{
   width: 100%;
 }
 .changePswInput i{
   cursor: pointer;
+}
+.tipContainer{
+  overflow: auto;
+  max-height: 300px;
+}
+.eyeIcon{
+  color:#999999;
+}
+.eyeIcon:hover{
+  color: #333333;
 }
 </style>
 

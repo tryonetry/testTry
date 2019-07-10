@@ -94,7 +94,7 @@ export default {
 
     data() {
         return {
-                            
+            companyDataArr:null,       
             tableTotalNum: 0,   //总页数：默认为0
             tableTotalNum1:0,
             tableTotalNum2:0,
@@ -490,23 +490,33 @@ export default {
     //监听属性 类似于data概念
     computed: {
         companyData:function(){
-            return this.$store.getters.getCompanyData
+            if(this.$store.getters.getCompanyData){
+                this.handlerCompanyData(this.$store.getters.getCompanyData);
+                return this.$store.getters.getCompanyData
+            }else{
+                return null;
+            }
         }
     },
 
     //监控data中的数据变化
     watch: {
-        //obj:{
-        //    handler:function(val,oldval){
-        //        
-        //    },
-        //    deep:true,//深度监听
-        //}
+        companyData:{
+           handler:function(newVal){
+               this.companyDataArr = newVal;
+               this.handlerCompanyData(this.companyDataArr)
+           },
+           deep:true,//深度监听
+        }
     },
 
     //方法集合
     methods: {
-
+        handlerCompanyData(arr){
+            this.initArr.formData.formInputs[0].children = [...arr].map((item)=>{
+                return {itemCode:item.id,itemName:item.companyName}
+            })
+        },
         getTableData(condition, pageNum, limitNum) {
             const _this = this;
             /***
@@ -629,9 +639,6 @@ export default {
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
         this.getTableData(null,1,10);
-        this.initArr.formData.formInputs[0].children = [...this.companyData].map((item)=>{
-            return {itemCode:item.id,itemName:item.companyName}
-        })
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

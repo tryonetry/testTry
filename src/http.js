@@ -39,7 +39,7 @@ axios.interceptors.request.use(
                     console.log(config)
                     if (key.endsWith('[]')) {
                         data[key].forEach(item => {
-                        fd.append(key, item)
+                            fd.append(key, item)
                         })
                     } else {
                         fd.append(key, data[key])

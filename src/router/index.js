@@ -696,7 +696,9 @@ let router = new vueRouter({ routes });
 
 // 路由拦截
 router.beforeEach((to,from,next)=>{
-    if(sessionStorage.getItem("isLogin") !== "1" && to.name !== "login"){
+    let loginData = JSON.parse(sessionStorage.getItem("loginData"));
+    // 判断是否为登录状态
+    if((!loginData || !loginData.isLogin) && to.name !== "login"){
         router.push({path:'/login'});
     }else if(to.path === '/' || to.matched.length <= 0){
         router.push({path:'/talentinfo/infopoll'});
