@@ -353,3 +353,11 @@ input{
 .commonFont{
   font-family:'Microsoft Yahei','simsun','arial','tahoma';
 }
+
+.infopoll.ant-modal{
+  padding-bottom: 0;
+}
+
+..ant-notification{
+  z-index: 999;
+}
