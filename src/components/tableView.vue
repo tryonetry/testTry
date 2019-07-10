@@ -207,7 +207,7 @@ export default {
       timer:null, //监听器
       bordered:false, // 边框默认 false
       selectedRowKeys: [], //选择的 keys
-      editCol: [],
+      editableCol: [], 
     };
   },
   watch: {
@@ -232,7 +232,6 @@ export default {
             JSON.stringify(newVal.tabledataArr)
           );
 
-          this.editCol =  this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
 
           this.selectedRowKeys = [];
 
@@ -524,8 +523,8 @@ export default {
 
   computed:{
     // 解决 v-if v-for 同时存在的问题 
-    editColComputed:function(){
-      return this.editCol =  this.editableCol && this.editableCol.length > 0 ? this.editableCol : [];
+    editCol:function(){
+      return this.editableCol && this.editableCol.length > 0 ? [...this.editableCol] : [];
     },
     address(){
       return address;
