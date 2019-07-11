@@ -6,11 +6,11 @@
          <!-- v-show="operateStatusVal !== 1" -->
         <div class="left_anchor">
           <a
-            href="javascript:void(0)"
             v-for="(item, index) in anchorList"
             :key="index"
+            href="javascript:void(0)"
             @click="anchorClick(item.value, index)"
-            :class="{left_anchorClick: index == currClickAnchor}"
+            :class="{'left_anchorClick': index == currClickAnchor}"
           >{{item.name}}</a>
         </div>
         <!-- :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']" -->
@@ -89,7 +89,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0117', personBasicInfo.a0117)}}</span>
+                    >{{this.conVersionData('a0117', personBasicInfo.a0117, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -137,7 +137,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0141', personBasicInfo.a0141)}}</span>
+                    >{{this.conVersionData('a0141', personBasicInfo.a0141, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -172,7 +172,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0131', personBasicInfo.a0131)}}</span>
+                    >{{this.conVersionData('a0131', personBasicInfo.a0131, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -196,6 +196,7 @@
                       maxlength="40"
                       v-model="personBasicInfo.a3708"
                       v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.a3708, 2, 40,'testEmail', '请输入正确的电子邮箱地址')"
                     ></a-input>
                   </td>
                 </tr>
@@ -208,7 +209,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0834', personBasicInfo.a0834)}}</span>
+                    >{{this.conVersionData('a0834', personBasicInfo.a0834, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -230,7 +231,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0914', personBasicInfo.a0914)}}</span>
+                    >{{this.conVersionData('a0914', personBasicInfo.a0914, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -314,7 +315,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0827', personBasicInfo.a0827)}}</span>
+                    >{{this.conVersionData('a0827', personBasicInfo.a0827, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -335,7 +336,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0127', personBasicInfo.a0127)}}</span>
+                    >{{this.conVersionData('a0127', personBasicInfo.a0127, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -390,7 +391,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0202d', personBasicInfo.a0202d)}}</span>
+                    >{{this.conVersionData('a0202d', personBasicInfo.a0202d, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -412,7 +413,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0202c', personBasicInfo.a0202c)}}</span>
+                    >{{this.conVersionData('a0202c', personBasicInfo.a0202c, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -436,7 +437,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0202b', personBasicInfo.a0202b)}}</span>
+                    >{{this.conVersionData('a0202b', personBasicInfo.a0202b, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -458,7 +459,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{this.conVersionData('a0211', personBasicInfo.a0211)}}</span>
+                    >{{this.conVersionData('a0211', personBasicInfo.a0211, 'itemCode')}}</span>
                     <a-select
                       class="info_select"
                       placeholder="请选择"
@@ -627,11 +628,19 @@
               </div>
             </div>
             <!-- 9-委托单位存档数据 -->
-            <div id="delagateData" class="otherinfo">
+            <div id="delagateData" class="otherinfo"  v-if="personBasicInfo">
               <p class="title">委托单位存档数据</p>
-              <div class="tableViewsCon">
-                <TableView :initArrData="delagateInitArr" :loading="delagateTableLoading"></TableView>
+              <div class="tableViewsCon" v-show="operateStatusVal == 2">
+                 <span style="padding-left:20px;">委托存档单位:</span>
+                 <span class="info_view">{{this.conVersionData('delagate', personBasicInfo.companyId, 'itemId')}}</span>
               </div>
+              <div class="tableViewsCon" v-show="operateStatusVal !== 2">
+                <span style="padding-left:20px;">请选择委托存档单位名称：</span>
+                 <!-- @change="delagateChange" -->
+                <a-select placeholder="请选择委托存档单位名称"  style="width: 40%;" v-model="personBasicInfo.companyId">
+                  <a-select-option v-for="item in delagateUnitList" :key="item.itemId">{{item.itemName}}</a-select-option>
+                </a-select>
+              </div> 
             </div>
             <!-- 10-档案接转数据 -->
             <div id="archiveData" class="otherinfo">
@@ -655,7 +664,6 @@ import address from "../../public/json/address.js";
 import DocDirectory from "./docDirectory";
 import regs from "../utils/regexp.js";
 import utils from "../utils/util.js";
-import TableFromSearch from "../components/tableFormSearch";
 import TableView from "@/components/tableView";
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -672,12 +680,13 @@ export default {
   ],
   components: {
     DocDirectory,
-    TableFromSearch,
     TableView
   },
   created() {},
   mounted() {
     this.getColumnDataFun(this.operateStatusVal);   //根据当前操作值--替换表头
+    this.getDelagateUnitListFun();  //获取委托存档单位：单位列表数据
+
     if (this.operateStatusVal !== 1) {
       //浏览、编辑
       this.getBasicInfo(this.currRowDataId); //人员基本信息
@@ -688,17 +697,7 @@ export default {
       this.getPersonOtherInfo(null);
     }
 
-    let scrollListener = document.getElementsByClassName("right_container");
-    window.addEventListener(
-      "scroll",
-      () => {
-        let currScrollTop =
-          scrollListener[0].scrollTop || scrollListener[0].pageYOffset;
-        // 控制滚动按钮的隐藏或显示
-        this.scrollAddListening(currScrollTop);
-      },
-      true
-    );
+    window.addEventListener("scroll", this.scrollAddListening,true);
   },
   data() {
     return {
@@ -779,7 +778,8 @@ export default {
         uLastModifiedDate: "",
         uLastModifieder: "",
         uLastModifiederOrgID: "",
-        uSortNo: ""
+        uSortNo: "",
+        companyId: ''
       },
       politicsStatusArr: [], //政治面貌
       nationalArr: [], //民族
@@ -826,7 +826,7 @@ export default {
           { title: "从事工作或担任职务", dataIndex: "a0215a", key: "a0215a", width: 300 },
           { title: "工作起始日期", dataIndex: "a4801", key: "a4801", width: 200 },
           { title: "工作终止日期", dataIndex: "a4804", key: "a4804", width: 200 },
-          { title: "单位证明人", dataIndex: "a0202d", key: "a0202d" }
+          { title: "单位证明人", dataIndex: "a0202dwork", key: "a0202dwork" }
         ],
         tabledataArr:[]
       },
@@ -844,48 +844,44 @@ export default {
           "a4804_editDateInput",
           "a0215a_editInput",
           "a0215a_editInput",
-          "a0202d_editInput",
-          "所在工作单位名称_requireTitle",
-          "工作起始日期_requireTitle",
-          "工作终止日期_requireTitle",
-          "从事工作或担任职务_requireTitle"
+          "a0202dwork_editInput",
         ],
         columnsArr: [
           {
+            title:'所在工作单位名称',
             dataIndex: "a0157a",
             key: "a0157a",
             width: 350,
-            slots: { title: "所在工作单位名称_requireTitle" },
             scopedSlots: { customRender: "a0157a_editInput" }
           },
           {
+            title:'从事工作或担任职务',
             dataIndex: "a0215a",
             key: "a0215a",
             width: 300,
-            slots: { title: "从事工作或担任职务_requireTitle" },
             scopedSlots: { customRender: "a0215a_editInput" }
           },
           {
+            title:'工作起始日期',
             dataIndex: "a4801",
             key: "a4801",
             width: 200,
-            slots: { title: "工作起始日期_requireTitle" },
             scopedSlots: { customRender: "a4801_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
+            title:'工作终止日期',
             dataIndex: "a4804",
             key: "a4804",
             width: 250,
-            slots: { title: "工作终止日期_requireTitle" },
             scopedSlots: { customRender: "a4804_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
             title: "单位证明人",
-            dataIndex: "a0202d",
-            key: "a0202d",
-            scopedSlots: { customRender: "a0202d_editInput" }
+            dataIndex: "a0202dwork",
+            key: "a0202dwork",
+            scopedSlots: { customRender: "a0202dwork_editInput" }
           },
           {
             title: "操作",
@@ -912,8 +908,8 @@ export default {
           { title: "学习形式", dataIndex: "a0838", key: "a0838", width: 150 },
           {
             title: "所学专业名称",
-            dataIndex: "a0824",
-            key: "a0824",
+            dataIndex: "a0824a08",
+            key: "a0824a08",
             width: 200 
           },
           { title: "所获学位", dataIndex: "a0901a", key: "a0901a", width: 150  },
@@ -924,7 +920,7 @@ export default {
             width: 150 
           },
           { title: "学习起始日期", dataIndex: "a0804", key: "a0804", width: 150  },
-          { title: "学习终止日期", dataIndex: "a0807", key: "a0807" }
+          { title: "学习终止日期", dataIndex: "a0807a08", key: "a0807a08" }
         ],
         tabledataArr:[]
       },
@@ -940,81 +936,73 @@ export default {
           "a0814_editInput", 
           'a0837_editSelectInput',
           'a0838_editSelectInput',
-          'a0824_editSelectInput',
+          'a0824a08_editSelectInput',
           'a0901a_editSelectInput',
           'a0801a_editSelectInput',
           'a0804_editDateInput',
-          'a0807_editDateInput',
-          "所在学校_requireTitle",
-          '教育类别_requireTitle',
-          '学习形式_requireTitle',
-          '所学专业名称_requireTitle',
-          '所获学位_requireTitle',
-          '所获学历_requireTitle',
-          '学习起始日期_requireTitle',
-          '学习终止日期_requireTitle'
+          'a0807a08_editDateInput',
         ],
         columnsArr: [
           {
+            title:'所在学校',
             dataIndex: "a0814",
             key: "a0814",
             width: 200,
-            slots: { title: "所在学校_requireTitle" },
             scopedSlots: { customRender: "a0814_editInput" }
           },
           {
+            title:'教育类别',
             dataIndex: "a0837",
             key: "a0837",
             width: 150,
-            slots: { title: "教育类别_requireTitle" },
             scopedSlots: { customRender: "a0837_editSelectInput" },
             itemChildren: []
           },
           {
+            title:'学习形式',
             dataIndex: "a0838",
             key: "a0838",
             width: 150,
-            slots: { title: "学习形式_requireTitle" },
             scopedSlots: { customRender: "a0838_editSelectInput" },
             itemChildren:[]
           },
           {
-            dataIndex: "a0824",
-            key: "a0824",
+            title:'所学专业名称',
+            dataIndex: "a0824a08",
+            key: "a0824a08",
             width: 200,
-            slots: { title: "所学专业名称_requireTitle" },
-            scopedSlots: { customRender: "a0824_editSelectInput" },
+            scopedSlots: { customRender: "a0824a08_editSelectInput" },
             itemChildren:[]
           },
           {
+            title:'所获学位',
             dataIndex: "a0901a",
             key: "a0901a",
             width: 200,
-            slots: { title: "所获学位_requireTitle" },
             scopedSlots: { customRender: "a0901a_editSelectInput" },
             itemChildren:[]
           },
           {
+            title:'所获学历',
             dataIndex: "a0801a",
             key: "a0801a",
             width: 200,
-            slots: { title: "所获学历_requireTitle" },
             scopedSlots: { customRender: "a0801a_editSelectInput" },
             itemChildren:[]
           },
           {
+            title:'学习起始日期',
             dataIndex: "a0804",
             key: "a0804",
             width: 200,
-            slots: { title: "学习起始日期_requireTitle" },
             scopedSlots: { customRender: "a0804_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
-            dataIndex: "a0807",
-            key: "a0807",
-            slots: { title: "学习终止日期_requireTitle" },
-            scopedSlots: { customRender: "a0807_editDateInput" },
+            title:'学习终止日期',
+            dataIndex: "a0807a08",
+            key: "a0807a08",
+            scopedSlots: { customRender: "a0807a08_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
@@ -1054,22 +1042,20 @@ export default {
           'a3601_editInput',
           'a3604a_editSelectInput',
           'a3611_editInput',
-          '姓名_requireTitle',
-          '与本人关系_requireTitle'
         ],
         columnsArr: [
           { 
+            title:'姓名',
             dataIndex: "a3601", 
             key: "a3601",
             width:400,
-            slots: { title: "姓名_requireTitle" },
             scopedSlots: { customRender: "a3601_editInput" }
           },
           { 
+            title:'与本人关系',
             dataIndex: "a3604a", 
             key: "a3604a",
             width:400,
-            slots: { title: "与本人关系_requireTitle" },
             scopedSlots: { customRender: "a3604a_editSelectInput" },
             itemChildren: []
           },
@@ -1204,31 +1190,28 @@ export default {
           'dc010701_editSelectInput',
           'dc010702_editSelectInput',
           'remark_editInput',
-          '语种_requireTitle',
-          '熟练程度_requireTitle',
-          '备注_requireTitle'
         ],
         columnsArr:[
           {  
+            title:'语种',
             dataIndex: "dc010701", 
             key: "dc010701",
             width: 300,
-            slots: { title: "语种_requireTitle" },
             scopedSlots: {customRender: "dc010701_editSelectInput" },
             itemChildren:[]
           },
           {  
+            title:'熟练程度',
             dataIndex: "dc010702", 
             key: "dc010702",
             width: 300,
-            slots: { title: "熟练程度_requireTitle" },
             scopedSlots: {customRender: "dc010702_editSelectInput" },
             itemChildren:[] 
           },
           {  
+            title:'备注',
             dataIndex: "remark", 
             key: "remark",
-            slots: { title: "备注_requireTitle" },
             scopedSlots: { customRender: "remark_editInput" }  
           },
           {
@@ -1270,15 +1253,13 @@ export default {
           'a1107_editDateInput',
           'a1111_editDateInput',
           'a1114A_editInput',
-          '培训班名称_requireTitle',
-          '培训主办单位名称_requireTitle'
         ],
         columnsArr:[
           {  
+            title:'培训班名称',
             dataIndex: "a1131", 
             key: "a1131",
             width: 400,
-            slots: { title: "培训班名称_requireTitle" },
             scopedSlots: { customRender: "a1131_editInput" }  
           },
           { 
@@ -1299,7 +1280,6 @@ export default {
             title: "培训主办单位名称", 
             dataIndex: "a1114A", 
             key: "a1114A",
-            slots: { title: "培训主办单位名称_requireTitle" },
             scopedSlots: { customRender: "a1114A_editInput" }   
           },
           {
@@ -1403,106 +1383,8 @@ export default {
         tabledataArr:[]
       },
 
-      delagateInitArr: null, //委托单位存档数据
-      delagateTableLoading: false,
-      delagateViewInitArr: {
-        treeflag: false,
-        tableCheck: false,
-        noPagination: true, // 分页是否不显示
-        bordered: true, // 表格 border 是否显示
-        formData: {},
-        columnsArr: [
-          { title: "单位立户号", dataIndex: "b0102", key: "b0102", width: 300 },
-          { title: "单位名称", dataIndex: "b0101", key: "b0101", width: 300 },
-          { title: "组织机构代码", dataIndex: "b0114", key: "b0114", width: 300 },
-          { title: "单位机构类型", dataIndex: "b0103", key: "b0103", width: 200 },
-          { title: "单位所属行业", dataIndex: "b0134", key: "b0134", width: 200 },
-          { title: "经济行业", dataIndex: "b0105", key: "b0105" }
-        ],
-        tabledataArr:[]
-      },
-      delagateEditInitArr: {
-        isEditAndAdd: true,
-        treeflag: false,
-        tableCheck: false,
-        noPagination: true, // 分页是否不显示
-        bordered: true, // 表格 border 是否显示
-        formData: {},
-        editableCol: [
-          'b0102_editInput',
-          'b0101_editInput',
-          'b0114_editInput',
-          'b0103_editSelectInput',
-          'b0134_editSelectInput',
-          'b0105_editSelectInput',
-          'b0107_editAddressInput',
-          '委托存档单位名称_requireTitle',
-          '单位机构类型_requireTitle',
-          '单位所属行业_requireTitle',
-          '经济行业_requireTitle'
-        ],
-        columnsArr: [
-          { 
-            title: "委托存档单位编号", 
-            dataIndex: "b0102",
-            key: "b0102",
-            width: 200,
-            scopedSlots: { customRender: "b0102_editInput" }    
-          },
-          { 
-            dataIndex: "b0101", 
-            key: "b0101", 
-            width: 300,
-            slots: { title: "委托存档单位名称_requireTitle" },
-            scopedSlots: { customRender: "b0101_editInput" } 
-          },
-          { 
-            title: "委托存档单位组织机构代码", 
-            dataIndex: "b0114", 
-            key: "b0114",
-            width: 300,
-            scopedSlots: { customRender: "b0114_editInput" } 
-          },
-          {  
-            dataIndex: "b0103", 
-            key: "b0103",
-            width: 200,
-            slots: { title: "单位机构类型_requireTitle" },
-            scopedSlots: { customRender: "b0103_editSelectInput" },
-            itemChildren:[]
-          },
-          {  
-            dataIndex: "b0134", 
-            key: "b0134",
-            width: 200,
-            slots: { title: "单位所属行业_requireTitle" },
-            scopedSlots: { customRender: "b0134_editSelectInput" },
-            itemChildren:[]  
-          },
-          { 
-            dataIndex: "b0105", 
-            key: "b0105",
-            width: 200,
-            slots: { title: "经济行业_requireTitle" },
-            scopedSlots: { customRender: "b0105_editSelectInput" },
-            itemChildren:[]
-          },
-          { 
-            title: '行政区划',
-            dataIndex: "b0107", 
-            key: "b0107",
-            scopedSlots: { customRender: "b0107_editAddressInput" },
-          },
-          {
-            title: "操作",
-            key: "action",
-            width: 150,
-            fixed: 'right',
-            scopedSlots: { customRender: "action" }
-          }
-        ],
-        tabledataArr: []
-      },
+      delagateUnitList: [],  //委托存档单位---select单位数据
+      // delagateCompanyId: null,   //委托存档单位---单位id
 
       archiveInitArr: null, //档案接转数据
       archiveTableLoading: false,
@@ -1527,17 +1409,19 @@ export default {
       },
       archiveEditInitArr:{
         isEditAndAdd: true,
+        addMaxLength: 1,
         treeflag: false,
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
         formData: {},
+        superimposeWidth:true,
         editableCol:[
-          'b0114_editInput',
+          'dc030001_editInput',
           'a0002_editInput',
           'dc030003_editSelectInput',
           'dc030004_editSelectInput',
-          'b0114_editInput',
+          'a3807a_editInput',
           'a3801_editDateInput',
           'a3803_editSelectInput',
           'a3802_editInput',
@@ -1546,22 +1430,14 @@ export default {
           'dc030011_editSelectInput',
           'dc030012_editInput',
           'dc030013_editAddressInput',
-          '存档编号_requireTitle',
-          '存档状态_requireTitle',
-          '存档性质_requireTitle',
-          '现档案管理机构名称_requireTitle',
-          '转入原因_requireTitle',
-          '原存档单位名称_requireTitle',
-          '转出原因_requireTitle',
-          '转往档案单位名称_requireTitle'
         ],
         columnsArr:[
           { 
+            title:'存档编号',
             dataIndex: "dc030001", 
             key: "dc030001",
             width: 250,
-            slots: { title: "存档编号_requireTitle" },
-            scopedSlots: { customRender: "b0114_editInput" } 
+            scopedSlots: { customRender: "dc030001_editInput" } 
           },
           { 
             title: '索引号',
@@ -1571,27 +1447,27 @@ export default {
             scopedSlots: { customRender: "a0002_editInput" } 
           },
           { 
+            title:'存档状态',
             dataIndex: "dc030003", 
             key: "dc030003",
             width: 200,
-            slots: { title: "存档状态_requireTitle" },
             scopedSlots: { customRender: "dc030003_editSelectInput" },
             itemChildren:[],
           },
           { 
+            title:'存档性质',
             dataIndex: "dc030004", 
             key: "dc030004",
             width: 200,
-            slots: { title: "存档性质_requireTitle" },
             scopedSlots: { customRender: "dc030004_editSelectInput" },
             itemChildren:[]
           },
           {
+            title:'现档案管理机构名称',
             dataIndex: "a3807a",
             key: "a3807a",
             width: 300,
-            slots: { title: "现档案管理机构名称_requireTitle" },
-            scopedSlots: { customRender: "b0114_editInput" } 
+            scopedSlots: { customRender: "a3807a_editInput" } 
           },
           { 
             title: "转入日期", 
@@ -1601,18 +1477,18 @@ export default {
             scopedSlots: { customRender: "a3801_editDateInput" } 
           },
           {  
+            title:'转入原因',
             dataIndex: "a3803", 
             key: "a3803",
             width: 300,
-            slots: { title: "转入原因_requireTitle" },
             scopedSlots: { customRender: "a3803_editSelectInput" },
             itemChildren:[]  
           },
           {
+            title:'原存档单位名称',
             dataIndex: "a3802",
             key: "a3802",
             width: 300,
-            slots: { title: "原存档单位名称_requireTitle" },
             scopedSlots: { customRender: "a3802_editInput" } 
           },
           { 
@@ -1630,18 +1506,18 @@ export default {
             scopedSlots: { customRender: "dc030010_editDateInput" } 
           },
           {  
+            title:'转出原因',
             dataIndex: "dc030011", 
             key: "dc030011",
             width: 300,
-            slots: { title: "转出原因_requireTitle" },
             scopedSlots: { customRender: "dc030011_editSelectInput" },
             itemChildren:[]  
           },
           {
+            title:'转往档案单位名称',
             dataIndex: "dc030012",
             key: "dc030012",
             width: 300,
-            slots: { title: "转往档案单位名称_requireTitle" },
             scopedSlots: { customRender: "dc030012_editInput" } 
           },
           { 
@@ -1678,10 +1554,10 @@ export default {
     address() {
       return address;
     },
-    exitsVal() {
+    exitsVal:function() {
+      let isRequireNum = 0;
       if (this.personBasicInfo) {
-        return (this.ifExist =
-          Number(Boolean(this.personBasicInfo.a0101)) +
+        isRequireNum = Number(Boolean(this.personBasicInfo.a0101)) +
           Number(Boolean(this.personBasicInfo.a0184)) +
           Number(Boolean(this.personBasicInfo.a0104)) +
           Number(Boolean(this.personBasicInfo.a0117)) +
@@ -1697,10 +1573,11 @@ export default {
           Number(Boolean(this.personBasicInfo.a0202b)) +
           Number(Boolean(this.personBasicInfo.a0202c)) +
           Number(Boolean(this.personBasicInfo.a0202d)) +
-          Number(Boolean(this.personBasicInfo.a0211)));
+          Number(Boolean(this.personBasicInfo.a0211));
       } else {
-        return (this.ifExist = 0);
+        isRequireNum = 0
       }
+      return this.ifExist = isRequireNum;
     },
     directoryData: function() {
       //字典数据
@@ -1725,7 +1602,7 @@ export default {
         this.eduEditInitArr.columnsArr.forEach(el => {
           if(el.key === 'a0837')  el.itemChildren = this.educationTypeArr;  //教育类别
           if(el.key === 'a0838')  el.itemChildren = this.studyFormArr;      //学习形式
-          if(el.key === 'a0824')  el.itemChildren = this.professionalArr;   //所学专业名称
+          if(el.key === 'a0824a08')  el.itemChildren = this.professionalArr;   //所学专业名称
           if(el.key === 'a0901a') el.itemChildren = this.degreeArr;         //所获学位
           if(el.key === 'a0801a') el.itemChildren = this.educationArr;      //所获学历
         });
@@ -1754,13 +1631,6 @@ export default {
           if(el.key === 'a0215c') el.itemChildren = this.positionLevelArr; //专业技术职务级别
         });
 
-        //委托单位存档数据
-        this.delagateEditInitArr.columnsArr.forEach(el => {
-          if(el.key === 'b0103')  el.itemChildren = this.workUnitArr; //单位机构类型
-          if(el.key === 'b0134')  el.itemChildren = this.industryArr;  //单位所属行业
-          if(el.key === 'b0105')  el.itemChildren = this.economicArr; //单位经济行业
-        })
-    
         //档案转接数据
         this.archiveEditInitArr.columnsArr.forEach(el => {
           if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
@@ -1776,7 +1646,6 @@ export default {
         this.languageInitArr = this.languageEditInitArr;  //语言能力
         this.trainerInitArr = this.trainerEditInitArr;  //培训经历
         this.professionalInitArr = this.professionalEditInitArr;  //专业与职业技术
-        this.delagateInitArr = this.delagateEditInitArr;  //委托单位存档数据
         this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据
       } else{
         //浏览--tableview传值
@@ -1787,7 +1656,6 @@ export default {
         this.languageInitArr = this.languageViewInitArr;  //语言能力
         this.trainerInitArr = this.trainerViewInitArr;  //培训经历
         this.professionalInitArr = this.professionalViewInitArr;  //专业与职业技术
-        this.delagateInitArr = this.delagateViewInitArr;  //委托单位存档数据
         this.archiveInitArr = this.archiveViewInitArr;  //档案转接数据
       }
     },
@@ -1854,7 +1722,6 @@ export default {
         this.getAward(currId);
         this.getTrainer(currId);
         this.getProfessional(currId);
-        this.getUnitSaveRecord(currId);
         this.getArchiveTableData(currId);
       } else{
         //添加
@@ -1865,10 +1732,8 @@ export default {
         this.languageInitArr.tabledataArr = [];
         this.trainerInitArr.tabledataArr = [];
         this.professionalInitArr.tabledataArr = [];
-        this.delagateInitArr.tabledataArr = [];
         this.archiveInitArr.tabledataArr = [];
       }
-      
     },
 
     getWork(currId) {
@@ -1889,7 +1754,7 @@ export default {
                 a4801: element.a4801,
                 a4804: element.a4804,
                 a0215a: element.a0215a,
-                a0202d: element.a0202d
+                a0202dwork: element.a0202dwork
               });
             });
             if(this.operateStatusVal !== 2){
@@ -1908,6 +1773,7 @@ export default {
           this.workTableLoading = false;
         });
     },
+
     getEducation(currId) {
       //获取教育经历
       this.eduTableLoading = true;
@@ -1927,10 +1793,10 @@ export default {
                   a0801a: element.a0801a,
                   a0801a_Code: element.a0801a_Code,
                   a0804: element.a0804,
-                  a0807: element.a0807,
+                  a0807a08: element.a0807a08,
                   a0814: element.a0814,
-                  a0824: element.a0824,
-                  a0824_Code: element.a0824_Code,
+                  a0824a08: element.a0824a08,
+                  a0824a08_Code: element.a0824a08_Code,
                   a0837: element.a0837,
                   a0837_Code: element.a0837_Code,
                   a0838: element.a0838,
@@ -1946,10 +1812,10 @@ export default {
                   key: element.a08000,
                   a0814: element.a0814,
                   a0804: element.a0804,
-                  a0807: element.a0807,
+                  a0807a08: element.a0807a08,
                   a0837: {code: element.a0837_Code, name: element.a0837},
                   a0801a: {code: element.a0801a_Code, name: element.a0801a},
-                  a0824: {code: element.a0824_Code, name: element.a0824},
+                  a0824a08: {code: element.a0824a08_Code, name: element.a0824a08},
                   a0838: {code: element.a0838_Code, name: element.a0838},
                   a0901a: {code: element.a0901a_Code, name: element.a0901a},
                   inEdit: false
@@ -1967,6 +1833,7 @@ export default {
           this.eduTableLoading = false;
         });
     },
+
     getFamily(currId) {
       //获取家庭情况
       this.$http
@@ -2003,6 +1870,7 @@ export default {
         })
         .catch(err => {});
     },
+
     getAward(currId) {
       //获取奖惩情况
       this.rewordTableLoading = true;
@@ -2032,10 +1900,10 @@ export default {
               currTempData.forEach(element => {
                 this.rewordInitArr.tabledataArr.push({
                   key: element.a14000,
-                  a14Z204a: {code: a14Z204a_Code, name: element.a14Z204a},
+                  a14Z204a: {code: element.a14Z204a_Code, name: element.a14Z204a},
                   a14Z211: element.a14Z211,
                   a14Z214a: element.a14Z214a,
-                  a14Z304a: {code: a14Z304a_Code, name: element.a14Z304a},
+                  a14Z304a: {code: element.a14Z304a_Code, name: element.a14Z304a},
                   a14Z307: element.a14Z307,
                   a14Z311a: element.a14Z311a,
                   inEdit: false
@@ -2053,6 +1921,7 @@ export default {
           this.rewordTableLoading = false;
         });
     },
+
     getLanguage(currId) {
       //语言能力
       this.languageTableLoading = true;
@@ -2097,6 +1966,7 @@ export default {
           this.languageTableLoading = false;
         });
     },
+
     getTrainer(currId) {
       //获取培训经历
       this.trainerTableLoading = true;
@@ -2133,6 +2003,7 @@ export default {
           this.trainerTableLoading = false;
         });
     },
+
     getProfessional(currId) {
       //获取专业与职业技术
       this.professionalTableLoading = true;
@@ -2184,58 +2055,7 @@ export default {
           this.professionalTableLoading = false;
         });
     },
-    getUnitSaveRecord(currId) {
-      //委托单位存档数据
-      this.delagateTableLoading = true;
-      this.$http
-        .fetchGet("informationPool@findB0A01ByA01Id.action", {
-          a01Id: currId
-        })
-        .then(res => {
-          if (Number(res.code) === 0) {
-            let currTempData = res.data;
-            this.delagateInitArr.tabledataArr = [];
-            if(this.operateStatusVal === 2){
-              //浏览
-              currTempData.forEach(element => {
-                this.delagateInitArr.tabledataArr.push({
-                  key: element.b01000,
-                  b0101: element.b0101,
-                  b0102: element.b0102,
-                  b0103: element.b0103,
-                  b0103_Code: element.b0103_Code,
-                  b0105: element.b0105,
-                  b0105_Code: element.b0105_Code,
-                  b0114: element.b0114,
-                  b0134: element.b0134,
-                  b0134_Code: element.b0134_Code,
-                  b0107: element.b0107
-                });
-              });
-            } else{
-              currTempData.forEach(element => {
-                this.delagateInitArr.tabledataArr.push({
-                  key: element.b01000,
-                  b0101: element.b0101,
-                  b0102: element.b0102,
-                  b0114: element.b0114,
-                  b0103: {code: element.b0103_Code, name: element.b0103},
-                  b0105: {code: element.b0105_Code, name: element.b0105},
-                  b0134: {code: element.b0134_Code, name: element.b0134},
-                  b0107: {code: element.b0107 ? element.b0107.split('.') : [], name: element.b0107}   //区划代码
-                });
-              });
-            }
-          } else{
-            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
-          }
-        })
-        .catch(err => {
-          this.$message.error('抱歉，网络异常！');
-        }).finally(end => {
-          this.delagateTableLoading = false;
-        });
-    },
+
     getArchiveTableData(currId) {
       //档案转接数据
       this.archiveTableLoading = false;
@@ -2299,14 +2119,32 @@ export default {
         });
     },
 
-    conVersionData(keyVal, data) {
+    getDelagateUnitListFun(){
+      //获取委托存档单位列表数据
+      this.$http.fetchGet('personalArch@getCompanyList.action').then(res => {
+        if(Number(res.code) === 0){
+          this.delagateUnitList = res.data;
+        } else{
+          this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+        }
+      }).catch(error => {
+        this.$message.error('抱歉，网络异常！');
+      })
+    },
+
+    // delagateChange(value){
+    //   //获取委托存档单位列表数据--change
+    //   this.delagateCompanyId = value;
+    // },
+
+    conVersionData(keyVal, data, searchKey) {
       /***
        * 功能：浏览页面:根据当前的属性值itemCode，查找对应的数组，判断匹配的data（拿到的itemCode）返回value（itemName）
-       * 参数：keyVal: 当前在哪个数组里查找；data:当前itemCode
+       * 参数：keyVal: 当前在哪个数组里查找；data:当前itemCode; searchKey:在数据里data根据哪个值匹配查找
        */
       let tempData = [];
       let tempName = "";
-      if (keyVal) {
+      if (keyVal && data) {
         if (keyVal === "a0117") {
           //民族
           tempData = this.nationalArr;
@@ -2340,9 +2178,11 @@ export default {
         } else if (keyVal === "a0202d") {
           //工作职位(岗位)类型
           tempData = this.professionalArr;
+        } else if(keyVal === 'delagate'){
+          tempData = this.delagateUnitList;
         }
         tempData.forEach(el => {
-          if (el.itemCode === data) {
+          if (el[searchKey] === data) {
             tempName = el.itemName;
           }
         });
@@ -2351,6 +2191,7 @@ export default {
       }
       return tempName;
     },
+
     birthdayChange(date, dateString) {
       //出生日期修改
       for (let key in this.personBasicInfo) {
@@ -2359,6 +2200,7 @@ export default {
         }
       }
     },
+
     graduateChange(date, dateString) {
       //最高学历毕业日期修改
       for (let key in this.personBasicInfo) {
@@ -2367,6 +2209,7 @@ export default {
         }
       }
     },
+
     joinWorkChange(date, dateString) {
       //参加工作年月
       for (let key in this.personBasicInfo) {
@@ -2375,18 +2218,22 @@ export default {
         }
       }
     },
+
     hujiCodeChange(value) {
       //户籍行政区划
       this.personBasicInfo["a0111d"] = value.join(".");
     },
+
     birthdayCodeChange(value) {
       //出生地行政区划
       this.personBasicInfo["a0114"] = value.join(".");
     },
+
     workCodeChange(value) {
       //工作地行政区划
       this.personBasicInfo["a0203"] = value.join(".");
     },
+
     uploadPhoto(info) {
       //上传照片
       if (info.file.status === "done") {
@@ -2400,6 +2247,7 @@ export default {
         });
       }
     },
+
     beforeUpload(file) {
       //上传照片前--照片格式校验
 
@@ -2413,10 +2261,12 @@ export default {
       }
       return isJPG && isLt2M;
     },
+
     clearImgUrl() {
       //清空当前图片
       this.imgUrl = "";
     },
+
     regInput(val, minLength, maxLength, regways, tip) {
       /***
        * 功能：必填项验证
@@ -2424,10 +2274,32 @@ export default {
        */
       if (val) {
         if (regways) {
-          let regResult = this.regs[regways](val);
-          if (regResult === 0) {
-            this.$message.error(tip);
-            this.isRight = false;
+          if(regways === 'testid'){
+            if(val === '000000000000000000') return
+            //身份证重复验证
+            let regResult = this.regs[regways](val);
+            if (regResult === 0) {
+              this.$message.error(tip);
+              this.isRight = false;
+            } else{
+              this.$http.fetchPost('informationPool@checkPerson.action', {
+                a0184: val
+              }).then(res => {
+                if(Number(res.code) === 0){
+                  //重复：已经存在
+                  this.$message.error('该人员已经存在，请勿重复添加');
+                  this.isRight = false;
+                }
+              }).catch(error => {
+                this.$message.error('抱歉，网络异常！');
+              })
+            }
+          } else{
+            let regResult = this.regs[regways](val);
+            if (regResult === 0) {
+              this.$message.error(tip);
+              this.isRight = false;
+            } 
           }
         } else {
           if (val.length > maxLength || val.length < minLength) {
@@ -2436,67 +2308,116 @@ export default {
           }
         }
       } else {
-        this.$message.error(tip);
         this.isRight = false;
       }
     },
-    getFinishData() {
-      let tempBasicInfo = this.personBasicInfo;
-      let isCloseModel = true;
-      if (this.isRight) {
-        if (this.operateStatusVal !== 1) {
-          //编辑
-          console.log(tempBasicInfo);
-          // this.$http
-          //   .fetchPost("informationPool@upDataPersonInfo.action", tempBasicInfo)
-          //   .then(res => {
-          //     if (Number(res.code) === 0) {
-          //       this.$message.success("提交成功");
-          //       isCloseModel = true;
-          //     }
-          //   })
-          //   .catch(err => {
-          //     this.$message.error("提交失败");
-          //     isCloseModel = false;
-          //   });
-        } else {
-          //添加
-          tempBasicInfo.upUnitId = this.addTreeNode["key"];
-          tempBasicInfo.dataArr = [];
-          tempBasicInfo.dataArr.push(
-            this.familyInitArr.tabledataArr, 
-            this.eduInitArr.tabledataArr, 
-            this.workInitArr.tabledataArr,
-            this.trainerInitArr.tabledataArr,
-            this.rewordInitArr.tabledataArr,
-            this.languageInitArr.tabledataArr,
-            this.professionalInitArr.tabledataArr,
-            this.archiveInitArr.tabledataArr)
-          console.log(tempBasicInfo);
 
-          // this.$http
-          //   .fetchPost(
-          //     "informationPool@personInfoAdd.action?upUnitId=" +
-          //       this.addTreeNode["key"],
-          //     tempBasicInfo
-          //   )
-          //   .then(res => {
-          //     if (Number(res.code) === 0) {
-          //       this.$message.success("提交成功");
-          //       isCloseModel = true;
-          //     }
-          //   })
-          //   .catch(err => {
-          //     this.$message.error("提交失败");
-          //     isCloseModel = false;
-          //   });
+    getFinishData() {
+      //验证存档编号是否存在
+      if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
+        this.$http.fetchPost('informationPool@checkArchNumber.action',{
+            dc030001: this.archiveInitArr.tabledataArr[0].dc030001
+          }).then(res =>{
+            if(Number(res.code) === 0){
+              if(this.operateStatusVal === 3){
+                //编辑状态
+                this.$emit('OperateStatusFun', true);
+                this.postOtherData();
+              } else{
+                //添加状态
+                this.$message.error('档案转接数据：存档编号已经存在，不能重复');
+                this.$emit('OperateStatusFun', false);
+              }
+            } else {
+              //没重复
+              this.postOtherData();
+            }
+          }).catch(error => {
+            this.$message.error('抱歉，网络异常！');
+            this.$emit('OperateStatusFun', false);
+          });
+        } else{
+          this.postOtherData();
         }
-      } else {
-        this.$message.error("必填项不能为空");
-        isCloseModel = false;
-      }
-      return isCloseModel;
+      
     },
+    
+    postOtherData(){
+      let tempBasicInfo = this.personBasicInfo;
+      let tempFamilyDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.familyInitArr.tabledataArr)));
+      let tempEduDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.eduInitArr.tabledataArr)));
+      let tempWorkDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.workInitArr.tabledataArr)));
+      let tempTrainerDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.trainerInitArr.tabledataArr)));
+      let tempRewordDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.rewordInitArr.tabledataArr)));
+      let tempLanguageDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.languageInitArr.tabledataArr)));
+      let tempProfessDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.professionalInitArr.tabledataArr)));
+      let tempArchiveDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.archiveInitArr.tabledataArr)));
+      if (this.isRight) {
+        tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';
+        console.log(tempBasicInfo);
+        let postdataArr = [];
+        // 先把数组转成str， 在转码，解码
+        postdataArr.push(
+          tempFamilyDataArr, 
+          tempEduDataArr, 
+          tempWorkDataArr,
+          tempTrainerDataArr,
+          tempRewordDataArr,
+          tempLanguageDataArr,
+          tempProfessDataArr,
+          tempArchiveDataArr)
+        tempBasicInfo.dataArr = encodeURI(JSON.stringify(postdataArr));
+        this.$http.fetchPost("informationPool@personInfoAdd.action",tempBasicInfo)
+          .then(res => {
+            if (Number(res.code) === 0) {
+              this.$message.success("提交成功");
+              this.$emit('OperateStatusFun', true);
+            } else{
+              this.$message.error("提交失败");
+              this.$emit('OperateStatusFun', false);
+            }
+          })
+          .catch(err => {
+            this.$message.error("抱歉，网络异常！");
+            this.$emit('OperateStatusFun', false);
+          });
+      } else {
+        this.$message.error("人员基本信息:必填项不能为空");
+        this.$emit('OperateStatusFun', false);
+      }
+    },
+  
+
+    transferNewDataArrFun(dataArr){
+      /**
+       * 功能：把当前数组里select为对象的转换为提交的数组：只需要itemCode
+       * 参数：dataArr:当前需要转换的数组
+       */
+      let resultDataArr = [],
+      objName = "[object Object]",
+      arrName = "[object Array]"
+      if(dataArr && dataArr.length > 0){
+        dataArr.forEach(el => {
+          for(let key in el){
+            if(Object.prototype.toString.call(el[key]) === objName){
+              if(Object.prototype.toString.call(el[key]['code']) === arrName){
+                //行政区划
+                el[key] = el[key]['code'].join('.');
+              } else{
+                el[key] = el[key]['code']
+              }
+              delete el['inEdit'];
+            }
+          }
+          resultDataArr.push(el);
+        });
+      } else{
+        resultDataArr = [];
+      }
+      
+      return resultDataArr;
+    },
+
     anchorClick(anchorId, indexVal) {
       //左侧锚点点击
       this.currClickAnchor = indexVal;
@@ -2504,8 +2425,12 @@ export default {
       document.getElementsByClassName("right_container")[0].scrollTop =
         anchor.offsetTop - 60;
     },
-    scrollAddListening(currScrollTopVal) {
+
+    scrollAddListening() {
       //右侧内容滚动条监听
+      let scrollListener = document.getElementsByClassName("right_container");
+      let currScrollTopVal =
+          scrollListener[0].scrollTop || scrollListener[0].pageYOffset;
       this.anchorList.forEach((item, index) => {
         this.$nextTick(() => {
           item.idscrollTop = document.getElementById(item.value).offsetTop;
@@ -2534,6 +2459,7 @@ export default {
         if (newVal === 1) {
           //添加操作
           this.personBasicInfo = this.addInitPersonBasicInfo;
+          this.getPersonOtherInfo(null);
         } else {
           //浏览或编辑操作
           this.getBasicInfo(this.currRowDataId);
@@ -2590,7 +2516,10 @@ export default {
         }
       },
       deep: true //深度监听
-    }
+    },
+  },
+  destroyed(){
+    window.removeEventListener('scroll', this.scrollAddListening, true);
   }
 };
 </script>
@@ -2682,9 +2611,9 @@ export default {
 .right_containerWidth {
   width: calc(100% - 180px);
 }
-.right_containeraddWidth {
+/* .right_containeraddWidth {
   width: 100%;
-}
+} */
 
 .otherinfo {
   margin: 40px 0;

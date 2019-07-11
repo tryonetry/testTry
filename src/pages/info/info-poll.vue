@@ -39,13 +39,14 @@
     <!-- 添加信息模态框 -->
     <div class="addModal">
       <a-modal
+        class="infopoll"
         centered
         :title="operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')"
         :visible="visible"
         :confirmLoading="confirmLoading"
-        :width="operateStatus == 1 ? '80%': '96%'"
+        width="95%"
         @cancel="handleCancel"
-        style="height:85%;overflow: hidden;"
+        style="height:95%;overflow: hidden;"
         :maskClosable="false"
       >
         <InfoOperate
@@ -54,6 +55,7 @@
           :currRowDataId="operateDataId"
           :addSelectTreeNode="selectTreeNode"
           :ramdomKey="ramdomKey"
+          @OperateStatusFun='infoOperateFun'
         ></InfoOperate>
         <template slot="footer">
           <a-button key="cancel" @click="handleCancel">取消</a-button>
@@ -281,7 +283,6 @@ export default {
       this.operateDataId = data.key;
       if (statusVal == 1) {
         let treenode = this.selectTreeNode;
-        console.log(treenode);
         if (treenode) {
           if (treenode.key.length > 4) {
             this.showModalFun();
@@ -312,19 +313,20 @@ export default {
        * 功能：模态框：确定操作
        */
       this.confirmLoading = true;
-      let isCloseModelFlag = this.$refs.operatePage.getFinishData();
-      if(isCloseModelFlag){
-        console.log('提交完了，更新页面！');
-        // this.getTableData(this.tempCondition, 1, 10);
-        // setTimeout(() => {
-        //   this.visible = false;
-        //   this.confirmLoading = false;
-        // }, 2000);
+      this.$refs.operatePage.getFinishData();
+    },
+
+    infoOperateFun(value){
+      console.log(value);
+      if(value){
+        this.getTableData(this.tempCondition, 1, 10);
+        this.visible = false;
+        this.confirmLoading = false;
       } else{
         this.visible = true;
       }
-      
     },
+
     handleCancel() {
       /***
        * 功能：模态框取消操作

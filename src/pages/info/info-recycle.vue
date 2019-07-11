@@ -104,6 +104,7 @@ export default {
             title: "姓名",
             dataIndex: "a0101",
             key: "a0101",
+            fixed: 'left',
             width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -112,6 +113,7 @@ export default {
             dataIndex: "a0104",
             key: "a0104",
             width: 120,
+            fixed: 'left',
             scopedSlots: { customRender: "cursorTitle" },
             filters: [
               {
@@ -172,13 +174,13 @@ export default {
             title: "删除人",
             dataIndex: "uLastModifieder",
             key: "uLastModifieder",
-            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
             width: 150,
+            fixed: 'right',
             scopedSlots: { customRender: "action" }
           }
         ],

@@ -208,6 +208,7 @@ export default {
       bordered:false, // 边框默认 false
       selectedRowKeys: [], //选择的 keys
       editableCol: [], 
+      addMaxLength:0,
     };
   },
   watch: {
@@ -227,6 +228,7 @@ export default {
           this.tabledata = newVal.tabledataArr;
           this.tablecheck = newVal.tableCheck;
           this.isHasNotTable = newVal.isHasNotTable;
+          this.addMaxLength = newVal.addMaxLength;
           sessionStorage.setItem(
             "hctabledata",
             JSON.stringify(newVal.tabledataArr)
@@ -451,8 +453,12 @@ export default {
 
     // 添加数据
     addList(){
-
-      if(this.columns.length <= 0) return;
+      
+      if(this.columns.length <= 0 )  return;
+      if(this.tabledata.length >= this.addMaxLength) {
+        this.$message.warning('只能添加'+ this.addMaxLength + '条数据！');
+        return;
+      } 
 
       // 添加空行
       let emptyRow = {};
