@@ -701,7 +701,7 @@ export default {
             ],
           },
           companyList:null,
-          hasDataDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum']
+          hasDataDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum','personType']
     };
   },
 

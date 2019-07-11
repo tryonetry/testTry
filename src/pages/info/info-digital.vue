@@ -16,6 +16,7 @@
     <div class="modal directoryModal">
       <a-modal
         centered 
+        class="editModal"
         :visible="directoryModalState"
         @cancel="handleCancel"
         :width ="1200"
@@ -35,6 +36,7 @@
     <!-- 档案编辑弹出层 -->
     <div class="modal editModal">
       <a-modal
+        class="editModal"
         centered 
         :visible="editModalState"
         :confirmLoading="editModalConfirm"
@@ -241,7 +243,7 @@ export default {
 </script>
     
 <style>
-  .ant-modal-body{
+  .editModal .ant-modal-body{
     padding:0;
   }
   .modal{

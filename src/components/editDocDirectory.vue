@@ -467,7 +467,7 @@ export default {
     width: 20%;
     box-sizing: border-box;
     /* padding: 20px; */
-    border-right: 3px solid #e8e8e8;
+    border-right: 1px solid #e8e8e8;
 }
 .left>ul>li{
     width: 100%;

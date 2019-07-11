@@ -1,4 +1,5 @@
 <!-- template -->
+
 <template>
   <!-- 信息变更 -->
   <div class="outer">
@@ -8,7 +9,7 @@
           href="javascrit:;"
           class="primaryBtnColor"
           @click="editOperate(slotPropsData.currRowdata)"
-        >进入</a>
+        >编辑信息</a>
       </div>
     </TableView>
     <div class="modal">
@@ -29,7 +30,7 @@
           <span>{{currentPersonData && currentPersonData.a0101}}</span>
         </div>
         <div class="recordInfoContainer">
-          <RecordInfo :currentPersonData='currentPersonData'></RecordInfo>
+          <RecordInfo :currentPersonData='currentPersonData' ref="accountInfoForm"></RecordInfo>
         </div>
       </a-modal>
     </div>
@@ -49,6 +50,11 @@ export default {
   props: [""],
 
   data() {
+    // 如果存档性质不是单位存档,则隐藏 委托单位存档名称和编号
+        // if(item.name === "personType" && item.val !== "02"){
+        //   _this.$set(this.formData.formInputs[26],"isHide",true);
+        //   _this.$set(this.formData.formInputs[27],"isHide",true);
+        // }
     return {
       tableTotalNum:0,
       tableLoading:false,
@@ -212,16 +218,41 @@ export default {
         _this.tableLoading = false;
       })
     },
+
     // 点击进入
     editOperate(currdata) {
       this.currentPersonData = currdata;
       // console.log(this.currentPersonData)
       this.modalState = true;
     },
+
+    // 提交
     handleOk(){
-      this.saveConfirmLoading = true;
-      // this.modalState = 
+      const _this = this;
+      let reultFormData = this.$refs.accountInfoForm.getFormSearchData(); 
+      // console.log(reultFormData)
+      if(reultFormData.isRight){
+        this.saveConfirmLoading = true;
+        this.$http.fetchPost('personalArch@editPersonalArch.action',{
+          a01000:this.currentPersonData.id,
+          ...reultFormData.postObj,
+        })
+        .then(res => {
+          if(Number(res.code) === 0){
+            _this.$message.success('提交成功');
+          }else{
+            _this.$message.warning('抱歉,提交失败,请重试');
+          }
+        })
+        .catch(err => {
+          _this.$message.error('抱歉,网络错误,请稍后重试');
+        })
+        .finally(end => {
+          _this.saveConfirmLoading = false;
+        })
+      }
     },
+
     handleCancel(){
       this.modalState = false;
     }

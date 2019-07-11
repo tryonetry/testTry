@@ -309,7 +309,7 @@ export default {
 
     // 父组件获取数据并验证数据准确性
     getFormData(){
-      console.log('传递数据....')
+      // console.log('传递数据....')
       const _this = this;
       // 必填项的 status 值是否都为 success 以及已填写的非必填项数据是否准确
       let requiredFiledsRight = true;
@@ -423,6 +423,7 @@ export default {
 
         let connectToArr = itemData.connectTo;
         let connectToFunArr = itemData.connectToFun;
+        // console.log(connectToArr);
         // 遍历关联函数和关联项
         connectToArr.forEach((item,i)=>{
           _this.formData.formInputs.forEach((input,index)=>{
@@ -858,12 +859,14 @@ export default {
 
     // 搜索选择框改变
     searchSelectChange (select) {
-      
       this.bundleLinkage(select);
       this.listeningChange();
-      this.$nextTick(function(){
-        this.tableBodyRize();
-      })
+      if(this.tableBodyRize && this.tableBodyRize instanceof Function){
+        this.$nextTick(function(){
+          this.tableBodyRize();
+        })
+      }
+      
     },
 
     // 普通的必填表单项失去焦点
