@@ -6,6 +6,8 @@ import antd from 'ant-design-vue';
 
 import './assets/index.css'
 
+import './assets/font/font_leapeszd49e/iconfont.css'
+
 import store from './store';
 import router from './router';
 import * as http from '@/http';

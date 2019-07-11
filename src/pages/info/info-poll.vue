@@ -11,8 +11,10 @@
       <span slot="formAction">
         <a-button class="buttonOperate" type="primary" @click="operateFun(currentData = {},1)">添加</a-button>
         <a-button class="buttonOperate" @click="portraitView">个人画像</a-button>
-        <a-button class="buttonOperate">导出</a-button>
-        <a-button class="buttonOperate">导出全部</a-button>
+        <JsonExcel :data="exportDataArr" :fields="exportFiledsJson" :name="fieldsName" style="display: inline-block;">
+          <a-button class="buttonOperate" @click="exportFun">导出</a-button>
+        </JsonExcel>
+        <!-- <a-button class="buttonOperate" @click="exportAllFun">导出全部</a-button> -->
       </span>
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
@@ -63,17 +65,65 @@
         </template>
       </a-modal>
     </div>
+
+    <!-- 个人画像modal -->
+     <div class="addModal">
+      <a-modal
+        class="personImgModal"
+        centered
+        :visible="personVisible"
+        :confirmLoading="personConfirmLoading"
+        width="1000px"
+        @cancel="handlePersonCancel"
+        style="height:650px;overflow: hidden;"
+        :maskClosable="false"
+        :footer="null"
+      >
+        <div slot="title" class="titleSlot">
+          <p>个人画像</p>
+          <span>测试某某</span>
+        </div>
+        
+        <div class="personContainer">
+          <div class="hotCon">
+              点击热度：75 次
+          </div>
+          <div class="personContent">
+             <div class="firstCircle">
+               <div class="secondCircle">
+                 <div class="contentCircle">
+                   <img src="../../assets/image/test6.gif" />
+                 </div>
+               </div>
+               <div class="detail_div detail_div_name"><Portrait :infoObj="nameObj"></Portrait></div>
+               <div class="detail_div detail_div_gender"><Portrait :infoObj="genderObj"></Portrait></div>
+               <div class="detail_div detail_div_age"><Portrait :infoObj="ageObj"></Portrait></div>
+               <div class="detail_div detail_div_edu"><Portrait :infoObj="eduObj"></Portrait></div>
+               <div class="detail_div detail_div_profess"><Portrait :infoObj="professObj"></Portrait></div>
+               <div class="detail_div detail_div_marry"><Portrait :infoObj="marryObj"></Portrait></div>
+               <div class="detail_div detail_div_college"><Portrait :infoObj="collegeObj"></Portrait></div>
+               <div class="detail_div detail_div_address"><Portrait :infoObj="addressObj"></Portrait></div>
+             </div>
+          </div>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
 import InfoOperate from "@/components/infoOperate";
+import JsonExcel from "vue-json-excel";
+import moment from "moment";
+import Portrait from '@/components/info/portrait'
 export default {
   name: "InfoPoll",
   components: {
     TableView,
-    InfoOperate
+    InfoOperate,
+    JsonExcel,
+    Portrait
   },
   data() {
     return {
@@ -192,6 +242,71 @@ export default {
       operateDataId: null, //当前操作数据
       tempCondition: {}, //临时查询条件
       ramdomKey:Math.random(), //确保档案目录数据每次都重新加载
+      personVisible:false,  //个人画像--modal
+      personConfirmLoading: false, //个人画像--modal
+      tempPersonData: {}, //临时--个人画像数据
+
+      exportDataArr: [], //导出数据
+      exportFiledsJson:{
+        //导出
+        序号: 'num',
+        姓名: 'a0101',
+        出生日期: 'a0107',
+        性别: 'a0104',
+        毕业院校: 'a0888',
+        参加工作日期: 'a0134',
+        工作单位及职务: 'a0202a',
+        热度: 'pageView'
+      },
+      fieldsName:"人员基础信息列表" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
+      nameObj: {
+        icon: 'user',
+        iconColor: '#64c3fa',
+        value: '从某某',
+        position: 'left'
+      },
+      genderObj:{
+        icon: 'male',
+        iconColor: '#64c3fa',
+        value: '男',
+        position: 'left'
+      },
+      ageObj:{
+        icon: 'nianling',
+        iconColor: '#64c3fa',
+        value: '28',
+        position: 'left'
+      },
+      eduObj:{
+        icon: 'xueli',
+        iconColor: '#64c3fa',
+        value: '硕士研究生',
+        position: 'left'
+      },
+      professObj:{
+        icon: 'book1',
+        iconColor: '#64c3fa',
+        value: '地理学',
+        position: 'left'
+      },
+      marryObj:{
+        icon: 'hunyinlianai',
+        iconColor: '#64c3fa',
+        value: '未婚',
+        position: 'right'
+      },
+      collegeObj:{
+        icon: 'school1',
+        iconColor: '#64c3fa',
+        value: '东华理工大学',
+        position: 'right'
+      },
+      addressObj:{
+        icon: '1302dizhi',
+        iconColor: '#64c3fa',
+        value: '江西吉安遂川',
+        position: 'right'
+      }
     };
   },
   watch: {},
@@ -337,18 +452,137 @@ export default {
       /***
        * 功能：查看个人画像
        */
-      console.log(this.checkTableData);
-      if (this.checkTableData.length < 1) {
-        this.$message.error("请选择一条需要的画像信息");
-      } else if (this.checkTableData.length > 1) {
-        this.$message.error("最多选择一条需画像信息");
-      } else {
-        console.log(111);
-        this.$message.info("该功能暂未开通");
+      // if (this.checkTableData.length < 1) {
+      //   this.$message.error("请选择一条需要的画像信息");
+      // } else if (this.checkTableData.length > 1) {
+      //   this.$message.error("最多选择一条需画像信息");
+      // } else {
+        this.tempPersonData = this.checkTableData[0];
+        this.personVisible = true;
+      // }
+    },
+    
+    handlePersonCancel(){
+      //个人画像--modal
+      this.personVisible = false;
+    },
+
+    exportFun(){
+      //导出功能
+      if(this.checkTableData && this.checkTableData.length > 0){
+        this.exportDataArr = this.checkTableData;
+      } else{
+        this.$message.error('请至少选择一条数据进行操作！');
       }
-    }
+    },
+    // exportAllFun(){
+    //   //导出全部
+      
+    // }
   }
 };
 </script>
+<style scoped>
+.titleSlot{
+  display: flex;
+}
+.titleSlot>p{
+  margin-right: 40px;
+}
+.titleSlot>span{
+  color:#2d8cf0;
+}
+
+.personContainer{
+  width:100%;
+  height: 100%;
+  overflow:hidden;
+}
+
+.hotCon{
+  color: red;
+  font-size: 16px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.personContent{
+  width: 100%;
+  height: calc(100% - 40px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.firstCircle{
+  padding: 60px;
+  border: 2px dashed #64c3fa;
+  border-radius: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.detail_div{
+  position: absolute;
+  z-index: -1;
+}
+
+.detail_div_name{
+  top: 5%;
+  left: -10%;
+}
+
+.detail_div_gender{
+  top: 40%;
+  left: -30%;
+}
+
+.detail_div_age{
+  top: 66%;
+  left: -7%;
+}
+
+.detail_div_edu{
+  bottom: -2%;
+  left: 30%;
+}
+
+.detail_div_profess{
+  top: 0;
+  right: 5%;
+}
+
+.detail_div_marry{
+  top: 30%;
+  right: -12%;
+}
+
+.detail_div_college{
+  top: 60%;
+  right: -30%;
+}
+
+.detail_div_address{
+  top: 80%;
+  right: -10%;
+}
+
+.secondCircle{
+  padding: 30px;
+  border: 2px solid #ff7f50;
+  border-radius: 100%;
+  z-index: 2;
+}
+
+
+.contentCircle img{
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  z-index: 3;
+}
+
+</style>
+
 
 

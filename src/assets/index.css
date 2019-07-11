@@ -361,3 +361,7 @@ input{
 .ant-notification{
   z-index: 999;
 }
+
+.personImgModal .ant-modal-body{
+  height: calc(100% - 55px); 
+}
