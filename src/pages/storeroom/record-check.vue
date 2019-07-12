@@ -23,7 +23,7 @@
           href="javascript:;"
           data-type="归还"
           class="primaryBtnColor"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'return')"
+          @click="operateFun(slotPropsData.currRowdata, 'return')"
         >归还</a>
 
         <!-- 删除此操作了； 归还操作等价于入库 -->
@@ -32,7 +32,7 @@
           href="javascript:;"
           data-type="入库"
           class="infoBtnColor"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'putstorage')"
+          @click="operateFun(slotPropsData.currRowdata, 'putstorage')"
         >入库</a> -->
 
         <a 
@@ -40,7 +40,7 @@
           href="javascript:;"
           data-type="借出"
           class="warnBtnColor"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'checkout')"
+          @click="operateFun(slotPropsData.currRowdata, 'checkout')"
         >借出</a>
 
         <a-popconfirm
@@ -60,7 +60,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? '档案现场查(借)阅' : '档案归还登记'"
         :visible="sceneVisible"
         :confirmLoading="sceneConfirmLoading"
         :width="mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? '80%' : '40%'"
@@ -69,6 +68,11 @@
         style="height:85%;overflow: hidden;"
         :footer="mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? null : void 0"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? '档案现场查(借)阅' : '档案归还登记'}}</p>
+          <span v-if="mulitipleOperateVal === 'return'">{{tempRowData && tempRowData.a0101}}</span>
+        </div>
+
         <!-- 现场查借阅modal -->
         <div class="sceneBorrow" v-if="mulitipleOperateVal === 'now' || mulitipleOperateVal === 'batchNow'">
            <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" :loading="sceneTableLoading" @searchTable="getSceneTableData" ref="sceneTableView">
@@ -97,7 +101,6 @@
     <div class="addModal">
       <a-modal
         centered
-        title="批量查(借)阅"
         :visible="modalVisible"
         :confirmLoading="modalConfirmLoading"
         width="80%"
@@ -105,6 +108,11 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>批量查(借)阅</p>
+          <span v-if="mulitipleOperateVal === 'checkout'">{{tempRowData && tempRowData.a0101}}</span>
+        </div>
+
         <!-- 批量查借阅 -->
         <div class="batchBorrow">
           <TableFromSearch :formDataArr="multipleForm" :layout="layoutModal" ref="multipleTableForm" ></TableFromSearch>
@@ -853,6 +861,7 @@ export default {
       mulitipleOperateVal: null, //批量操作功能：1--> 现场直接借出，不经过申请； 2-->客户提出申请后再借出；
       archiveIdStr: '',  //批量操作返回的符合的id字符串
       operateCurrId: '',  //归还、入库、借出操作按钮---当前的id； 
+      tempRowData: null,  //当前行数据 
 
     };
   },
@@ -1030,6 +1039,7 @@ export default {
         } else{
           element.val = void 0;
         }
+        element.status = void 0;
       });
       _this.listDirectory = [];   //批量查借阅modal---可输入借阅人及身份证号数组赋值为[];
       if(currOpeVal === 'batchAudit'){
@@ -1255,9 +1265,15 @@ export default {
       const _this = this;
       _this.mulitipleOperateVal = operateVal;
       _this.operateCurrId = currRowData['key'];
+      _this.tempRowData = currRowData;
       if(operateVal === 'return'){
         //归还
         _this.sceneVisible = true;
+        _this.returnForm.formInputs.forEach(element => {
+          if(element.status) {
+            element.status = void 0;
+          }
+        });
         _this.returnForm = utils.getNewFormSearch(currRowData, _this.returnForm)
       } else if(operateVal === 'checkout'){
         //借出

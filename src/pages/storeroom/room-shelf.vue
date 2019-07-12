@@ -8,14 +8,14 @@
       <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
         <!-- tableFormSearch里添加其他按钮 -->
         <span slot="formAction">
-          <a-button class="buttonOperate" type="primary" @click="operateFun(currentData={}, 1)">添加</a-button>
+          <a-button class="buttonOperate" type="primary" @click="operateFun({}, 1)">添加</a-button>
         </span>
 
         <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
         <div slot="tableAction" slot-scope="slotPropsData">
           <a
             href="javascript:;"
-            @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+            @click="operateFun(slotPropsData.currRowdata, 3)"
             data-type="编辑"
           >编辑</a>
           <a-popconfirm
@@ -34,7 +34,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="operateStatus==1 ? '添加密集架': '编辑密集架'"
         :visible="visible"
         :confirmLoading="confirmLoading"
         width="80%"
@@ -42,6 +41,10 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{operateStatus == 1 ? '添加密集架': '编辑密集架'}}</p>
+          <span>{{currentRowData && currentRowData.whdName}}</span>
+        </div>
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="roomShelfForm" ref="shelfForm"></TableFromSearch>
         </div>
@@ -302,7 +305,8 @@ export default {
             status: ""
           }
         ]
-      }
+      },
+      currentRowData: null,  //当前行数据
     };
   },
 
@@ -448,6 +452,7 @@ export default {
        */
       this.operateStatus = statusVal;
       let initData = {};
+      this.currentRowData = data;
       if (statusVal == 1) {
         //添加
         initData = {

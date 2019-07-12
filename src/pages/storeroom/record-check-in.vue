@@ -14,7 +14,7 @@
           v-if="slotPropsData.currRowdata.archiveStatus != 1"
           class="primaryBtnColor"
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+          @click="operateFun(slotPropsData.currRowdata, 3)"
           data-type="档案入库"
         >档案入库</a>
       </div>
@@ -24,7 +24,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="operateStatus==1 ? '调整档案位置': '选择分配区域'"
         :visible="visible"
         :confirmLoading="confirmLoading"
         width="80%"
@@ -32,6 +31,10 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{operateStatus == 1 ? '调整档案位置': '选择分配区域'}}</p>
+          <span>{{currentRowData && currentRowData.a0101}}</span>
+        </div>
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="RecordCheckInForm" ref="recordCheckInForm" :getCapacityDataFun='getCapacityData'>
             <div class="capacityDiv" slot='otherForm'>
@@ -523,6 +526,7 @@ export default {
       batchDistributeIdStr: '',  //批量分配档案
       freeCapacity: 0, //空闲容量
       totalCapacity: 0, //总容量
+      currentRowData: null, //当前行数据
     };
   },
 
@@ -634,6 +638,7 @@ export default {
        * 功能：调整位置：功能
        */
       this.operateStatus = statusVal;
+      this.currentRowData = editDataObj;   //当前行数据
       if(editDataObj){
         //档案入库操作
         this.getPositionForm(editDataObj.key);

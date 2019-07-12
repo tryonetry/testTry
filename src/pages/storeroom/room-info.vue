@@ -4,14 +4,14 @@
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-        <a-button class="buttonOperate" type="primary" @click="operateFun(currentData={}, 1)">添加</a-button>
+        <a-button class="buttonOperate" type="primary" @click="operateFun({}, 1)">添加</a-button>
       </span>
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+          @click="operateFun(slotPropsData.currRowdata, 3)"
           data-type="编辑"
         >编辑</a>
         <a-popconfirm placement="topLeft" okText="确定" cancelText="取消" @confirm="deleteFun(slotPropsData.currRowdata)">
@@ -28,7 +28,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="operateStatus==1? '添加信息': '编辑信息'"
         :visible="visible"
         :confirmLoading="confirmLoading"
         width="80%"
@@ -36,6 +35,10 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{operateStatus==1? '添加信息': '编辑信息'}}</p>
+          <span>{{currentRowData && currentRowData.whName}}</span>
+        </div>
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="roomInfoForm" ref="infoForm"></TableFromSearch>
         </div>
@@ -313,7 +316,8 @@ export default {
       operateStatus: null, //操作状态：1-添加， 2-浏览， 3-编辑
       visible: false,      //模态框显隐：默认:false不显示
       confirmLoading: false,   //模态框加载状态： 默认false不加载
-      tempCondition: {}
+      tempCondition: {},  //临时--查询条件
+      currentRowData: null,  //当前行数据
     };
   },
 
@@ -383,9 +387,11 @@ export default {
        */
       this.operateStatus = statusVal;
       this.visible = true;
+      this.currentRowData = data;
       let initData = {};
       if (statusVal == 1) {
         //添加操作
+        
         initData = {
           whCode: "",
           whName: "",
@@ -506,4 +512,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>

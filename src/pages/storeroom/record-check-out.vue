@@ -11,7 +11,7 @@
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, '2')"
+          @click="operateFun(slotPropsData.currRowdata, '2')"
           data-type="出库"
           class="primaryBtnColor"
         >出库</a>
@@ -30,7 +30,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="operateStatus== '1'? '档案转出批量出库登记': '档案转出出库登记'"
         :visible="visible"
         :confirmLoading="confirmLoading"
         width="50%"
@@ -38,6 +37,11 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{operateStatus== '1'? '档案转出批量出库登记': '档案转出出库登记'}}</p>
+          <span>{{currentRowData && currentRowData.a0101}}</span>
+        </div>
+
         <div style="height:100%;overflow:auto;">
           <TableFromSearch :formDataArr="checkoutForm" :layout="layoutModal" ref="checkoutForm"></TableFromSearch>
         </div>
@@ -370,6 +374,7 @@ export default {
       },
       currOperateId: null, //当前操作的id
       batchOperateIdStr: null,  //批量操作--id字符串
+      currentRowData: null,  //当前行数据
     };
   },
 
@@ -443,6 +448,7 @@ export default {
        */
       const _this = this; 
       _this.operateStatus = operateVal;
+      _this.currentRowData = currData;
       if(currData && operateVal === '2'){
         //出库
         _this.checkoutForm.formInputs.forEach(el => {

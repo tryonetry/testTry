@@ -26,20 +26,20 @@
           href="javascript:;"
           data-type="借出"
           class="warnBtnColor"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'checkout')"
+          @click="operateFun(slotPropsData.currRowdata, 'checkout')"
         >借出</a>
         <a 
           v-if="slotPropsData.currRowdata.isInware === '0' && slotPropsData.currRowdata.borrowState==='1'"
           href="javascript:;"
           data-type="归还"
           class="infoBtnColor"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'return')"
+          @click="operateFun(slotPropsData.currRowdata, 'return')"
         >归还</a>
         <a 
           v-if="slotPropsData.currRowdata.isInware === '0' && slotPropsData.currRowdata.borrowState==='1'"
           href="javascript:;"
           data-type="打印预览"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 'print')"
+          @click="operateFun(slotPropsData.currRowdata, 'print')"
         >打印预览</a>
       </div>
     </TableView>
@@ -48,7 +48,6 @@
     <div class="addModal">
       <a-modal
         centered
-        :title="tempOperateVal==='checkRecord' ? '档案材料借阅':(tempOperateVal === 'checkout'? '借阅登记表' : '档案材料归还')"
         :visible="visible"
         :confirmLoading="confirmLoading"
         :width="tempOperateVal !== 'return' ? '80%' : '40%'"
@@ -57,6 +56,11 @@
         style="height:85%;overflow: hidden;"
         :footer="tempOperateVal==='checkRecord' ? null: void 0"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{tempOperateVal==='checkRecord' ? '档案材料借阅':(tempOperateVal === 'checkout'? '借阅登记表' : '档案材料归还')}}</p>
+          <span>{{currentRowData && currentRowData.a0101}}</span>
+        </div>
+        
         <!-- 查阅记录 -->
         <div class="checkRecordTable" v-if="tempOperateVal==='checkRecord'">
           <TableView :initArrData="recordInitArr" :totalCount="recordTableTotalNum" :loading="recordTableLoading" @searchTable="getRecordTableData"></TableView>
@@ -83,7 +87,6 @@
     <div class="addModal">
       <a-modal
         centered
-        title="交接清单预览"
         :visible="printVisible"
         :confirmLoading="printConfirmLoading"
         :width="modalWidth"
@@ -91,6 +94,11 @@
         style="height:85%;overflow: hidden;"
         :maskClosable="false"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>交接清单预览</p>
+          <span>{{currentRowData && currentRowData.a0101}}</span>
+        </div>
+
         <div class="modalInnerContainer">
             <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
               <div slot="printContent" class="printContent">
@@ -817,6 +825,7 @@ export default {
       firstTitle: '江西省人才流动中心', //打印--大标题
       secondTitle: '借条',  //打印---小标题
       nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
+      currentRowData: null,  //当前行数据
     };
   },
 
@@ -956,6 +965,7 @@ export default {
        */
       const _this = this;
       _this.tempOperateVal = operateVal;
+      _this.currentRowData = currData;
       _this.tempPersonId = tempMaterialId = currData['a01000'];
       if(operateVal === 'checkout' || operateVal === 'return'){
         if(operateVal === 'checkout'){

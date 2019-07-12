@@ -365,3 +365,14 @@ input{
 .personImgModal .ant-modal-body{
   height: calc(100% - 55px); 
 }
+
+/* 档案库房管理--modal--header名称 */
+.roomModalTitleSlot{
+  display: flex;
+}
+.roomModalTitleSlot>p{
+  margin-right: 40px;
+}
+.roomModalTitleSlot>span{
+  color:#2d8cf0;
+}
