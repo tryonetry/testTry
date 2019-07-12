@@ -267,43 +267,45 @@ export default {
       },
       genderObj:{
         icon: 'male',
-        iconColor: '#64c3fa',
+        iconColor: '#e25c58',
         value: '男',
         position: 'left'
       },
       ageObj:{
         icon: 'nianling',
-        iconColor: '#64c3fa',
+        iconColor: '#ffffff',
+        iconClass:'age_icon_bg',
         value: '28',
         position: 'left'
       },
       eduObj:{
         icon: 'xueli',
-        iconColor: '#64c3fa',
+        iconColor: '#ea5c5c',
         value: '硕士研究生',
         position: 'left'
       },
       professObj:{
         icon: 'book1',
-        iconColor: '#64c3fa',
+        iconColor: '#50b673',
         value: '地理学',
         position: 'left'
       },
       marryObj:{
         icon: 'hunyinlianai',
-        iconColor: '#64c3fa',
+        iconColor: '#1196db',
         value: '未婚',
         position: 'right'
       },
       collegeObj:{
         icon: 'school1',
-        iconColor: '#64c3fa',
+        iconColor: '#ffffff',
+        iconClass: 'college_icon_bg',
         value: '东华理工大学',
         position: 'right'
       },
       addressObj:{
         icon: '1302dizhi',
-        iconColor: '#64c3fa',
+        iconColor: '#0590d9',
         value: '江西吉安遂川',
         position: 'right'
       }
@@ -533,38 +535,38 @@ export default {
 }
 
 .detail_div_gender{
-  top: 40%;
-  left: -30%;
+  top: 33%;
+  left: -27%;
 }
 
 .detail_div_age{
-  top: 66%;
-  left: -7%;
+  top: 60%;
+  left: -13%;
 }
 
 .detail_div_edu{
-  bottom: -2%;
-  left: 30%;
+  bottom: -3%;
+  left: 13%;
 }
 
 .detail_div_profess{
-  top: 0;
-  right: 5%;
+  top: -7%;
+  right: 16%;
 }
 
 .detail_div_marry{
-  top: 30%;
-  right: -12%;
+  top: 20%;
+  right: -18%;
 }
 
 .detail_div_college{
-  top: 60%;
-  right: -30%;
+  top: 47%;
+  right: -38%;
 }
 
 .detail_div_address{
-  top: 80%;
-  right: -10%;
+  top: 78%;
+  right: -21%;
 }
 
 .secondCircle{

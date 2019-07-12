@@ -182,7 +182,7 @@
         </a-menu>
       </a-layout-sider>
       <!-- 内容栏 -->
-      <a-layout style="padding: 0 5px 24px;">
+      <a-layout :style="currentMainIndex !== 2 && currentMainIndex !== 3 ? 'padding: 0 5px 24px' : ''">
         <!-- 面包屑 -->
         <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="currentMainIndex !== 2 && currentMainIndex !== 3">
           <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>

@@ -1,6 +1,6 @@
 <!-- template -->
 <template>
-    <div class="outer"></div>
+    <div class="bigDataAnalysis"></div>
 </template>
 
 <script>
@@ -64,5 +64,9 @@ export default {
 </script>
 
 <style scoped>
-
+.bigDataAnalysis{
+    width: 100%;
+    height: 100%;
+    background: #0a1930;
+}
 </style>

@@ -2,12 +2,13 @@
 <template>
   <div class="portrait_con">
      <div class="left_detail" v-if="infoObj.position === 'left'">
-       <span :class="'detail_left_icon' + ' ' +'iconfont' +' '+ 'icon-' +infoObj.icon"  :style="{color: infoObj.iconColor}"></span>
+       <!-- infoObj.iconClass ? infoObj.iconClass : '' -->
+       <span :class="['detail_left_icon', infoObj.iconClass ? infoObj.iconClass : '', 'iconfont', 'icon-' + infoObj.icon]"  :style="{color: infoObj.iconColor}"></span>
        <span class="name">{{infoObj.value}}</span>
      </div>
      <div class="right_detail" v-else>
         <span class="name">{{infoObj.value}}</span>
-        <span :class="'detail_right_icon' + ' ' +'iconfont' +' '+ 'icon-' +infoObj.icon"  :style="{color: infoObj.iconColor}"></span>
+        <span :class="['detail_right_icon', infoObj.iconClass ? infoObj.iconClass : '', 'iconfont', 'icon-' + infoObj.icon]" :style="{color: infoObj.iconColor}"></span>
      </div>
   </div>
 </template>
@@ -34,6 +35,13 @@ export default {
     //    },
     //    deep:true,//深度监听
     //}
+    infoObj: {
+      immediate: true, 
+      handler:function(newVal){
+        this.infoObj = newVal;
+        console.log(newVal);
+      }
+    }
   },
 
   //方法集合
@@ -111,5 +119,12 @@ export default {
 }
 .detail_right_icon{
   margin-left: 20px;
+}
+
+.age_icon_bg{
+  background: #1ad24d;
+}
+.college_icon_bg{
+  background: rgb(218, 44, 21);
 }
 </style>
