@@ -53,6 +53,7 @@
         <a
           href="javascrit:;"
           class="primaryBtnColor"
+          @click="printAndPreview(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '2' && !slotPropsData.currRowdata.confNumber"
         >预览打印</a>
 
@@ -138,6 +139,97 @@
       </a-modal>
     </div>
 
+    <!-- 预览打印 -->
+    <a-modal
+        centered
+        title="预览打印"
+        :visible="printModalVisible"
+        @cancel="handleCancel"
+        @ok="print"
+        :width="'80%'"
+        style="height:95%;overflow: hidden;"
+        :maskClosable='false'
+        class="printModal"
+        cancelText="取消"
+        okText="打印"
+    >
+        <div class="detailModalCont">
+            <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;">
+
+              <a-tab-pane tab="调档函" key="1">
+                <TemplateOfPrint :fileNum="fileNum" firstTitle="流动人员人事档案材料转递存根" ref="print">
+                    <div slot="printContent" class="printContent">
+                      <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
+                      <div class="bottomRight">
+                          <p>{{nowData}}</p>
+                      </div>
+                      <div class="bigTitle">
+                          <h1>流动人员人事档案材料转递存根</h1>
+                      </div>
+                      <p><span class="redSpan redUL" style="width:200px;display:inline-block;">xxxxxxx</span><span class="redSpan">:</span></p>
+                      <p class="indent">兹将<span class="redSpan">zzzz</span>同志的档案转去请按档案目录清点查收，并将回执及时退回。</p>
+                      <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
+                      <div class="bottomRight">
+                          <p>{{nowData}}</p>
+                      </div>
+
+                      <!-- 回执 -->
+                      <div class="receipt">
+                        
+                        <!-- 回执左侧 --> 
+                        <div class="reLeft">
+                          <p>回</p>
+                          <p>执</p>
+                        </div>
+
+                        <!-- 回执右侧 -->
+                        <div class="reRight">
+                          <p style="text-align:right;">NO:{{fileNum}}</p>
+                          <p style="padding:10px 0">江西省人才流动中心：</p>
+                          <p class="indent">你处于2019 年 06 月 12 日转来   罗俊远   同志的档案材料共壹册（份），已全部收到，现将回执退回。</p>
+                          <div class="signCont">
+                            <p>收件人签名</p>
+                            <p style="margin-right:120px;">收件机关盖章</p>
+                          </div>
+                          <div class="bottomRight">
+                            <p>{{nowData}}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- 最下方 -->
+                      <div class="bottomEnd">
+                        <div>
+                          <p>单位名单：江西省人才流动中心 代理服务部</p>
+                          <p>地址：江西省南昌市二七北路266号</p>
+                        </div>
+                        <div>
+                          <p>邮编：330046</p>
+                        </div>
+                      </div>
+                      
+                    </div>
+                </TemplateOfPrint>
+              </a-tab-pane>
+
+              <a-tab-pane tab="现实表现" key="2" >
+                <TemplateOfPrint :fileNum="fileNum1" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print1">
+                    <div slot="printContent" class="printContent">
+                      <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员。据其档案材料记载：该同志始终立场坚定，旗帜鲜明地与党中央保持高度一致，坚持四项基本原则，遵守国家法律法规，在“六四”中无不良言行记录；遵守单位工作纪律，工作认真、负责。</p>
+                      <p class="indent">无该同志参加“法轮功”等非法组织记录。</p>
+                      <p class="indent">特此证明。</p>
+                      <div class="bottomRight">
+                        <p>{{nowData}}</p>
+                      </div>
+                    </div>
+                </TemplateOfPrint>
+              </a-tab-pane>
+                
+            </a-tabs>
+        </div>
+    </a-modal>
+
+
   </div>
 </template>
 
@@ -145,6 +237,8 @@
 import TableView from "@/components/tableView";
 import TransferOnSite from "@/components/record/transferOnSite";
 import TableFromSearch from "@/components/tableFormSearch";
+import TemplateOfPrint from '@/components/templateOfPrint';
+import moment from "moment";
 import { request } from 'http';
 export default {
   name: "PersonalTransferOut",
@@ -153,6 +247,7 @@ export default {
     TableView,
     TransferOnSite,
     TableFromSearch,
+    TemplateOfPrint,
   },
   props: [""],
 
@@ -402,9 +497,48 @@ export default {
       confirmLoading: false, //模态框确认按钮加载：默认不加载
       sendConfirmLoading:false, //邮寄确认按钮加载
       currentPersonData:{}, //当前人的数据
+      currRowdata:{}, //当前行数据
+      printModalVisible:false, //打印弹层显示
       showRandom:Math.random(),
       currentPersonId:'', //当前人的 id
       confirmBtnTitle:'转出申请',
+      fileNum:"360000A1907120008",
+      fileNum1:"360000A1907120008",
+      nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
+      printTableColumns: [
+        //打印--表格-表头
+        {
+          title: "姓名",
+          dataIndex: "num",
+          key: "num",
+        },
+        {
+          title: "专递单位",
+          dataIndex: "e0101",
+          key: "e0101",
+        },
+        {
+          title: "专递原因",
+          dataIndex: "e0102",
+          key: "e0102",
+        },
+        {
+          title: "数册",
+          dataIndex: "e0103",
+          key: "e0103",
+        },
+        {
+          title: "量份",
+          dataIndex: "e0104",
+          key: "e0104",
+        },
+        {
+          title: "备注",
+          dataIndex: "e0108a",
+          key: "e0108a",
+        },
+      ], 
+      printTableData: [],  //打印--表格数据
     };
   },
 
@@ -506,6 +640,12 @@ export default {
       
     },
 
+    // 打印预览
+    printAndPreview(currRowdata){
+      this.currRowdata = currRowdata;
+      this.printModalVisible = true;
+    },
+
     // 撤销 cd - 0 撤销  cd - 1
     cancelOrDelete(id,cd){
       const _this = this;
@@ -553,8 +693,14 @@ export default {
       /***
        * 功能：模态框取消操作
        */
+      this.printModalVisible = false;
       this.visible = false;
       this.sendModalShow = false;
+    },
+
+    // 打印
+    print(){
+
     },
 
     //获取 btn 的 title 
@@ -641,5 +787,48 @@ export default {
   }
   .titleSlot>span{
     color:red;
+  }
+  .detailModalCont{
+    height: 100%;
+  }
+  .bigTitle{
+    clear: both;
+    margin-bottom: 40px;
+  }
+  .bigTitle>h1{
+    text-align: center;
+  }
+  .receipt{
+    clear: both;
+    display: flex;
+    border: 1px solid #e8e8e8;
+  }
+  .receipt>div{
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .receipt .reLeft{
+    width: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border-right: 1px solid #e8e8e8;
+  }
+  .receipt .reLeft>p{
+    text-align: center;
+  }
+  .receipt .reRight{
+    width: 90%;
+  }
+  .signCont{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+  .bottomEnd{
+    clear: both;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
   }
 </style>

@@ -50,11 +50,7 @@ export default {
   props: [""],
 
   data() {
-    // 如果存档性质不是单位存档,则隐藏 委托单位存档名称和编号
-        // if(item.name === "personType" && item.val !== "02"){
-        //   _this.$set(this.formData.formInputs[26],"isHide",true);
-        //   _this.$set(this.formData.formInputs[27],"isHide",true);
-        // }
+    
     return {
       tableTotalNum:0,
       tableLoading:false,
@@ -157,6 +153,7 @@ export default {
       },
       modalState:false,
       currentPersonData:null,
+      tempCondition:null,
     };
   },
 
@@ -181,7 +178,8 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
       **/
-     this.tableLoading = true;
+      this.tableLoading = true;
+      this.tempCondition = condition;
       this.$http.fetchPost('personalArch@getPersonalArchList.action',{
           page: pageNum,
           limit: limitNum,
@@ -190,24 +188,9 @@ export default {
           if(Number(res.code) === 0){
               _this.tableTotalNum = res.count;
               this.initArr.tabledataArr = res.data;
-              console.log(res.data)
               this.initArr.tabledataArr.forEach((element, index) => {
 
                 Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1,a0104:element.a0104 === "1" ? "男" : "女"});
-
-                // this.initArr.tabledataArr.push({
-                //     key: element.a01000, //主键值
-                //     num: (pageNum - 1) * limitNum + index + 1, //序号
-                //     a01000: element.a01000, //id
-                //     a0101: element.a0101, //姓名
-                //     a0184: element.a0184, //身份证号
-                //     a3707c: element.a3707c, //联系电话
-                //     a0100A:element.a0100A, //存档编号
-                //     // a0888: element.a0888, //单位名称
-                //     // companyNumber: element.companyNumber, //单位编号
-                //     // shelvesNo: element.shelvesNo, //档案位置号
-                //     uCreateDate: element.uCreateDate, //存档日期
-                // });
               });
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
@@ -230,16 +213,17 @@ export default {
     handleOk(){
       const _this = this;
       let reultFormData = this.$refs.accountInfoForm.getFormSearchData(); 
-      // console.log(reultFormData)
-      if(reultFormData.isRight){
+      if(reultFormData.isRight && this.currentPersonData.a01000){
         this.saveConfirmLoading = true;
         this.$http.fetchPost('personalArch@editPersonalArch.action',{
-          a01000:this.currentPersonData.id,
+          a01000:this.currentPersonData.a01000,
           ...reultFormData.postObj,
         })
         .then(res => {
           if(Number(res.code) === 0){
             _this.$message.success('提交成功');
+            _this.handleCancel();
+            _this.getTableData(_this.tempCondition,1,10);
           }else{
             _this.$message.warning('抱歉,提交失败,请重试');
           }
@@ -255,7 +239,8 @@ export default {
 
     handleCancel(){
       this.modalState = false;
-    }
+    },
+
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）

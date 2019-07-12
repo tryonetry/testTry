@@ -164,7 +164,7 @@ export default {
                 name: "recordNumber",
                 val: void 0,
                 postname: "",
-                maxlength: 20,
+                maxlength: 30,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入存档编号",
@@ -180,7 +180,7 @@ export default {
                 name: "confNumber",
                 val: void 0,
                 postname: "confNumber",
-                maxlength: 20,
+                maxlength: 30,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入邮寄编号",
@@ -201,7 +201,7 @@ export default {
                 name: "a0101",
                 val: void 0,
                 postname: "a0101",
-                maxlength: 20,
+                maxlength: 40,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入姓名",
@@ -264,7 +264,7 @@ export default {
                 name: "a0111",
                 val: void 0,
                 postname: "",
-                maxlength: 20,
+                maxlength: 100,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入籍贯",
@@ -294,7 +294,7 @@ export default {
                 name: "a0181",
                 val: void 0,
                 postname: "a0181",
-                maxlength: 20,
+                maxlength: 100,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入户口所在地",
@@ -322,7 +322,7 @@ export default {
                 name: "a3711",
                 val: void 0,
                 postname: "a3711",
-                maxlength: 20,
+                maxlength: 100,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入现住址",
@@ -337,7 +337,7 @@ export default {
                 name: "a3707C",
                 val: void 0,
                 postname: "a3707C",
-                maxlength: 20,
+                maxlength: 11,
                 minlength: 0,
                 reg: "testMobile",
                 tip: "* 请输入正确的手机号码",
@@ -352,7 +352,7 @@ export default {
                 name: "a3708",
                 val: void 0,
                 postname: "a3708",
-                maxlength: 20,
+                maxlength: 40,
                 minlength: 0,
                 reg: "testEmail",
                 tip: "* 请输入电子邮箱",
@@ -367,7 +367,7 @@ export default {
                 name: "a0139",
                 val: void 0,
                 postname: "a0139",
-                maxlength: 20,
+                maxlength: 30,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入曾用名",
@@ -430,7 +430,7 @@ export default {
                 name: "a0202A",
                 val: void 0,
                 postname: "a0202A",
-                maxlength: 40,
+                maxlength: 50,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入工作单位名称",
@@ -460,7 +460,7 @@ export default {
                 name: "partyDuties",
                 val: void 0,
                 postname: "partyDuties",
-                maxlength: 20,
+                maxlength: 40,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入紧急联系人",
@@ -475,7 +475,7 @@ export default {
                 name: "partyDuties",
                 val: void 0,
                 postname: "partyDuties",
-                maxlength: 20,
+                maxlength: 11,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入紧急联系人",
@@ -490,7 +490,7 @@ export default {
                 name: "companyId",
                 val: void 0,
                 postname: "companyId",
-                maxlength: 40,
+                maxlength: 50,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择委托存档单位名称",
@@ -527,7 +527,7 @@ export default {
                 name: "inComeReason",
                 val: void 0,
                 postname: "inComeReason",
-                maxlength: 40,
+                maxlength: 200,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择转入原因",
@@ -542,7 +542,7 @@ export default {
                 name: "hightestTitle",
                 val: void 0,
                 postname: "hightestTitle",
-                maxlength: 40,
+                maxlength: 50,
                 minlength: 0,
                 reg: "",
                 tip: "* 请选择最高职称",
@@ -558,7 +558,7 @@ export default {
                 name: "oldArchiveUnit",
                 val: void 0,
                 postname: "oldArchiveUnit",
-                maxlength: 40,
+                maxlength: 50,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入原存档单位名称",
@@ -636,7 +636,7 @@ export default {
                 name: "a0888",
                 val: void 0,
                 postname: "a0888",
-                maxlength: 20,
+                maxlength: 50,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入最高学历毕业院校",
@@ -679,7 +679,7 @@ export default {
                 name: "a0824",
                 val: void 0,
                 postname: "a0824",
-                maxlength: 30,
+                maxlength: 40,
                 minlength: 0,
                 reg: "",
                 tip: "* 请输入最高学历专业名称",
@@ -729,12 +729,24 @@ export default {
     
     currentPersonData:{
       handler:function(newVal,oldVal){
-        if(newVal){
-          this.insertData(newVal)
+        this.clearDataAndStatus();
+        if(newVal && newVal.a01000){
+          this.insertData(newVal,true)
           this.disableSomeOption(this.hasDataDisabledOptions);
         }
       },
     },
+
+    currentEnterprice:{
+      handler:function(newVal){
+        if(newVal && newVal.id){
+          this.clearDataAndStatus();
+          this.insertData(newVal)
+          this.disableSomeOption(this.hasDataDisabledOptions);
+          this.insertCompanyData();
+        }
+      }
+    }
   },
 
   //方法集合
@@ -752,9 +764,9 @@ export default {
           // 存档性质
           if(item.name === 'personType'){
             item.children = Data.archiveTypeList;
+            console.log(item.children)
             if(this.isStaff){
-              item.val = '02';
-              item.disabled = true;
+              item.val = '01';
             }
           }
           // 来当方式
@@ -791,11 +803,25 @@ export default {
       
 
     },
+    
+    // 清空数据及状态
+    clearDataAndStatus(){
+      this.formData.formInputs.forEach((item,index)=>{
+        
+        if(!item.disabled){
+          Object.assign(item,{
+            val:void 0,
+            status:"",
+            isHide:false
+          })
+        }
+        
+      })
+    },
 
     // 插入数据
-    insertData(Data){
+    insertData(Data,isPersonData){
       if(!Data) return;
-      console.log(Data)
       this.formData.formInputs.forEach((item,index)=>{
         for(let key in Data){
           if(item.name === key){
@@ -810,56 +836,74 @@ export default {
             }
           }
         }
+
+        // 如果存档性质不是单位存档,则隐藏 委托单位存档名称和编号
+        if(isPersonData && item.name === "personType" && item.val !== "01"){
+          this.formData.formInputs.forEach((item,index)=>{
+            if(item.name === "companyId" || item.name === "companyNum"){
+              this.$set(this.formData.formInputs[index],'isHide',true)
+            }
+          });
+        }
+
       });
     },
 
     // 有数据时,使部分表单项不可填
     disableSomeOption(arr){
       const _this = this;
-        this.formData.formInputs.forEach((item,index) => {
-          arr.forEach(name=>{
-            if(item.name === name){
-              _this.$set(this.formData.formInputs[index],'disabled',true)
-            }
-          });
-        })
-    }
+      this.formData.formInputs.forEach((item,index) => {
+        arr.forEach(name=>{
+          if(item.name === name){
+            _this.$set(this.formData.formInputs[index],'disabled',true)
+          }
+        });
+      });
+    },
+
+    // 插入company数据
+    insertCompanyData(){
+      this.formData.formInputs.forEach((item,index)=>{
+
+        // console.log(tempCompanylist)
+        if(item.name === 'companyId') {
+          item.children = this.companyList
+          if(this.currentEnterprice && this.currentEnterprice.id){
+            item.val = this.currentEnterprice.id;
+            item.disabled = true;
+          }else if(this.currentPersonData && this.currentPersonData.companyId){
+            item.val = this.currentPersonData.companyId;
+            item.disabled = true;
+          }
+        }
+
+      });
+    },
     
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    const {currentPersonData,hasDataDisabledOptions,disableSomeOption,insertData} = this;
+    const {currentPersonData,hasDataDisabledOptions,disableSomeOption,insertData,currentEnterprice} = this;
 
-    if(currentPersonData){
+    if((currentPersonData && currentPersonData.a01000) || (currentEnterprice && currentEnterprice.id)){
       disableSomeOption(hasDataDisabledOptions);
-      insertData(currentPersonData);
+      insertData(currentPersonData,true);
+      insertData(currentEnterprice);
     }
     
     // 获取公司名称
     this.$http.fetchGet('personalArch@getCompanyList.action',{})
       .then(res => {
         if(Number(res.code) === 0){
-          this.companyList = res.data;
           // 委托存档单位名称
           let tempCompanylist = [];
           res.data.forEach( company => {
             // attention ! code - id
             tempCompanylist.push({itemName:company.itemName,itemCode: company.itemId,itemId:company.itemCode});
           });
-          this.formData.formInputs.forEach((item,index)=>{
-            // console.log(tempCompanylist)
-            if(item.name === 'companyId') {
-              item.children = tempCompanylist
-              if(this.currentEnterprice && this.currentEnterprice.id){
-                item.val = this.currentEnterprice.id;
-                item.disabled = true;
-              }else if(this.currentPersonData && this.currentPersonData.companyId){
-                item.val = this.currentPersonData.companyId;
-                item.disabled = true;
-              }
-            }
-          });
+          this.companyList = tempCompanylist;
+          this.insertCompanyData();
         }else{
           //...
         }
