@@ -502,10 +502,11 @@ export default {
 }
 
 .hotCon{
-  color: red;
-  font-size: 16px;
-  height: 40px;
-  line-height: 40px;
+    color: #333;
+    font-size: 14px;
+    height: 40px;
+    line-height: 40px;
+    text-align: right;
 }
 
 .personContent{
@@ -540,23 +541,23 @@ export default {
 }
 
 .detail_div_age{
-  top: 60%;
-  left: -13%;
+  top: 66%;
+  left: -20%;
 }
 
 .detail_div_edu{
-  bottom: -3%;
-  left: 13%;
+  bottom: -7%;
+  left: 25%;
 }
 
 .detail_div_profess{
-  top: -7%;
-  right: 16%;
+  top: -10%;
+  right: 28%;
 }
 
 .detail_div_marry{
-  top: 20%;
-  right: -18%;
+  top: 10%;
+  right: -17%;
 }
 
 .detail_div_college{
@@ -571,7 +572,7 @@ export default {
 
 .secondCircle{
   padding: 30px;
-  border: 2px solid #ff7f50;
+  border: 2px solid #f3b396;
   border-radius: 100%;
   z-index: 2;
 }

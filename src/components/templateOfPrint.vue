@@ -4,7 +4,7 @@
     <div id="printPage" ref="printSection">
 
         <div class="fileNumContainer">
-            <p>NO: {{fileNum}}</p>
+            <p v-if="fileNum">NO: {{fileNum}}</p>
         </div>
         <div class="bigTitle">
             <h1>{{firstTitle}}</h1>

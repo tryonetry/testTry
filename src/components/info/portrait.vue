@@ -127,4 +127,11 @@ export default {
 .college_icon_bg{
   background: rgb(218, 44, 21);
 }
+.portrait_con{
+  cursor: pointer;
+}
+.portrait_con:hover{
+  transform: scale(1.1);
+  transition: .2s all linear;
+}
 </style>

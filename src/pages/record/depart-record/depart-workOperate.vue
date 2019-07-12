@@ -31,7 +31,7 @@
           <span>{{currentEnterprice.companyName}}</span>
         </div>
         <div class="insertContainer">
-          <RecordInfo :isStaff='isStaff' :currentEnterprice='currentEnterprice' ref="accountInfoForm"></RecordInfo>
+          <RecordInfo :isStaff='true' :currentEnterprice='currentEnterprice' ref="accountInfoForm"></RecordInfo>
         </div>
       </a-modal>
     </div>
@@ -218,7 +218,6 @@ export default {
       confirmLoading:false,
       currentEnterprice:{},
       random:Math.random(),
-      isStaff:true,
     };
   },
 
@@ -271,7 +270,7 @@ export default {
 
     editOperate(currdata){
       this.currentEnterprice = currdata;
-      console.log(currdata)
+      // console.log(currdata)
       this.random = Math.random();
       this.changeModalShow = true;
     },
