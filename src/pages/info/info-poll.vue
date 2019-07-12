@@ -9,7 +9,7 @@
       @accepttreeNode="accepttreeNodeFun"
     >
       <span slot="formAction">
-        <a-button class="buttonOperate" type="primary" @click="operateFun(currentData = {},1)">添加</a-button>
+        <a-button class="buttonOperate" type="primary" @click="operateFun({},1)">添加</a-button>
         <a-button class="buttonOperate" @click="portraitView">个人画像</a-button>
         <JsonExcel :data="exportDataArr" :fields="exportFiledsJson" :name="fieldsName" style="display: inline-block;">
           <a-button class="buttonOperate" @click="exportFun">导出</a-button>
@@ -19,13 +19,13 @@
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
+          @click="operateFun(slotPropsData.currRowdata, 2)"
           data-type="浏览"
           class="primaryBtnColor"
         >浏览</a>
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+          @click="operateFun(slotPropsData.currRowdata, 3)"
           data-type="编辑"
         >编辑</a>
         <a-popconfirm
@@ -43,7 +43,6 @@
       <a-modal
         class="infopoll"
         centered
-        :title="operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')"
         :visible="visible"
         :confirmLoading="confirmLoading"
         width="95%"
@@ -51,6 +50,12 @@
         style="height:95%;overflow: hidden;"
         :maskClosable="false"
       >
+        <div slot="title" class="roomModalTitleSlot">
+          <p>{{operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')}}</p>
+          <span>{{currentRowData && currentRowData.a0101}}</span>
+        </div>
+
+
         <InfoOperate
           ref="operatePage"
           :operateStatusVal="operateStatus"
@@ -79,7 +84,7 @@
         :maskClosable="false"
         :footer="null"
       >
-        <div slot="title" class="titleSlot">
+        <div slot="title" class="roomModalTitleSlot">
           <p>个人画像</p>
           <span>测试某某</span>
         </div>
@@ -180,6 +185,13 @@ export default {
             dataIndex: "a0101",
             fixed: "left",
             key: "a0101",
+            width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "性别",
+            dataIndex: "a0104",
+            key: "a0104",
             width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -187,52 +199,47 @@ export default {
             title: "出生日期",
             dataIndex: "a0107",
             key: "a0107",
-            width: 100,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "性别",
-            dataIndex: "a0104",
-            key: "a0104",
-            width: 60,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "毕业院校",
             dataIndex: "a0888",
             key: "a0888",
-            width: 150,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "参加工作日期",
             dataIndex: "a0134",
             key: "a0134",
-            width: 150,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "工作单位及职务",
             dataIndex: "a0202a",
             key: "a0202a",
-            width: 250,
+            width: 300,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "热度",
             dataIndex: "pageView",
             key: "pageView",
-            width: 60,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",
             key: "action",
+            width: 200,
+            fixed: 'right',
             scopedSlots: { customRender: "action" }
           }
         ],
         tabledataArr: [] //table数据
       },
+
       tableTotalNum: 0, //table数据量
       visible: false, //模态框默认不可见
       confirmLoading: false, //模态框确认按钮加载：默认不加载
@@ -308,7 +315,8 @@ export default {
         iconColor: '#0590d9',
         value: '江西吉安遂川',
         position: 'right'
-      }
+      },
+      currentRowData: null,  //当前行数据
     };
   },
   watch: {},
@@ -398,6 +406,7 @@ export default {
        */
       this.operateStatus = statusVal;
       this.operateDataId = data.key;
+      this.currentRowData = data;
       if (statusVal == 1) {
         let treenode = this.selectTreeNode;
         if (treenode) {
@@ -454,14 +463,14 @@ export default {
       /***
        * 功能：查看个人画像
        */
-      // if (this.checkTableData.length < 1) {
-      //   this.$message.error("请选择一条需要的画像信息");
-      // } else if (this.checkTableData.length > 1) {
-      //   this.$message.error("最多选择一条需画像信息");
-      // } else {
+      if (this.checkTableData.length < 1) {
+        this.$message.error("请选择一条需要的画像信息");
+      } else if (this.checkTableData.length > 1) {
+        this.$message.error("最多选择一条需画像信息");
+      } else {
         this.tempPersonData = this.checkTableData[0];
         this.personVisible = true;
-      // }
+      }
     },
     
     handlePersonCancel(){
@@ -485,16 +494,6 @@ export default {
 };
 </script>
 <style scoped>
-.titleSlot{
-  display: flex;
-}
-.titleSlot>p{
-  margin-right: 40px;
-}
-.titleSlot>span{
-  color:#2d8cf0;
-}
-
 .personContainer{
   width:100%;
   height: 100%;
