@@ -1510,4 +1510,5 @@ export default {
 .sceneBorrow{
   height: 100%;
 }
+
 </style>
