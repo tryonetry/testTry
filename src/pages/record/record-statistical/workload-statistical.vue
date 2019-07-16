@@ -76,7 +76,7 @@ export default {
       },
       currDate: [
         //默认查询日期
-        moment(moment().subtract(1, "year"), "YYYY-MM-DD"),
+        moment(moment().subtract(7, "day"), "YYYY-MM-DD"),
         moment(new Date(), "YYYY-MM-DD")
       ],
       rangeConfig: {
@@ -312,9 +312,12 @@ export default {
         _this.$refs.charts.resizeChartsFun();
       });
     };
-    _this.getAgentFun(null); //查询经办人
-    _this.getChartData(null);  //图表数据渲染
-    _this.getTableData(null);   //table数据
+    let iniSearch = {};
+    iniSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
+    iniSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
+    _this.getAgentFun(iniSearch); //查询经办人
+    _this.getChartData(iniSearch);  //图表数据渲染
+    _this.getTableData(iniSearch);   //table数据
   },
 
   beforeCreate() {}, //生命周期 - 创建之前

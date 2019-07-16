@@ -89,7 +89,7 @@ export default {
       },
       currDate: [
         //默认查询日期
-        moment(moment().subtract(1, "year"), "YYYY-MM"),
+        moment(moment().subtract(7, "day"), "YYYY-MM"),
         moment(new Date(), "YYYY-MM")
       ],
       tempSearch: {},  //临时：当前查询条件
@@ -311,6 +311,8 @@ export default {
               }
             });
           }
+
+          console.log(_this.chartsDataObj)
           
           _this.drawChartFun(_this.chartsDataObj);
         } else{
@@ -628,8 +630,10 @@ export default {
     this.initArr.columnsArr = this.acceptColumnsArr;
     this.exportFiledsJson = this.exportFiledsJsonFun(this.acceptColumnsArr); 
 
-    this.getChartData(null); //获取图表数据
-    this.getTableData(null); //获取表格数据
+    this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM");
+    this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM");
+    this.getChartData(this.tempSearch); //初始化--获取图表数据
+    this.getTableData(this.tempSearch); //初始化--获取表格数据
 
   },
 

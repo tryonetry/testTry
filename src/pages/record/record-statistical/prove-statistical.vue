@@ -196,7 +196,10 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getTableData(null); //获取图表和表格数据
+    let iniSearch = {};
+    iniSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
+    iniSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
+    this.getTableData(iniSearch); //获取图表和表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）

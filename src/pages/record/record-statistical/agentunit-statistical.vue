@@ -62,7 +62,7 @@ export default {
       },
       currDate: [
         //默认查询日期
-        moment(moment().subtract(1, "year"), "YYYY-MM-DD"),
+        moment(moment().subtract(7, "day"), "YYYY-MM-DD"),
         moment(new Date(), "YYYY-MM-DD")
       ],
       tempSearch: {},  //临时：当前查询条件
@@ -240,8 +240,11 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getChartData(null); //获取图表数据
-    this.getTableData(null); //获取表格数据
+    let iniSearch = {};
+    iniSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
+    iniSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
+    this.getChartData(iniSearch); //获取图表数据
+    this.getTableData(iniSearch); //获取表格数据
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
