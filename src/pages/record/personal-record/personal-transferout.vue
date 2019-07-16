@@ -154,10 +154,10 @@
         okText="打印"
     >
         <div class="detailModalCont">
-            <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;">
+            <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;" @change="tabIndexChange">
 
               <a-tab-pane tab="调档函" key="1">
-                <TemplateOfPrint :fileNum="fileNum" firstTitle="流动人员人事档案材料转递存根" ref="print">
+                <TemplateOfPrint :fileNum="fileNum" firstTitle="流动人员人事档案材料转递存根" ref="print1">
                     <div slot="printContent" class="printContent">
                       <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
                       <div class="bottomRight">
@@ -174,29 +174,30 @@
                       </div>
 
                       <!-- 回执 -->
-                      <div class="receipt">
-                        
-                        <!-- 回执左侧 --> 
-                        <div class="reLeft">
-                          <p>回</p>
-                          <p>执</p>
-                        </div>
-
-                        <!-- 回执右侧 -->
-                        <div class="reRight">
-                          <p style="text-align:right;">NO:{{fileNum}}</p>
-                          <p style="padding:10px 0">江西省人才流动中心：</p>
-                          <p class="indent">你处于2019 年 06 月 12 日转来   罗俊远   同志的档案材料共壹册（份），已全部收到，现将回执退回。</p>
-                          <div class="signCont">
-                            <p>收件人签名</p>
-                            <p style="margin-right:120px;">收件机关盖章</p>
+                      <div class="receiptContainer">
+                        <div class="receipt">
+                          
+                          <!-- 回执左侧 --> 
+                          <div class="reLeft">
+                            <p>回</p>
+                            <p>执</p>
                           </div>
-                          <div class="bottomRight">
-                            <p>{{nowData}}</p>
+
+                          <!-- 回执右侧 -->
+                          <div class="reRight">
+                            <p style="text-align:right;">NO:{{fileNum}}</p>
+                            <p style="padding:10px 0">江西省人才流动中心：</p>
+                            <p class="indent">你处于2019 年 06 月 12 日转来   罗俊远   同志的档案材料共壹册（份），已全部收到，现将回执退回。</p>
+                            <div class="signCont">
+                              <p>收件人签名</p>
+                              <p style="margin-right:120px;">收件机关盖章</p>
+                            </div>
+                            <div class="bottomRight">
+                              <p>{{nowData}}</p>
+                            </div>
                           </div>
                         </div>
                       </div>
-
                       <!-- 最下方 -->
                       <div class="bottomEnd">
                         <div>
@@ -213,9 +214,9 @@
               </a-tab-pane>
 
               <a-tab-pane tab="现实表现" key="2" >
-                <TemplateOfPrint :fileNum="fileNum1" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print1">
+                <TemplateOfPrint :fileNum="fileNum1" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print2">
                     <div slot="printContent" class="printContent">
-                      <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员。据其档案材料记载：该同志始终立场坚定，旗帜鲜明地与党中央保持高度一致，坚持四项基本原则，遵守国家法律法规，在“六四”中无不良言行记录；遵守单位工作纪律，工作认真、负责。</p>
+                      <p class="indent">{{currRowdata && currRowdata.a0101}}，性别：{{currRowdata && currRowdata.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRowdata && currRowdata.a0184}}，系我中心档案托管人员。据其档案材料记载：该同志始终立场坚定，旗帜鲜明地与党中央保持高度一致，坚持四项基本原则，遵守国家法律法规，在“六四”中无不良言行记录；遵守单位工作纪律，工作认真、负责。</p>
                       <p class="indent">无该同志参加“法轮功”等非法组织记录。</p>
                       <p class="indent">特此证明。</p>
                       <div class="bottomRight">
@@ -539,6 +540,7 @@ export default {
         },
       ], 
       printTableData: [],  //打印--表格数据
+      currentTabIndex:"1", // 当前的 tab index
     };
   },
 
@@ -698,9 +700,15 @@ export default {
       this.sendModalShow = false;
     },
 
+    // tab 更改
+    tabIndexChange(index){
+      this.currentTabIndex = index;
+    },
+
     // 打印
     print(){
-
+      let printIndex = "print"+this.currentTabIndex;
+      this.$refs[printIndex].printFun();
     },
 
     //获取 btn 的 title 
@@ -797,6 +805,9 @@ export default {
   }
   .bigTitle>h1{
     text-align: center;
+  }
+  .receiptContainer{
+    padding-top: 400px;
   }
   .receipt{
     clear: both;

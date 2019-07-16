@@ -850,11 +850,11 @@ export default {
 
         // 打印
         print(){
-            // this.$refs.print.printFun();
-            this.$http.fetchPost('archPrintProof@findBusinessLetter.action',{name:'1'})
-                .then(res => {
-                    console.log(res);
-                })
+            this.$refs.print.printFun();
+            // this.$http.fetchPost('archPrintProof@findBusinessLetter.action',{name:'1'})
+            //     .then(res => {
+            //         console.log(res);
+            //     })
         },
     },
 

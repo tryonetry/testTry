@@ -620,7 +620,7 @@ export default {
         // 打印预览
         printPreview(currRowdata){
             this.currRow = currRowdata;
-            console.log(currRowdata)
+            // console.log(currRowdata)
             if(this.selectProofType || String(this.selectProofType) === '0' ){
                 this.printVisiable = true;
             }else{
@@ -630,7 +630,7 @@ export default {
         },
 
         print(){
-
+            this.$refs.print.printFun();
         },
     },
 
