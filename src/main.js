@@ -15,6 +15,9 @@ import echarts from 'echarts'
 import printJS from 'print-js'
 import print from './utils/print';
 import VueParticles from 'vue-particles';
+
+import VueAMap from 'vue-amap';
+
 Vue.prototype.printJS = printJS;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = http;
@@ -23,6 +26,8 @@ Vue.use(antd);
 Vue.use(print);
 Vue.use(VueParticles);
 Vue.config.productionTip = false;
+
+Vue.use(VueAMap);
 
 new Vue({
   store,
