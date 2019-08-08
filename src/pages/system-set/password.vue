@@ -265,7 +265,8 @@ export default {
 }
 
 .savePswOperate{
-    width: 20%;
+    width: 80%;
     margin-left: 20%;
+    height: 38px;
 }
 </style>
