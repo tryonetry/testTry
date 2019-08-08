@@ -298,7 +298,7 @@ export default {
         }
       }else if(status === 1){
         // 确认密码
-        if(val !== this.confirmPsw){
+        if(val !== this.newPsw){
           this.confirmPswTip = "* 两次密码不一致";
         }else{
           this.confirmPswTip = "";
@@ -407,16 +407,18 @@ export default {
     handleChange(){
       const { oldPswTip, newPswTip, confirmPswTip, oldPsw, newPsw } = this;
       if(!oldPswTip && !newPswTip && !confirmPswTip){
-        this.confirmLoading = true;
         this.$http.fetchPost("user@updateSysUserPwd.action",{
           originalPassword:oldPsw,
           newPassword:newPsw,
         }).then(res => {
-          console.log(res)
+          if(Number(res.code) === 0){
+              this.$message.success('密码修改成功，请重新登陆!');
+              this.signOutSystem();
+          } else{
+              this.$message.warning('密码修改失败！');
+          }
         }).catch(err => {
-
-        }).finally(end => {
-          this.confirmLoading = false;
+            this.$message.error('抱歉，网络异常，请稍后重试！');
         })
       }
     },
@@ -435,7 +437,6 @@ export default {
       this.$http.fetchPost("login@logout.action",null)
       .then(res => {
         if(Number(res.code) === 0){
-          this.$message.success("退出成功!");
           this.$router.push('/login');
         }else{
           // this.$message.warning("抱歉,退出失败,请重试!");
@@ -720,7 +721,7 @@ export default {
 }
 .pswTip span{
   display: inline-block;
-  width: 12%;
+  width: 20%;
 }
 .changePswInput{
   width: 100%;
