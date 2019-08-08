@@ -231,6 +231,7 @@ export default {
       confirmPswTip:"",
       systemTipVisiable:false, //系统提示弹层显示
       systemTips:null, //系统提示
+      systemTipTime:0,
     };
   },
   computed: {
@@ -268,7 +269,13 @@ export default {
     _this.systemTip();
     this.routerData = this.$route.meta.breadcrumb ? this.$route.meta.breadcrumb : "";
     timer = setInterval(function(){
-        _this.systemTip();
+
+        _this.systemTipTime ++;
+        if(_this.systemTipTime >= 1 ){
+          _this.systemTip();
+          _this.systemTipTime = 0;
+        }
+
     },3*60*1000);
   },
 
@@ -349,7 +356,7 @@ export default {
                     size: 'default',
                   },
                   on: {
-                    click: () => this.$notification.close(tipKey)
+                    click: () => {this.$notification.close(tipKey);this.systemTipTime = 0;}
                   }
                 }, '知道了')
               },
@@ -419,6 +426,7 @@ export default {
     },
 
     systemTipCancel(){
+      this.systemTipTime = 0;
       this.systemTipVisiable = false;
     },
 

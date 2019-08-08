@@ -5,6 +5,11 @@
       <OrganTree @sendTreeValue="acceptTreeValue"></OrganTree>
     </div>
     <div :class="treeFlag ? 'viewContent' : 'noviewContent'">
+
+      <!-- 搜索框上方的内容 -->
+      <slot name="underSearchCont"></slot>
+
+      <!-- table 搜索框 -->
       <TableFromSearch :formDataArr="formData" @searchForm="searchFormFun" @bundleChange="bundleChangeFun" :layout="layout" :tableBodyRize="tableBodyRize">
         <slot name="formAction"></slot>
       </TableFromSearch>
@@ -242,7 +247,7 @@ export default {
             
             let theadWidthArr = [];
             let fixedLeftNum = 0;
-            newVal.columnsArr.forEach((col,i) => {
+            newVal.columnsArr && newVal.columnsArr.forEach((col,i) => {
               // 不固定且有宽度的 push
               if(col.width && col.width > 0 && !col.fixed){
                 theadWidthArr.push(col.width);
@@ -300,14 +305,18 @@ export default {
     
     setTimeout(function(){
       _this.$nextTick(function(){
-        _this.tableBodyRize();
+        if(_this.columns && _this.columns.length > 0){
+          _this.tableBodyRize();
+        }
       });
     },0);
 
     // 监听窗口改变 
     window.onresize = function(){
       _this.$nextTick(function(){
-        _this.tableBodyRize();
+        if(_this.columns && _this.columns.length > 0){
+          _this.tableBodyRize();
+        }
       });
     }
 

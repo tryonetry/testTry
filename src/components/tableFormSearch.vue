@@ -233,7 +233,7 @@ export default {
         wrapperCol: {
           sm: { span: 18 },
           xl: { span: 16 },
-          xxl: { span: 16 }
+          xxl: { span: 15 }
         }
       },
       textareaCon: {
@@ -245,7 +245,7 @@ export default {
         wrapperCol: {
           sm: { span: 18 },
           xl: { span: 20 },
-          xxl: { span: 14}
+          xxl: { span: 13}
         }
       },
     };

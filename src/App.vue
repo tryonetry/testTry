@@ -61,6 +61,7 @@ export default {
         el.title = el.name;
         el.key = el.id;
         el.value = el.id;
+        el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true:null;
         delete el.name;
         delete el.id;
         if (el.children) {

@@ -50,6 +50,7 @@ export default {
   created() {},
   mounted() {},
   methods: {
+
     onExpand(expandedKeys) {
       /***
        * 功能：tree是否展开
@@ -57,6 +58,7 @@ export default {
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = false;
     },
+
     generateList(data) {
       /***
        * 功能：gData重组
@@ -64,17 +66,21 @@ export default {
        */
       for (let i = 0; i < data.length; i++) {
         const node = data[i];
+        // if(node.isParent === "false")
         this.dataList.push({
           key: node.key,
           title: node.title,
           pId: node.pId,
-          type: node.type
+          type: node.type,
+          isLeaf:node.isParent === "false" && node.key.length > 10 ? true:null,
         });
+        
         if (node.children) {
           this.generateList(node.children, node.key);
         }
       }
     },
+
     getParentKey(key, tree) {
       /***
        * 功能：过滤gData,返回与key值相同的数量
@@ -93,6 +99,7 @@ export default {
       }
       return parentKey;
     },
+
     onChange(e) {
       /**
        * 功能：input输入名称查询gData，若有查询结果，返回匹配数量
