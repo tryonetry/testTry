@@ -376,3 +376,10 @@ input{
 .roomModalTitleSlot>span{
   color:#2d8cf0;
 }
+.ant-tree.ant-tree-directory > li span.ant-tree-node-content-wrapper.ant-tree-node-selected, .ant-tree.ant-tree-directory .ant-tree-child-tree > li span.ant-tree-node-content-wrapper.ant-tree-node-selected {
+  background: #1890ff;
+}
+.ant-radio-wrapper{
+  margin-left: 10px;
+  margin-right: 10px;
+}

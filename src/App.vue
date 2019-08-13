@@ -49,6 +49,7 @@ export default {
       this.$http.fetchGet("informationPool@getParentId.action", {})
       .then(res => {
         if(Number(res.code) === 0){
+          console.log(res.data)
           this.getNewTreeData(res.data);
         }
       });

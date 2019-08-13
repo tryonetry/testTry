@@ -54,7 +54,10 @@
             </p>
             <slot name="tableAction" :currRowdata="record" :currTableData="tabledata"></slot>
           </span>
-          
+
+          <span slot="action2" slot-scope="text, record">
+            <slot name="tableAction2" :currRowdata="record" :currTableData="tabledata"></slot>
+          </span>
           
           <!-- 鼠标放上去显示当前行数据 -->
           <span slot="cursorTitle" slot-scope="text, record">

@@ -76,6 +76,13 @@
           >{{el.itemName}}</a-select-option>
         </a-select>
 
+        <a-radio-group 
+          v-if="!item.type && item.otherType==='radio'"
+          v-model="item.val" 
+          :disabled = "item.disabled ? item.disabled : false"
+          :options="item.children"
+        />
+
          <!-- v-decorator="[ item.name, {rules: [{required: item.required}]}]" -->
          <!-- :readonly = "item.readonly ? item.readonly : false" -->
         <a-select
