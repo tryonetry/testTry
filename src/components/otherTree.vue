@@ -14,10 +14,12 @@
     <a-directory-tree
       :class="!treeDataObj.isSearch ? 'treeView' : 'treeViewIsSearch'"
       @expand="onExpand"
+      :checkable="treeDataObj.isChecked ? treeDataObj.isChecked : false"
       :expandedKeys="expandedKeys"
       :autoExpandParent="autoExpandParent"
       :treeData="treeDataObj.dataArr"
       @select="onSelect"
+      @check="onCheck"
       treeNodeFilterProp="title"
     >
       <template slot="title" slot-scope="{title}">
@@ -77,8 +79,8 @@ export default {
     },
     generateList(data) {
       /***
-       * 功能：gData重组
-       * 参数：data:gData;
+       * 功能：重组
+       * 参数：data:this.treeDataObj.dataArr;
        */
       for (let i = 0; i < data.length; i++) {
         const node = data[i];
@@ -95,8 +97,8 @@ export default {
     },
     getParentKey(key, tree) {
       /***
-       * 功能：过滤gData,返回与key值相同的数量
-       * 参数：key:input输入的名称与gData里title匹配的key；tree:gData
+       * 功能：过滤,返回与key值相同的数量
+       * 参数：key:input输入的名称与里title匹配的key；tree:tree-data
        */
       let parentKey;
       for (let i = 0; i < tree.length; i++) {
@@ -113,14 +115,14 @@ export default {
     },
     onChange(e) {
       /**
-       * 功能：input输入名称查询gData，若有查询结果，返回匹配数量
+       * 功能：input输入名称查询tree，若有查询结果，返回匹配数量
        * 参数:input输入值
        */
       const value = e.target.value;
       const expandedKeys = this.dataList
         .map(item => {
           if (item.title.indexOf(value) > -1) {
-            return this.getParentKey(item.key, this.gData); //若输入名称与gData名称匹配的，传入匹配值的key，以及gData；
+            return this.getParentKey(item.key, this.treeDataObj.dataArr); //若输入名称与tree--Data名称匹配的，传入匹配值的key，以及tree--Data；
           }
           return null;
         })
@@ -144,6 +146,9 @@ export default {
         }
       });
     },  
+    onCheck (checkedKeys, info) {
+      console.log('onCheck', checkedKeys, info)
+    },
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
