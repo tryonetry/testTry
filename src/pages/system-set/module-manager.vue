@@ -248,7 +248,6 @@ export default {
       }else{
         postState = "0";
       }
-      console.log(postState);
       this.$http.fetchPost('module@updateModuleStateByModuleCode.action', {
         moduleCode:rowData.muCode,
         muState: postState
