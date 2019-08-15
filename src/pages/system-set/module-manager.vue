@@ -15,7 +15,11 @@
           :totalCount="tableTotalNum"
           :loading="tableLoading"
           @searchTable="getTableData"
-        ></TableView>
+        >
+           <div slot="tableAction2" slot-scope="slotPropsData">
+            <a-switch @click="handleChecked(slotPropsData.currRowdata)" checkedChildren="已启用" unCheckedChildren="未启用" :checked="String(slotPropsData.currRowdata.muState) === '1' ? true : false" />
+          </div>
+        </TableView>
       </div>
     </div>
   </div>
@@ -88,8 +92,8 @@ export default {
           {
             title: "是否启用",
             dataIndex: "muState",
-            key: "muState"
-            //scopedSlots: { customRender: "cursorTitle" }
+            key: "muState",
+            scopedSlots: { customRender: "action2" }
           }
         ],
         // table数据
@@ -144,7 +148,8 @@ export default {
                 muCode: element.muCode, 
                 muHelpUrl: element.muHelpUrl,
                 muType: element.muType === '1' ? '操作': '菜单',
-                muState: element.muState
+                muState: element.muState,
+                muCode: element.muCode
               });
             });
           } else {
@@ -231,6 +236,32 @@ export default {
       console.log(data);
       this.mouduleId = data.key;
       this.getTableData(null, 1, 10);
+    },
+    handleChecked(rowData){
+      /**
+       * 功能：是否启用操作：切换状态
+       * 参数：rowData：当前行数据
+       */
+      let postState = "";
+      if(rowData.muState === "0"){
+        postState = "1";
+      }else{
+        postState = "0";
+      }
+      console.log(postState);
+      this.$http.fetchPost('module@updateModuleStateByModuleCode.action', {
+        moduleCode:rowData.muCode,
+        muState: postState
+      }).then(res => {
+         if(Number(res.code) === 0){
+            this.$message.success("状态切换成功!");
+            this.getTableData(null, 1, 10);
+         }else{
+          this.$message.warning("抱歉,操作失败,请刷新后重试！");
+        }
+      }).catch(error => {
+        this.$message.error("抱歉，网络异常，请稍后重试！");
+      });
     }
   },
 
