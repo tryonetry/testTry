@@ -188,6 +188,7 @@ export default {
 }
 .otherTreeContainer>ul{
   flex: 1;
+  overflow: hidden;
 }
 .treeView,
 .treeViewIsSearch {
