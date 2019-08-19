@@ -39,6 +39,7 @@ input            type              "text"
 时间(月)          otherType         "month"
 时间(范围)        otherType         "daterange"
 多行文本          otherType         "textarea"
+单选              otherType         "radio"
 
 ### tableView  DOM结构
     <TableView

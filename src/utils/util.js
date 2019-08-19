@@ -1,5 +1,7 @@
 import address from '../../public/json/address';
-import moment from 'moment'
+import moment from 'moment';
+
+let _utilTempTreeArr = [];
 
 // 递归遍历 address
 function searchName(codeArr, dataArr, deep, result) {
@@ -16,6 +18,7 @@ function searchName(codeArr, dataArr, deep, result) {
     });
     return result;
 }
+
 function getDPI() {
     var arrDPI = new Array();
     if (window.screen.deviceXDPI != undefined) {
@@ -30,7 +33,7 @@ function getDPI() {
         arrDPI[1] = parseInt(tmpNode.offsetHeight);
         tmpNode.parentNode.removeChild(tmpNode);
     }
-    console.log(arrDPI)
+    // console.log(arrDPI)
     return arrDPI;
 }
 
@@ -176,9 +179,43 @@ const utils = {
         }
           
          return ratio;
-      },
+    },
 
-      printModalWidth:Math.ceil(getDPI()[0] * 8.27 * 1.2 + 300),
+    // 打印modal的宽度
+    printModalWidth:Math.ceil(getDPI()[0] * 8.27 * 1.2 + 300),
+
+    // 递归树寻找到树下的节点
+    searchPid:function(treeObj,arrData){
+        treeObj.forEach(item => {
+            arrData.forEach((value,j) => {
+                if(item.id === value.pId){
+                    if(!item.children){
+                        item.children = [];
+                    }
+                    item.children.push(value);
+                }
+            });
+            if(item.children && item.children.length > 0){
+                this.searchPid(item.children,arrData);
+            }
+        })
+    }, 
+
+    // 一维数组树数据 -> 树结构数组数据 
+    one2MultiDimensional:function(rootPid,dataArr){
+        let result = null;
+        dataArr.forEach((item) => {
+            if(rootPid && rootPid === item.pId){
+                _utilTempTreeArr.push(item);
+            }
+        });
+
+        this.searchPid(_utilTempTreeArr,dataArr);
+        result = JSON.parse(JSON.stringify(_utilTempTreeArr));
+        _utilTempTreeArr = [];
+        return result;
+    }
+
     
 }
 export default utils;

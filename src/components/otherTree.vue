@@ -1,15 +1,18 @@
 <!-- template -->
 <template>
   <!-- 其他类型的Tree：  以及对树的操作 -->
+
   <div class="otherTreeContainer">
+
+    <!-- tree上面得操作按钮 -->
+    <slot name="treeOperate"></slot>
+
     <a-input-search
       v-if="treeDataObj.isSearch"
       style="margin-bottom: 8px"
       :placeholder="treeDataObj.searchPlaceholder"
       @change="onChange"
     />
-    <!-- tree上面得操作按钮 -->
-    <slot name="treeOperate"></slot>
 
     <a-directory-tree
       :class="!treeDataObj.isSearch ? 'treeView' : 'treeViewIsSearch'"
@@ -88,6 +91,7 @@ export default {
           key: node.key,
           title: node.title,
           pId: node.pId,
+          isLeaf:node.isLeaf,
         });
         if (node.children) {
           this.generateList(node.children, node.key);
@@ -147,7 +151,7 @@ export default {
       });
     },  
     onCheck (checkedKeys, info) {
-      console.log('onCheck', checkedKeys, info)
+      this.$emit('acceptCheckNode', checkedKeys);
     },
   },
 
@@ -179,6 +183,11 @@ export default {
 .otherTreeContainer {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.otherTreeContainer>ul{
+  flex: 1;
 }
 .treeView,
 .treeViewIsSearch {

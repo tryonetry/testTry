@@ -372,17 +372,53 @@ export default {
         userCode:this.addFormData.formInputs[0].val,
         userId:this.currUserData && this.currUserData.userId,
       }).then(res => {
-        console.log(res);
-      })
+        let result = this.$refs.addForm.getFormData();
+        if(Number(res.code) === 2 && result.isRight){
+          // 验证通过
+          if(!this.currUserData){
 
-      if(!this.currUserData){
-        // 添加
-      }else{
-        // 编辑
-        // this.$http.fetchPost("")
-      }
+            // 添加
+            this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
+              ...result.postObj,
+            }).then(res => {
+
+              if(Number(res.code) === 0){
+                this.$message.success("添加成功!");
+                this.getTableData(this.tempCondition,1,10);
+                this.handleCancel();
+              }else{
+                this.$message.warning("抱歉,添加失败,请重试!");
+              }
+            }).catch(err => {
+              this.$message.error("抱歉,网络异常,请稍后重试");
+            })
+
+          }else if(this.currUserData.userId){
+
+            // 编辑
+            this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
+              ...result.postObj,
+              userId:this.currUserData.userId,
+            }).then(res => {
+              console.log(res);
+              if(Number(res.code) === 0){
+                this.$message.success("编辑修改成功!");
+                this.getTableData(this.tempCondition,1,10);
+                this.handleCancel();
+              }else{
+                this.$message.warning("抱歉,编辑修改失败,请重试!");
+              }
+            }).catch(err => {
+              this.$message.error("抱歉,网络异常,请稍后重试");
+            })
+
+          }
+        }else{
+          // 验证不通过
+          this.$message.warning("抱歉,登录名已存在!");
+        }
+      });
       
-      // console.log(this.$refs.addForm.getFormData())
     },
 
     // 关闭

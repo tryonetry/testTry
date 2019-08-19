@@ -1,7 +1,7 @@
-<!-- template -->
+<!-- 角色管理 -->
 <template>
   <div class="outer">
-    <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData">
+    <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData" :loading="tableLoading">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
           <a-button class="buttonOperate">添加</a-button>
@@ -44,6 +44,8 @@ export default {
   data() {
     return {
       tableTotalNum: 0, //总页数：默认为0
+      tempCondition:null,
+      tableLoading:false,
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
@@ -58,14 +60,14 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入角色名称",
-              key: "",
-              name: "",
+              key: "roleName",
+              name: "roleName",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
-              postname: "",
+              postname: "roleName",
               status: ""
             },
           ],
@@ -88,32 +90,32 @@ export default {
           },
           {
             title: "角色代码",
-            dataIndex: "",
-            key: "",
+            dataIndex: "roleCode",
+            key: "roleCode",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色名称",
-            dataIndex: "",
-            key: "",
+            dataIndex: "roleName",
+            key: "roleName",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色类型",
-            dataIndex: "",
-            key: "",
+            dataIndex: "roleType",
+            key: "roleType",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色状态",
-            dataIndex: "",
-            key: "",
+            dataIndex: "roleState",
+            key: "roleState",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色备注",
-            dataIndex: "",
-            key: "",
+            dataIndex: "roleDesc",
+            key: "roleDesc",
             width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -145,15 +147,44 @@ export default {
   //方法集合
   methods: {
     getTableData(condition, pageNum, limitNum) {
+      const _this = this;
       /***
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * 参数：condition:form查询结果：{}
-       *         */
-    }
+      **/
+      this.tableLoading = true;
+      this.tempCondition = condition;
+      this.$http.fetchPost('role@roleLists.action',{
+          page: pageNum,
+          limit: limitNum,
+          ...condition
+      }).then((res)=>{
+        console.log(res);
+          if(Number(res.code) === 0){
+              _this.tableTotalNum = res.count;
+              this.initArr.tabledataArr = res.data;
+              this.initArr.tabledataArr.forEach((element, index) => {
+                Object.assign(element,{
+                  key:element.userId,
+                  num: (pageNum - 1) * limitNum + index + 1,
+                  userLoginFailnum:String(element.userLoginFailnum) === '0' ? "正常" : "锁定"
+                });
+              });
+          }else{
+              _this.$message.warning("抱歉,暂时未查到数据!");
+          }
+      }).catch(err => {
+        _this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        _this.tableLoading = false;
+      })
+    },
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
-  created() {},
+  created() {
+    this.getTableData(this.tempCondition,1,10);
+  },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {},
