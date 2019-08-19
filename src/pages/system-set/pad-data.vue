@@ -22,8 +22,7 @@
             <a-button class="buttonOperate" type="primary" @click="generateDataFun">生成数据</a-button>
           </span>
           <div slot="tableAction" slot-scope="slotPropsData">
-            <!-- @click="operateFun(slotPropsData.currRowdata, 2)" -->
-            <a href="javascript:;" data-type="下载" class="primaryBtnColor">下载</a>
+            <a :href="slotPropsData.currRowdata.filePath" download="arch.idb" data-type="下载" class="primaryBtnColor">下载</a>
             <a-popconfirm
               title="确定删除吗?"
               okText="确定"
@@ -280,7 +279,8 @@ export default {
                 fileName: element.fileName,
                 fileSize: element.fileSize,
                 createDate: element.createDate,
-                messageRemark: element.messageRemark
+                messageRemark: element.messageRemark,
+                filePath: element.filePath
               });
             });
           } else {
@@ -444,7 +444,7 @@ export default {
         .catch(err => {
           this.$message.error("抱歉，网络异常！");
         });
-    }
+    },
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
