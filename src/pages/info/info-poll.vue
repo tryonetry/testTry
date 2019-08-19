@@ -385,7 +385,12 @@ export default {
           if (Number(res.code) === 0) {
             this.$message.success("删除成功");
             this.getTableData(this.tempCondition, 1, 10);
+          } else{
+            this.$message.warning('抱歉，操作失败，请刷新后重试！');
           }
+        })
+        .catch(err => {
+          this.$message.error('抱歉，网络异常！');
         });
     },
     accepttreeNodeFun(newTreeData, newConditionVal) {
