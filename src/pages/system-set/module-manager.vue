@@ -42,6 +42,7 @@ export default {
       initArr: {
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check
+        superimposeWidth: true, //
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -149,7 +150,6 @@ export default {
                 muHelpUrl: element.muHelpUrl,
                 muType: element.muType === '1' ? '操作': '菜单',
                 muState: element.muState,
-                muCode: element.muCode
               });
             });
           } else {
