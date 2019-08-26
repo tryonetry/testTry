@@ -4,6 +4,7 @@
     <TableView
       :initArrData="initArr"
       :totalCount="tableTotalNum"
+      :loading="tableLoading"
       @searchTable="getTableData"
       ref="updateTable"
       @accepttreeNode="accepttreeNodeFun"
@@ -86,12 +87,12 @@
       >
         <div slot="title" class="roomModalTitleSlot">
           <p>个人画像</p>
-          <span>测试某某</span>
+          <span>{{tempPersonData && tempPersonData.a0101}}</span>
         </div>
         
         <div class="personContainer">
           <div class="hotCon">
-              点击热度：75 次
+              点击热度：{{(tempPersonData && tempPersonData.pageView) ? tempPersonData.pageView : 0}} 次
           </div>
           <div class="personContent">
              <div class="firstCircle">
@@ -241,6 +242,8 @@ export default {
       },
 
       tableTotalNum: 0, //table数据量
+      tableLoading: false, //table--loading
+      tempPageSize: 1, //临时--table--pageSize
       visible: false, //模态框默认不可见
       confirmLoading: false, //模态框确认按钮加载：默认不加载
       selectTreeNode: null, //接收treeNode值
@@ -269,51 +272,51 @@ export default {
       nameObj: {
         icon: 'user',
         iconColor: '#64c3fa',
-        value: '从某某',
+        value: '',
         position: 'left'
       },
       genderObj:{
         icon: 'male',
         iconColor: '#e25c58',
-        value: '男',
+        value: '',
         position: 'left'
       },
       ageObj:{
         icon: 'nianling',
         iconColor: '#ffffff',
         iconClass:'age_icon_bg',
-        value: '28',
+        value: '',
         position: 'left'
       },
       eduObj:{
         icon: 'xueli',
         iconColor: '#ea5c5c',
-        value: '硕士研究生',
+        value: '',
         position: 'left'
       },
       professObj:{
         icon: 'book1',
         iconColor: '#50b673',
-        value: '地理学',
+        value: '',
         position: 'left'
       },
       marryObj:{
         icon: 'hunyinlianai',
         iconColor: '#1196db',
-        value: '未婚',
+        value: '',
         position: 'right'
       },
       collegeObj:{
         icon: 'school1',
         iconColor: '#ffffff',
         iconClass: 'college_icon_bg',
-        value: '东华理工大学',
+        value: '',
         position: 'right'
       },
       addressObj:{
         icon: '1302dizhi',
         iconColor: '#0590d9',
-        value: '江西吉安遂川',
+        value: '',
         position: 'right'
       },
       currentRowData: null,  //当前行数据
@@ -321,7 +324,7 @@ export default {
   },
   watch: {},
   created() {
-    this.getTableData(null, 1, 10);
+    this.getTableData(null, this.tempPageSize, 10);
   },
   computed: {
     checkTableData: function() {
@@ -336,6 +339,8 @@ export default {
        * 参数：condition:form查询结果：{}
        *  */
       this.tempCondition = condition;
+      this.tableLoading = true;
+      this.tempPageSize = pageNum;
       this.$http
         .fetchGet("informationPool@findA01ListByState.action", {
           status: 1,
@@ -364,10 +369,21 @@ export default {
                 a0202a: element.a0202a, //工作单位名称
                 pageView: element.pageView, //热度
                 a0100a: element.a0100a, //档案编号
-                a0184: element.a0184 //身份证号
+                a0184: element.a0184, //身份证号
+                a0111: element.a0111,
+                a0824: element.a0824,
+                a0834: element.a0834,
+                a0888: element.a0888,
+                a0131: element.a0131
               });
             });
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
           }
+        }).catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.tableLoading = false;
         });
     },
     deleteFun(data, currTableData) {
@@ -384,7 +400,7 @@ export default {
           console.log(res);
           if (Number(res.code) === 0) {
             this.$message.success("删除成功");
-            this.getTableData(this.tempCondition, 1, 10);
+            this.getTableData(this.tempCondition, this.tempPageSize, 10);
           } else{
             this.$message.warning('抱歉，操作失败，请刷新后重试！');
           }
@@ -450,7 +466,7 @@ export default {
     infoOperateFun(value){
       console.log(value);
       if(value){
-        this.getTableData(this.tempCondition, 1, 10);
+        this.getTableData(this.tempCondition, this.tempPageSize, 10);
         this.visible = false;
         this.confirmLoading = false;
       } else{
@@ -475,6 +491,14 @@ export default {
       } else {
         this.tempPersonData = this.checkTableData[0];
         this.personVisible = true;
+        this.nameObj['value'] = this.tempPersonData['a0101'];
+        this.genderObj['value'] = this.tempPersonData['a0104'] === "1" ? "男" : "女";
+        this.ageObj['value'] = this.tempPersonData['a0107'];
+        this.eduObj['value'] = this.tempPersonData['a0834'];
+        this.professObj['value'] = this.tempPersonData['a0824'];
+        this.marryObj['value'] = this.tempPersonData['a0131'];
+        this.collegeObj['value'] = this.tempPersonData['a0888'];
+        this.addressObj['value'] = this.tempPersonData['a0111'];
       }
     },
     
@@ -555,8 +579,8 @@ export default {
 }
 
 .detail_div_profess{
-  top: -10%;
-  right: 28%;
+  top: -14%;
+  right: 13%;
 }
 
 .detail_div_marry{

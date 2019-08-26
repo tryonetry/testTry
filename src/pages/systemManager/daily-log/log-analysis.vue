@@ -225,11 +225,11 @@ export default {
           limit: limitNum,
           moduleId: this.tempTreeNode,
           startDate:
-            !condition || !condition.startDate ? "" : condition.startDate,
-          endDate: !condition || !condition.endDate ? "" : condition.endDate,
-          creator: !condition || !condition.creator ? "" : condition.creator,
-          status: !condition || !condition.status ? "" : condition.status,
-          ip: !condition || !condition.ip ? "" : condition.ip
+            !condition || !condition.startDate ? '' : condition.startDate,
+          endDate: !condition || !condition.endDate ? '' : condition.endDate,
+          creator: !condition || !condition.creator ? '' : condition.creator,
+          status: !condition || !condition.status ? '' : condition.status,
+          ip: !condition || !condition.ip ? '' : condition.ip
         })
         .then(res => {
           if (Number(res.code) === 0) {
@@ -310,7 +310,6 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             this.treeDataObj.dataArr = this.getNewTreeData(utils.one2MultiDimensional("0",res.data));
-            // this.getTreeRootFun(res.data);
             this.getTableData(null, this.tempPageSize, 10);
           } else {
             this.$message.error("抱歉，获取数据失败，请刷新后重试！");
@@ -320,37 +319,6 @@ export default {
           this.$message.error("抱歉，网络异常！");
         });
     },
-    // getTreeRootFun(data) {
-    //   /**
-    //    * 功能：过滤获取tree--根节点；重组tree数据
-    //    * 参数：data:当前需重组的数据
-    //    */
-    //   if (data && data.length > 0) {
-    //     let resultTree = [];
-    //     data.forEach(el => {
-    //       if (Number(el.pId) === 0 || el.name == "PAD生成数据") {
-    //         resultTree.push(el);
-    //         el.children = this.restructureTreeFun(el.id, data);
-    //       }
-    //     });
-    //     this.treeDataObj.dataArr = this.getNewTreeData(resultTree);
-    //     this.getTableData(null, this.tempPageSize, 10);
-    //   }
-    // },
-    // restructureTreeFun(nodeId, data) {
-    //   /**
-    //    * 功能：根据nodeId从data中过滤出chidren
-    //    * 参数：nodeId：父id值； data：重组的数据
-    //    */
-    //   let childData = [];
-    //   data.forEach(item => {
-    //     if (nodeId === item.pId) {
-    //       childData.push(item);
-    //       item.children = this.restructureTreeFun(item.id, data);
-    //     }
-    //   });
-    //   return childData;
-    // },
     getNewTreeData(dataArr) {
       /***
        * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title

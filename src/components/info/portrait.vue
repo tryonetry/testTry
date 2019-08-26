@@ -4,7 +4,7 @@
      <div class="left_detail" v-if="infoObj.position === 'left'">
        <!-- infoObj.iconClass ? infoObj.iconClass : '' -->
        <span :class="['detail_left_icon', infoObj.iconClass ? infoObj.iconClass : '', 'iconfont', 'icon-' + infoObj.icon]"  :style="{color: infoObj.iconColor}"></span>
-       <span class="name">{{infoObj.value}}</span>
+       <span class="name" style="white-space: nowrap;">{{infoObj.value}}</span>
      </div>
      <div class="right_detail" v-else>
         <span class="name">{{infoObj.value}}</span>
