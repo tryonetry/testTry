@@ -1,48 +1,108 @@
 <!-- 角色管理 -->
 <template>
   <div class="outer">
+    
+    <!-- 添加 -->
+    <a-modal
+      centered 
+      :visible="addState"
+      @cancel="handleCancel"
+      width="45%"
+      :maskClosable='false'
+      class="modal"
+    >
+      <!-- title -->
+      <div slot="title" class="titleSlot">
+        <p>{{currRowdata && currRowdata.roleName ? "编辑" : "添加"}}</p>
+        <span>{{currRowdata && currRowdata.roleName}}</span>
+      </div>
+      <!-- footer -->
+      <div slot="footer">
+        <a-button @click="handleCancel">取消</a-button>
+        <a-button @click="confirmAdd" type="primary" :loading="addConfirmLoading">{{currRowdata && currRowdata.roleName ? "保存" : "添加"}}</a-button>
+      </div>
+      <div class="addEditModalContainer">
+        <TableFromSearch :formDataArr='addFormData' :layout='addModal' ref="addForm"></TableFromSearch>
+      </div>
+    </a-modal>
+
+    <!-- 授权 -->
+    <a-modal
+      centered 
+      :visible="permissionState"
+      @cancel="handleCancel"
+      width="50%"
+      :maskClosable='false'
+      class="modal"
+    >
+      <!-- title -->
+      <div slot="title" class="titleSlot">
+        <p>授权</p>
+        <span>{{currRowdata && currRowdata.roleName}}</span>
+      </div>
+      <!-- footer -->
+      <div slot="footer">
+        <a-button @click="handleCancel">取消</a-button>
+        <a-button type="primary" :loading="addConfirmLoading">确定</a-button>
+      </div>
+      <a-tabs defaultActiveKey="1" style="height:400px" tabPosition="left">
+        <a-tab-pane tab="功能菜单" key="1">
+          <OtherTree :treeDataObj="featureMenuTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+          <OtherTree :treeDataObj="orgPermissionTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+        </a-tab-pane>
+        <a-tab-pane tab="机构授权" key="2">Content of tab 2</a-tab-pane>
+      </a-tabs>
+    </a-modal>
+
     <TableView :initArrData="initArr" :totalCount="tableTotalNum" @searchTable="getTableData" :loading="tableLoading">
       <!-- tableFormSearch里添加其他按钮 -->
       <span slot="formAction">
-          <a-button class="buttonOperate">添加</a-button>
+          <a-button class="buttonOperate" @click="handleAdd">添加</a-button>
       </span>
-
+      <div slot="tableAction2" slot-scope="slotPropsData">
+        <a-switch @click="handleOpenState(slotPropsData.currRowdata)" checkedChildren="已启用" unCheckedChildren="未启用" :checked="String(slotPropsData.currRowdata.roleState) === '1' ? true : false" />
+      </div>
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 3)"
+          @click="handleAdd(slotPropsData.currRowdata)"
           data-type="编辑"
         >编辑</a>
         <a-popconfirm
           title="确定删除吗?"
           okText="确定"
           cancelText="取消"
-          @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
+          @confirm="deleteFun(slotPropsData.currRowdata)"
         >
           <a href="javascript:;" class="errorBtnColor">删除</a>
         </a-popconfirm>
         <a
           href="javascript:;"
-          @click="operateFun(currentData=slotPropsData.currRowdata, 2)"
+          @click="handlePermisson(slotPropsData.currRowdata)"
           data-type="授权"
           class="primaryBtnColor"
         >授权</a>
       </div>
+      
     </TableView>
   </div>
 </template>
 
 <script>
 import TableView from "@/components/tableView";
+import TableFromSearch from "@/components/tableFormSearch";
+import OtherTree from '@/components/otherTree';
+
 export default {
   name: "RoleManager",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView },
+  components: { TableView, TableFromSearch, OtherTree },
   props: [""],
 
   data() {
     return {
+      currRowdata:null,
       tableTotalNum: 0, //总页数：默认为0
       tempCondition:null,
       tableLoading:false,
@@ -84,39 +144,42 @@ export default {
             title: "序号",
             dataIndex: "num",
             key: "num",
-            fixed: "left",
-            width: 60,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
             title: "角色代码",
             dataIndex: "roleCode",
             key: "roleCode",
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色名称",
             dataIndex: "roleName",
             key: "roleName",
+            width: 300,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色类型",
             dataIndex: "roleType",
             key: "roleType",
+            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "角色状态",
             dataIndex: "roleState",
             key: "roleState",
-            scopedSlots: { customRender: "cursorTitle" }
+            width: 250,
+            scopedSlots: { customRender: "action2" }
           },
           {
             title: "角色备注",
             dataIndex: "roleDesc",
             key: "roleDesc",
-            width: 250,
+            width: 300,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -127,7 +190,129 @@ export default {
         ],
         // table数据
         tabledataArr: []
+      },
+      addModalTitle:"",
+      addState:false,
+      addConfirmLoading:false,
+      addFormData:{
+          formInputs: [
+              {
+                  title: '角色代码',
+                  type: "text",
+                  required: true,
+                  placeholder: "请输入角色代码(只能包含数字和字母)",
+                  key: "roleCode",
+                  name: "roleCode",
+                  val: void 0,
+                  postname: "roleCode",
+                  maxlength: 20,
+                  minlength: 0,
+                  tip: '* 请输入角色代码(只能包含数字和字母)',
+                  status: '',
+                  reg:"testNumAndChar",
+                  colWidth:[24,24],
+                  isHide:false,
+              },
+              {
+                  title: '角色名称',
+                  type: "text",
+                  required: true,
+                  placeholder: "请输入角色名称",
+                  key: 'roleName',
+                  name: 'roleName',
+                  postname: "roleName",
+                  tip: '* 请输入角色名称',
+                  val: void 0,
+                  status: '',
+                  colWidth:[24,24],
+                  isHide:false,
+              },
+              {
+                  title: '角色类型',
+                  otherType: 'searchSelect',
+                  required: true,
+                  placeholder: "请选择角色类型",
+                  key: 'roleType',
+                  name: 'roleType',
+                  postname: "roleType",
+                  tip: '* 请选择角色类型',
+                  val: void 0,
+                  children: [
+                    {itemCode:"0",itemName:"系统管理角色"},
+                    {itemCode:"1",itemName:"安全管理角色"},
+                    {itemCode:"2",itemName:"安全审计角色"},
+                    {itemCode:"3",itemName:"系统配置角色"},
+                    {itemCode:"4",itemName:"网站管理角色"},
+                  ],
+                  status: '',
+                  colWidth:[24,24],
+                  isHide:false,
+              },
+              {
+                title:"角色状态",
+                otherType: "radio",
+                key: "roleState",
+                name: "roleState",
+                val: '1',
+                postname: "roleState",
+                children:[
+                  {label:"启用",value:'1'},
+                  {label:"禁用",value:'0'},
+                ],
+                colWidth:[24,24],
+              },
+              {
+                title: '角色备注',
+                otherType: 'textarea',
+                required: false,
+                key: 'roleDesc',
+                name: 'roleDesc',
+                postname: "roleDesc",
+                val: void 0,
+                status: '',
+                colWidth:[24,24],
+                isHide:false,
+              },
+          ]
+      },
+      // sendModal 布局
+      addModal:{
+          defaultCon: {
+              labelCol: {
+                  sm: { span: 5 },
+                  xl: { span: 5 },
+                  xxl: { span: 5 }
+              },
+              wrapperCol: {
+                  sm: { span: 17 },
+                  xl: { span: 17 },
+                  xxl: { span: 17 }
+              }
+          },
+          textareaCon: {
+            labelCol: {
+              sm: { span: 5 },
+              xl: { span: 5 },
+              xxl: { span: 5 }
+            },
+            wrapperCol: {
+              sm: { span: 17 },
+              xl: { span: 17 },
+              xxl: { span: 17 }
+            }
+          },
+      },
+
+      permissionState:false,
+      featureMenuTree: {
+        isChecked: true,
+        dataArr: [],
+      },
+      orgPermissionTree:{
+        isChecked: true,
+        dataArr: [],
       }
+
     };
   },
 
@@ -165,9 +350,10 @@ export default {
               this.initArr.tabledataArr = res.data;
               this.initArr.tabledataArr.forEach((element, index) => {
                 Object.assign(element,{
-                  key:element.userId,
+                  key:element.roleId,
                   num: (pageNum - 1) * limitNum + index + 1,
-                  userLoginFailnum:String(element.userLoginFailnum) === '0' ? "正常" : "锁定"
+                  userLoginFailnum:String(element.userLoginFailnum) === '0' ? "正常" : "锁定",
+                  roleType:this.filterData(element.roleType) ? this.filterData(element.roleType).itemName : element.roleType,
                 });
               });
           }else{
@@ -178,6 +364,174 @@ export default {
       }).finally(end => {
         _this.tableLoading = false;
       })
+    },
+
+    // 过滤数据
+    filterData(roleType,itemName){
+      let tempObj = this.addFormData.formInputs[2].children.filter(item => item.itemCode === roleType)[0];
+      if(tempObj){
+        return tempObj
+      }
+    },
+
+    // 重置数据
+    resetFormData(arr){
+      arr.forEach(item => {
+        if(item.otherType === "radio"){
+          item.val = item.children && item.children[0] && item.children[0].value;
+        }else{
+          item.val = void 0;
+          item.status = void 0;
+        }
+      });
+    },
+
+    // 编辑回填数据
+    addFormBackFill(){
+      this.addFormData.formInputs.forEach(item => {
+        if(this.currRowdata && this.currRowdata[item.name]){
+          item.val = this.currRowdata[item.name];
+        }
+      })
+    }, 
+
+    // 更改状态
+    handleOpenState(currRowdata){
+      this.$http.fetchPost("role@changeRoleState.action",{
+        roleCode:currRowdata.roleCode,
+        roleState:currRowdata.roleState === "1" ? "0" : "1",
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.$message.success("状态切换成功!");
+          this.getTableData(this.tempCondition,1,10);
+        }else{
+          this.$message.warning("状态切换失败,请重试");
+        }
+      }).catch(err => {
+        this.$message.error("抱歉,网路异常,请稍后重试");
+      })
+    },
+
+    // 添加
+    handleAdd(currRowdata){
+      this.resetFormData(this.addFormData.formInputs);
+      if(currRowdata){
+        this.currRowdata = currRowdata;
+      }
+      this.addFormBackFill();
+      this.addState = true;
+    },
+
+    // 确认添加
+    confirmAdd(){
+      let result = this.$refs.addForm.getFormData();
+      let postUrl = this.currRowdata.roleId ? "role@roleUpdate.action" : "role@insertRole.action";
+      if(!result.isRight) return;
+      // 判断code是否重复
+      this.$http.fetchPost("role@checkRoleCode.action",{
+        roleCode:result.postObj.roleCode
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.addConfirmLoading = true;
+          this.$http.fetchPost(postUrl,{
+            roleId:this.currRowdata.roleId,
+            ...result.postObj,
+          }).then(res => {
+            if(Number(res.code) === 0){
+              this.$message.success(this.currRowdata.roleId ? "保存成功!" : "添加成功!");
+              this.getTableData(this.tempCondition,1,10);
+              this.handleCancel();
+            }else{
+              this.$message.warning(this.currRowdata.roleId ? "保存失败,请重试" : "添加失败,请重试");
+            }
+          }).catch(err => {
+            this.$message.error("抱歉,网路异常,请稍后重试");
+          }).finally(end => {
+            this.addConfirmLoading = false;
+          })
+        }else{
+          this.$message.warning("抱歉,角色代码重复,请重新输入");
+          this.addFormData.formInputs[0].status = "warning";
+        }
+      })
+      
+    },
+
+    // 删除
+    deleteFun(currRowdata){
+      this.$http.fetchPost("role@roleDel.action",{
+        roleId:currRowdata.roleId
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.$message.success("删除成功!");
+          this.getTableData(this.tempCondition,1,10);
+        }else{
+          this.$message.warning("删除失败,请重试");
+        }
+      }).catch(err => {
+        this.$message.error("抱歉,网路异常,请稍后重试");
+      })
+    },
+
+
+    getNewTreeData(dataArr) {
+      /***
+       * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
+       */
+      dataArr.forEach(el => {
+        el.title = el.name;
+        el.key = el.id;
+        el.value = el.id;
+        // el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true:null;
+        el.isLeaf = el.type === "2" && el.key.length > 10 ? true : null;
+        delete el.name;
+        delete el.id;
+        if (el.children) {
+          this.getNewTreeData(el.children);
+        }
+      });
+      return dataArr;
+    },
+
+    handlePermisson(currRowdata){
+      this.permissionState = true;
+      this.currRowdata = currRowdata;
+
+      // 获取功能菜单树
+      this.$http.fetchPost("role@getModuleTree.action",{
+        rootPId:"0",
+        roleId:currRowdata.roleId,
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.featureMenuTree.dataArr = this.getNewTreeData(res.data);
+        }else{
+          this.$message.warning("获取数据失败,请刷新重试");
+        }
+      }).catch(err => {
+        this.$message.error("抱歉,网络异常,请稍后重试");
+      })
+
+      // 获取机构树
+      this.$http.fetchPost("role@getUnitTree.action",{
+        roleId:currRowdata.roleId,
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.orgPermissionTree.dataArr = this.getNewTreeData(res.data);
+        }else{
+          this.$message.warning("获取数据失败,请刷新重试");
+        }
+      }).catch(err => {
+        this.$message.error("抱歉,网络异常,请稍后重试");
+      })
+    },
+
+    handleCancel(){
+      this.addState = false;
+      this.permissionState = false;
+    },
+
+    accepttreeNodeFun(){
+      
     },
   },
 
@@ -206,4 +560,13 @@ export default {
 </script>
 
 <style scoped>
+.titleSlot{
+  display: flex;
+}
+.titleSlot>p{
+  margin-right: 40px;
+}
+.titleSlot>span{
+  color:#2d8cf0;
+}
 </style>

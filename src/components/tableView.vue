@@ -542,7 +542,6 @@ export default {
 
 
   computed:{
-    // 解决 v-if v-for 同时存在的问题 
     editCol:function(){
       return this.editableCol && this.editableCol.length > 0 ? [...this.editableCol] : [];
     },
