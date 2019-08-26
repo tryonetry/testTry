@@ -23,6 +23,7 @@
 <script>
 import TableView from "@/components/tableView";
 import OtherTree from "@/components/otherTree";
+import utils from '../../../utils/util';
 export default {
   name: "LogAnalysis",
   //import引入的组件需要注入到对象中才能使用
@@ -308,7 +309,9 @@ export default {
         })
         .then(res => {
           if (Number(res.code) === 0) {
-            this.getTreeRootFun(res.data);
+            this.treeDataObj.dataArr = this.getNewTreeData(utils.one2MultiDimensional("0",res.data));
+            // this.getTreeRootFun(res.data);
+            this.getTableData(null, this.tempPageSize, 10);
           } else {
             this.$message.error("抱歉，获取数据失败，请刷新后重试！");
           }
@@ -317,37 +320,37 @@ export default {
           this.$message.error("抱歉，网络异常！");
         });
     },
-    getTreeRootFun(data) {
-      /**
-       * 功能：过滤获取tree--根节点；重组tree数据
-       * 参数：data:当前需重组的数据
-       */
-      if (data && data.length > 0) {
-        let resultTree = [];
-        data.forEach(el => {
-          if (Number(el.pId) === 0 || el.name == "PAD生成数据") {
-            resultTree.push(el);
-            el.children = this.restructureTreeFun(el.id, data);
-          }
-        });
-        this.treeDataObj.dataArr = this.getNewTreeData(resultTree);
-        this.getTableData(null, this.tempPageSize, 10);
-      }
-    },
-    restructureTreeFun(nodeId, data) {
-      /**
-       * 功能：根据nodeId从data中过滤出chidren
-       * 参数：nodeId：父id值； data：重组的数据
-       */
-      let childData = [];
-      data.forEach(item => {
-        if (nodeId === item.pId) {
-          childData.push(item);
-          item.children = this.restructureTreeFun(item.id, data);
-        }
-      });
-      return childData;
-    },
+    // getTreeRootFun(data) {
+    //   /**
+    //    * 功能：过滤获取tree--根节点；重组tree数据
+    //    * 参数：data:当前需重组的数据
+    //    */
+    //   if (data && data.length > 0) {
+    //     let resultTree = [];
+    //     data.forEach(el => {
+    //       if (Number(el.pId) === 0 || el.name == "PAD生成数据") {
+    //         resultTree.push(el);
+    //         el.children = this.restructureTreeFun(el.id, data);
+    //       }
+    //     });
+    //     this.treeDataObj.dataArr = this.getNewTreeData(resultTree);
+    //     this.getTableData(null, this.tempPageSize, 10);
+    //   }
+    // },
+    // restructureTreeFun(nodeId, data) {
+    //   /**
+    //    * 功能：根据nodeId从data中过滤出chidren
+    //    * 参数：nodeId：父id值； data：重组的数据
+    //    */
+    //   let childData = [];
+    //   data.forEach(item => {
+    //     if (nodeId === item.pId) {
+    //       childData.push(item);
+    //       item.children = this.restructureTreeFun(item.id, data);
+    //     }
+    //   });
+    //   return childData;
+    // },
     getNewTreeData(dataArr) {
       /***
        * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
@@ -356,7 +359,8 @@ export default {
         el.title = el.name;
         el.key = el.id;
         el.value = el.id;
-        el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true : null;
+        // el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true:null;
+        el.isLeaf = el.type === "2" && el.key.length > 10 ? true : null;
         delete el.name;
         delete el.id;
         if (el.children) {
