@@ -65,7 +65,7 @@ export default {
                 userPassword:password,
             },{withCredentials:true}).then(res => {
                 if(res.bo){
-                    this.$message.success("登录成功");
+                    this.$message.success("登录成功",0.5);
                     this.loginBtnText = "跳转中...";
                     // this.$store.dispatch('changeLoginState',{isLogin:true,loginUser:res.userInfo});
                     sessionStorage.setItem("loginData", JSON.stringify({isLogin:true,loginUser:res.userInfo}));

@@ -21,6 +21,7 @@
       :expandedKeys="expandedKeys"
       :autoExpandParent="autoExpandParent"
       :treeData="treeDataObj.dataArr"
+      :expandAction="treeDataObj && treeDataObj.expandAction === 1 ? false : 'click'"
       @select="onSelect"
       @check="onCheck"
       treeNodeFilterProp="title"
@@ -92,6 +93,7 @@ export default {
           title: node.title,
           pId: node.pId,
           isLeaf:node.isLeaf,
+          type:node.type,
         });
         if (node.children) {
           this.generateList(node.children, node.key);
@@ -188,7 +190,7 @@ export default {
 }
 .otherTreeContainer>ul{
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
 }
 .treeView,
 .treeViewIsSearch {

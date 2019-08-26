@@ -232,6 +232,15 @@ const regs = {
       }else{
         return 0;
       }
+    },
+
+    // 不允许包含特殊字符
+    testNoSpecialStr:function(val){
+      let reg = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？ ]");
+      if (reg.test(val)){
+        return 0;
+      }
+      return 1;
     }
 
 }

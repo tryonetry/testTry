@@ -203,6 +203,7 @@ export default {
       formData: [], //表格上方form
       organData: [], //左侧树tree数据
       treeFlag: Boolean, //左侧树是否存在
+      otherTreeFlag:Boolean, // 其他树
       isHasNotTable: Boolean, //table是否存在： true：不存在， false：存在
       columns: [], //table表头
       tabledata: [], //table数据
@@ -226,6 +227,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal) {
           this.treeFlag = newVal.treeflag;
+          this.otherTreeFlag = newVal.otherTreeFlag;
           this.noPagination = newVal.noPagination;
           this.bordered = newVal.bordered ? newVal.bordered : false;
           this.isEditAndAdd = newVal.isEditAndAdd ? newVal.isEditAndAdd : false;
@@ -242,9 +244,7 @@ export default {
             JSON.stringify(newVal.tabledataArr)
           );
 
-
-          this.selectedRowKeys = [];
-
+          this.selectedRowKeys = newVal.selectedRowKeys ? newVal.selectedRowKeys : [];
           // 单元格宽度溢出处理
           this.$nextTick(function(){
             
@@ -336,7 +336,7 @@ export default {
 
     // table 宽高重新渲染
     tableBodyRize(){
-        let currScreenWidth = this.treeFlag ? 1920-280-240 : 1920-280;
+        let currScreenWidth = this.treeFlag || this.otherTreeFlag ? 1920-280-240 : 1920-280;
         let tempHeight = this.$refs.tableCon.clientHeight - 53;
         let tempWidth = 0;
         this.initArrData.columnsArr.forEach(el => {
@@ -413,12 +413,14 @@ export default {
        * 功能：checbox-table选择表格数据
        * 参数：record:当前行； selected:true/false; selectedRows:[]选择的数据
        */
+      this.$emit("listeningCheck",record,selected,selectedRows);
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
 
     // check table 全选
     onSelectAll(selected, selectedRows, changeRows) {
       //table全选
+      this.$emit("listeningCheckAll",selected, selectedRows, changeRows);
       this.$store.dispatch('getinfoTableCheckData',selectedRows);
     },
 
