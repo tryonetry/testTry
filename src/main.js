@@ -21,7 +21,7 @@ import VueAMap from 'vue-amap';
 Vue.prototype.printJS = printJS;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = http;
-Vue.prototype.$targetHost = 'http://192.168.1.215:8181/hasngcadrefile/'
+Vue.prototype.$targetHost = 'http://192.168.1.215:8181/'
 Vue.use(antd);
 Vue.use(print);
 Vue.use(VueParticles);

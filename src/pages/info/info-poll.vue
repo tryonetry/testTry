@@ -98,7 +98,7 @@
              <div class="firstCircle">
                <div class="secondCircle">
                  <div class="contentCircle">
-                   <img src="../../assets/image/test6.gif" />
+                   <img src="../../assets/image/defaulthead.png" />
                  </div>
                </div>
                <div class="detail_div detail_div_name"><Portrait :infoObj="nameObj"></Portrait></div>
@@ -320,15 +320,35 @@ export default {
         position: 'right'
       },
       currentRowData: null,  //当前行数据
+      dictoryDataArr: [],  //字典数据
     };
   },
-  watch: {},
+  watch: {
+    directoryData: {
+      // 监听：字典数据
+      immediate: true,
+      handler: function(newVal, oldVal) {
+        if (newVal) {
+          this.dictoryDataArr = newVal;
+        }
+      },
+      deep: true //深度监听
+    },
+  },
   created() {
     this.getTableData(null, this.tempPageSize, 10);
   },
   computed: {
     checkTableData: function() {
       return this.$store.getters.getinfoTableCheckData;
+    },
+    directoryData: function() {
+      //字典数据
+      if (this.$store.getters.getDirectoryData) {
+        return this.$store.getters.getDirectoryData;
+      } else {
+        return null;
+      }
     }
   },
   mounted() {},
@@ -494,9 +514,9 @@ export default {
         this.nameObj['value'] = this.tempPersonData['a0101'];
         this.genderObj['value'] = this.tempPersonData['a0104'] === "1" ? "男" : "女";
         this.ageObj['value'] = this.tempPersonData['a0107'];
-        this.eduObj['value'] = this.tempPersonData['a0834'];
+        this.eduObj['value'] = this.getDictResultName('educationList', this.tempPersonData['a0834'], this.dictoryDataArr);
         this.professObj['value'] = this.tempPersonData['a0824'];
-        this.marryObj['value'] = this.tempPersonData['a0131'];
+        this.marryObj['value'] = this.getDictResultName('maritalList', this.tempPersonData['a0131'], this.dictoryDataArr);
         this.collegeObj['value'] = this.tempPersonData['a0888'];
         this.addressObj['value'] = this.tempPersonData['a0111'];
       }
@@ -518,7 +538,24 @@ export default {
     // exportAllFun(){
     //   //导出全部
       
-    // }
+    // },
+    getDictResultName(keyVal, itemCodeVal, dictDataArr){
+       /**
+        * 功能：通过itemCode值在字典数据里查找对应的itemName
+        * 参数：keyVal:字典里对应的key值； itemCode：当前itemCode值； dictDataArr：字典数据
+        */
+      let tempDataArr = dictDataArr[keyVal], resultStr = '';
+      if(itemCodeVal){
+        tempDataArr.forEach(el => {
+          if(el.itemCode === itemCodeVal){
+            resultStr = el.itemName;
+          }
+        });
+      } else{
+        resultStr = '';
+      }
+      return resultStr;
+    }
   }
 };
 </script>
@@ -580,7 +617,7 @@ export default {
 
 .detail_div_profess{
   top: -14%;
-  right: 13%;
+  right: 21%;
 }
 
 .detail_div_marry{
@@ -590,7 +627,7 @@ export default {
 
 .detail_div_college{
   top: 47%;
-  right: -38%;
+  right: -48%;
 }
 
 .detail_div_address{

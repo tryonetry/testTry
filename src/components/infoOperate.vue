@@ -2251,7 +2251,7 @@ export default {
     beforeUpload(file) {
       //上传照片前--照片格式校验
 
-      const isJPG = file.type === "image/jpeg";
+      const isJPG = file.type === "image/jpeg" || file.type === 'image/png';
       if (!isJPG) {
         this.$message.error("请上传JPEG格式!");
       }
@@ -2632,7 +2632,6 @@ export default {
   border: 1px solid #e8e8e8;
   border-top: none;
 }
-
 
 </style>
 
