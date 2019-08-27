@@ -39,7 +39,6 @@ export default {
       immediate: true, 
       handler:function(newVal){
         this.infoObj = newVal;
-        console.log(newVal);
       }
     }
   },
