@@ -46,11 +46,18 @@
         <a-button type="primary" :loading="addConfirmLoading">确定</a-button>
       </div>
       <a-tabs defaultActiveKey="1" style="height:400px" tabPosition="left">
-        <a-tab-pane tab="功能菜单" key="1">
-          <OtherTree :treeDataObj="featureMenuTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
-          <OtherTree :treeDataObj="orgPermissionTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+        <a-tab-pane class="tabPane" tab="功能菜单" key="1">
+          <div class="paneLoading" v-if="featureTreeLoading">
+            <a-spin tip="Loading..." />
+          </div>
+          <OtherTree v-else :treeDataObj="featureMenuTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
         </a-tab-pane>
-        <a-tab-pane tab="机构授权" key="2">Content of tab 2</a-tab-pane>
+        <a-tab-pane class="tabPane" tab="机构授权" key="2">
+          <div class="paneLoading" v-if="orgTreeLoading">
+            <a-spin tip="Loading..." />
+          </div>
+          <OtherTree v-else :treeDataObj="orgPermissionTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+        </a-tab-pane>
       </a-tabs>
     </a-modal>
 
@@ -104,6 +111,7 @@ export default {
     return {
       currRowdata:null,
       tableTotalNum: 0, //总页数：默认为0
+      currentPage:1,
       tempCondition:null,
       tableLoading:false,
       // tableView传值方式
@@ -304,13 +312,19 @@ export default {
       },
 
       permissionState:false,
+      featureTreeLoading:false,
+      orgTreeLoading:false,
       featureMenuTree: {
         isChecked: true,
+        checkedKeys:[],
         dataArr: [],
+        checkStrictly:true,
       },
       orgPermissionTree:{
         isChecked: true,
+        checkedKeys:[],
         dataArr: [],
+        checkStrictly:true,
       }
 
     };
@@ -339,6 +353,7 @@ export default {
       **/
       this.tableLoading = true;
       this.tempCondition = condition;
+      this.currentPage = pageNum;
       this.$http.fetchPost('role@roleLists.action',{
           page: pageNum,
           limit: limitNum,
@@ -403,7 +418,7 @@ export default {
       }).then(res => {
         if(Number(res.code) === 0){
           this.$message.success("状态切换成功!");
-          this.getTableData(this.tempCondition,1,10);
+          this.getTableData(this.tempCondition,this.currentPage,10);
         }else{
           this.$message.warning("状态切换失败,请重试");
         }
@@ -431,7 +446,7 @@ export default {
       this.$http.fetchPost("role@checkRoleCode.action",{
         roleCode:result.postObj.roleCode
       }).then(res => {
-        if(Number(res.code) === 0){
+        if(Number(res.code) === 0 || this.currRowdata.roleId){
           this.addConfirmLoading = true;
           this.$http.fetchPost(postUrl,{
             roleId:this.currRowdata.roleId,
@@ -439,7 +454,7 @@ export default {
           }).then(res => {
             if(Number(res.code) === 0){
               this.$message.success(this.currRowdata.roleId ? "保存成功!" : "添加成功!");
-              this.getTableData(this.tempCondition,1,10);
+              this.getTableData(this.tempCondition,this.currentPage,10);
               this.handleCancel();
             }else{
               this.$message.warning(this.currRowdata.roleId ? "保存失败,请重试" : "添加失败,请重试");
@@ -464,7 +479,7 @@ export default {
       }).then(res => {
         if(Number(res.code) === 0){
           this.$message.success("删除成功!");
-          this.getTableData(this.tempCondition,1,10);
+          this.getTableData(this.tempCondition,this.currentPage,10);
         }else{
           this.$message.warning("删除失败,请重试");
         }
@@ -474,10 +489,11 @@ export default {
     },
 
 
-    getNewTreeData(dataArr) {
+    getNewTreeData(dataArr,checkedArrName) {
       /***
        * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
        */
+      if(!(dataArr instanceof Array)) return;
       dataArr.forEach(el => {
         el.title = el.name;
         el.key = el.id;
@@ -486,8 +502,11 @@ export default {
         el.isLeaf = el.type === "2" && el.key.length > 10 ? true : null;
         delete el.name;
         delete el.id;
+        if(el.checked === "true"){
+          this[checkedArrName].checkedKeys.push(el.key);
+        }
         if (el.children) {
-          this.getNewTreeData(el.children);
+          this.getNewTreeData(el.children,checkedArrName);
         }
       });
       return dataArr;
@@ -498,30 +517,41 @@ export default {
       this.currRowdata = currRowdata;
 
       // 获取功能菜单树
+      this.featureMenuTree.dataArr = [];
+      this.featureMenuTree.checkedKeys = [];
+      this.featureTreeLoading = true;
       this.$http.fetchPost("role@getModuleTree.action",{
         rootPId:"0",
         roleId:currRowdata.roleId,
       }).then(res => {
         if(Number(res.code) === 0){
-          this.featureMenuTree.dataArr = this.getNewTreeData(res.data);
+          this.featureMenuTree.dataArr = this.getNewTreeData(res.data,"featureMenuTree");
         }else{
           this.$message.warning("获取数据失败,请刷新重试");
         }
       }).catch(err => {
         this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        this.featureTreeLoading = false;
       })
 
       // 获取机构树
+      this.orgPermissionTree.dataArr = [];
+      this.orgPermissionTree.checkedKeys = [];
+      this.orgTreeLoading = true;
       this.$http.fetchPost("role@getUnitTree.action",{
         roleId:currRowdata.roleId,
       }).then(res => {
         if(Number(res.code) === 0){
-          this.orgPermissionTree.dataArr = this.getNewTreeData(res.data);
+          this.orgPermissionTree.dataArr = this.getNewTreeData(res.data,"orgPermissionTree");
         }else{
           this.$message.warning("获取数据失败,请刷新重试");
         }
       }).catch(err => {
+        // console.log(err)
         this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        this.orgTreeLoading = false;
       })
     },
 
@@ -531,13 +561,13 @@ export default {
     },
 
     accepttreeNodeFun(){
-      
+       
     },
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    this.getTableData(this.tempCondition,1,10);
+    this.getTableData(this.tempCondition,this.currentPage,10);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
@@ -568,5 +598,16 @@ export default {
 }
 .titleSlot>span{
   color:#2d8cf0;
+}
+.tabPane{
+  height: 100%;
+  overflow: auto;
+}
+.paneLoading{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 }
 </style>

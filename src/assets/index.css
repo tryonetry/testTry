@@ -383,3 +383,6 @@ input{
   margin-left: 10px;
   margin-right: 10px;
 }
+.ant-tabs .ant-tabs-left-content{
+  height:100%;
+}

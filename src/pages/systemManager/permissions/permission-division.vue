@@ -143,6 +143,7 @@ export default {
   data() {
     return {
       tableTotalNum: 0, //总页数：默认为0
+      currentPage:1,
       permissionTotalNum:0,
       divisionTotalNum:0,
       tableLoading:false,
@@ -403,7 +404,7 @@ export default {
     getTableData(condition, pageNum, limitNum) {
       // userGroup@getAllotRole.action
       const _this = this;
-      
+      this.currentPage = pageNum;
       this.tableLoading = true;
       this.$http.fetchPost('userGroup@getAllotRole.action',{
           page: pageNum,
@@ -638,11 +639,11 @@ export default {
         this.addDisabled = true;
         this.deleteDisabled = true;
         this.divisionDisabled = true;
-        this.getTableData(null,1,10);
+        this.getTableData(null,this.currentPage,10);
       }else{
         // 非根节点和叶子节点
         this.addDisabled = true;
-        this.getTableData(null,1,10);
+        this.getTableData(null,this.currentPage,10);
       }
     },
 
@@ -656,7 +657,7 @@ export default {
       }).then(res => {
         if(Number(res.code) === 0){
           this.$message.success("删除成功!");
-          this.getTableData(null,1,10);
+          this.getTableData(null,this.currentPage,10);
         }else{
           this.$message.warning("删除失败,请重试");
         }
@@ -779,7 +780,7 @@ export default {
         if(Number(res.code) === 0){
           this.$message.success("保存成功!");
           this.handleCancel();
-          this.getTableData(null,1,10);
+          this.getTableData(null,this.currentPage,10);
         }else{
           this.$message.warning("保存失败,请重试");
         }

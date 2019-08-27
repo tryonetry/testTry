@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       tableTotalNum: 0, //总页数：默认为0
+      currentPage:1,
       tableLoading:false,
       tempCondition:null,
       addModalState:false, // 添加 modal
@@ -303,6 +304,7 @@ export default {
       **/
       this.tableLoading = true;
       this.tempCondition = condition;
+      this.currentPage = pageNum;
       this.$http.fetchPost('user@getSysUserList.action',{
           page: pageNum,
           limit: limitNum,
@@ -384,7 +386,7 @@ export default {
 
               if(Number(res.code) === 0){
                 this.$message.success("添加成功!");
-                this.getTableData(this.tempCondition,1,10);
+                this.getTableData(this.tempCondition,this.currentPage,10);
                 this.handleCancel();
               }else{
                 this.$message.warning("抱歉,添加失败,请重试!");
@@ -403,7 +405,7 @@ export default {
               console.log(res);
               if(Number(res.code) === 0){
                 this.$message.success("编辑修改成功!");
-                this.getTableData(this.tempCondition,1,10);
+                this.getTableData(this.tempCondition,this.currentPage,10);
                 this.handleCancel();
               }else{
                 this.$message.warning("抱歉,编辑修改失败,请重试!");
@@ -440,7 +442,7 @@ export default {
       }).then(res => {
         if(Number(res.code) === 0){
           this.$message.success("状态切换成功!");
-          this.getTableData(this.tempCondition,1,10);
+          this.getTableData(this.tempCondition,this.currentPage,10);
         }else{
           this.$message.warning("抱歉,用户状态切换失败,请重试");
         }
@@ -457,7 +459,7 @@ export default {
         }).then(res => {
           if(Number(res.code) === 0){
             this.$message.success("重置密码成功!");
-            // this.getTableData(this.tempCondition,1,10);
+            // this.getTableData(this.tempCondition,this.currentPage,10);
           }else{
             this.$message.warning("抱歉,重置密码失败,请重试");
           }
@@ -478,7 +480,7 @@ export default {
         }).then(res => {
           if(Number(res.code) === 0){
             this.$message.success("解锁成功!");
-            this.getTableData(this.tempCondition,1,10);
+            this.getTableData(this.tempCondition,this.currentPage,10);
           }else{
             this.$message.warning("抱歉,解锁失败,请重试");
           }

@@ -24,7 +24,8 @@
       :expandAction="treeDataObj && treeDataObj.expandAction === 1 ? false : 'click'"
       @select="onSelect"
       @check="onCheck"
-      treeNodeFilterProp="title"
+      :checkedKeys="checkedKeys"
+      :checkStrictly="checkStrictly"
     >
       <template slot="title" slot-scope="{title}">
         <span v-if="title.indexOf(searchValue) > -1">
@@ -48,10 +49,12 @@ export default {
   data() {
     return {
       expandedKeys: [],
+      checkedKeys:[],
       searchValue: "",
       autoExpandParent: true,
       dataList: [], //gData重组完新数组
-      selectTreeValue: null
+      selectTreeValue: null,
+      checkStrictly:false,
     };
   },
 
@@ -64,10 +67,18 @@ export default {
        immediate: true,
        deep: true,
        handler:function(newVal){
-           this.treeDataObj = newVal;
-           if(newVal.dataArr.length > 0){
-             this.generateList(this.treeDataObj.dataArr);
-           }
+          this.treeDataObj = newVal;
+          if(newVal.checkStrictly){
+            console.log(1);
+            this.checkStrictly = newVal.checkStrictly;
+          }
+          if(newVal.dataArr.length > 0){
+            this.generateList(this.treeDataObj.dataArr);
+          }
+          //  checkedKeys
+          if(newVal.checkedKeys instanceof Array){
+            this.checkedKeys = [...newVal.checkedKeys];
+          }
        },
     }
   },
@@ -153,6 +164,7 @@ export default {
       });
     },  
     onCheck (checkedKeys, info) {
+      this.checkedKeys = checkedKeys;
       this.$emit('acceptCheckNode', checkedKeys);
     },
   },
