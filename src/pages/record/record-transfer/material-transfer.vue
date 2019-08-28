@@ -430,7 +430,7 @@ export default {
                     'e0105_editSelectInput',
                     'e0106_editInput',
                     'e0106a_editDateInput',
-                    'e0114_editAddressInput',
+                    'e0114_editInput',
                     "材料名称_requireTitle",
                     "材料类型_requireTitle",
                 ],
@@ -444,10 +444,7 @@ export default {
                         width: 200,
                         slots: { title: '材料类型_requireTitle' },
                         scopedSlots: { customRender: "e0105_editSelectInput" },
-                        itemChildren:[
-                            {itemCode:'1',itemName:'类型一'},
-                            {itemCode:'2',itemName:'类型二'},
-                        ]
+                        itemChildren:[]
                     },
                     {
                         // title: "材料名称",
@@ -470,7 +467,7 @@ export default {
                         dataIndex: "e0114",
                         key: "e0114",
                         width: 500,
-                        scopedSlots: { customRender: "e0114_editAddressInput" },
+                        scopedSlots: { customRender: "e0114_editInput" },
                     },
                     {
                         title: "操作",
@@ -479,14 +476,14 @@ export default {
                 ],
                 
                 tabledataArr: [
-                    {
-                        key:0,
-                        e0105:{code:void 0,name:''},
-                        e0106:'bbb',
-                        e0106a:'19950814',
-                        e0114:{code:[ "13", "1303", "130303" ],name:"秦皇岛"},
-                        inEdit:false,
-                    }
+                    // {
+                    //     key:0,
+                    //     e0105:{code:void 0,name:''},
+                    //     e0106:'bbb',
+                    //     e0106a:'19950814',
+                    //     e0114:'',
+                    //     inEdit:false,
+                    // }
                 ],
             },
             visible:false,
@@ -503,21 +500,36 @@ export default {
     computed: {
         checkTableData: function() {
             return this.$store.getters.getinfoTableCheckData;
+        },
+        directoryData:function(){
+            if(this.$store.getters.getDirectoryData){
+                // this.splitDirectoryData(this.$store.getters.getDirectoryData);
+                return this.$store.getters.getDirectoryData;
+            }else{
+                return null;
+            }
         }
     },
 
     //监控data中的数据变化
     watch: {
-        //obj:{
-        //    handler:function(val,oldval){
-        //        
-        //    },
-        //    deep:true,//深度监听
-        //}
+        directoryData:{
+            // 改变数据
+            handler:function(newVal,oldVal){
+                this.splitDirectoryData(newVal)
+            },
+            deep:true,//深度监听
+        },
     },
 
     //方法集合
     methods: {
+        
+        // 拆分字典数据
+        splitDirectoryData(data){
+            if(!data) return;
+            this.initArr2.columnsArr[0].itemChildren = data.catalog;
+        },
 
         // 过滤 table 不可选择项
         filterTableCheck(record){
@@ -654,6 +666,7 @@ export default {
         saveConfirm(){
             this.$refs.editTable.getTableData();
             // this.saveConfirmLoading = true;
+            console.log(this.$refs.editTable.getTableData())
         },
     },
 
