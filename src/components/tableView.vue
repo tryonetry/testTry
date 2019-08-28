@@ -212,7 +212,7 @@ export default {
       currentPageNum: 1,
       condition:{},  //子组件的查询结果
       tableWidth:"100%",
-      tableHeight:450, // 设置table滚动的高度
+      tableHeight:200, // 设置table滚动的高度
       timer:null, //监听器
       bordered:false, // 边框默认 false
       selectedRowKeys: [], //选择的 keys
@@ -337,7 +337,7 @@ export default {
     // table 宽高重新渲染
     tableBodyRize(){
         let currScreenWidth = this.treeFlag || this.otherTreeFlag ? 1920-280-240 : 1920-280;
-        let tempHeight = this.$refs.tableCon.clientHeight - 53;
+        let tempHeight = this.$refs.tableCon.clientHeight - 59;
         let tempWidth = 0;
         this.initArrData.columnsArr.forEach(el => {
           if(el.width){
@@ -348,7 +348,7 @@ export default {
         if(tempWidth > currScreenWidth || this.superimposeWidth){
           currScreenWidth = tempWidth
         }
-        this.tableHeight = tempHeight > 0 ? tempHeight : this.tableHeight;
+        this.tableHeight = tempHeight > 200 ? tempHeight : this.tableHeight;
         this.tableWidth = utils.detectZoom()/100 * currScreenWidth;
     },
     
@@ -591,6 +591,7 @@ export default {
 
 .noviewContent {
   width: 100%;
+  overflow: auto;
 }
 .tableLink {
   color: #2d8cf0;
@@ -612,7 +613,7 @@ export default {
 
 .tableCon{
   flex: 1;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
 }
 .tableCon .ant-table-wrapper{
   height: 100%;
