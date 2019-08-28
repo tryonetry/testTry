@@ -386,3 +386,10 @@ input{
 .ant-tabs .ant-tabs-left-content{
   height:100%;
 }
+
+@media screen and (max-width: 1250px) {
+  #components-layout-demo-top-side-2 .logo {
+    width: 45px;
+    background: url(../assets/image/headlogo.png) no-repeat;
+  }          
+}

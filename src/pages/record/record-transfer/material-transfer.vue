@@ -57,7 +57,7 @@
             >
                 <template slot="footer">
                     <a-button key="back" @click="handleCancel1">取消</a-button>
-                    <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="saveConfirm">保存</a-button>
+                    <a-button key="submit" type="primary" :loading='saveConfirmLoading' @click="saveConfirm">添加</a-button>
                 </template>
                 <div class="editTableContainer">
                     <TableView :initArrData="initArr2" ref='editTable'>
@@ -89,6 +89,7 @@ export default {
         return {
                             
             tableTotalNum: 0,   //总页数：默认为0
+            currentPage:1,
             tableLoading:false,
             // tableView传值方式
             initArr:{
@@ -488,6 +489,7 @@ export default {
             },
             visible:false,
             visible1:false,
+            inEditPerson:null,
             tempCondition:{},
             tempCondition1:{},
             loading:false,
@@ -549,6 +551,7 @@ export default {
              **/
             this.tempCondition = condition;
             this.tableLoading = true;
+            this.currentPage = pageNum;
             this.$http.fetchPost('fileConnect@getConnectList.action',{
                 page: pageNum,
                 limit: limitNum,
@@ -594,7 +597,7 @@ export default {
                 }).then(res => {
                     if(Number(res.code) === 0){
                         _this.$message.success("移交成功");
-                        _this.getTableData(_this.tempCondition,1,10)
+                        _this.getTableData(_this.tempCondition,this.currentPage,10)
                     }else{
                         _this.$message.warning("抱歉,移交失败,请重试")
                     }
@@ -656,6 +659,7 @@ export default {
         // 添加
         openEdit(rowData){
             this.visible1 = true;
+            this.inEditPerson = rowData;
         },
 
         // 关闭
@@ -664,9 +668,49 @@ export default {
         },
 
         saveConfirm(){
-            this.$refs.editTable.getTableData();
-            // this.saveConfirmLoading = true;
-            console.log(this.$refs.editTable.getTableData())
+                console.log(this.inEditPerson)
+            let postObjIsRight = true;
+            let tablePostArr = [];
+            this.saveConfirmLoading = true;
+            this.$refs.editTable.getTableData().forEach(item => {
+                let tempObj = {};
+                for (let i in item){
+                    if(typeof item[i] === "object"){
+                        tempObj[i] = item[i].code
+                    }else{
+                        tempObj[i] = item[i];
+                    }
+                    if((i === "e0105" && !item[i].code && item[i].code !== 0) || (i === "e0106" && !item[i] && item[i] !== 0)){
+                        postObjIsRight = false;
+                    }
+                }
+                delete tempObj.inEdit;
+                delete tempObj.key;
+                tablePostArr.push(tempObj);
+            });
+            // 必填项不为空
+            if(postObjIsRight && tablePostArr.length > 0){
+                this.$http.fetchPost("fileConnect@saveCatalogList.action",{
+                    personId:this.inEditPerson.a01000,
+                    dataArr:JSON.stringify(tablePostArr)
+                }).then(res => {
+                    if(Number(res.code) === 0){
+                        this.$message.success("添加成功");
+                        this.getTableData(this.tempCondition,this.currentPage,10)
+                        this.handleCancel1();
+                    }else{
+                        this.$message.warning("添加失败,请重试");
+                    }
+                }).catch(err => {
+                    this.$message.error("抱歉,网络异常,请稍后重试");
+                }).finally(end => {
+                    this.saveConfirmLoading = false;
+                })
+            }else if(tablePostArr.length <= 0){
+                this.$message.warning("请填写材料内容");
+            }else{
+                this.$message.warning("必填项不能为空");
+            }
         },
     },
 
@@ -675,7 +719,7 @@ export default {
         const _this = this;
 
         // 初始化数据
-        this.getTableData(null,1,10);
+        this.getTableData(null,this.currentPage,10);
 
         // 查询经办人
         this.$http.fetchGet('fileConnect@archTurnOverList.action',{})

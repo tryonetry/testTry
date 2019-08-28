@@ -343,9 +343,10 @@ export default {
         width:100%;
     }
     .left{
-        width: 20%;
+        width: 25%;
         padding: 20px;
         box-sizing: border-box;
+        overflow: auto;
         border-right: 3px solid #e8e8e8;
     }
     .right{
