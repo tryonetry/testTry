@@ -43,20 +43,20 @@
       <!-- footer -->
       <div slot="footer">
         <a-button @click="handleCancel">取消</a-button>
-        <a-button type="primary" :loading="addConfirmLoading">确定</a-button>
+        <a-button type="primary" @click="permissionTreeConfirm" :loading="permissionConfirmLoading">保存</a-button>
       </div>
-      <a-tabs defaultActiveKey="1" style="height:400px" tabPosition="left">
+      <a-tabs defaultActiveKey="1" :activeKey="activeTabKey" @change="tabChange" style="height:400px" tabPosition="left">
         <a-tab-pane class="tabPane" tab="功能菜单" key="1">
           <div class="paneLoading" v-if="featureTreeLoading">
             <a-spin tip="Loading..." />
           </div>
-          <OtherTree v-else :treeDataObj="featureMenuTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+          <OtherTree v-else :treeDataObj="featureMenuTree" @acceptCheckNode="accepttreeNodeFun(arguments,'featureMenuTree')"></OtherTree>
         </a-tab-pane>
         <a-tab-pane class="tabPane" tab="机构授权" key="2">
           <div class="paneLoading" v-if="orgTreeLoading">
             <a-spin tip="Loading..." />
           </div>
-          <OtherTree v-else :treeDataObj="orgPermissionTree" @accepttreeNode="accepttreeNodeFun"></OtherTree>
+          <OtherTree v-else :treeDataObj="orgPermissionTree" @acceptCheckNode="accepttreeNodeFun(arguments,'orgPermissionTree')"></OtherTree>
         </a-tab-pane>
       </a-tabs>
     </a-modal>
@@ -114,6 +114,8 @@ export default {
       currentPage:1,
       tempCondition:null,
       tableLoading:false,
+      activeTabKey:"1",
+      permissionConfirmLoading:false,
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
@@ -560,9 +562,38 @@ export default {
       this.permissionState = false;
     },
 
-    accepttreeNodeFun(){
-       
+    tabChange(activeKey){
+      this.activeTabKey = activeKey;
     },
+
+    accepttreeNodeFun(args,arrStrName){
+      this[arrStrName].checkedKeys = args[0].checked;
+    },
+
+    permissionTreeConfirm(){
+      this.permissionConfirmLoading = true;
+      let tempKeys = this.activeTabKey === "1" ? this.featureMenuTree.checkedKeys.join(",") : this.orgPermissionTree.checkedKeys.join(",");
+      let postUrl = this.activeTabKey === "1" ? "role@saveModuleAuth.action" : "role@saveUnitAuth.action"
+
+      this.$http.fetchPost(postUrl,{
+        arrayP:tempKeys,
+        roleId:this.currRowdata.roleId,
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.$message.success("保存成功!");
+          this.getTableData(this.tempCondition,this.currentPage,10);
+          this.handleCancel();
+        }else{
+          this.$message.warning("保存失败,请重试");
+        }
+      }).catch(err => {
+        this.$message.error("抱歉,网络异常,请稍后重试");
+      }).finally(end => {
+        this.permissionConfirmLoading = false;
+      })
+
+    },
+
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）

@@ -697,6 +697,7 @@ let router = new vueRouter({ routes });
 // 路由拦截
 router.beforeEach((to,from,next)=>{
     let loginData = JSON.parse(sessionStorage.getItem("loginData"));
+    console.log(loginData);
     // 判断是否为登录状态
     if((!loginData || !loginData.isLogin) && to.name !== "login"){
         router.push({path:'/login'});

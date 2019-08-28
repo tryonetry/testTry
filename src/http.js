@@ -60,12 +60,16 @@ axios.interceptors.request.use(
 //返回状态判断(添加响应拦截器)
 axios.interceptors.response.use((res) =>{
     //对响应数据做些事
-    if(!res.data.success){
+    // console.log(res.data)
+    if(res.data){
+        // console.log(1)
         return Promise.resolve(res);
     }
+    // console.log(2)
+    sessionStorage.removeItem("loginData");
+    // console.log(sessionStorage.getItem("loginData"))
     return res;
 }, (error) => {
-    console.log('网络异常')
     return Promise.reject(error);
 });
 
