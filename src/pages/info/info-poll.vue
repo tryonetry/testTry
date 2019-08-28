@@ -98,16 +98,17 @@
              <div class="firstCircle">
                <div class="secondCircle">
                  <div class="contentCircle">
-                   <img src="../../assets/image/defaulthead.png" />
+                   <img :src="imgUrl" v-if="tempPersonData && tempPersonData.imgPath"/>
+                   <img v-else src="../../assets/image/defaulthead.png" />
                  </div>
                </div>
                <div class="detail_div detail_div_name"><Portrait :infoObj="nameObj"></Portrait></div>
                <div class="detail_div detail_div_gender"><Portrait :infoObj="genderObj"></Portrait></div>
                <div class="detail_div detail_div_age"><Portrait :infoObj="ageObj"></Portrait></div>
-               <div class="detail_div detail_div_edu"><Portrait :infoObj="eduObj"></Portrait></div>
+               <div class="detail_div detail_div_college"><Portrait :infoObj="collegeObj"></Portrait></div>
                <div class="detail_div detail_div_profess"><Portrait :infoObj="professObj"></Portrait></div>
                <div class="detail_div detail_div_marry"><Portrait :infoObj="marryObj"></Portrait></div>
-               <div class="detail_div detail_div_college"><Portrait :infoObj="collegeObj"></Portrait></div>
+               <div class="detail_div detail_div_edu"><Portrait :infoObj="eduObj"></Portrait></div>
                <div class="detail_div detail_div_address"><Portrait :infoObj="addressObj"></Portrait></div>
              </div>
           </div>
@@ -288,9 +289,10 @@ export default {
         value: '',
         position: 'left'
       },
-      eduObj:{
-        icon: 'xueli',
-        iconColor: '#ea5c5c',
+      collegeObj:{
+        icon: 'school1',
+        iconColor: '#ffffff',
+        iconClass: 'college_icon_bg',
         value: '',
         position: 'left'
       },
@@ -306,10 +308,9 @@ export default {
         value: '',
         position: 'right'
       },
-      collegeObj:{
-        icon: 'school1',
-        iconColor: '#ffffff',
-        iconClass: 'college_icon_bg',
+      eduObj:{
+        icon: 'xueli',
+        iconColor: '#ea5c5c',
         value: '',
         position: 'right'
       },
@@ -321,6 +322,7 @@ export default {
       },
       currentRowData: null,  //当前行数据
       dictoryDataArr: [],  //字典数据
+      imgUrl: '',  //个人画像图片地址
     };
   },
   watch: {
@@ -394,7 +396,8 @@ export default {
                 a0824: element.a0824,
                 a0834: element.a0834,
                 a0888: element.a0888,
-                a0131: element.a0131
+                a0131: element.a0131,
+                imgPath: element.imgPath
               });
             });
           } else{
@@ -511,14 +514,15 @@ export default {
       } else {
         this.tempPersonData = this.checkTableData[0];
         this.personVisible = true;
-        this.nameObj['value'] = this.tempPersonData['a0101'];
+        this.nameObj['value'] = this.tempPersonData['a0101'] ? this.tempPersonData['a0101'] : '姓名';
         this.genderObj['value'] = this.tempPersonData['a0104'] === "1" ? "男" : "女";
-        this.ageObj['value'] = this.tempPersonData['a0107'];
+        this.ageObj['value'] = this.tempPersonData['a0107'] ? this.tempPersonData['a0107'] : '年龄';
         this.eduObj['value'] = this.getDictResultName('educationList', this.tempPersonData['a0834'], this.dictoryDataArr);
-        this.professObj['value'] = this.tempPersonData['a0824'];
+        this.professObj['value'] = this.tempPersonData['a0824'] ? this.tempPersonData['a0824'] : '专业';
         this.marryObj['value'] = this.getDictResultName('maritalList', this.tempPersonData['a0131'], this.dictoryDataArr);
-        this.collegeObj['value'] = this.tempPersonData['a0888'];
-        this.addressObj['value'] = this.tempPersonData['a0111'];
+        this.collegeObj['value'] = this.tempPersonData['a0888'] ? this.tempPersonData['a0888'] : '毕业院校';
+        this.addressObj['value'] = this.tempPersonData['a0111'] ? this.tempPersonData['a0111'] : '地址';
+        this.imgUrl = this.$targetHost + this.tempPersonData.imgPath.substr(2);
       }
     },
     
@@ -545,7 +549,9 @@ export default {
         * 参数：keyVal:字典里对应的key值； itemCode：当前itemCode值； dictDataArr：字典数据
         */
       let tempDataArr = dictDataArr[keyVal], resultStr = '';
-      if(itemCodeVal){
+      console.log(keyVal + ':' + itemCodeVal);
+      console.log(tempDataArr);
+      if(itemCodeVal && dictDataArr && dictDataArr[keyVal].length > 0){
         tempDataArr.forEach(el => {
           if(el.itemCode === itemCodeVal){
             resultStr = el.itemName;
@@ -610,7 +616,8 @@ export default {
   left: -20%;
 }
 
-.detail_div_edu{
+
+.detail_div_college{
   bottom: -7%;
   left: 25%;
 }
@@ -625,13 +632,13 @@ export default {
   right: -17%;
 }
 
-.detail_div_college{
-  top: 47%;
-  right: -48%;
+.detail_div_edu{
+  top: 44%;
+  right: -32%;
 }
 
 .detail_div_address{
-  top: 78%;
+  top: 71%;
   right: -21%;
 }
 
