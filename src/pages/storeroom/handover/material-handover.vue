@@ -92,10 +92,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证号/社保卡号",
+              title: "身份证/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入身份证号/社保卡号",
+              placeholder: "请输入身份证/社保卡号",
               key: "e0104",
               name: "e0104",
               val: void 0,
@@ -209,7 +209,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证号/社保卡号",
+            title: "身份证/社保卡号",
             dataIndex: "e0104",
             key: "e0104",
             width: 200,

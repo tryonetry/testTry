@@ -7,11 +7,11 @@
     <div class="detailContent searchCoditions" v-if='!isAction'>
         <!-- 查询条件 -->
         <p>
-            <span>身份证号/社保卡号:</span>
+            <span>身份证/社保卡号:</span>
             <a-input
                 type="text"
                 class="aInput"
-                placeholder="请输入完整的身份证号/社保卡号"
+                placeholder="请输入完整的身份证/社保卡号"
                 v-model="idCardNum"
                 @change="searchConditionChange"
             ></a-input>
@@ -113,7 +113,7 @@ export default {
             notInnerData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
                 { label:"性别", val:void 0 ,name:'a0104',hasDataNotShow:true},
-                { label:"身份证号/社保卡号", val:void 0 ,name:'a0184'},
+                { label:"身份证/社保卡号", val:void 0 ,name:'a0184'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"出生日期", val:void 0 ,name:'a0107'},
                 { label:"政治面貌", val:void 0 ,name:'a0141'},
@@ -130,7 +130,7 @@ export default {
             innerData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
                 { label:"性别", val:void 0 ,name:'a0104'},
-                { label:"身份证号/社保卡号", val:void 0 ,name:'a0184'},
+                { label:"身份证/社保卡号", val:void 0 ,name:'a0184'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"出生日期", val:void 0 ,name:'a0107'},
                 { label:"政治面貌", val:void 0 ,name:'a0141'},
@@ -177,10 +177,10 @@ export default {
                         disabled:true,
                     },
                     {
-                        title: '身份证号/社保卡号',
+                        title: '身份证/社保卡号',
                         type: "text",
                         required: true,
-                        placeholder: "请输入申请人身份证号/社保卡号",
+                        placeholder: "请输入申请人身份证/社保卡号",
                         key: "applyIdNum",
                         name: "applyIdNum",
                         val: void 0,
@@ -188,7 +188,7 @@ export default {
                         maxlength: 18,
                         minlength: 15,
                         reg: 'testid',
-                        tip: '* 请输入正确的申请人身份证号/社保卡号',
+                        tip: '* 请输入正确的申请人身份证/社保卡号',
                         status: '',
                         disabled:true,
                     },
@@ -292,10 +292,10 @@ export default {
                         status: '',
                     },
                     {
-                        title: '身份证号/社保卡号',
+                        title: '身份证/社保卡号',
                         type: "text",
                         required: true,
-                        placeholder: "请输入申请人身份证号/社保卡号",
+                        placeholder: "请输入申请人身份证/社保卡号",
                         key: "applyIdNum",
                         name: "applyIdNum",
                         val: void 0,
@@ -303,7 +303,7 @@ export default {
                         maxlength: 18,
                         minlength: 15,
                         reg: 'testid',
-                        tip: '* 请输入正确的申请人身份证号/社保卡号',
+                        tip: '* 请输入正确的申请人身份证/社保卡号',
                         status: '',
                     },
                     {

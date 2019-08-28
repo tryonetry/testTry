@@ -87,7 +87,7 @@ export default {
               status: ""
             },
             {
-              title: "身份证号/社保卡号",
+              title: "身份证/社保卡号",
               type: "text",
               required: false,
               placeholder: "请输入存档编号",
