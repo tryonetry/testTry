@@ -3,7 +3,6 @@
   <div class="outerContainer">
     <a-tabs class="tabContainer" defaultActiveKey="1">
       <a-tab-pane class="tabView" tab="人员信息浏览" key="1">
-         <!-- v-show="operateStatusVal !== 1" -->
         <div class="left_anchor">
           <a
             v-for="(item, index) in anchorList"
@@ -13,7 +12,6 @@
             :class="{'left_anchorClick': index == currClickAnchor}"
           >{{item.name}}</a>
         </div>
-        <!-- :class="['right_container', operateStatusVal !==1 ? 'right_containerWidth': 'right_containeraddWidth']" -->
         <div class="right_container right_containerWidth">
           <!-- 1-基本信息 -->
           <div class="basicInfo" id="anchor_basicInfo" ref="anchor_basicInfo">
@@ -35,12 +33,12 @@
                     <span class="info_view" v-if="operateStatusVal == 2">{{personBasicInfo.a0101}}</span>
                     <a-input
                       v-show="operateStatusVal !== 2"
-                      class="info_input"
+                      class="info_input required_input"
                       type="text"
                       placeholder="姓名"
                       maxlength="40"
                       v-model="personBasicInfo.a0101"
-                      @blur="regInput(personBasicInfo.a0101, 2, 40, null, '请输入正确的姓名')"
+                      @blur="regInput(personBasicInfo.a0101, 2, 40, null, '请输入正确的姓名', $event, 'a0101')"
                     >{{personBasicInfo.a0101}}</a-input>
                   </td>
                   <td colspan="4">
@@ -50,13 +48,13 @@
                   <td colspan="4">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0184}}</span>
                     <a-input
-                      class="info_input"
+                      class="info_input required_input"
                       type="text"
                       placeholder="身份证号码"
                       maxlength="18"
                       v-model="personBasicInfo.a0184"
                       v-show="operateStatusVal !== 2"
-                      @blur="regInput(personBasicInfo.a0184, 15, 18,'testid', '请输入正确的身份证号')"
+                      @blur="regInput(personBasicInfo.a0184, 15, 18,'testid', '请输入正确的身份证号', $event, 'a0184')"
                     ></a-input>
                   </td>
                   <td colspan="2" rowspan="4">
@@ -196,7 +194,7 @@
                       maxlength="40"
                       v-model="personBasicInfo.a3708"
                       v-show="operateStatusVal !== 2"
-                      @blur="regInput(personBasicInfo.a3708, 2, 40,'testEmail', '请输入正确的电子邮箱地址')"
+                      @blur="regInput(personBasicInfo.a3708, 2, 40,'testEmail', '请输入正确的电子邮箱地址', $event, 'a3708')"
                     ></a-input>
                   </td>
                 </tr>
@@ -252,13 +250,13 @@
                   <td :colspan="operateStatusVal==2 ? 4 : 2">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0888}}</span>
                     <a-input
-                      class="info_input"
+                      class="info_input required_input"
                       type="text"
                       placeholder="毕业院校"
                       v-model="personBasicInfo.a0888"
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
-                      @blur="regInput(personBasicInfo.a0888, 2, 20, null, '请输入正确的毕业院校')"
+                      @blur="regInput(personBasicInfo.a0888, 2, 20, null, '请输入正确的毕业院校', $event, 'a0888')"
                     ></a-input>
                   </td>
                   <td colspan="2" v-show="operateStatusVal !== 2">
@@ -298,13 +296,13 @@
                   <td colspan="6">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0824}}</span>
                     <a-input
-                      class="info_input"
+                      class="info_input  required_input"
                       type="text"
                       placeholder="最高学历所学专业"
                       v-model="personBasicInfo.a0824"
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
-                      @blur="regInput(personBasicInfo.a0824, 2, 20, null, '请输入正确的专业名称')"
+                      @blur="regInput(personBasicInfo.a0824, 2, 20, null, '请输入正确的专业名称', $event, 'a0824')"
                     ></a-input>
                   </td>
                   <td colspan="2">
@@ -360,13 +358,13 @@
                       v-show="operateStatusVal == 2"
                     >{{personBasicInfo.a0202a}}</span>
                     <a-input
-                      class="info_input"
+                      class="info_input required_input"
                       type="text"
                       placeholder="工作单位名称"
                       v-model="personBasicInfo.a0202a"
                       v-show="operateStatusVal !== 2"
                       maxlength="40"
-                      @blur="regInput(personBasicInfo.a0202a, 2, 40, null, '请输入正确的工作单位')"
+                      @blur="regInput(personBasicInfo.a0202a, 2, 40, null, '请输入正确的工作单位', $event, 'a0202a')"
                     ></a-input>
                   </td>
                   <td colspan="2">参加工作年月</td>
@@ -1546,7 +1544,8 @@ export default {
       addTreeNode: "", //当为添加操作时，选择的treeNode值
       hjCode: [], //户籍行政区划
       birthdayCode: [], //出生地行政区划
-      workCode: [] //工作地行政区划
+      workCode: [], //工作地行政区划
+      tempBasicInfoStatusArr: {},  //临时----人员基本信息错误状态Dom
     };
   },
   updated() {},
@@ -2267,53 +2266,72 @@ export default {
       this.imgUrl = "";
     },
 
-    regInput(val, minLength, maxLength, regways, tip) {
+    regInput(val, minLength, maxLength, regways, tip, e, key) {
       /***
        * 功能：必填项验证
        * 参数：val:当前值; reg:验证方法
        */
+      let flag = true;
       if (val) {
         if (regways) {
           if(regways === 'testid'){
-            if(val === '000000000000000000') return
-            //身份证重复验证
-            let regResult = this.regs[regways](val);
-            if (regResult === 0) {
-              this.$message.error(tip);
-              this.isRight = false;
-            } else{
-              this.$http.fetchPost('informationPool@checkPerson.action', {
-                a0184: val
-              }).then(res => {
-                if(Number(res.code) === 0){
-                  //重复：已经存在
-                  this.$message.error('该人员已经存在，请勿重复添加');
-                  this.isRight = false;
-                }
-              }).catch(error => {
-                this.$message.error('抱歉，网络异常！');
-              })
+            if(val !== '000000000000000000') {
+              //身份证重复验证
+              let regResult = this.regs[regways](val);
+              if (regResult === 0) {
+                this.$message.error(tip);
+                this.isRight = false;
+                flag = false;
+              } else{
+                this.$http.fetchPost('informationPool@checkPerson.action', {
+                  a0184: val
+                }).then(res => {
+                  if(Number(res.code) === 0){
+                    //重复：已经存在
+                    this.$message.error('该人员已经存在，请勿重复添加');
+                    this.isRight = false;
+                    flag = false;
+                  }
+                }).catch(error => {
+                  this.$message.error('抱歉，网络异常！');
+                })
+              }
             }
           } else{
             let regResult = this.regs[regways](val);
             if (regResult === 0) {
               this.$message.error(tip);
               this.isRight = false;
+              flag = false;
             } 
           }
         } else {
           if (val.length > maxLength || val.length < minLength) {
             this.$message.error(tip);
             this.isRight = false;
+            flag = false;
           }
         }
       } else {
         this.isRight = false;
+        flag = false;
+      }
+      
+      if(!flag){
+        this.tempBasicInfoStatusArr[key] = e;
+      } else {
+        delete this.tempBasicInfoStatusArr[key];
+        e.target.style.outline ='';
       }
     },
 
     getFinishData() {
       //验证存档编号是否存在
+      //当添加时，给input增加焦点
+      var inputRequiredArr = document.getElementsByClassName('required_input');
+      for(let i = 0; i < inputRequiredArr.length; i++){
+        inputRequiredArr[i].focus();
+      }
       if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
         this.$http.fetchPost('informationPool@checkArchNumber.action',{
             dc030001: this.archiveInitArr.tabledataArr[0].dc030001
@@ -2354,7 +2372,6 @@ export default {
       let tempArchiveDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.archiveInitArr.tabledataArr)));
       if (this.isRight) {
         tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';
-        console.log(tempBasicInfo);
         let postdataArr = [];
         // 先把数组转成str， 在转码，解码
         postdataArr.push(
@@ -2382,6 +2399,14 @@ export default {
             this.$emit('OperateStatusFun', false);
           });
       } else {
+        let tempArr = [];
+        for(let prop in this.tempBasicInfoStatusArr){
+          tempArr.push(prop);
+          this.tempBasicInfoStatusArr[prop].target.style.outline = '1px solid red';
+        }
+        if(tempArr.length > 0){
+          this.tempBasicInfoStatusArr[tempArr[0]].target.focus();
+        }
         this.$message.error("人员基本信息:必填项不能为空");
         this.$emit('OperateStatusFun', false);
       }
@@ -2454,6 +2479,15 @@ export default {
     
   },
   watch: {
+    ramdomKey: {
+      handler(newVal){
+        if(this.tempBasicInfoStatusArr){
+          for(let prop in this.tempBasicInfoStatusArr){
+            this.tempBasicInfoStatusArr[prop].target.style.outline = '';
+          }
+        }
+      }
+    },
     operateStatusVal: {
       handler(newVal) {
         if (newVal === 1) {

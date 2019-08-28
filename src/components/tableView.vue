@@ -370,7 +370,7 @@ export default {
 
     // 获取 table 数据
     getTableData(){
-      console.log(this.tabledata)
+      return  this.tabledata;
     },
 
     // 通过form获取数据
