@@ -2334,7 +2334,7 @@ export default {
       for(let prop in this.$refs){
         tempRefsArr.push(this.$refs[prop]);
       }
-      for(let i = 1; i < tempRefsArr.length; i ++){
+      for(let i = 0; i < tempRefsArr.length - 1; i ++){
         if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
         } else{
