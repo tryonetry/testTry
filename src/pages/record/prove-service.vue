@@ -39,7 +39,7 @@
                     v-if="String(slotPropsData.currRowdata.isInware) === '0'"
                     href="javascript:;"
                     class="primaryBtnColor"
-                    @click="printPreview(slotPropsData.currRowdata)"
+                    @click="printPreview(slotPropsData)"
                 >预览打印</a>
                 <a
                     v-if="String(slotPropsData.currRowdata.isInware) === '2'"
@@ -620,6 +620,12 @@ export default {
         // 打印预览
         printPreview(currRowdata){
             this.currRow = currRowdata;
+            console.log(currRowdata);
+            // this.$http.fetchPost("archPrintProof@sencePrintProofApply.action",{
+            //     archiveId:currRowdata.a010000,
+            //     proofType:
+            //     sourceType:"1"
+            // })
             // console.log(currRowdata)
             if(this.selectProofType || String(this.selectProofType) === '0' ){
                 this.printVisiable = true;
