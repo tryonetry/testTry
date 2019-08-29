@@ -39,6 +39,7 @@
                       maxlength="40"
                       v-model="personBasicInfo.a0101"
                       @blur="regInput(personBasicInfo.a0101, 2, 40, null, '请输入正确的姓名', $event, 'a0101')"
+                      ref="reqiuredList0"
                     >{{personBasicInfo.a0101}}</a-input>
                   </td>
                   <td colspan="4">
@@ -55,6 +56,7 @@
                       v-model="personBasicInfo.a0184"
                       v-show="operateStatusVal !== 2"
                       @blur="regInput(personBasicInfo.a0184, 15, 18,'testid', '请输入正确的身份证号', $event, 'a0184')"
+                      ref="reqiuredList1"
                     ></a-input>
                   </td>
                   <td colspan="2" rowspan="4">
@@ -93,6 +95,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0117"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList3"
                     >
                       <a-select-option
                         v-for="(item, index) in nationalArr"
@@ -112,6 +115,7 @@
                       v-show="operateStatusVal !== 2"
                       v-model="birthday"
                       @change="birthdayChange"
+                      ref="reqiuredList4"
                     />
                   </td>
                 </tr>
@@ -141,6 +145,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0141"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList5"
                     >
                       <a-select-option
                         v-for="(item, index) in politicsStatusArr"
@@ -213,6 +218,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0834"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList6"
                     >
                       <a-select-option
                         v-for="(item, index) in educationArr"
@@ -235,6 +241,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0914"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList7"
                     >
                       <a-select-option
                         v-for="(item, index) in degreeArr"
@@ -257,6 +264,7 @@
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0888, 2, 20, null, '请输入正确的毕业院校', $event, 'a0888')"
+                      ref="reqiuredList8"
                     ></a-input>
                   </td>
                   <td colspan="2" v-show="operateStatusVal !== 2">
@@ -287,6 +295,7 @@
                       @change="graduateChange"
                       v-model="graduateDate"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList9"
                     />
                   </td>
                   <td colspan="2">
@@ -303,6 +312,7 @@
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0824, 2, 20, null, '请输入正确的专业名称', $event, 'a0824')"
+                      ref="reqiuredList10"
                     ></a-input>
                   </td>
                   <td colspan="2">
@@ -319,6 +329,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0827"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList11"
                     >
                       <a-select-option
                         v-for="(item, index) in professionalArr"
@@ -365,6 +376,7 @@
                       v-show="operateStatusVal !== 2"
                       maxlength="40"
                       @blur="regInput(personBasicInfo.a0202a, 2, 40, null, '请输入正确的工作单位', $event, 'a0202a')"
+                      ref="reqiuredList12"
                     ></a-input>
                   </td>
                   <td colspan="2">参加工作年月</td>
@@ -395,6 +407,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0202d"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList13"
                     >
                       <a-select-option
                         v-for="(item, index) in positionArr"
@@ -417,6 +430,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0202c"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList14"
                     >
                       <a-select-option
                         v-for="(item, index) in workUnitArr"
@@ -441,6 +455,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0202b"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList15"
                     >
                       <a-select-option
                         v-for="(item, index) in economicArr"
@@ -463,6 +478,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0211"
                       v-show="operateStatusVal !== 2"
+                      ref="reqiuredList16"
                     >
                       <a-select-option
                         v-for="(item, index) in industryArr"
@@ -1545,7 +1561,6 @@ export default {
       hjCode: [], //户籍行政区划
       birthdayCode: [], //出生地行政区划
       workCode: [], //工作地行政区划
-      tempBasicInfoStatusArr: {},  //临时----人员基本信息错误状态Dom
     };
   },
   updated() {},
@@ -2271,7 +2286,7 @@ export default {
        * 功能：必填项验证
        * 参数：val:当前值; reg:验证方法
        */
-      let flag = true;
+      // let flag = true;
       if (val) {
         if (regways) {
           if(regways === 'testid'){
@@ -2281,7 +2296,6 @@ export default {
               if (regResult === 0) {
                 this.$message.error(tip);
                 this.isRight = false;
-                flag = false;
               } else{
                 this.$http.fetchPost('informationPool@checkPerson.action', {
                   a0184: val
@@ -2290,7 +2304,6 @@ export default {
                     //重复：已经存在
                     this.$message.error('该人员已经存在，请勿重复添加');
                     this.isRight = false;
-                    flag = false;
                   }
                 }).catch(error => {
                   this.$message.error('抱歉，网络异常！');
@@ -2302,35 +2315,31 @@ export default {
             if (regResult === 0) {
               this.$message.error(tip);
               this.isRight = false;
-              flag = false;
             } 
           }
         } else {
           if (val.length > maxLength || val.length < minLength) {
             this.$message.error(tip);
             this.isRight = false;
-            flag = false;
           }
         }
       } else {
         this.isRight = false;
-        flag = false;
-      }
-      
-      if(!flag){
-        this.tempBasicInfoStatusArr[key] = e;
-      } else {
-        delete this.tempBasicInfoStatusArr[key];
-        e.target.style.outline ='';
       }
     },
 
     getFinishData() {
       //验证存档编号是否存在
-      //当添加时，给input增加焦点
-      var inputRequiredArr = document.getElementsByClassName('required_input');
-      for(let i = 0; i < inputRequiredArr.length; i++){
-        inputRequiredArr[i].focus();
+      let tempRefsArr = [];
+      for(let prop in this.$refs){
+        tempRefsArr.push(this.$refs[prop]);
+      }
+      for(let i = 1; i < tempRefsArr.length; i ++){
+        if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
+          tempRefsArr[i].$el.style.outline = '1px solid red';
+        } else{
+          tempRefsArr[i].$el.style.outline = '';
+        }
       }
       if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
         this.$http.fetchPost('informationPool@checkArchNumber.action',{
@@ -2399,14 +2408,6 @@ export default {
             this.$emit('OperateStatusFun', false);
           });
       } else {
-        let tempArr = [];
-        for(let prop in this.tempBasicInfoStatusArr){
-          tempArr.push(prop);
-          this.tempBasicInfoStatusArr[prop].target.style.outline = '1px solid red';
-        }
-        if(tempArr.length > 0){
-          this.tempBasicInfoStatusArr[tempArr[0]].target.focus();
-        }
         this.$message.error("人员基本信息:必填项不能为空");
         this.$emit('OperateStatusFun', false);
       }
@@ -2479,15 +2480,6 @@ export default {
     
   },
   watch: {
-    ramdomKey: {
-      handler(newVal){
-        if(this.tempBasicInfoStatusArr){
-          for(let prop in this.tempBasicInfoStatusArr){
-            this.tempBasicInfoStatusArr[prop].target.style.outline = '';
-          }
-        }
-      }
-    },
     operateStatusVal: {
       handler(newVal) {
         if (newVal === 1) {
@@ -2567,8 +2559,10 @@ export default {
 .infoTable tbody tr td {
   text-align: center;
   line-height: 50px;
+  height: 50px;
   white-space: nowrap;
   width: 80px;
+  box-sizing: border-box;
 }
 
 .info_input {
@@ -2580,7 +2574,20 @@ export default {
 }
 
 .info_select {
-  width: 150px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+.info_select .ant-select-selection-selected-value{
+  float: none;
+}
+
+.info_select .ant-select-selection--single{
+  height: 100%;
+}
+
+.info_select .ant-select-selection__rendered{
+  line-height: 51px;
 }
 
 .outerContainer,
