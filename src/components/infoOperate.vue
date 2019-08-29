@@ -2332,11 +2332,14 @@ export default {
       //验证存档编号是否存在
       let tempRefsArr = [];
       for(let prop in this.$refs){
-        tempRefsArr.push(this.$refs[prop]);
+        if(this.$refs[prop].className != 'basicInfo'){
+          tempRefsArr.push(this.$refs[prop]);
+        }
       }
-      for(let i = 1; i < tempRefsArr.length; i ++){
+      for(let i = 0; i < tempRefsArr.length - 1; i ++){
         if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
+          document.getElementsByClassName("right_container")[0].scrollTop = 0;
         } else{
           tempRefsArr[i].$el.style.outline = '';
         }
