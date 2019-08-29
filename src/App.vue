@@ -20,7 +20,7 @@ export default {
   },
   name: "app",
   created(){
-    this.getNavData();
+    // this.getNavData();
     this.getTreeData();
     this.getCompanyData();
   },
@@ -29,18 +29,18 @@ export default {
   },
   methods:{
     // 获取导航栏的数据(保证最先加载)
-    getNavData(){
-      this.$http.fetchGet("login@getUserModule.action", {})
-        .then(res => {
-          if(Number(res.code) === 0){
-            //dispatch
-            this.$store.dispatch("getNavData", res.data);
-          }
-        })
-        .catch(err => {
-          this.$message.error('抱歉,网络异常,请刷新重试');
-        })
-    },
+    // getNavData(){
+    //   this.$http.fetchGet("login@getUserModule.action", {})
+    //     .then(res => {
+    //       if(Number(res.code) === 0){
+    //         //dispatch
+    //         this.$store.dispatch("getNavData", res.data);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       this.$message.error('抱歉,网络异常,请刷新重试');
+    //     })
+    // },
 
     getTreeData() {
       /***

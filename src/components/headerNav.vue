@@ -253,9 +253,11 @@ export default {
 
   created() {
     // 改变导航
+    this.getNavData();
     this.getMenuData();
     this.currentPath = this.$route.path;
     // this.routeChange(this.currentPath);
+    
     
   },
 
@@ -286,7 +288,19 @@ export default {
   },
 
   methods: {
-
+    getNavData(){
+      // 获取导航栏的数据(保证最先加载)
+      this.$http.fetchGet("login@getUserModule.action", {})
+        .then(res => {
+          if(Number(res.code) === 0){
+            //dispatch
+            this.$store.dispatch("getNavData", res.data);
+          }
+        })
+        .catch(err => {
+          this.$message.error('抱歉,网络异常,请刷新重试');
+        })
+    },
     // password blur
     pswInputBlur(status,val){
       if(status === 0){
