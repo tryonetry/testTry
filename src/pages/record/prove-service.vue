@@ -1,7 +1,6 @@
 <!-- template -->
 <template>
 <div class="outer">
-    
     <!-- 档案转出弹层 -->
     <div class="proofModal">
       <a-modal
@@ -24,7 +23,7 @@
                 
                 <a-select
                     v-if="String(slotPropsData.currRowdata.isInware) === '0'"
-                    v-model="selectProofType"
+                    v-model="slotPropsData.currRowdata.proofType"
                     placeholder="请选择证明类型"
                     allowClear
                     class="actionSelect"
@@ -39,7 +38,7 @@
                     v-if="String(slotPropsData.currRowdata.isInware) === '0'"
                     href="javascript:;"
                     class="primaryBtnColor"
-                    @click="printPreview(slotPropsData)"
+                    @click="printPreview(slotPropsData.currRowdata)"
                 >预览打印</a>
                 <a
                     v-if="String(slotPropsData.currRowdata.isInware) === '2'"
@@ -79,7 +78,7 @@
 
 
                     <!-- 个人存档证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="存档证明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '1'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="存档证明" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">
                                 {{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员，
@@ -93,7 +92,7 @@
                     </TemplateOfPrint>
 
                     <!-- 档案记载证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '6'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="证  明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '6'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="证  明" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，
                                 系我中心档案托管人员，据其人事档案材料记载：该同志无违法犯罪记录，无参加“法轮功”等非法组织记录。
@@ -106,7 +105,7 @@
                     </TemplateOfPrint>
 
                     <!-- 档案记载空白证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '7'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="证  明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '7'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="证  明" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，
                                 系我中心档案托管人员，据其人事档案材料记载：
@@ -120,9 +119,9 @@
                     </TemplateOfPrint>
 
                     <!-- 单位存档证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '8'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '8'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
                         <div slot="printContent" class="printContent">
-                            <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员，档案管理编号：{{currRow && currRow.a0100A}}，其人事档案由{{currRow && currRow.a0100A}}集体委托在我中心管理。</p>
+                            <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员，档案管理编号：{{currRow && currRow.a0100A}}，其人事档案由集体委托在我中心管理。</p>
                             <p class="indent">特此证明。</p>
                             <div class="bottomRight">
                                 <p>{{nowData}}</p>
@@ -131,7 +130,7 @@
                     </TemplateOfPrint>
 
                     <!-- 现实表现证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '2'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '2'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员。据其档案材料记载：该同志始终立场坚定，旗帜鲜明地与党中央保持高度一致，坚持四项基本原则，遵守国家法律法规，在“六四”中无不良言行记录；遵守单位工作纪律，工作认真、负责。</p>
                             <p class="indent">无该同志参加“法轮功”等非法组织记录。</p>
@@ -143,7 +142,7 @@
                     </TemplateOfPrint>
 
                     <!-- 同意调出函 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '3'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="同意调出函" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '3'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="同意调出函" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">{{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，系我中心档案托管人员。根据中组部、人社部等国家五部委《关于进一步加强流动人员人事档案管理服务工作的通知（〔2014〕90号）和人社部办公厅《关于简化优化流动人员人事档案管理服务的通知》（〔2016〕75号）精神，经研究同意该同志调出，贵处能否接受，请复函。</p>
                             <div class="bottomRight">
@@ -159,7 +158,7 @@
                     </TemplateOfPrint>
 
                     <!-- 空白证明 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '5'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '5'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="单位存档证明" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">
                                 {{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，
@@ -176,7 +175,7 @@
                     </TemplateOfPrint>
 
                     <!-- 同意改派函 -->
-                    <TemplateOfPrint v-if="String(selectProofType) === '4'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="同意改派函" ref="print">
+                    <TemplateOfPrint v-if="this.currRow && this.currRow.proofType && String(this.currRow.proofType) === '4'" :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="同意改派函" ref="print">
                         <div slot="printContent" class="printContent">
                             <p class="indent">
                                 {{currRow && currRow.a0101}}，性别：{{currRow && currRow.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRow && currRow.a0184}}，该同志系
@@ -250,6 +249,7 @@ export default {
             printVisiable:false,   
             currRow:null,            
             tableTotalNum: 0,   //总页数：默认为0
+            currentPage:1,
             tableTotalNum1: 0,
             tempCondition:{},
             tempCondition1:{},
@@ -257,7 +257,16 @@ export default {
             tableLoading1:false,
             printLoading:false,
             // 证明类型
-            proofTypes:[],
+            proofTypes:[
+                {itemCode:"1",itemName:"个人存档证明"},
+                {itemCode:"6",itemName:"档案记载证明"},
+                {itemCode:"7",itemName:"档案记载空白证明"},
+                {itemCode:"8",itemName:"单位存档证明"},
+                {itemCode:"2",itemName:"现实表现证明"},
+                {itemCode:"3",itemName:"同意调出函"},
+                {itemCode:"5",itemName:"空白证明"},
+                {itemCode:"4",itemName:"同意改派函"},
+            ],
             selectProofType:void 0,
             // tableView传值方式
             initArr:{
@@ -495,11 +504,11 @@ export default {
             fileNum:'360000B180000963',
             nowData:moment(new Date()).format("YYYY年MM月DD日"),
             printData:{
-                agreeCollegeYear:"2016",
-                agreeCollege:"北京大学",
-                agreeYear:"2019",
-                agreeMonth:"08",
-                agreeDay:"06",
+                agreeCollegeYear:"",
+                agreeCollege:"",
+                agreeYear:"",
+                agreeMonth:"",
+                agreeDay:"",
             }
         };
     },
@@ -508,7 +517,7 @@ export default {
     computed: {
         directoryData:function(){
             if(this.$store.getters.getDirectoryData){
-                this.splitDirectoryData(this.$store.getters.getDirectoryData);
+                // this.splitDirectoryData(this.$store.getters.getDirectoryData);
                 return this.$store.getters.getDirectoryData;
             }else{
                 return null;
@@ -537,6 +546,7 @@ export default {
              * 参数：condition:form查询结果：{}
              **/
             this.tableLoading = true;
+            this.currentPage = pageNum;
             this.tempCondition = condition;
             this.$http.fetchPost('archPrintProof@printProofService.action',{
                 page: pageNum,
@@ -553,12 +563,14 @@ export default {
                             num: (pageNum - 1) * limitNum + index + 1,
                             sourceType:String(element.sourceType) === '1' ? "现场打印" : String(element.sourceType) === '0' ? "网站申请" : "未知来源",
                             printState:String(element.printState) === '1' ? "已打印" : "未打印",
+                            proofType:this.findProofName(element.proofType),
                         });
                     });
                 }else{
                     _this.$message.warning("抱歉,暂时未查到数据!");
                 }
             }).catch(err => {
+                console.log(err)
                 _this.$message.error("抱歉,网络异常,请稍后重试");
             }).finally(end => {
                 _this.tableLoading = false;
@@ -604,6 +616,7 @@ export default {
         },
 
         handleCancel(){
+            this.getTableData(null,this.currentPage,10);
             this.visible = false;
         },
 
@@ -617,17 +630,34 @@ export default {
             this.proofTypes = Data.proofTypeList;
         },
 
+        findProofName(proofCode){
+            let result = proofCode;
+            this.proofTypes.forEach(item => {
+                if(proofCode === item.itemCode){
+                    result = item.itemName;
+                }
+            });
+            return result;
+        },
+
         // 打印预览
         printPreview(currRowdata){
             this.currRow = currRowdata;
-            console.log(currRowdata);
-            // this.$http.fetchPost("archPrintProof@sencePrintProofApply.action",{
-            //     archiveId:currRowdata.a010000,
-            //     proofType:
-            //     sourceType:"1"
-            // })
-            // console.log(currRowdata)
-            if(this.selectProofType || String(this.selectProofType) === '0' ){
+            this.$http.fetchPost("archPrintProof@sencePrintProofApply.action",{
+                archiveId:currRowdata.a01000,
+                proofType:currRowdata.proofType,
+                sourceType:"1"
+            }).then(res => {
+                // console.log(res);
+                if(Number(res.code) === 0){
+                    this.fileNum = res.data.grcdzmNum;
+                }else{
+                    this.$message.warning("获取编号失败");   
+                }
+            }).catch(err => {
+                this.$message.error("抱歉,网络异常,请稍后重试");
+            })
+            if(currRowdata.proofType){
                 this.printVisiable = true;
             }else{
                 this.$message.warning('请选择打印类型后进行打印预览操作!');
@@ -642,8 +672,8 @@ export default {
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-        this.getTableData(null,1,10);
-        this.getTableData1(null,1,10);
+        this.getTableData(null,this.currentPage,10);
+        this.getTableData1(null,this.currentPage,10);
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）
