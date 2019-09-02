@@ -203,7 +203,7 @@ import reg from "../utils/regexp";
 import { setInterval, clearInterval } from 'timers';
 import { Icon } from 'ant-design-vue';
 const IconFont = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/font_1341319_lswn2jy1t3q.js',
+  scriptUrl: '//at.alicdn.com/t/font_1341319_j25y2s6sdi.js',
 })
 
 export default {
