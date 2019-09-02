@@ -267,6 +267,16 @@ export default {
                 {itemCode:"5",itemName:"空白证明"},
                 {itemCode:"4",itemName:"同意改派函"},
             ],
+            proofUrl:{
+                "1":"archPrintProof@sencePrintProofApply.action",
+                "2":"archPrintProof@realityShowProof.action",
+                "3":"archPrintProof@callOutProof.action",
+                "4":"archPrintProof@gpProof.action",
+                "5":"archPrintProof@kbProof.action",
+                "6":"archPrintProof@dnjzProof.action",
+                "7":"archPrintProof@dnjzkbProof.action",
+                "8":"archPrintProof@dwcdProof.action",
+            },
             selectProofType:void 0,
             // tableView传值方式
             initArr:{
@@ -643,25 +653,28 @@ export default {
         // 打印预览
         printPreview(currRowdata){
             this.currRow = currRowdata;
-            this.$http.fetchPost("archPrintProof@sencePrintProofApply.action",{
-                archiveId:currRowdata.a01000,
-                proofType:currRowdata.proofType,
-                sourceType:"1"
-            }).then(res => {
-                // console.log(res);
-                if(Number(res.code) === 0){
-                    this.fileNum = res.data.grcdzmNum;
+            if(currRowdata.a01000 && currRowdata.proofType && this.proofUrl[currRowdata.proofType]){
+                this.$http.fetchPost(this.proofUrl[currRowdata.proofType],{
+                    archiveId:currRowdata.a01000,
+                    proofType:currRowdata.proofType,
+                    sourceType:"1"
+                }).then(res => {
+                    // console.log(res);
+                    if(Number(res.code) === 0){
+                        this.fileNum = res.data.grcdzmNum;
+                    }else{
+                        this.$message.warning("获取编号失败");   
+                    }
+                }).catch(err => {
+                    this.$message.error("抱歉,网络异常,请稍后重试");
+                })
+                if(currRowdata.proofType){
+                    this.printVisiable = true;
                 }else{
-                    this.$message.warning("获取编号失败");   
+                    this.$message.warning('请选择打印类型后进行打印预览操作!');
                 }
-            }).catch(err => {
-                this.$message.error("抱歉,网络异常,请稍后重试");
-            })
-            if(currRowdata.proofType){
-                this.printVisiable = true;
-            }else{
-                this.$message.warning('请选择打印类型后进行打印预览操作!');
             }
+            
             
         },
 
