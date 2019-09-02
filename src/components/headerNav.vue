@@ -153,7 +153,7 @@
             v-if="menuId === item.menuId && item.children.length !== 0"
           >
             <span slot="title">
-              <a-icon type="user"/>
+              <icon-font :type="'icon-' + item.iconName" />
               <span>{{item.name}}</span>
             </span>
 
@@ -174,7 +174,7 @@
             @click="slideIndexChange(item.menuId,item.path, 'two')"
           >
             <router-link :to="item.path">
-              <a-icon type="user"/>
+              <icon-font :type="'icon-' + item.iconName" />
               <span class="nav-text">{{item.name}}</span>
             </router-link>
           </a-menu-item>
@@ -201,6 +201,10 @@ const tipKey = "tipKey";
 import utils from "../utils/util";
 import reg from "../utils/regexp";
 import { setInterval, clearInterval } from 'timers';
+import { Icon } from 'ant-design-vue';
+const IconFont = Icon.createFromIconfontCN({
+  scriptUrl: '//at.alicdn.com/t/font_1341319_lswn2jy1t3q.js',
+})
 
 export default {
   name: "HeaderNav",
@@ -232,12 +236,16 @@ export default {
       systemTipVisiable:false, //系统提示弹层显示
       systemTips:null, //系统提示
       systemTipTime:0,
+      navData: [],  
     };
   },
+  components: {
+    IconFont
+  },
   computed: {
-    navData(){
-      return this.$store.getters.getNavData;
-    },
+    // navData(){
+    //   return this.$store.getters.getNavData;
+    // },
     loginData(){
       let loginData = JSON.parse(sessionStorage.getItem("loginData"));
       return loginData;
@@ -294,7 +302,8 @@ export default {
         .then(res => {
           if(Number(res.code) === 0){
             //dispatch
-            this.$store.dispatch("getNavData", res.data);
+            // this.$store.dispatch("getNavData", res.data);
+            this.navData = res.data;
           }
         })
         .catch(err => {
@@ -482,7 +491,8 @@ export default {
               name: el.name,
               orderno: el.orderno,
               path: el.muPath,
-              children: el.children
+              children: el.children,
+              iconName: el.iconName
             });
           });
         }
@@ -752,6 +762,10 @@ export default {
 }
 .eyeIcon:hover{
   color: #333333;
+}
+
+.iconfont{
+  margin-right: 8px
 }
 </style>
 
