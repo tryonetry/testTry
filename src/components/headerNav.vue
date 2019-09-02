@@ -153,7 +153,7 @@
             v-if="menuId === item.menuId && item.children.length !== 0"
           >
             <span slot="title">
-              <icon-font :type="'icon-' + item.iconName" />
+              <icon-font :type="'icon-' + item.iconName" style="font-size: 18px;"  />
               <span>{{item.name}}</span>
             </span>
 
@@ -174,7 +174,7 @@
             @click="slideIndexChange(item.menuId,item.path, 'two')"
           >
             <router-link :to="item.path">
-              <icon-font :type="'icon-' + item.iconName" />
+              <icon-font :type="'icon-' + item.iconName" style="font-size: 18px;" />
               <span class="nav-text">{{item.name}}</span>
             </router-link>
           </a-menu-item>
@@ -762,10 +762,6 @@ export default {
 }
 .eyeIcon:hover{
   color: #333333;
-}
-
-.iconfont{
-  margin-right: 8px
 }
 </style>
 
