@@ -52,7 +52,7 @@
         <!-- 预览打印操作 -->
         <a
           href="javascrit:;"
-          class="primaryBtnColor"
+          :class="printLoading ? 'canNotClickBtnColor':'primaryBtnColor'"
           @click="printAndPreview(slotPropsData.currRowdata)"
           v-if="String(slotPropsData.currRowdata.transferOutState) === '2' && !slotPropsData.currRowdata.confNumber"
         >预览打印</a>
@@ -157,7 +157,7 @@
             <a-tabs defaultActiveKey="1" style="padding:10px;height:100%;" @change="tabIndexChange">
 
               <a-tab-pane tab="调档函" key="1">
-                <TemplateOfPrint :fileNum="fileNum" firstTitle="流动人员人事档案材料转递存根" ref="print1">
+                <TemplateOfPrint :fileNum="fileNum1" firstTitle="流动人员人事档案材料转递存根" ref="print1">
                     <div slot="printContent" class="printContent">
                       <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
                       <div class="bottomRight">
@@ -185,7 +185,7 @@
 
                           <!-- 回执右侧 -->
                           <div class="reRight">
-                            <p style="text-align:right;">NO:{{fileNum}}</p>
+                            <p style="text-align:right;">NO:{{fileNum1}}</p>
                             <p style="padding:10px 0">江西省人才流动中心：</p>
                             <p class="indent">你处于2019 年 06 月 12 日转来   罗俊远   同志的档案材料共壹册（份），已全部收到，现将回执退回。</p>
                             <div class="signCont">
@@ -214,7 +214,7 @@
               </a-tab-pane>
 
               <a-tab-pane tab="现实表现" key="2" >
-                <TemplateOfPrint :fileNum="fileNum1" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print2">
+                <TemplateOfPrint :fileNum="fileNum" firstTitle="江西省人才流动中心" secondTitle="现实表现证明" ref="print2">
                     <div slot="printContent" class="printContent">
                       <p class="indent">{{currRowdata && currRowdata.a0101}}，性别：{{currRowdata && currRowdata.a0104 === '1' ? "男" : "女" }}，身份证号：{{currRowdata && currRowdata.a0184}}，系我中心档案托管人员。据其档案材料记载：该同志始终立场坚定，旗帜鲜明地与党中央保持高度一致，坚持四项基本原则，遵守国家法律法规，在“六四”中无不良言行记录；遵守单位工作纪律，工作认真、负责。</p>
                       <p class="indent">无该同志参加“法轮功”等非法组织记录。</p>
@@ -503,8 +503,9 @@ export default {
       showRandom:Math.random(),
       currentPersonId:'', //当前人的 id
       confirmBtnTitle:'转出申请',
-      fileNum:"360000A1907120008",
-      fileNum1:"360000A1907120008",
+      fileNum:"",
+      fileNum1:"",
+      printLoading:false,
       nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
       printTableColumns: [
         //打印--表格-表头
@@ -644,8 +645,27 @@ export default {
 
     // 打印预览
     printAndPreview(currRowdata){
+
+      if(this.printLoading) return;
+      this.printLoading = true;
       this.currRowdata = currRowdata;
-      this.printModalVisible = true;
+      if(currRowdata.id){
+          this.$http.fetchPost('archTransferOut@archTransforPrint.action',{id:currRowdata.id})
+          .then(res => {
+              if(Number(res.code) === 0){
+                  this.fileNum = res.data.fielNum;
+                  this.fileNum1 = res.data.ddhNum;
+                  this.printModalVisible = true;
+              }else{
+                  this.$message.warning("获取信息失败,请重试");
+              }
+          }).catch(err => {
+              this.$message.error("抱歉,网络异常,请稍后重试");
+          }).finally(end => {
+              this.printLoading = false;
+          })
+      }
+
     },
 
     // 撤销 cd - 0 撤销  cd - 1
