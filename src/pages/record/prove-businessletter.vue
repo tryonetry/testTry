@@ -18,7 +18,7 @@
             <a
                 href="javascript:;"
                 @click="previewPrint(slotPropsData.currRowdata)"
-                class="primaryBtnColor"
+                :class="printLoading ? 'canNotClickBtnColor':'primaryBtnColor'"
             >预览打印</a>
             <a
                 href="javascript:;"
@@ -175,6 +175,7 @@ import moment from "moment";
 import TemplateOfPrint from '@/components/templateOfPrint';
 import TableView from "@/components/tableView";
 import TableFromSearch from "@/components/tableFormSearch";
+import { constants } from 'crypto';
 export default {
     name:"ProveBusinessletter",
     //import引入的组件需要注入到对象中才能使用
@@ -622,10 +623,11 @@ export default {
                 },
             },
 
-            fileNum:'360000A180000318',
+            fileNum:'',
             firstTitle:'江西省人才流动中心',
             secondTitle:'调(档)函',
             nowData:moment(new Date()).format("YYYY年MM月DD日"),
+            printLoading:false,
             printData:{
                 selectOption:"",
                 year:"",
@@ -844,17 +846,32 @@ export default {
 
         // 预览打印
         previewPrint(currRowdata){
-            this.printVisiable = true;
+
+            if(this.printLoading) return;
+            this.printLoading = true;
             this.currRow = currRowdata;
+            if(currRowdata.id){
+                this.$http.fetchPost('businessLetter@businessLetterPrint.action',{id:currRowdata.id})
+                .then(res => {
+                    if(Number(res.code) === 0){
+                        this.fileNum = res.data.dueBillSerialNumber
+                        this.printVisiable = true;
+                    }else{
+                        this.$message.warning("获取信息失败,请重试");
+                    }
+                }).catch(err => {
+                    this.$message.error("抱歉,网络异常,请稍后重试");
+                }).finally(end => {
+                    this.printLoading = false;
+                })
+            }
+            
         },
 
         // 打印
         print(){
             this.$refs.print.printFun();
-            // this.$http.fetchPost('archPrintProof@findBusinessLetter.action',{name:'1'})
-            //     .then(res => {
-            //         console.log(res);
-            //     })
+            
         },
     },
 

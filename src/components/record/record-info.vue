@@ -764,7 +764,7 @@ export default {
           // 存档性质
           if(item.name === 'personType'){
             item.children = Data.archiveTypeList;
-            console.log(item.children)
+            // console.log(item.children)
             if(this.isStaff){
               item.val = '01';
             }
@@ -813,6 +813,10 @@ export default {
             val:void 0,
             status:"",
             isHide:false
+          })
+        }else{
+          Object.assign(item,{
+            status:""
           })
         }
         

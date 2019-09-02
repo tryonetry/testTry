@@ -680,7 +680,7 @@ export default {
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-        console.log(this.companyDataArr)
+        // console.log(this.companyDataArr)
         this.getTableData(null,1,10);
         // 生成导出列的Json对象 和 生成选择的导出列的 options
         let tempJson = {};
@@ -692,7 +692,7 @@ export default {
         tempJson = JSON.parse(JSON.stringify(tempJson));
         this.initArr1.formData.formInputs[3].children = tempSelectOptions;
         this.fieldsJson = tempJson;
-        console.log(this.fieldsJson)
+        // console.log(this.fieldsJson)
     },
 
     //生命周期 - 挂载完成（可以访问DOM元素）

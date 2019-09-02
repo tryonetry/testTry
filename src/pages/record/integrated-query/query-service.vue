@@ -491,11 +491,11 @@ export default {
     computed: {
         companyData:function(){
             if(this.$store.getters.getCompanyData){
-                console.log(this.$store.getters.getCompanyData)
+                // console.log(this.$store.getters.getCompanyData)
                 this.handlerCompanyData(this.$store.getters.getCompanyData);
                 return this.$store.getters.getCompanyData
             }else{
-                console.log(1)
+                // console.log(1)
                 return null;
             }
         }
@@ -640,7 +640,7 @@ export default {
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-        console.log(1)
+        // console.log(1)
         this.getTableData(null,1,10);
     },
 

@@ -5,6 +5,9 @@ const regs = {
       if(!idCard){
         return 0;
       }
+      if(String(idCard) === '000000000000000000'){
+        return 1;
+      }
       var tip = '';
       //1.传入15位或者18位身份证号码，18位号码末位可以为数字或X
       idCard = idCard.toUpperCase();
