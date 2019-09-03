@@ -1,13 +1,13 @@
 module.exports = {
-    // configureWebpack: config => {
-    //     if (process.env.NODE_ENV === 'production') {
-    //         // 为生产环境修改配置...
-    //     } else {
-    //         // 为开发环境修改配置...
-    //     }
-    // },
+    configureWebpack: config => {
+        if (process.env.NODE_ENV === 'production') {
+            // 为生产环境修改配置...
+        } else {
+            // 为开发环境修改配置...
+        }
+    },
     //axios域代理，解决axios跨域问题
-    // publicPath: '/',
+    publicPath: './',
     devServer: {
         open: false, //浏览器自动打开页面
         host: "localhost", //如果是真机测试，就使用这个IP

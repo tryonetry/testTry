@@ -43,7 +43,7 @@ export default {
     //方法集合
     methods: {
         handleLogin(){
-            console.log(1)
+            // console.log(1)
             if(!this.user){
                 this.$message.warning("请输入用户名");
                 this.$nextTick(function(){

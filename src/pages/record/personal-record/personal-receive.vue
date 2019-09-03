@@ -77,7 +77,7 @@ export default {
       /***
        * 功能：编辑按钮：接收参数，并且把参数对应的 formInput里的val 修改
        */
-      console.log(this.$route.params.data);
+      // console.log(this.$route.params.data);
     }
   },
 
