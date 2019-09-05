@@ -300,6 +300,9 @@ export default {
       // 获取导航栏的数据(保证最先加载)
       this.$http.fetchGet("login@getUserModule.action", {})
         .then(res => {
+          if(Number(res.code) === 999){
+            this.$router.push({path:'/login'});
+          } 
           if(Number(res.code) === 0){
             //dispatch
             // this.$store.dispatch("getNavData", res.data);

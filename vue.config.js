@@ -19,7 +19,7 @@ module.exports = {
         proxy: {
             //配置跨域
             '/': {
-                target: "http://192.168.1.215:8181",
+                target: "http://192.168.1.222:8181",
                 ws: false,
                 changOrigin: true,
                 pathRewrite: {
