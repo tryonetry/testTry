@@ -8,7 +8,7 @@
       <div class="tableAnalysis">
         <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" ref="infoStaticsTable">
           <span slot="formAction">
-            <a :href="exportUrl" :download="exportFileName" data-type="下载" class="primaryBtnColor">导出</a>
+            <a :href="exportUrl" :download="exportFileName" data-type="下载" class="aBtnCss">导出</a>
           </span>
         </TableView>
       </div>
@@ -1068,5 +1068,18 @@ export default {
 </script>
 
 <style scoped>
-
+.aBtnCss{
+  display: inline-block;
+  background: #1890FF;
+  color: #fff;
+  line-height: 32px;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  cursor: pointer;
+  padding: 0 15px;
+  font-size: 14px;
+  border-radius: 4px;
+}
 </style>
