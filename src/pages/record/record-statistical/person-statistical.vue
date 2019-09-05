@@ -8,9 +8,7 @@
       <div class="tableAnalysis">
         <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" ref="infoStaticsTable">
           <span slot="formAction">
-            <JsonExcel :data="initArr.tabledataArr" :fields="exportFiledsJson" :name="fieldsName">
-              <a-button type="primary" @click="exportFun">导出</a-button>
-            </JsonExcel>
+            <a :href="exportUrl" :download="exportFileName" data-type="下载" class="aBtnCss">导出</a>
           </span>
         </TableView>
       </div>
@@ -588,9 +586,8 @@ export default {
       chartTypeArr: ["bar", "line", "radar", "pie"], //chart图表类型
       selectChartType: 'bar',
 
-      exportFiledsJson:{
-      },
-      fieldsName:"人员信息统计分析-年龄段分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss"),  //导出excel表名称
+      exportUrl: '',
+      exportFileName: ''
     };
   },
 
@@ -653,28 +650,18 @@ export default {
       if(typeVal === 1){
         //年龄段分析
         _this.initArr.columnsArr = _this.ageColumns;
-        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.ageColumns);
-        _this.fieldsName = "人员信息统计分析-年龄段分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 2){
         //学历分析
         _this.initArr.columnsArr = _this.eduColumns;
-        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.eduColumns);
-        _this.fieldsName = "人员信息统计分析-学历分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 3){
         //专业做技术资格分析
         _this.initArr.columnsArr = _this.professionColumns;
-        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.professionColumns);
-        _this.fieldsName = "人员信息统计分析-专业做技术资格分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else if(typeVal === 4){
         //民族分析
         _this.initArr.columnsArr = _this.nationaColumns;
-        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.nationaColumns);
-        _this.fieldsName = "人员信息统计分析-民族分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       } else{
         //政治面貌分析
         _this.initArr.columnsArr = _this.politicalColumns;
-        _this.exportFiledsJson = _this.exportFiledsJsonFun(_this.politicalColumns);
-        _this.fieldsName = "人员信息统计分析-政治面貌分析" + moment(new Date()).format("YYYY-MM-DD hh:mm:ss");
       }
       _this.getTableData(typeVal);
     },
@@ -682,11 +669,12 @@ export default {
     getTableData(currVal){
       this.tableLoading = true;
       this.$http.fetchPost('statisticsAnalysis@getAnalysisdata.action', {
-        cktype: Number(currVal) === 1 ? 'age' : (Number(currVal) === 2 ? 'degree' : (Number(currVal) === 3 ? 'major': (Number(currVal) === 4 ? 'ethnic': 'PoliticalStatus')))
+        cktype: this.returnTypeFun(currVal)
       }).then(res => {
         if(Number(res.code) === 0){
           this.initArr.tabledataArr =  this.UpdateTableDataFun(currVal, res);
           this.$refs.infoStaticsTable.tableBodyRize();
+          this.exportFun(currVal);
         } else{
           this.$message.error("抱歉，获取数据失败，请刷新后重试！");
         }
@@ -983,29 +971,52 @@ export default {
       this.getTableColumnData(currType);
     },
     
-    exportFiledsJsonFun(dataArr){
-      /**
-       * 功能：根据当前table表头重组：导出excel数据--表头
-       * 参数：dataArr：当前table--Column
-       */
-      let resultObj = {};
-      dataArr.forEach(element => {
-        if(element.dataIndex){
-          resultObj[element.title] = element.dataIndex;
-        }else{
-          element.children.forEach(item => {
-            resultObj[element.title + item.title ] = item.dataIndex;
-          });
-        }
-      });
-      return resultObj;
-    },
+    // exportFiledsJsonFun(dataArr){
+    //   /**
+    //    * 功能：根据当前table表头重组：导出excel数据--表头
+    //    * 参数：dataArr：当前table--Column
+    //    */
+    //   let resultObj = {};
+    //   dataArr.forEach(element => {
+    //     if(element.dataIndex){
+    //       resultObj[element.title] = element.dataIndex;
+    //     }else{
+    //       element.children.forEach(item => {
+    //         resultObj[element.title + item.title ] = item.dataIndex;
+    //       });
+    //     }
+    //   });
+    //   return resultObj;
+    // },
 
-    exportFun(){
+    exportFun(currVal){
       //导出操作
       if (this.initArr.tabledataArr.length === 0) {
         this.$message.warning("暂无可导出的数据！");
+      } else{
+        this.$http.fetchPost('statisticsAnalysis@getAnalysisdata.action', {
+          cktype: this.returnTypeFun(currVal),
+          exportfile: this.returnTypeFun(currVal) + 'Excel'
+        }).then(res => {
+          if(Number(res.code) === 0){
+            if(res.data.path){
+              this.exportUrl = this.$targetHost + res.data.path.substr(3);
+              this.exportFileName = res.data.path.substr(16);
+            } 
+          } else{
+            this.$message.warning('抱歉，导出失败，请刷新后重试！');
+          }
+        }).catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        })
       }
+    },
+    returnTypeFun(currVal){
+      /**
+       * 功能：根据传的type类型，返回对应type的name值
+       * currVal: 当前type值
+       */
+      return Number(currVal) === 1 ? 'age' : (Number(currVal) === 2 ? 'degree' : (Number(currVal) === 3 ? 'major': (Number(currVal) === 4 ? 'ethnic': 'PoliticalStatus')))
     }
   },
 
@@ -1014,7 +1025,6 @@ export default {
     this.getChartData(); //图表数据
     this.getTableData(1); //table数据--默认为年龄
     this.initArr.columnsArr = [...this.ageColumns];    //默认年龄段表头
-    this.exportFiledsJson = this.exportFiledsJsonFun(this.ageColumns);  //默认导出excel表为年龄段分析
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
@@ -1058,5 +1068,18 @@ export default {
 </script>
 
 <style scoped>
-
+.aBtnCss{
+  display: inline-block;
+  background: #1890FF;
+  color: #fff;
+  line-height: 32px;
+  text-decoration: none;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  cursor: pointer;
+  padding: 0 15px;
+  font-size: 14px;
+  border-radius: 4px;
+}
 </style>
