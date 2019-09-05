@@ -62,7 +62,7 @@ export default {
       },
       currDate: [
         //默认查询日期
-        moment(moment().subtract(1, "year"), "YYYY-MM-DD"),
+        moment(moment().subtract(7, "day"), "YYYY-MM-DD"),
         moment(new Date(), "YYYY-MM-DD")
       ],
       tempSearch: {},  //临时：当前查询条件
