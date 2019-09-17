@@ -5,9 +5,8 @@
             :src="pdfSrc"
         ></pdf> -->
         
-        <!-- <iframe src="http://192.168.1.215:8080/hasngcadrefile/pdf/2018-report.pdf" width="100%" height="100%"></iframe> -->
         <object 
-            codebase="http://192.168.1.222:8181/hasngcadrefile/pdf/2018-report.pdf" 
+            codebase="http://192.168.2.251:8181/hasngcadrefile/pdf/2018-report.pdf" 
             width="100%" 
             height="100%" 
             align="middle"
@@ -15,7 +14,7 @@
             <embed 
                 width="100%" 
                 height="100%" 
-                src="http://192.168.1.222:8181/hasngcadrefile/pdf/2018-report.pdf" 
+                src="http://192.168.2.251:8181/hasngcadrefile/pdf/2018-report.pdf" 
                 type="application/pdf"
                 background-color="red"
             />
@@ -27,7 +26,7 @@
 
 // import pdf from 'vue-pdf';
 // let loadingTask = pdf.createLoadingTask({
-//     url:'http://192.168.1.215:8080/hasngcadrefile/pdf/2018-report.pdf'
+//     url:'http://192.168.2.251:8080/hasngcadrefile/pdf/2018-report.pdf'
 // });
 export default {
     name:"Report",

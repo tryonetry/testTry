@@ -68,7 +68,7 @@ export default {
               val: void 0
             },
             {
-              title: "身份证号",
+              title: "身份证/社保卡号",
               type: "text",
               placeholder: "请输入身份证/社保卡号",
               key: "a0184",

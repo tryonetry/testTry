@@ -321,7 +321,6 @@ export default {
     },
 
     confirmDelete(){
-      const _this = this;
       let confirmInfo = this.$refs.deleteForm.getFormData();
 
       if(confirmInfo.isRight && this.currentEnterprice.id){
@@ -332,19 +331,20 @@ export default {
         })
         .then(res => {
           if(Number(res.code) === 0){
-            _this.$message.success('销户成功');
+            this.$message.success('销户成功');
+            this.handleCancel();
             this.getTableData(this.tempCondition,1,10);
           }else if(Number(res.code) === 2){
-            _this.$message.error(res.msg)
+            this.$message.error(res.msg)
           }else{
-            _this.$message.error('抱歉,销户失败,请重试');
+            this.$message.error('抱歉,销户失败,请重试');
           }
         })
         .catch(err => {
-          _this.$message.error('销户失败,请稍后重试')
+          this.$message.error('销户失败,请稍后重试')
         })
         .finally(end => {
-          _this.deleteConfirmLoading = false;
+          this.deleteConfirmLoading = false;
         })
       }
     },
