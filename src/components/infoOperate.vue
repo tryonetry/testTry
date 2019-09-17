@@ -2297,6 +2297,7 @@ export default {
                 this.$message.error(tip);
                 this.isRight = false;
               } else{
+                //通过id验证身份证号码---添加/编辑的分别验证
                 this.$http.fetchPost('informationPool@checkPerson.action', {
                   a0184: val
                 }).then(res => {
@@ -2336,7 +2337,7 @@ export default {
           tempRefsArr.push(this.$refs[prop]);
         }
       }
-      for(let i = 0; i < tempRefsArr.length - 1; i ++){
+      for(let i = 0; i < tempRefsArr.length; i ++){
         if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
           document.getElementsByClassName("right_container")[0].scrollTop = 0;
@@ -2574,23 +2575,6 @@ export default {
   padding: 0;
   height: auto;
   line-height: 50px;
-}
-
-.info_select {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-}
-.info_select .ant-select-selection-selected-value{
-  float: none;
-}
-
-.info_select .ant-select-selection--single{
-  height: 100%;
-}
-
-.info_select .ant-select-selection__rendered{
-  line-height: 51px;
 }
 
 .outerContainer,
