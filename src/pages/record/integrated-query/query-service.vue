@@ -120,7 +120,7 @@ export default {
                     formInputs:[
                         // select/searchSelect
                         {
-                            title: '单位名称',
+                            title: '委托存档单位名称',
                             otherType: 'searchSelect',
                             required: false,
                             placeholder: "请选择(搜索)单位名称",
@@ -203,7 +203,7 @@ export default {
                         scopedSlots: { customRender: "customize" }
                     },
                     {
-                        title: "身份证号",
+                        title: "身份证号/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
@@ -224,14 +224,14 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "单位名称",
+                        title: "委托存档单位名称",
                         dataIndex: "a0888",
                         key: "a0888",
                         width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "单位编号",
+                        title: "委托存档单位编号",
                         dataIndex: "companyNumber",
                         key: "companyNumber",
                         width: 150,
@@ -340,7 +340,7 @@ export default {
                         width: 150,
                     },
                     {
-                        title: "身份号码/社保卡号",
+                        title: "身份证/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
@@ -408,7 +408,7 @@ export default {
                         width: 150,
                     },
                     {
-                        title: "身份号码/社保卡号",
+                        title: "身份证/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,

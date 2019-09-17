@@ -124,7 +124,7 @@ export default {
           { title: "姓名", dataIndex: "name", key: "name", width: 200 , scopedSlots: { customRender: "nameLink" }},
           { title: "籍贯", dataIndex: "address", key: "address", width: 300 },
           {
-            title: "最高学历",
+            title: "毕业院校",
             dataIndex: "graduate",
             key: "graduate",
             width: 100

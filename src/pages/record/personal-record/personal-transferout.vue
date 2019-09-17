@@ -279,9 +279,9 @@ export default {
               val: void 0
             },
             {
-              title: "档案编号",
+              title: "存档编号",
               type: "text",
-              placeholder: "请输入档案编号",
+              placeholder: "请输入存档编号",
               key: "archSerialNum",
               name: "archSerialNum",
               postname: "archSerialNum",

@@ -126,7 +126,7 @@ export default {
                     formInputs:[
                         // select/searchSelect
                         {
-                            title: '单位名称',
+                            title: '委托存档单位名称',
                             otherType: 'searchSelect',
                             required: false,
                             placeholder: "请选择(搜索)单位名称",
@@ -144,7 +144,7 @@ export default {
                         },
                         //input
                         {
-                            title: '单位编号',
+                            title: '委托存档单位编号',
                             type: "text",
                             required: false,
                             placeholder: "请输入单位编号",
@@ -207,11 +207,18 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "单位名称",
+                        title: "委托存档单位名称",
                         dataIndex: "companyName",
                         key: "companyName",
                         width: 350,
                         scopedSlots: { customRender: "customize" }
+                    },
+                    {
+                        title: "委托存档单位编号",
+                        dataIndex: "companyNumber",
+                        key: "companyNumber",
+                        width: 300,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "联系人",
@@ -227,13 +234,13 @@ export default {
                         width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    {
-                        title: "统一社会信用代码",
-                        dataIndex: "businessLicense",
-                        key: "businessLicense",
-                        width: 300,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
+                    // {
+                    //     title: "统一社会信用代码",
+                    //     dataIndex: "businessLicense",
+                    //     key: "businessLicense",
+                    //     width: 300,
+                    //     scopedSlots: { customRender: "cursorTitle" }
+                    // },
                     {
                         title: "立户日期",
                         dataIndex: "registrationDate",
