@@ -212,7 +212,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "参加工作日期",
+            title: "参加工作年月",
             dataIndex: "a0134",
             key: "a0134",
             width: 200,

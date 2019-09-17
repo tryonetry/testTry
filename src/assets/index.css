@@ -178,9 +178,7 @@ input[readonly]{
   .canNotClickBtnColor:hover{
     color: #afafaf;
   }
-  .info_select .ant-select-selection{
-    border: none;
-  }
+  
 
   .info_date input{
     background-color: #ffffff;
@@ -194,10 +192,6 @@ input[readonly]{
 
   .info_division input{
     border: none;
-    text-align: center;
-  }
-
-  .info_select .ant-select-selection__placeholder{
     text-align: center;
   }
 
@@ -386,6 +380,24 @@ input{
 .ant-tabs .ant-tabs-left-content{
   height:100%;
 }
+
+.info_select {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.info_select .ant-select-selection--single{
+  border: none;
+}
+
+.info_select .ant-select-selection-selected-value{
+  width: 100%;
+}
+
 
 @media screen and (max-width: 1250px) {
   #components-layout-demo-top-side-2 .logo {
