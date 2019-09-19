@@ -217,7 +217,7 @@ export default {
           {
             title: "密集架编号",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入密集架编号",
             key: "whdCode",
             name: "whdCode",
@@ -232,7 +232,7 @@ export default {
           {
             title: "密集架名称",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入密集架名称",
             key: "whdName",
             name: "whdName",
@@ -247,7 +247,7 @@ export default {
           {
             title: "密集架列数",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入密集架列数",
             key: "whdColumnNum",
             name: "whdColumnNum",
@@ -262,7 +262,7 @@ export default {
           {
             title: "密集架层数",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入密集架层数",
             key: "whdLayerNum",
             name: "whdLayerNum",
@@ -277,7 +277,7 @@ export default {
           {
             title: "密集架每格盒数",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入密集架每格盒数",
             key: "whdGridNum",
             name: "whdGridNum",
