@@ -85,8 +85,7 @@
         </a-menu>
       </div>
       <div class="right">
-
-
+        
         <a-popover
           :title="null" 
           placement="bottom"
@@ -302,7 +301,7 @@ export default {
         .then(res => {
           if(Number(res.code) === 999){
             this.$router.push({path:'/login'});
-          } 
+          }
           if(Number(res.code) === 0){
             //dispatch
             // this.$store.dispatch("getNavData", res.data);
