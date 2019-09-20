@@ -43,7 +43,7 @@
                     >{{personBasicInfo.a0101}}</a-input>
                   </td>
                   <td colspan="4">
-                    身份证号码
+                    身份证/社保卡号
                     <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">
@@ -60,7 +60,7 @@
                     ></a-input>
                   </td>
                   <td colspan="2" rowspan="4">
-                    <img :src="imgUrl" alt="avatar" style="width: 130px;height: 180px;" />
+                    <img :src="imgUrl" alt="照片" style="width: 130px;height: 180px;" />
                   </td>
                 </tr>
 
@@ -166,6 +166,7 @@
                       placeholder="手机号码"
                       v-model="personBasicInfo.a3707c"
                       v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.a3707c, null, null, 'testMobile', '请输入正确的手机号码', $event, 'a0101')"
                     ></a-input>
                   </td>
                 </tr>
@@ -524,13 +525,13 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="4">户籍地址</td>
+                  <td colspan="4">户口所在地址</td>
                   <td colspan="4">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0181}}</span>
                     <a-input
                       class="info_input"
                       type="text"
-                      placeholder="户籍地址"
+                      placeholder="户口所在地址"
                       v-model="personBasicInfo.a0181"
                       v-show="operateStatusVal !== 2"
                     ></a-input>
@@ -748,8 +749,8 @@ export default {
         a0114: "",
         a0114Name: "",
         a0117: "01",
-        a0127: "",
-        a0131: "",
+        a0127: "1",
+        a0131: "1",
         a0134: this.moment(new Date()).format("YYYY-MM-DD"),
         a0139: "",
         a0141: "01",
@@ -2659,6 +2660,10 @@ export default {
   text-align: center;
   border: 1px solid #e8e8e8;
   border-top: none;
+}
+
+.info_view{
+  color: #7F7F7F;
 }
 
 </style>
