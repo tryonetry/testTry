@@ -128,6 +128,14 @@ export default {
             onFilter: (value, record) => record.genderType.indexOf(value) === 0
           },
           {
+            title: "出生日期",
+            dataIndex: "a0107",
+            key: "a0107",
+            width: 150,
+            fixed: 'left',
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "婚姻状况",
             dataIndex: "a0131",
             key: "a0131",
@@ -225,6 +233,7 @@ export default {
                 num: (pageNum - 1) * limitNum + index + 1, //序号
                 a0101: element.a0101,
                 a0104: element.a0104 === "1" ? "男" : "女",
+                a0107: element.a0107,
                 a0131: element.a0131,
                 a0111: element.a0111,
                 a0888: element.a0888,

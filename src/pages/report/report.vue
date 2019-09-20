@@ -6,7 +6,7 @@
         ></pdf> -->
         
         <object 
-            codebase="http://192.168.2.251:8181/hasngcadrefile/pdf/2018-report.pdf" 
+            :codebase="url" 
             width="100%" 
             height="100%" 
             align="middle"
@@ -14,7 +14,7 @@
             <embed 
                 width="100%" 
                 height="100%" 
-                src="http://192.168.2.251:8181/hasngcadrefile/pdf/2018-report.pdf" 
+                :src="url" 
                 type="application/pdf"
                 background-color="red"
             />
@@ -24,10 +24,6 @@
 
 <script>
 
-// import pdf from 'vue-pdf';
-// let loadingTask = pdf.createLoadingTask({
-//     url:'http://192.168.2.251:8080/hasngcadrefile/pdf/2018-report.pdf'
-// });
 export default {
     name:"Report",
     
@@ -39,6 +35,7 @@ export default {
         return {
             // pdfSrc:loadingTask,
             // numPages: void 0,
+            url: this.$targetHost + 'hasngcadrefile/pdf/2018-report.pdf'
         };
     },
 

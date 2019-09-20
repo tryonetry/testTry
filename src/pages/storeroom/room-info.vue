@@ -208,7 +208,7 @@ export default {
           {
             title: "库房编号",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入库房编号",
             key: "whCode",
             name: "whCode",
@@ -223,7 +223,7 @@ export default {
           {
             title: "库房名称",
             type: "text",
-            required: false,
+            required: true,
             placeholder: "请输入库房名称",
             key: "whName",
             name: "whName",
@@ -391,7 +391,6 @@ export default {
       let initData = {};
       if (statusVal == 1) {
         //添加操作
-        
         initData = {
           whCode: "",
           whName: "",
@@ -401,6 +400,9 @@ export default {
           whManagerPhone: "",
           whDesc: ""
         };
+        this.roomInfoForm.formInputs.forEach(item => {
+          item.status = '';
+        })
       } else {
         //编辑操作
         initData = data;

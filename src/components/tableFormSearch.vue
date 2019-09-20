@@ -409,12 +409,17 @@ export default {
     resetForm() {
       this.formData.formInputs.forEach((item)=>{
         if(!item.disabled){
-          item.val = void 0;
+          if(item.key === 'startDate-endDate'){
+            item.val = [void 0, void 0]
+          } else{
+            item.val = void 0;
+          }
           item.status = void 0;
         }
         
       })
       // this.form.resetFields();
+      this.$emit("searchForm", this.formData.formInputs); //禅道提的--重置完--查询表格数据
     },
 
     treeSelect(value) {
