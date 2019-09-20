@@ -3,7 +3,8 @@
     <div class="outer">
 
         <!-- 左侧树 -->
-        <div class="left"  @click="changeIndex(null,false,null)">
+        <!-- @click="changeIndex(null,false,null)" -->
+        <div class="left">
             <a-directory-tree
                 :treeData="treeData"
                 :defaultExpandedKeys="defaultExpandedKeys"
@@ -17,11 +18,16 @@
 
         <!-- 右侧列表 -->
         <div class="right">
-            <div class="bundleContainer">
+            <!-- 阅读器-->
+            <iframe id="readerIframe" ref="iframe" :src="iframeUrl" frameborder="0"></iframe>
+
+
+            <!-- 原来 -->
+            <!-- <div class="bundleContainer">
                 <MsgTip :msgTip="msgTip" :msgIndex="msgIndex" :watcherState="watcherState" :closeState="closeState"></MsgTip>
-            </div>
+            </div> -->
             <!-- 图片列表 -->
-            <draggable v-model="currentList" group="people" @start="drag=true" @end="drag=false" class="dragContainer">
+            <!-- <draggable v-model="currentList" group="people" @start="drag=true" @end="drag=false" class="dragContainer">
                 <div v-for="(element,index) in currentList" :key="index" class="dragElement">
                     <div class="elementLeft">
                         <div class="elementImg">
@@ -45,11 +51,11 @@
                         </a-popconfirm>
                     </div>
                 </div>
-            </draggable>
+            </draggable> -->
             
         </div>
         <!-- 图片查看 -->
-        <a-modal
+        <!-- <a-modal
             centered 
             @cancel="handleCancel"
             title="图片查看"
@@ -62,7 +68,6 @@
         >
             <div class="checkImgContainer" v-if="checkImgModalStatus">
                 <swiper :options="swiperOption" ref="mySwiper">
-                    <!-- slides -->
                     <swiper-slide v-for="(item,index) in currentList" :key="index">
                         <img :src="item.imgData" alt="" />
                     </swiper-slide>
@@ -70,7 +75,7 @@
                     <div class="swiper-button-next" slot="button-next"></div>
                 </swiper>
             </div>
-        </a-modal>
+        </a-modal> -->
     </div>    
 </template>
 
@@ -122,6 +127,10 @@ export default {
             },
             checkImgModalStatus:false,
             currentIndex:0,
+            initParamsObj: {
+                HD: []
+            },
+            iframeUrl: this.$targetHost + 'hasngcadrefile/Test/index.html'
         }
     },
 
@@ -236,6 +245,7 @@ export default {
             this.msgIndex = index;
             this.watcherState = Math.random();
         },
+
         // 调序
         changeIndex(index,status,id){
             // console.log(index)
@@ -288,12 +298,20 @@ export default {
                     catagId:keys[0],
                 }).then((res)=>{
                     if(Number(res.code) === 0){
+                        _this.initParamsObj.HD = res.data;
+                        _this.initParamsObj.region = false;
+                        _this.$refs.iframe.contentWindow.initReader(_this.initParamsObj);
+
+
                         _this.currentList = res.data;
                         _this.currentList.forEach((item)=>{
                             item.imgData = _this.$targetHost+item.filePath.substr(2);
                             item.name = item.fileName;
                             item.onChange = false;
                         });
+
+                        
+                        // _this.$refs.iframe.contentWindow.initReader(_this.initParamsObj);
                     }else{
                         _this.alertTip('未找到此材料的数据',2,false);
                     }
@@ -402,5 +420,11 @@ export default {
         justify-content: center;
         align-items: center;
     }
+
+    #readerIframe {
+        width: 100%; 
+        height: 100%;
+		border: 1px solid #eee;
+	}
 </style>
 
