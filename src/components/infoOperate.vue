@@ -589,7 +589,6 @@
                 </tr>
               </tbody>
             </table>
-            <div style="display:none">{{ exitsVal }}</div>
           </div>
           <!-- v-show="operateStatusVal !== 1" -->
           <div class="otherInfo">
@@ -718,8 +717,6 @@ export default {
     return {
       regs,
       utils,
-      isRight: true, //必填项是否标红
-      ifExist: 0,
       file: [],
       anchorList: [
         //左侧锚点
@@ -742,7 +739,7 @@ export default {
         a0101: "",
         a0101py: "",
         a0104: "1",
-        a0107: this.moment(new Date()).format("YYYY-MM-DD"),
+        a0107: moment(new Date()).format("YYYY-MM-DD"),
         a0111: "",
         a0111d: "",
         a0111dName: "",
@@ -751,7 +748,7 @@ export default {
         a0117: "01",
         a0127: "1",
         a0131: "1",
-        a0134: this.moment(new Date()).format("YYYY-MM-DD"),
+        a0134: moment(new Date()).format("YYYY-MM-DD"),
         a0139: "",
         a0141: "01",
         a0181: "",
@@ -763,7 +760,7 @@ export default {
         a0203: "",
         a0203Name: "",
         a0211: "0100",
-        a0807: this.moment(new Date()).format("YYYY-MM-DD"),
+        a0807: moment(new Date()).format("YYYY-MM-DD"),
         a0824: "",
         a0827: "990000",
         a0834: "11",
@@ -1569,31 +1566,7 @@ export default {
     address() {
       return address;
     },
-    exitsVal:function() {
-      let isRequireNum = 0;
-      if (this.personBasicInfo) {
-        isRequireNum = Number(Boolean(this.personBasicInfo.a0101)) +
-          Number(Boolean(this.personBasicInfo.a0184)) +
-          Number(Boolean(this.personBasicInfo.a0104)) +
-          Number(Boolean(this.personBasicInfo.a0117)) +
-          Number(Boolean(this.personBasicInfo.a0107)) +
-          Number(Boolean(this.personBasicInfo.a0141)) +
-          Number(Boolean(this.personBasicInfo.a0914)) +
-          Number(Boolean(this.personBasicInfo.a0834)) +
-          Number(Boolean(this.personBasicInfo.a0888)) +
-          Number(Boolean(this.personBasicInfo.a0807)) +
-          Number(Boolean(this.personBasicInfo.a0824)) +
-          Number(Boolean(this.personBasicInfo.a0827)) +
-          Number(Boolean(this.personBasicInfo.a0202a)) +
-          Number(Boolean(this.personBasicInfo.a0202b)) +
-          Number(Boolean(this.personBasicInfo.a0202c)) +
-          Number(Boolean(this.personBasicInfo.a0202d)) +
-          Number(Boolean(this.personBasicInfo.a0211));
-      } else {
-        isRequireNum = 0
-      }
-      return this.ifExist = isRequireNum;
-    },
+    
     directoryData: function() {
       //字典数据
       if (this.$store.getters.getDirectoryData) {
@@ -1605,7 +1578,6 @@ export default {
     }
   },
   methods: {
-    moment,
     getColumnDataFun(operateVal){
       /**
        * 功能：根据操作替换当前table--表头 
@@ -2291,48 +2263,52 @@ export default {
       if (val) {
         if (regways) {
           if(regways === 'testid'){
-            if(val !== '000000000000000000') {
-              //身份证重复验证
-              let regResult = this.regs[regways](val);
-              if (regResult === 0) {
-                this.$message.error(tip);
-                this.isRight = false;
-              } else{
-                //通过id验证身份证号码---添加/编辑的分别验证
-                this.$http.fetchPost('informationPool@checkPerson.action', {
-                  a0184: val
-                }).then(res => {
-                  if(Number(res.code) === 0){
-                    //重复：已经存在
-                    this.$message.error('该人员已经存在，请勿重复添加');
-                    this.isRight = false;
-                  }
-                }).catch(error => {
-                  this.$message.error('抱歉，网络异常！');
-                })
-              }
-            }
-          } else{
+            //身份证重复验证
             let regResult = this.regs[regways](val);
             if (regResult === 0) {
               this.$message.error(tip);
-              this.isRight = false;
-            } 
+            } else{
+              //通过输入的身份证号码--填写出生日期和性别
+              if(Number(val)){
+                let tempGender = 0;
+                if(val.length === 18){
+                  this.birthday = moment(val.substr(6,8), 'YYYY-MM-DD');
+                  tempGender = Number(val[16])%2 === 0 ? '2':'1';
+                } else if(val.length){
+                  this.birthday = moment(val.substr(6,6), 'YYYY-MM-DD');
+                  tempGender = Number(val[14])%2 === 0 ? '2':'1';
+                }
+                this.$set(this.personBasicInfo, 'a0104', tempGender)
+              } else{
+                this.birthday = moment(new Date(), 'YYYY-MM-DD');
+                this.$set(this.personBasicInfo, 'a0104', '1')
+              }
+              //通过id验证身份证号码---添加/编辑的分别验证
+              this.$http.fetchPost('informationPool@checkPerson.action', {
+                a0184: val
+              }).then(res => {
+                if(Number(res.code) === 0){
+                  //重复：已经存在
+                  this.$message.error('该人员已经存在，请勿重复添加');
+                }
+              }).catch(error => {
+                this.$message.error('抱歉，网络异常！');
+              })
+            }
           }
         } else {
           if (val.length > maxLength || val.length < minLength) {
             this.$message.error(tip);
-            this.isRight = false;
           }
         }
-      } else {
-        this.isRight = false;
       }
     },
 
     getFinishData() {
-      //验证存档编号是否存在
-      let tempRefsArr = [];
+      /**
+       * 功能：1.查看必填项：如果有必填项为空则标红，且得到为空必填项长度requiredLen；否则必填项全填，requiredLen =0; 2.验证存档编号是否存在
+       */
+      let tempRefsArr = [], requiredLen = 0;
       for(let prop in this.$refs){
         if(this.$refs[prop].className != 'basicInfo'){
           tempRefsArr.push(this.$refs[prop]);
@@ -2342,35 +2318,41 @@ export default {
         if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
           document.getElementsByClassName("right_container")[0].scrollTop = 0;
+          requiredLen++;
         } else{
           tempRefsArr[i].$el.style.outline = '';
         }
       }
-      if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
-        this.$http.fetchPost('informationPool@checkArchNumber.action',{
-            dc030001: this.archiveInitArr.tabledataArr[0].dc030001
-          }).then(res =>{
-            if(Number(res.code) === 0){
-              if(this.operateStatusVal === 3){
-                //编辑状态
-                this.$emit('OperateStatusFun', true);
+
+      if(!requiredLen){
+        if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
+          this.$http.fetchPost('informationPool@checkArchNumber.action',{
+              dc030001: this.archiveInitArr.tabledataArr[0].dc030001
+            }).then(res =>{
+              if(Number(res.code) === 0){
+                if(this.operateStatusVal === 3){
+                  //编辑状态
+                  this.$emit('OperateStatusFun', true);
+                  this.postOtherData();
+                } else{
+                  //添加状态
+                  this.$message.error('档案转接数据：存档编号已经存在，不能重复');
+                  this.$emit('OperateStatusFun', false);
+                }
+              } else {
+                //没重复
                 this.postOtherData();
-              } else{
-                //添加状态
-                this.$message.error('档案转接数据：存档编号已经存在，不能重复');
-                this.$emit('OperateStatusFun', false);
               }
-            } else {
-              //没重复
-              this.postOtherData();
-            }
-          }).catch(error => {
-            this.$message.error('抱歉，网络异常！');
-            this.$emit('OperateStatusFun', false);
-          });
-        } else{
-          this.postOtherData();
-        }
+            }).catch(error => {
+              this.$message.error('抱歉，网络异常！');
+              this.$emit('OperateStatusFun', false);
+            });
+          } else{
+            this.postOtherData();
+          }
+      } else{
+        this.$message.warning('人员基本信息必填项不能为空!');
+      }
       
     },
     
@@ -2384,38 +2366,34 @@ export default {
       let tempLanguageDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.languageInitArr.tabledataArr)));
       let tempProfessDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.professionalInitArr.tabledataArr)));
       let tempArchiveDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.archiveInitArr.tabledataArr)));
-      if (this.isRight) {
-        tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';
-        let postdataArr = [];
-        // 先把数组转成str， 在转码，解码
-        postdataArr.push(
-          tempFamilyDataArr, 
-          tempEduDataArr, 
-          tempWorkDataArr,
-          tempTrainerDataArr,
-          tempRewordDataArr,
-          tempLanguageDataArr,
-          tempProfessDataArr,
-          tempArchiveDataArr)
-        tempBasicInfo.dataArr = encodeURI(JSON.stringify(postdataArr));
-        this.$http.fetchPost("informationPool@personInfoAdd.action",tempBasicInfo)
-          .then(res => {
-            if (Number(res.code) === 0) {
-              this.$message.success("提交成功");
-              this.$emit('OperateStatusFun', true);
-            } else{
-              this.$message.error("提交失败");
-              this.$emit('OperateStatusFun', false);
-            }
-          })
-          .catch(err => {
-            this.$message.error("抱歉，网络异常！");
+      tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';
+      
+      let postdataArr = [];
+      // 先把数组转成str， 在转码，解码
+      postdataArr.push(
+        tempFamilyDataArr, 
+        tempEduDataArr, 
+        tempWorkDataArr,
+        tempTrainerDataArr,
+        tempRewordDataArr,
+        tempLanguageDataArr,
+        tempProfessDataArr,
+        tempArchiveDataArr)
+      tempBasicInfo.dataArr = encodeURI(JSON.stringify(postdataArr));
+      this.$http.fetchPost("informationPool@personInfoAdd.action",tempBasicInfo)
+        .then(res => {
+          if (Number(res.code) === 0) {
+            this.$message.success("提交成功");
+            this.$emit('OperateStatusFun', true);
+          } else{
+            this.$message.error("提交失败");
             this.$emit('OperateStatusFun', false);
-          });
-      } else {
-        this.$message.error("人员基本信息:必填项不能为空");
-        this.$emit('OperateStatusFun', false);
-      }
+          }
+        })
+        .catch(err => {
+          this.$message.error("抱歉，网络异常！");
+          this.$emit('OperateStatusFun', false);
+        });
     },
   
 
@@ -2489,7 +2467,7 @@ export default {
       handler(newVal) {
         if (newVal === 1) {
           //添加操作
-          this.personBasicInfo = this.addInitPersonBasicInfo;
+          this.personBasicInfo = {...this.addInitPersonBasicInfo};
           this.getPersonOtherInfo(null);
         } else {
           //浏览或编辑操作
@@ -2508,7 +2486,7 @@ export default {
           this.getPersonOtherInfo(newVal);
         } else {
           //没有id值：添加操作
-          this.personBasicInfo = this.addInitPersonBasicInfo;
+          this.personBasicInfo = {...this.addInitPersonBasicInfo};
         }
       }
     },
@@ -2526,18 +2504,7 @@ export default {
         this.currentId = newVal;
       }
     },
-    ifExist: {
-      immediate: true,
-      handler(newVal) {
-        if (Number(newVal) === 17) {
-          //required全有值
-          this.isRight = true;
-        } else {
-          //至少有一个没值
-          this.isRight = false;
-        }
-      }
-    },
+
     directoryData: {
       // 监听：字典数据
       immediate: true,

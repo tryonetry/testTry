@@ -300,7 +300,8 @@ export default {
                     if(Number(res.code) === 0){
                         _this.initParamsObj.HD = res.data;
                         _this.initParamsObj.region = false;
-                        _this.$refs.iframe.contentWindow.initReader(_this.initParamsObj);
+                        console.log(_this.initParamsObj);
+                        // _this.$refs.iframe.contentWindow.initReader(_this.initParamsObj);
 
 
                         _this.currentList = res.data;
