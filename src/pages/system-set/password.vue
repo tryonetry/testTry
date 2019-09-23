@@ -153,8 +153,29 @@ export default {
 
     // 确认修改密码
     handleChange(){
-      const { oldPswTip, newPswTip, confirmPswTip, oldPsw, newPsw } = this;
-      if(!oldPswTip && !newPswTip && !confirmPswTip){
+      const { oldPswTip, newPswTip, confirmPswTip, oldPsw, newPsw,confirmPsw} = this;
+      let isRight = true;
+
+      if(!oldPsw){
+        isRight = false;
+        this.oldPswTip = "* 请输入原始密码"
+      }
+
+      // 新密码
+      if(!reg.testPassword(newPsw)){
+        isRight = false;
+        this.newPswTip = "* 请输入6-16位(只可包含数字、字母、下划线)的密码"
+      }
+        
+      // 确认密码
+      if(confirmPsw !== newPsw){
+        isRight = false;
+        this.confirmPswTip = "* 两次密码不一致";
+      }
+
+      if(isRight){
+        this.oldPswTip = "";
+        this.confirmPswTip = "";
         this.$http.fetchPost("user@updateSysUserPwd.action",{
           originalPassword:oldPsw,
           newPassword:newPsw,
