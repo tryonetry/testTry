@@ -5,7 +5,7 @@ const regs = {
       if(!idCard){
         return 0;
       }
-      if(String(idCard) === '000000000000000000'){
+      if(String(idCard) === '000000000000000000' || String(idCard) === '000000000000000'){
         return 1;
       }
       var tip = '';
