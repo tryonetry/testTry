@@ -466,8 +466,7 @@ export default {
       /***
        * 功能：打印操作
        */
-      console.log('打印');
-      // this.$refs.print.printFun();
+      this.$refs.print.printFun();
     }
   },
 

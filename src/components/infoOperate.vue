@@ -857,35 +857,39 @@ export default {
           "a0215a_editInput",
           "a0215a_editInput",
           "a0202dwork_editInput",
+          '所在工作单位名称_requireTitle',
+          '从事工作或担任职务_requireTitle',
+          '工作起始日期_requireTitle',
+          '工作终止日期_requireTitle'
         ],
         columnsArr: [
           {
-            title:'所在工作单位名称',
             dataIndex: "a0157a",
             key: "a0157a",
             width: 350,
+            slots: { title: '所在工作单位名称_requireTitle' },
             scopedSlots: { customRender: "a0157a_editInput" }
           },
           {
-            title:'从事工作或担任职务',
             dataIndex: "a0215a",
             key: "a0215a",
             width: 300,
+            slots: { title: '从事工作或担任职务_requireTitle' },
             scopedSlots: { customRender: "a0215a_editInput" }
           },
           {
-            title:'工作起始日期',
             dataIndex: "a4801",
             key: "a4801",
             width: 200,
+            slots: { title: '工作起始日期_requireTitle' },
             scopedSlots: { customRender: "a4801_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
-            title:'工作终止日期',
             dataIndex: "a4804",
             key: "a4804",
             width: 250,
+            slots: { title: '工作终止日期_requireTitle' },
             scopedSlots: { customRender: "a4804_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
@@ -953,28 +957,32 @@ export default {
           'a0801a_editSelectInput',
           'a0804_editDateInput',
           'a0807a08_editDateInput',
+          '所在学校_requireTitle',
+          '教育类别_requireTitle',
+          '学习形式_requireTitle',
+          '所获学历_requireTitle'
         ],
         columnsArr: [
           {
-            title:'所在学校',
             dataIndex: "a0814",
             key: "a0814",
             width: 200,
+            slots: { title: '所在学校_requireTitle' },
             scopedSlots: { customRender: "a0814_editInput" }
           },
           {
-            title:'教育类别',
             dataIndex: "a0837",
             key: "a0837",
             width: 150,
+            slots: { title: '教育类别_requireTitle' },
             scopedSlots: { customRender: "a0837_editSelectInput" },
             itemChildren: []
           },
           {
-            title:'学习形式',
             dataIndex: "a0838",
             key: "a0838",
             width: 150,
+            slots: { title: '学习形式_requireTitle' },
             scopedSlots: { customRender: "a0838_editSelectInput" },
             itemChildren:[]
           },
@@ -995,10 +1003,10 @@ export default {
             itemChildren:[]
           },
           {
-            title:'所获学历',
             dataIndex: "a0801a",
             key: "a0801a",
             width: 200,
+            slots: { title: '所获学历_requireTitle' },
             scopedSlots: { customRender: "a0801a_editSelectInput" },
             itemChildren:[]
           },
@@ -1039,7 +1047,7 @@ export default {
         columnsArr: [
           { title: "姓名", dataIndex: "a3601", key: "a3601", width: 400 },
           { title: "与本人关系", dataIndex: "a3604a", key: "a3604a", width: 400 },
-          { title: "单位及职务", dataIndex: "a3611", key: "a3611" }
+          { title: "家庭成员工作单位及职务", dataIndex: "a3611", key: "a3611" }
         ],
         tabledataArr:[]
       },
@@ -1054,25 +1062,27 @@ export default {
           'a3601_editInput',
           'a3604a_editSelectInput',
           'a3611_editInput',
+          '姓名_requireTitle',
+          '与本人关系_requireTitle'
         ],
         columnsArr: [
           { 
-            title:'姓名',
             dataIndex: "a3601", 
             key: "a3601",
             width:400,
+            slots: { title: '姓名_requireTitle' },
             scopedSlots: { customRender: "a3601_editInput" }
           },
           { 
-            title:'与本人关系',
             dataIndex: "a3604a", 
             key: "a3604a",
             width:400,
+            slots: { title: '与本人关系_requireTitle' },
             scopedSlots: { customRender: "a3604a_editSelectInput" },
             itemChildren: []
           },
           { 
-            title: "单位及职务", 
+            title: "家庭成员工作单位及职务", 
             dataIndex: "a3611", 
             key: "a3611",
             scopedSlots: { customRender: "a3611_editInput" }
@@ -1119,7 +1129,11 @@ export default {
           'a14Z214a_editInput',
           'a14Z304a_editSelectInput',
           'a14Z307_editDateInput',
-          'a14Z311a_editInput'
+          'a14Z311a_editInput',
+          '奖励批准日期_requireTitle',
+          '奖励批准单位名称_requireTitle',
+          '处分批准日期_requireTitle',
+          '处分批准单位名称_requireTitle'
         ],
         columnsArr:[
           { 
@@ -1131,17 +1145,18 @@ export default {
             itemChildren:[]
           },
           { 
-            title: "奖励批准日期", 
             dataIndex: "a14Z211", 
             key: "a14Z211",
             width: 200,
-            scopedSlots: { customRender: "a14Z211_editDateInput" } 
+            slots: { title: '奖励批准日期_requireTitle' },
+            scopedSlots: { customRender: "a14Z211_editDateInput" },
+            dateFormat: "YYYY-MM-DD" 
           },
           { 
-            title: "奖励批准单位名称",
             dataIndex: "a14Z214a", 
             key: "a14Z214a",
             width: 250,
+            slots: { title: '奖励批准单位名称_requireTitle' },
             scopedSlots: { customRender: "a14Z214a_editInput" } 
           },
           { 
@@ -1153,16 +1168,17 @@ export default {
             itemChildren:[]  
           },
           { 
-            title: "处分批准日期", 
             dataIndex: "a14Z307", 
             key: "a14Z307",
             width: 200,
-            scopedSlots: { customRender: "a14Z307_editDateInput" }  
+            slots: { title: '处分批准日期_requireTitle' },
+            scopedSlots: { customRender: "a14Z307_editDateInput" },
+            dateFormat: "YYYY-MM-DD"  
           },
           { 
-            title: "处分批准单位名称", 
             dataIndex: "a14Z311a", 
             key: "a14Z311a",
+            slots: { title: '处分批准单位名称_requireTitle' },
             scopedSlots: { customRender: "a14Z311a_editInput" }  
           },
           {
@@ -1202,21 +1218,23 @@ export default {
           'dc010701_editSelectInput',
           'dc010702_editSelectInput',
           'remark_editInput',
+          '语种_requireTitle',
+          '熟练程度_requireTitle'
         ],
         columnsArr:[
           {  
-            title:'语种',
             dataIndex: "dc010701", 
             key: "dc010701",
             width: 300,
+            slots: { title: '语种_requireTitle' },
             scopedSlots: {customRender: "dc010701_editSelectInput" },
             itemChildren:[]
           },
           {  
-            title:'熟练程度',
             dataIndex: "dc010702", 
             key: "dc010702",
             width: 300,
+            slots: { title: '熟练程度_requireTitle' },
             scopedSlots: {customRender: "dc010702_editSelectInput" },
             itemChildren:[] 
           },
@@ -1265,33 +1283,40 @@ export default {
           'a1107_editDateInput',
           'a1111_editDateInput',
           'a1114A_editInput',
+          '培训班名称_requireTitle',
+          '培训起始日期_requireTitle',
+          '培训终止日期_requireTitle',
+          '培训主办单位名称_requireTitle'
         ],
         columnsArr:[
           {  
-            title:'培训班名称',
             dataIndex: "a1131", 
             key: "a1131",
             width: 400,
-            scopedSlots: { customRender: "a1131_editInput" }  
+            slots: { title: '培训班名称_requireTitle' },
+            scopedSlots: { customRender: "a1131_editInput" },
+
           },
           { 
-            title: "培训起始日期", 
             dataIndex: "a1107", 
             key: "a1107",
             width: 300,
-            scopedSlots: { customRender: "a1107_editDateInput" } 
+            slots: { title: '培训起始日期_requireTitle' },
+            scopedSlots: { customRender: "a1107_editDateInput" },
+            dateFormat: "YYYY-MM-DD" 
           },
           { 
-            title: "培训终止日期", 
             dataIndex: "a1111", 
             key: "a1111",
             width: 300,
-            scopedSlots: { customRender: "a1111_editDateInput" }  
+            slots: { title: '培训终止日期_requireTitle' },
+            scopedSlots: { customRender: "a1111_editDateInput" },
+            dateFormat: "YYYY-MM-DD"  
           },
           { 
-            title: "培训主办单位名称", 
             dataIndex: "a1114A", 
             key: "a1114A",
+            slots: { title: '培训主办单位名称_requireTitle' },
             scopedSlots: { customRender: "a1114A_editInput" }   
           },
           {
@@ -1314,11 +1339,11 @@ export default {
         bordered: true, // 表格 border 是否显示
         formData: {},
         columnsArr: [
-          { title: "职业(工种)资格名称", dataIndex: "a0601", key: "a0601", width: 300 },
-          { title: "资格等级(技能人员等级)", dataIndex: "a0602", key: "a0602", width: 300 },
           { title: "专业技术职务名", dataIndex: "a0215a", key: "a0215a", width: 300 },
           { title: "专业技术职务级别", dataIndex: "a0215c", key: "a0215c", width: 300 },
           { title: "取得专技资格日期", dataIndex: "a0604", key: "a0604", width: 200 },
+          { title: "职业(工种)资格名称", dataIndex: "a0601", key: "a0601", width: 300 },
+          { title: "资格等级(技能人员等级)", dataIndex: "a0602", key: "a0602", width: 300 },
           { title: "职业(工种)资格日期", dataIndex: "a0603", key: "a0603" }
         ],
         tabledataArr:[]
@@ -1331,30 +1356,14 @@ export default {
         bordered: true, // 表格 border 是否显示
         formData: {},
         editableCol: [
-          'a0601_editSelectInput',
-          'a0602_editSelectInput',
           'a0215a_editSelectInput',
           'a0215c_editSelectInput',
           'a0604_editDateInput',
+          'a0601_editSelectInput',
+          'a0602_editSelectInput',
           'a0603_editDateInput'
         ],
         columnsArr: [
-          { 
-            title: "职业(工种)资格名称", 
-            dataIndex: "a0601", 
-            key: "a0601",
-            width: 250,
-            scopedSlots: {customRender: "a0601_editSelectInput" },
-            itemChildren:[]
-          },
-          { 
-            title: "资格等级(技能人员等级)", 
-            dataIndex: "a0602",
-            key: "a0602",
-            width: 250,
-            scopedSlots: {customRender: "a0602_editSelectInput" },
-            itemChildren:[] 
-          },
           { 
             title: "专业技术职务名", 
             dataIndex: "a0215a", 
@@ -1376,13 +1385,31 @@ export default {
             dataIndex: "a0604", 
             key: "a0604",
             width: 200,
-            scopedSlots: { customRender: "a0604_editDateInput" }  
+            scopedSlots: { customRender: "a0604_editDateInput" },
+            dateFormat: "YYYY-MM-DD"  
+          },
+          { 
+            title: "职业(工种)资格名称", 
+            dataIndex: "a0601", 
+            key: "a0601",
+            width: 250,
+            scopedSlots: {customRender: "a0601_editSelectInput" },
+            itemChildren:[]
+          },
+          { 
+            title: "资格等级(技能人员等级)", 
+            dataIndex: "a0602",
+            key: "a0602",
+            width: 250,
+            scopedSlots: {customRender: "a0602_editSelectInput" },
+            itemChildren:[] 
           },
           { 
             title: "职业(工种)资格日期",
             dataIndex: "a0603", 
             key: "a0603",
-            scopedSlots: { customRender: "a0603_editDateInput" }  
+            scopedSlots: { customRender: "a0603_editDateInput" },
+            dateFormat: "YYYY-MM-DD"  
           },
           {
             title: "操作",
@@ -1442,13 +1469,23 @@ export default {
           'dc030011_editSelectInput',
           'dc030012_editInput',
           'dc030013_editAddressInput',
+          '存档编号_requireTitle',
+          '存档状态_requireTitle',
+          '存档性质_requireTitle',
+          '现档案管理机构名称_requireTitle',
+          '转入日期_requireTitle',
+          '转入原因_requireTitle',
+          '原存档单位名称_requireTitle',
+          '转出日期_requireTitle',
+          '转出原因_requireTitle',
+          '转往档案单位名称_requireTitle'
         ],
         columnsArr:[
           { 
-            title:'存档编号',
             dataIndex: "dc030001", 
             key: "dc030001",
             width: 250,
+            slots: { title: '存档编号_requireTitle' },
             scopedSlots: { customRender: "dc030001_editInput" } 
           },
           { 
@@ -1459,48 +1496,49 @@ export default {
             scopedSlots: { customRender: "a0002_editInput" } 
           },
           { 
-            title:'存档状态',
             dataIndex: "dc030003", 
             key: "dc030003",
             width: 200,
+            slots: { title: '存档状态_requireTitle' },
             scopedSlots: { customRender: "dc030003_editSelectInput" },
             itemChildren:[],
           },
           { 
-            title:'存档性质',
             dataIndex: "dc030004", 
             key: "dc030004",
             width: 200,
+            slots: { title: '存档性质_requireTitle' },
             scopedSlots: { customRender: "dc030004_editSelectInput" },
             itemChildren:[]
           },
           {
-            title:'现档案管理机构名称',
             dataIndex: "a3807a",
             key: "a3807a",
             width: 300,
+            slots: { title: '现档案管理机构名称_requireTitle' },
             scopedSlots: { customRender: "a3807a_editInput" } 
           },
-          { 
-            title: "转入日期", 
+          {  
             dataIndex: "a3801", 
             key: "a3801",
             width: 200,
-            scopedSlots: { customRender: "a3801_editDateInput" } 
+            slots: { title: '转入日期_requireTitle' },
+            scopedSlots: { customRender: "a3801_editDateInput" },
+            dateFormat: "YYYY-MM-DD" 
           },
           {  
-            title:'转入原因',
             dataIndex: "a3803", 
             key: "a3803",
             width: 300,
+            slots: { title: '转入原因_requireTitle' },
             scopedSlots: { customRender: "a3803_editSelectInput" },
             itemChildren:[]  
           },
           {
-            title:'原存档单位名称',
             dataIndex: "a3802",
             key: "a3802",
             width: 300,
+            slots: { title: '原存档单位名称_requireTitle' },
             scopedSlots: { customRender: "a3802_editInput" } 
           },
           { 
@@ -1511,25 +1549,26 @@ export default {
             scopedSlots: { customRender: "dc030009_editAddressInput" },
           },
           { 
-            title: "转出日期", 
             dataIndex: "dc030010", 
             key: "dc030010",
             width: 200,
-            scopedSlots: { customRender: "dc030010_editDateInput" } 
+            slots: { title: '转出日期_requireTitle' },
+            scopedSlots: { customRender: "dc030010_editDateInput" },
+            dateFormat: "YYYY-MM-DD" 
           },
           {  
-            title:'转出原因',
             dataIndex: "dc030011", 
             key: "dc030011",
             width: 300,
+            slots: { title: '转出原因_requireTitle' },
             scopedSlots: { customRender: "dc030011_editSelectInput" },
             itemChildren:[]  
           },
           {
-            title:'转往档案单位名称',
             dataIndex: "dc030012",
             key: "dc030012",
             width: 300,
+            slots: { title: '转往档案单位名称_requireTitle' },
             scopedSlots: { customRender: "dc030012_editInput" } 
           },
           { 
@@ -2515,6 +2554,12 @@ export default {
       },
       deep: true //深度监听
     },
+    ramdomKey: {
+      immediate: true,
+      handler(newVal) {
+        this.personBasicInfo = {...this.addInitPersonBasicInfo};
+      }
+    }
   },
   destroyed(){
     window.removeEventListener('scroll', this.scrollAddListening, true);

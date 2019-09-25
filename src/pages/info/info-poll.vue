@@ -420,7 +420,7 @@ export default {
           state: 2
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           if (Number(res.code) === 0) {
             this.$message.success("删除成功");
             this.getTableData(this.tempCondition, this.tempPageSize, 10);
@@ -487,7 +487,7 @@ export default {
     },
 
     infoOperateFun(value){
-      console.log(value);
+      // console.log(value);
       if(value){
         this.getTableData(this.tempCondition, this.tempPageSize, 10);
         this.visible = false;
@@ -549,8 +549,8 @@ export default {
         * 参数：keyVal:字典里对应的key值； itemCode：当前itemCode值； dictDataArr：字典数据
         */
       let tempDataArr = dictDataArr[keyVal], resultStr = '';
-      console.log(keyVal + ':' + itemCodeVal);
-      console.log(tempDataArr);
+      // console.log(keyVal + ':' + itemCodeVal);
+      // console.log(tempDataArr);
       if(itemCodeVal && dictDataArr && dictDataArr[keyVal].length > 0){
         tempDataArr.forEach(el => {
           if(el.itemCode === itemCodeVal){

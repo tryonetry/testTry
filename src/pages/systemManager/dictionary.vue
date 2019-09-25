@@ -41,7 +41,7 @@
         :width="operateStatus === 1 || operateStatus === 2 ? '40%' : '80%'"
         @cancel="handleCancel"
         :maskClosable="false"
-        style="height:60%;overflow: hidden; z-index: 1001;"
+        style="height:60%;overflow: hidden; z-index: 1005;"
       >
         <div slot="title" class="roomModalTitleSlot">
           <p>{{operateStatus == 1 ? '添加信息': (operateStatus === 2 ?'编辑信息': (operateStatus === 3 ? '新增字典项': '修改字典项'))}}</p>

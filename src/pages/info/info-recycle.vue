@@ -210,7 +210,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * condition:form查询结果：{}
        *  */
-      console.log(condition);
+      // console.log(condition);
       this.tempCondition = condition;
       this.$http
         .fetchGet("informationPool@findRecycleBinA01List.action", {
@@ -288,7 +288,7 @@ export default {
           a01000: data.key
         })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           if (Number(res.code) === 0) {
             this.$message.success("删除成功");
             this.getTableData(this.tempCondition, 1, 10);

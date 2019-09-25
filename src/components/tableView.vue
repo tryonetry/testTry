@@ -44,7 +44,7 @@
               <a v-if="record.inEdit" href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,false)">确 定</a>
               <a v-else href="javascript:;" class="primaryBtnColor" @click="changeEditStatus(index,true)">编 辑</a>
               <a-popconfirm
-                title="您确定撤销吗?"
+                title="您确定删除吗?"
                 okText="确定"
                 cancelText="取消"
                 @confirm="deleteRow(index)"

@@ -478,7 +478,7 @@ export default {
       /***
        * 功能：打印操作
        */
-      // this.$refs.printPage.printFun();
+      this.$refs.print.printFun();
     }
   },
 
