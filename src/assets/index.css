@@ -59,6 +59,7 @@ input[readonly]{
   height: 100%;
   min-width: 900px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
  /* 头部导航栏 */
