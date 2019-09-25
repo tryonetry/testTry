@@ -2279,7 +2279,7 @@ export default {
     uploadPhoto(info) {
       //上传照片
       if (info.file.status === "done") {
-        console.log(info);
+        // console.log(info);
         let currResImgUrl = info.fileList,
           len = info.fileList.length;
         this.personBasicInfo.imgPath = currResImgUrl[len - 1].response;
@@ -2532,7 +2532,7 @@ export default {
     anchorClick(anchorId, indexVal) {
       //左侧锚点点击
       this.currClickAnchor = indexVal;
-      console.log(this.currClickAnchor);
+      // console.log(this.currClickAnchor);
       let anchor = document.getElementById(anchorId);
       document.getElementsByClassName("right_container")[0].scrollTop =
         anchor.offsetTop - 60;
