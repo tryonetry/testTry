@@ -54,6 +54,8 @@
         <div slot="title" class="roomModalTitleSlot">
           <p>{{operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')}}</p>
           <span>{{currentRowData && currentRowData.a0101}}</span>
+          <span style="margin-left: 30px;">籍贯：{{currentRowData && currentRowData.a0111}}</span>
+          <span style="margin-left: 30px;">学历：{{currentRowData && this.conVersionData(currentRowData.a0914)}}</span>
         </div>
 
 
@@ -397,7 +399,8 @@ export default {
                 a0834: element.a0834,
                 a0888: element.a0888,
                 a0131: element.a0131,
-                imgPath: element.imgPath
+                imgPath: element.imgPath,
+                a0914: element.a0914
               });
             });
           } else{
@@ -409,6 +412,19 @@ export default {
           this.tableLoading = false;
         });
     },
+
+    conVersionData(data){
+      let tempName = '';
+      if(data){
+        this.directoryData["degreeList"].forEach(el => {
+          if (el['itemCode'] === data) {
+            tempName = el.itemName;
+          }
+        });
+      }
+      return tempName;
+    },
+
     deleteFun(data, currTableData) {
       /**
        * 功能：table：删除操作
