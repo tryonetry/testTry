@@ -361,7 +361,7 @@ export default {
       treeNodeObj:null,
       treeDataObj: {
         isSearch: true,
-        searchPlaceholder:'请输入搜索机构名称',
+        searchPlaceholder:'请输入搜索用户组名称',
         isChecked: false,
         dataArr: [],
         expandAction:1, // 点击箭头可展开或收缩

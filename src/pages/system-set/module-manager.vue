@@ -17,7 +17,7 @@
           @searchTable="getTableData"
         >
            <div slot="tableAction2" slot-scope="slotPropsData">
-            <a-switch @click="handleChecked(slotPropsData.currRowdata)" checkedChildren="已启用" unCheckedChildren="未启用" :checked="String(slotPropsData.currRowdata.muState) === '1' ? true : false" />
+            <a-switch @click="handleChecked(slotPropsData.currRowdata)" :disabled="!slotPropsData.currRowdata.muHelpUrl" checkedChildren="已启用" unCheckedChildren="未启用" :checked="String(slotPropsData.currRowdata.muState) === '1' ? true : false" />
           </div>
         </TableView>
       </div>
@@ -253,8 +253,13 @@ export default {
         muState: postState
       }).then(res => {
          if(Number(res.code) === 0){
-            this.$message.success("状态切换成功!");
+            this.$message.success("状态切换成功,请重新登录");
             this.getTableData(null, 1, 10);
+            let timer = setTimeout(() => {
+              clearTimeout(timer);
+              timer = null;
+              this.$router.push({path:'/login'});
+            },1000);
          }else{
           this.$message.warning("抱歉,操作失败,请刷新后重试！");
         }

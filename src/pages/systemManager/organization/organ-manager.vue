@@ -209,7 +209,7 @@ export default {
           this.$message.error("抱歉,网络异常,请稍后重试");
         });
       }else{
-        this.$message.warning("请选择行政区划");
+        this.$message.warning("存档机构名称不能为空");
       }
 
     },
