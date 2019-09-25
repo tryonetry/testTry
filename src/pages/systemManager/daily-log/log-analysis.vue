@@ -63,7 +63,7 @@ export default {
               title: "IP地址",
               type: "text",
               required: false,
-              placeholder: "请输入操作人",
+              placeholder: "请输入IP地址",
               key: "ip",
               name: "ip",
               val: void 0,

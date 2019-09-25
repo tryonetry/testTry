@@ -26,9 +26,9 @@
         centered
         title="浏览信息"
         :visible="visible"
-        :width="1600"
+        width="95%"
         @cancel="handleCancel"
-        style="height:85%;overflow: hidden;"
+        style="height:95%;overflow: hidden;"
       >
         <InfoOperate
           :operateStatusVal="operateStatus"

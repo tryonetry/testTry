@@ -120,19 +120,31 @@ export default {
             fixed: "left",
             width: 80
           },
-          { title: "照片", dataIndex: "photo", key: "photo", width: 200 ,scopedSlots: { customRender: "img" }},
-          { title: "姓名", dataIndex: "name", key: "name", width: 200 , scopedSlots: { customRender: "nameLink" }},
-          { title: "籍贯", dataIndex: "address", key: "address", width: 300 },
+          { 
+            title: "姓名", 
+            dataIndex: "name", 
+            key: "name", 
+            width: 200, 
+            fixed: "left"
+          },
+          { title: "照片", dataIndex: "photo", key: "photo", width: 200, scopedSlots: { customRender: "img" }},
+          
+          { 
+            title: "籍贯", 
+            dataIndex: "address", 
+            key: "address", 
+            width: 300 
+          },
           {
             title: "毕业院校",
             dataIndex: "graduate",
-            key: "graduate",
-            width: 100
+            key: "graduate"
           },
           {
             title: "操作",
             key: "action",
             width: 200,
+            fixed: 'right',
             scopedSlots: { customRender: "action" }
           }
         ],

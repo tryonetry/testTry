@@ -20,18 +20,82 @@
         <div class="right">
             <!-- 阅读器-->
             <iframe id="readerIframe" ref="iframe" :src="iframeUrl" frameborder="0"></iframe>
+
+
+            <!-- 原来 -->
+            <!-- <div class="bundleContainer">
+                <MsgTip :msgTip="msgTip" :msgIndex="msgIndex" :watcherState="watcherState" :closeState="closeState"></MsgTip>
+            </div> -->
+            <!-- 图片列表 -->
+            <!-- <draggable v-model="currentList" group="people" @start="drag=true" @end="drag=false" class="dragContainer">
+                <div v-for="(element,index) in currentList" :key="index" class="dragElement">
+                    <div class="elementLeft">
+                        <div class="elementImg">
+                            <img :src="element.imgData" alt="" @click="openImgCheck(index)">
+                        </div>
+                        <span  @click="openImgCheck(index)">{{element.name?element.name.replace(element.name.substring(element.name.indexOf('---'),element.name.lastIndexOf('.')),''):''}}</span>
+                    </div>
+                    <div class="elementRight">
+                        <a-input-search 
+                            placeholder="输入调整的顺序值" 
+                            v-show='element.onChange' 
+                            v-model="targetIndex" 
+                            type='number' 
+                            @search='changeIndex(index,false,element.id)'
+                        >
+                            <a-button slot="enterButton">调 序</a-button>
+                        </a-input-search>
+                        <a-button v-show="!element.onChange" @click="changeIndex(index,true,null)">调 序</a-button>
+                        <a-popconfirm title="确定要删除吗?" @confirm="confirmDelete(element,index)"  okText="确定" cancelText="取消">
+                            <a-button>删 除</a-button>
+                        </a-popconfirm>
+                    </div>
+                </div>
+            </draggable> -->
+            
         </div>
+        <!-- 图片查看 -->
+        <!-- <a-modal
+            centered 
+            @cancel="handleCancel"
+            title="图片查看"
+            :visible="checkImgModalStatus"
+            :footer='null'
+            :width ="1200"
+            :maskClosable='true'
+            :mask='false'
+            class="imgModal"
+        >
+            <div class="checkImgContainer" v-if="checkImgModalStatus">
+                <swiper :options="swiperOption" ref="mySwiper">
+                    <swiper-slide v-for="(item,index) in currentList" :key="index">
+                        <img :src="item.imgData" alt="" />
+                    </swiper-slide>
+                    <div class="swiper-button-prev" slot="button-prev"></div>
+                    <div class="swiper-button-next" slot="button-next"></div>
+                </swiper>
+            </div>
+        </a-modal> -->
     </div>    
 </template>
 
 <script>
-
+import 'swiper/dist/css/swiper.css'
+import draggable from 'vuedraggable';
+import MsgTip from './msgTip';
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
+// import { debug } from 'util';
+// import { setTimeout, clearTimeout } from 'timers';
 
 export default {
-    name:'DocDirectory',
+    name:'DocDirectoryCopy',
     // 需要父组件传userId
     props:["userId","ramdomKey"],
     components:{
+        draggable,
+        swiper,
+        swiperSlide,
+        MsgTip,
     },
     data(){
         return{
@@ -45,7 +109,24 @@ export default {
             expandedKeys:[],
             // 当前的列表
             currentList:[],
-           
+            // 操作提示信息
+            msgTip:'',
+            msgIndex:0,
+            watcherState:Math.random(),
+            closeState:false,
+            // 调整顺序的目标index
+            targetIndex:'',
+            // 图片查看
+            swiperOption:{
+                loop: true,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                initialSlide:0,
+            },
+            checkImgModalStatus:false,
+            currentIndex:0,
             initParamsObj: {
                 host: '192.168.1.215',   //主机地址
                 port: '7777',   //主机服务端口
@@ -88,12 +169,12 @@ export default {
                     _this.expandedKeys.push(_this.treeData[0].key);
                 }else{
                     // 提示数据失败
-                    _this.$message.warning('抱歉,用户档案目录信息不存在');
+                    _this.alertTip('抱歉,用户档案目录信息不存在',2,false);
                 }
             }).catch((err)=>{
                 if(err){
                     // 提示数据失败
-                    _this.$message.error('抱歉,网络错误了,请稍后重试');
+                    _this.alertTip('抱歉,网络错误了,请稍后重试',3,false);
                 }
             })
         },
@@ -137,6 +218,86 @@ export default {
             mapData(data);
             return data;
         },
+        // 打开图片
+        openImgCheck(index){
+            this.swiperOption.initialSlide = index;
+            this.checkImgModalStatus = true;
+        },
+        // 关闭
+        handleCancel(){
+            this.checkImgModalStatus = false;
+        },
+        // 确认删除
+        confirmDelete(el,index){
+            const _this = this;
+            this.$http.fetchGet('digitalArchives@catagFileDelete.action',{id:el.id})
+                .then(res => {
+                    if(Number(res.code) === 0){
+                        _this.$message.success('删除成功!');
+                        _this.currentList.splice(index,1);
+                    }else{
+                        _this.$message.error('删除失败');
+                    }
+                })
+                .catch(err => {
+                    _this.$message.error('抱歉,网络出错了,请稍后重试');
+                })
+        },
+
+        // 弹出提示信息 index:[0-success,1-info,2-warning,3-err]
+        alertTip(msg,index,close){
+            if(close){
+                this.closeState = close;
+            }else{
+                this.closeState = false;
+            }
+            
+            this.msgTip = msg;
+            this.msgIndex = index;
+            this.watcherState = Math.random();
+        },
+
+        // 调序
+        changeIndex(index,status,id){
+            // console.log(index)
+            const {currentList,targetIndex} = this;
+            const _this = this;
+            currentList.forEach((item)=>{item.onChange = false});
+            if(!index && index !== 0) return;
+            // 调序
+            if(!status){
+                if(targetIndex < 1){
+                    this.targetIndex = '';
+                    this.alertTip('请输入大于0的整数',2,false);
+                    this.currentList[index].onChange = true;
+                }else if(targetIndex > currentList.length || Number(targetIndex) % 1 !== 0){
+                    this.targetIndex = '';
+                    this.alertTip('请输入小于列表长度的整数',2,false);
+                    this.currentList[index].onChange = true;
+                }else{
+                    this.$http.fetchGet('digitalArchives@doSort.action',{targetPage: Number(targetIndex),currentPage: Number(index)+1,id:id})
+                        .then(res => {
+                            if(Number(res.code) === 0){
+                                let tempItem = currentList[index];
+                                _this.currentList.splice(index,1);
+                                _this.currentList.splice(targetIndex-1,0,tempItem);
+                                _this.currentList[index].onChange = status;
+                                _this.alertTip('',0,true);
+                                _this.$message.success('调整成功');
+                            }else{
+                                _this.$message.error('调整失败');
+                            }
+                        })
+                        .catch(err => {
+                            _this.$message.error('抱歉,网络出错了,请稍后重试');
+                        })
+                    
+                }
+            }else{
+                this.currentList[index].onChange = status;
+                this.currentList = [...this.currentList];
+            }
+        },
 
         // 选择树
         onSelect(keys,e){
@@ -155,7 +316,7 @@ export default {
                                     tempItemPath += tempFilePathArr [i] + '/'
                             }
 
-                            _this.initParamsObj.tempFilePath = tempItemPath + '.cadremultip'
+                            _this.initParamsObj.tempFilePath = tempItemPath + '.zzbmultip'
 
                             let tempNameArr = [];
                             res.data.forEach((item, index) => {
@@ -181,19 +342,21 @@ export default {
                                     }
                                 },1000);
                             }
-                            _this.currentList = res.data;
-                            _this.currentList.forEach((item)=>{
-                                item.imgData = _this.$targetHost+item.filePath.substr(2);
-                                item.name = item.fileName;
-                                item.onChange = false;
-                            });
-                        } else{
-                            this.$message.warning('暂无数据！');
                         }
+
+                        _this.currentList = res.data;
+                        _this.currentList.forEach((item)=>{
+                            item.imgData = _this.$targetHost+item.filePath.substr(2);
+                            item.name = item.fileName;
+                            item.onChange = false;
+                        });
+
                     }else{
-                        _this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+                        _this.alertTip('未找到此材料的数据',2,false);
                     }
                    
+                }).catch(()=>{
+                    _this.alertTip('抱歉,网络错误了,请稍后重试',3,false);
                 })
             }
         },
