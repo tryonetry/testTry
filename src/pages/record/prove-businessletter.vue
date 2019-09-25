@@ -378,7 +378,7 @@ export default {
                         maxlength: 20,
                         minlength: 0,
                         reg: '',
-                        tip: '* 请输入正确的邮寄编号',
+                        tip: '* 请输入姓名',
                         status: '',
                         colWidth:[24,24],
                     },

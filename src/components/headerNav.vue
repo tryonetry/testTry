@@ -169,7 +169,7 @@
           <a-menu-item
             v-for="item in submenuArr"
             :key="item.id"
-            v-if="menuId === item.menuId && item.children.length === 0"
+            v-if="menuId === item.menuId && item.children.length === 0 && item.path"
             @click="slideIndexChange(item.menuId,item.path, 'two')"
           >
             <router-link :to="item.path">

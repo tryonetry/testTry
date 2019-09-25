@@ -199,8 +199,17 @@ export default {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
+                        fixed: "left",
                         width: 150,
                         scopedSlots: { customRender: "customize" }
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "a0100a",
+                        key: "a0100a",
+                        fixed: "left",
+                        width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "身份证号/社保卡号",
@@ -213,13 +222,6 @@ export default {
                         title: "手机号码",
                         dataIndex: "a3707c",
                         key: "a3707c",
-                        width: 150,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
-                        title: "存档编号",
-                        dataIndex: "a3714",
-                        key: "a3714",
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },

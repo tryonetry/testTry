@@ -47,6 +47,34 @@ export default {
     //方法集合
     methods: {
         printFun() {
+            let tagArr = document.getElementsByClassName("printOuter")[0].getElementsByTagName("*");
+            [].forEach.call(tagArr,(item) => {
+                // if(item.getAttribute("class")){
+                    let cssObj = document.defaultView.getComputedStyle(item,null);
+                    let mapObj = {
+                        "display":"display",
+                        // "width":"width",
+                        // "height":"height",
+                        // "line-height":"lineHeight",
+                        "font-size":"fontSize",
+                        "margin":"margin",
+                        "padding":"padding",
+                        "color":"color",
+                        "postion":"position",
+                        "border":"border",
+                        "text-indent":"textIndent",
+                        "text-align":"textAlign",
+                        "box-sizing":"boxSizing",
+                        "background":"background",
+                        "float":"float",
+                        "font-weight":"fontWeight",
+                        "overflow":"overflow",
+                    };
+                    for(let styleName in mapObj){
+                        item.style[styleName] = cssObj[mapObj[styleName]];
+                    }
+                // }
+            })
             this.$print(this.$refs.printSection)
             // let newContent = subOutputRankPrint.innerHTML;
             // let oldContent = document.body.innerHTML;

@@ -668,10 +668,9 @@ export default {
         },
 
         saveConfirm(){
-                console.log(this.inEditPerson)
+            console.log(this.inEditPerson)
             let postObjIsRight = true;
             let tablePostArr = [];
-            this.saveConfirmLoading = true;
             this.$refs.editTable.getTableData().forEach(item => {
                 let tempObj = {};
                 for (let i in item){
@@ -690,6 +689,7 @@ export default {
             });
             // 必填项不为空
             if(postObjIsRight && tablePostArr.length > 0){
+                this.saveConfirmLoading = true;
                 this.$http.fetchPost("fileConnect@saveCatalogList.action",{
                     personId:this.inEditPerson.a01000,
                     dataArr:JSON.stringify(tablePostArr)
