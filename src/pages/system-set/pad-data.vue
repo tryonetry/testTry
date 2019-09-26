@@ -331,7 +331,7 @@ export default {
       /**
        * 功能：接收tree选择的数据
        */
-      console.log(data);
+      // console.log(data);
     },
     acceptCheckNodeFun(data) {
       /**
@@ -389,7 +389,7 @@ export default {
         _this.$http
           .fetchPost("padFilePackage@percentage.action")
           .then(res => {
-            console.log(res);
+            // console.log(res);
             if (res.data == "10") {
               _this.isCreateFile = true;
               _this.isReadData = false;

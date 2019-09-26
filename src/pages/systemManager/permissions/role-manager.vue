@@ -361,7 +361,7 @@ export default {
           limit: limitNum,
           ...condition
       }).then((res)=>{
-        console.log(res);
+        // console.log(res);
           if(Number(res.code) === 0){
               _this.tableTotalNum = res.count;
               this.initArr.tabledataArr = res.data;

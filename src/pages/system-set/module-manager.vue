@@ -233,7 +233,7 @@ export default {
       /**
        * 功能：接收tree选择的数据
        */
-      console.log(data);
+      // console.log(data);
       this.mouduleId = data.key;
       this.getTableData(null, 1, 10);
     },

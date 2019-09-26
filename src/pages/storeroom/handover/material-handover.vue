@@ -441,7 +441,7 @@ export default {
         archNumber: currData.e0101,
         strArr: currData.key
       }).then(res => {
-        console.log(res);
+        // console.log(res);
         if(Number(res.code) === 0){
           this.fileNum = res.data.dueBillSerialNumber;   //文件编号
           for(let key in this.currRow){

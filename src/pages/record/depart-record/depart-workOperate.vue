@@ -251,7 +251,7 @@ export default {
       }).then((res)=>{
           if(Number(res.code) === 0){
               this.tableTotalNum = res.count;
-              console.log(this.tableTotalNum)
+              // console.log(this.tableTotalNum)
               this.initArr.tabledataArr = res.data;
               this.initArr.tabledataArr.forEach((element, index) => {
                 Object.assign(element,{

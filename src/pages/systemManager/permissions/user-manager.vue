@@ -402,7 +402,7 @@ export default {
               ...result.postObj,
               userId:this.currUserData.userId,
             }).then(res => {
-              console.log(res);
+              // console.log(res);
               if(Number(res.code) === 0){
                 this.$message.success("编辑修改成功!");
                 this.getTableData(this.tempCondition,this.currentPage,10);

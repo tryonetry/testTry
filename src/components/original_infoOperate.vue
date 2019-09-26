@@ -2807,10 +2807,10 @@ export default {
       return tempName;
     },
     nationalChange(value) {
-      console.log(`selected ${value}`);
+      // console.log(`selected ${value}`);
     },
     genderChange(e) {
-      console.log("性别:", e.target.value);
+      // console.log("性别:", e.target.value);
     },
     birthdayChange(date, dateString) {
       //出生日期修改
@@ -2838,7 +2838,7 @@ export default {
     },
     hujiCodeChange(value) {
       //户籍行政区划
-      console.log(value);
+      // console.log(value);
       this.personBasicInfo["a0111d"] = value.join(".");
     },
     birthdayCodeChange(value) {
@@ -2852,7 +2852,7 @@ export default {
     uploadPhoto(info) {
       //上传照片
       if (info.file.status === "done") {
-        console.log(info);
+        // console.log(info);
         let currResImgUrl = info.fileList, len = info.fileList.length;
         this.personBasicInfo.imgPath = currResImgUrl[len - 1].response;
         
@@ -3060,7 +3060,7 @@ export default {
           initData = data;
           this.currentId = data["key"];
         }
-        console.log(initData);
+        // console.log(initData);
         this.personInfoForm = this.utils.getNewFormSearch(
           initData,
           this.educationForm
@@ -3112,7 +3112,7 @@ export default {
           initData = data;
           this.currentId = data["key"];
         }
-        console.log(this.languageForm);
+        // console.log(this.languageForm);
         this.personInfoForm = this.utils.getNewFormSearch(
           initData,
           this.languageForm
@@ -3155,7 +3155,7 @@ export default {
           initData = data;
           this.currentId = data["key"];
         }
-        console.log(this.professionalForm);
+        // console.log(this.professionalForm);
         this.personInfoForm = this.utils.getNewFormSearch(
           initData,
           this.professionalForm
@@ -3225,7 +3225,7 @@ export default {
           this.currentId = data["key"];
         }
         this.personInfoForm = this.utils.getNewFormSearch(initData, this.archiveForm);
-        console.log(this.personInfoForm);
+        // console.log(this.personInfoForm);
       }
     },
 
@@ -3551,7 +3551,7 @@ export default {
           ) {
             currDataObj[i] = this.moment(currDataObj[i]).format("YYYY-MM-DD");
           } else if (i === "dc030009" || i === "dc030013" || i === "b0107") {
-            console.log(currDataObj[i]);
+            // console.log(currDataObj[i]);
             let tempAddressStr = "";
             currDataObj[i].forEach(item => {
               tempAddressStr += item + ".";
@@ -3767,7 +3767,7 @@ export default {
     ifExist:{
       immediate: true,
       handler(newVal){
-        console.log('newVal:'+ Number(newVal));
+        // console.log('newVal:'+ Number(newVal));
         if(Number(newVal) === 17){  //required全有值
           this.isRight = true;
         } else{

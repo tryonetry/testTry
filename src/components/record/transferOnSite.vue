@@ -591,7 +591,7 @@ export default {
                         this.transferOutShow();
                     }
                 }else{
-                    console.log(1)
+                    // console.log(1)
                     this.clearBaseInfoData('innerData');
                 }
             },
@@ -692,7 +692,7 @@ export default {
 
         // search condition bundle change
         searchConditionChange(){
-            console.log(1)
+            // console.log(1)
         },
 
         // 关闭

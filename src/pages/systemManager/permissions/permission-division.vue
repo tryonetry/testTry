@@ -445,9 +445,9 @@ export default {
           type:this.treeNodeObj.type,
           ...condition,
       }).then((res)=>{
-          console.log(res);
+          // console.log(res);
           if(Number(res.code) === 0){
-              console.log(res.data);
+              // console.log(res.data);
               this.permissionTotalNum = res.count;
               this.initPermissionArr.tabledataArr = res.data;
               this.initPermissionArr.tabledataArr.forEach((element, index) => {

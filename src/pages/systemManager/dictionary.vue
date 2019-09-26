@@ -928,7 +928,7 @@ export default {
        * 功能：字典维护--删除功能
        * 参数：currRowdata：当前行数据
        */
-      console.log(currRowdata);
+      // console.log(currRowdata);
       this.$http
         .fetchPost("dictItem@deleteDictItem.action", {
           itemId: currRowdata.key

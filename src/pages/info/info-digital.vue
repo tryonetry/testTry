@@ -177,7 +177,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * condition:form查询结果：{}
        *  */
-      console.log(condition);
+      // console.log(condition);
       const _this = this;
       this.$http.fetchGet('digitalArchives@personnelList.action',{
         page:pageNum,
@@ -229,7 +229,7 @@ export default {
       if(!finalData) return ;
       this.$http.fetchPost('digitalArchives@addCatalog.action',{arrs:JSON.stringify(finalData)})
           .then(res => {
-              console.log(res);
+              // console.log(res);
               if(Number(res.code) === 0){
                 _this.$message.success('保存成功!');
                 _this.handleCancel();

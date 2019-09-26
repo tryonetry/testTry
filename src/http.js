@@ -36,7 +36,7 @@ axios.interceptors.request.use(
 
             for (const key in data) {
                 if (data.hasOwnProperty(key)) {
-                    console.log(config)
+                    // console.log(config)
                     if (key.endsWith('[]')) {
                         data[key].forEach(item => {
                             fd.append(key, item)

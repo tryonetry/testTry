@@ -338,7 +338,7 @@ export default {
       return dataArr;
     },
     accepttreeNodeFun(data) {
-      console.log(data);
+      // console.log(data);
       this.tempTreeNode = data['key'];
       this.getTableData(this.tempCondition, this.tempPageSize, 10);
     }

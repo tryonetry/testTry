@@ -35,7 +35,7 @@ export default {
     watch: {
         watcherState:{
             handler:function(newVal){
-                console.log(newVal)
+                // console.log(newVal)
                 let timer =  null;
                 const _this = this;
                 const statusStrOfThis = ['successStatus','infoStatus','warningStatus','errorStatus'];

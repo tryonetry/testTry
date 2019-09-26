@@ -269,10 +269,10 @@ export default {
       }).then((res)=>{
           if(Number(res.code) === 0){
               this.tableTotalNum = res.count;
-              console.log(this.tableTotalNum)
+              // console.log(this.tableTotalNum)
               this.initArr.tabledataArr = res.data;
               this.initArr.tabledataArr.forEach((element, index) => {
-                console.log(element)
+                // console.log(element)
                 Object.assign(element,{
                   key:element.a01000,
                   num: (pageNum - 1) * limitNum + index + 1,
@@ -289,7 +289,7 @@ export default {
 
     editOperate(currdata){
       this.currentPersonData = currdata;
-      console.log(currdata)
+      // console.log(currdata)
       this.random = Math.random();
       this.changeModalShow = true;
     },

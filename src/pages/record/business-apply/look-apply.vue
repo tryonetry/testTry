@@ -286,7 +286,7 @@ export default {
             this.baseData.forEach(item => {
                 Object.assign(item,{val:currRowdata[item.name]})
             });
-            console.log(currRowdata);
+            // console.log(currRowdata);
             let imgFiles = JSON.parse(currRowdata.applyFilePath);
             // 多条图片数据
             if(imgFiles && imgFiles.length > 0){

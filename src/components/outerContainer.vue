@@ -81,10 +81,10 @@ export default {
         pageSize:5
       })
       .then(res => {
-        console.log(res);
+        // console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
       });
   }
 };
