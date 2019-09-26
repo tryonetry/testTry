@@ -288,11 +288,11 @@ export default {
             key: "whManagerPhone",
             name: "whManagerPhone",
             val: void 0,
-            maxlength: 20,
-            minlength: 0,
+            maxlength: 11,
+            minlength: 8,
             reg: "",
-            tip: "",
-            postname: "whManagerPhone",
+            tip: "请输入正确得联系方式",
+            postname: "",
             status: ""
           },
           {
