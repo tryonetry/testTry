@@ -518,7 +518,7 @@ export default {
         } else {
           //编辑
           currObjData = Object.assign({}, currObjData, { 'whdId': this.currentId, 'whId': this.currWhId });
-          console.log(currObjData);
+          // console.log(currObjData);
           this.$http
             .fetchPost("wareHouse@editWareHouseDetail.action", currObjData)
             .then(res => {

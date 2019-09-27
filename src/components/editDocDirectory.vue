@@ -146,7 +146,7 @@ export default {
         tempEmptyObj:function(){
             let tempEmptyObj = null;
             if(this.listDirectory && this.listDirectory.length > 0){
-                console.log(this.listDirectory[0])
+                // console.log(this.listDirectory[0])
                 tempEmptyObj = {...this.listDirectory[0].dataArr[0]};
             }
             for(let key in tempEmptyObj){

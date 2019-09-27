@@ -92,7 +92,7 @@ export default {
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
        * condition:form查询结果：{}
        *  */
-      console.log(condition);
+      // console.log(condition);
       let tempData = [];
       if(condition.length === 0){
         this.initArr.tabledataArr = initableArr;
@@ -103,20 +103,20 @@ export default {
            });
          });
       }
-      console.log(tempData);
+      // console.log(tempData);
       this.initArr.tabledataArr = tempData;
     },
     viewFun(data){
       /***
        * 功能:查看当前行数据
        */
-      console.log(data)
+      // console.log(data)
     },
     recommendFun(data){
       /***
        * 功能：推荐操作
        */
-      console.log(data);
+      // console.log(data);
     }
   }
 };

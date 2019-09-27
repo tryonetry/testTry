@@ -485,7 +485,7 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    console.log(this.currentEnterprice)
+    // console.log(this.currentEnterprice)
     this.acceptEditParams(this.currentEnterprice);
     this.tempEnterPriceData = {...this.currentEnterprice};
   },

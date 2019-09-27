@@ -604,7 +604,7 @@ export default {
                 }).catch(err => {
                     _this.$message.error("抱歉,网络异常,请稍后重试")
                 }).finally(end => {
-                    console.log(end);
+                    // console.log(end);
                     _this.loading = false;
                 })
             }
@@ -668,7 +668,7 @@ export default {
         },
 
         saveConfirm(){
-            console.log(this.inEditPerson)
+            // console.log(this.inEditPerson)
             let postObjIsRight = true;
             let tablePostArr = [];
             this.$refs.editTable.getTableData().forEach(item => {

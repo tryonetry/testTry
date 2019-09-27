@@ -40,6 +40,7 @@
                       v-model="personBasicInfo.a0101"
                       @blur="regInput(personBasicInfo.a0101, 2, 40, null, '请输入正确的姓名', $event, 'a0101')"
                       ref="reqiuredList0"
+                      data-type="basicInfoRequire"
                     >{{personBasicInfo.a0101}}</a-input>
                   </td>
                   <td colspan="4">
@@ -57,6 +58,7 @@
                       v-show="operateStatusVal !== 2"
                       @blur="regInput(personBasicInfo.a0184, 15, 18,'testid', '请输入正确的身份证号', $event, 'a0184')"
                       ref="reqiuredList1"
+                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
                   <td colspan="2" rowspan="4">
@@ -96,6 +98,7 @@
                       v-model="personBasicInfo.a0117"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList3"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in nationalArr"
@@ -116,6 +119,7 @@
                       v-model="birthday"
                       @change="birthdayChange"
                       ref="reqiuredList4"
+                      data-type="basicInfoRequire"
                     />
                   </td>
                 </tr>
@@ -146,6 +150,7 @@
                       v-model="personBasicInfo.a0141"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList5"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in politicsStatusArr"
@@ -220,6 +225,7 @@
                       v-model="personBasicInfo.a0834"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList6"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in educationArr"
@@ -243,6 +249,7 @@
                       v-model="personBasicInfo.a0914"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList7"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in degreeArr"
@@ -266,6 +273,7 @@
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0888, 2, 20, null, '请输入正确的毕业院校', $event, 'a0888')"
                       ref="reqiuredList8"
+                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
                   <td colspan="2" v-show="operateStatusVal !== 2">
@@ -297,6 +305,7 @@
                       v-model="graduateDate"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList9"
+                      data-type="basicInfoRequire"
                     />
                   </td>
                   <td colspan="2">
@@ -314,6 +323,7 @@
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0824, 2, 20, null, '请输入正确的专业名称', $event, 'a0824')"
                       ref="reqiuredList10"
+                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
                   <td colspan="2">
@@ -331,6 +341,7 @@
                       v-model="personBasicInfo.a0827"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList11"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in professionalArr"
@@ -378,6 +389,7 @@
                       maxlength="40"
                       @blur="regInput(personBasicInfo.a0202a, 2, 40, null, '请输入正确的工作单位', $event, 'a0202a')"
                       ref="reqiuredList12"
+                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
                   <td colspan="2">参加工作年月</td>
@@ -409,6 +421,7 @@
                       v-model="personBasicInfo.a0202d"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList13"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in positionArr"
@@ -432,6 +445,7 @@
                       v-model="personBasicInfo.a0202c"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList14"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in workUnitArr"
@@ -457,6 +471,7 @@
                       v-model="personBasicInfo.a0202b"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList15"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in economicArr"
@@ -480,6 +495,7 @@
                       v-model="personBasicInfo.a0211"
                       v-show="operateStatusVal !== 2"
                       ref="reqiuredList16"
+                      data-type="basicInfoRequire"
                     >
                       <a-select-option
                         v-for="(item, index) in industryArr"
@@ -596,42 +612,42 @@
             <div id="workExperience" class="otherinfo">
               <p class="title">工作经历</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="workInitArr"  :loading="workTableLoading"></TableView>
+                <TableView :initArrData="workInitArr"  :loading="workTableLoading" ref='editTable1' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 3-教育经历 -->
             <div id="educationExperience" class="otherinfo">
               <p class="title">教育经历</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="eduInitArr" :loading="eduTableLoading"></TableView>
+                <TableView :initArrData="eduInitArr" :loading="eduTableLoading"  ref='editTable2' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 4-家庭情况 -->
             <div id="familySta" class="otherinfo">
               <p class="title">家庭情况</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="familyInitArr" :loading="familyTableLoading"></TableView>
+                <TableView :initArrData="familyInitArr" :loading="familyTableLoading"  ref='editTable3' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 5-奖惩历史 -->
             <div id="rewordsHistory" class="otherinfo">
               <p class="title">奖惩历史</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="rewordInitArr" :loading="rewordTableLoading"></TableView>
+                <TableView :initArrData="rewordInitArr" :loading="rewordTableLoading"  ref='editTable4' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 6-语言能力 -->
             <div id="languageAbility" class="otherinfo">
               <p class="title">语言能力</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="languageInitArr" :loading="languageTableLoading"></TableView>
+                <TableView :initArrData="languageInitArr" :loading="languageTableLoading"  ref='editTable5' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 7-培训经历 -->
             <div id="trainExperience" class="otherinfo">
               <p class="title">人员培训信息</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="trainerInitArr" :loading="trainerTableLoading"></TableView>
+                <TableView :initArrData="trainerInitArr" :loading="trainerTableLoading"  ref='editTable6' data-type="editTableRequire"></TableView>
               </div>
             </div>
             <!-- 8-专业与职业技术 -->
@@ -660,7 +676,7 @@
             <div id="archiveData" class="otherinfo">
               <p class="title">档案接转数据</p>
               <div class="tableViewsCon">
-                <TableView :initArrData="archiveInitArr" :loading="archiveTableLoading"></TableView>
+                <TableView :initArrData="archiveInitArr" :loading="archiveTableLoading"  ref='editTable7' data-type="editTableRequire"></TableView>
               </div>
             </div>
           </div>
@@ -2263,7 +2279,7 @@ export default {
     uploadPhoto(info) {
       //上传照片
       if (info.file.status === "done") {
-        console.log(info);
+        // console.log(info);
         let currResImgUrl = info.fileList,
           len = info.fileList.length;
         this.personBasicInfo.imgPath = currResImgUrl[len - 1].response;
@@ -2347,12 +2363,21 @@ export default {
       /**
        * 功能：1.查看必填项：如果有必填项为空则标红，且得到为空必填项长度requiredLen；否则必填项全填，requiredLen =0; 2.验证存档编号是否存在
        */
-      let tempRefsArr = [], requiredLen = 0;
+
+      //人员基本信息--不能为空, 可编辑表格必填项---不为空
+      let tempRefsArr = [], requiredLen = 0, tableRequireArr = [];
+
       for(let prop in this.$refs){
         if(this.$refs[prop].className != 'basicInfo'){
-          tempRefsArr.push(this.$refs[prop]);
+          if(this.$refs[prop].$el.dataset['type'] == 'basicInfoRequire'){
+            tempRefsArr.push(this.$refs[prop]);    //人员基本信息必填项--数组
+          }
+          if(this.$refs[prop].$el.dataset['type'] == 'editTableRequire'){
+            tableRequireArr.push(this.$refs[prop]);  //可编辑表格有必填--数组
+          }
         }
       }
+
       for(let i = 0; i < tempRefsArr.length; i ++){
         if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
@@ -2363,32 +2388,70 @@ export default {
         }
       }
 
-      if(!requiredLen){
-        if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
-          this.$http.fetchPost('informationPool@checkArchNumber.action',{
-              dc030001: this.archiveInitArr.tabledataArr[0].dc030001
-            }).then(res =>{
-              if(Number(res.code) === 0){
-                if(this.operateStatusVal === 3){
-                  //编辑状态
-                  this.$emit('OperateStatusFun', true);
-                  this.postOtherData();
-                } else{
-                  //添加状态
-                  this.$message.error('档案转接数据：存档编号已经存在，不能重复');
-                  this.$emit('OperateStatusFun', false);
-                }
-              } else {
-                //没重复
-                this.postOtherData();
-              }
-            }).catch(error => {
-              this.$message.error('抱歉，网络异常！');
-              this.$emit('OperateStatusFun', false);
-            });
-          } else{
-            this.postOtherData();
+      //可编辑表格--必填项遍历
+      let temptableRequireObj = {};
+      tableRequireArr.forEach((item, index) => {
+        let tempReCloumnArr = [];   //当前可编辑表--必填列--数组
+        item.initArrData.columnsArr.forEach(el => {
+          if(el.slots){
+            tempReCloumnArr.push(el.key);
           }
+        });
+        if(item.initArrData.tabledataArr.length > 0){
+          tempReCloumnArr.forEach(elem => {
+            item.initArrData.tabledataArr.forEach(element => {
+              for(let prop in element){
+                if(elem == prop){
+                  if(typeof(element[prop]) == "object") {
+                    if(!element[prop].name){
+                       temptableRequireObj[index] = false;
+                    }
+                  } else{
+                    if(!element[prop]){
+                       temptableRequireObj[index] = false;
+                    }
+                  }
+                }
+              }
+            });
+          });
+        }
+      });
+      
+     
+
+      if(!requiredLen){
+        if(Object.keys(temptableRequireObj).length  > 0){
+          this.$message.warning('必填项不能为空!');
+          document.getElementsByClassName("right_container")[0].scrollTop = tableRequireArr[Object.keys(temptableRequireObj)[0]].$el.offsetTop - 110;
+        } else{
+          if(this.archiveInitArr && this.archiveInitArr.tabledataArr && this.archiveInitArr.tabledataArr.length > 0){
+            this.$http.fetchPost('informationPool@checkArchNumber.action',{
+                dc030001: this.archiveInitArr.tabledataArr[0].dc030001
+              }).then(res =>{
+                if(Number(res.code) === 0){
+                  if(this.operateStatusVal === 3){
+                    //编辑状态
+                    this.$emit('OperateStatusFun', true);
+                    this.postOtherData();
+                  } else{
+                    //添加状态
+                    this.$message.error('档案转接数据：存档编号已经存在，不能重复');
+                    this.$emit('OperateStatusFun', false);
+                  }
+                } else {
+                  //没重复
+                  this.postOtherData();
+                }
+              }).catch(error => {
+                this.$message.error('抱歉，网络异常！');
+                this.$emit('OperateStatusFun', false);
+              });
+            } else{
+              this.postOtherData();
+            }
+        }
+        
       } else{
         this.$message.warning('人员基本信息必填项不能为空!');
       }
@@ -2469,6 +2532,7 @@ export default {
     anchorClick(anchorId, indexVal) {
       //左侧锚点点击
       this.currClickAnchor = indexVal;
+      // console.log(this.currClickAnchor);
       let anchor = document.getElementById(anchorId);
       document.getElementsByClassName("right_container")[0].scrollTop =
         anchor.offsetTop - 60;
@@ -2484,16 +2548,18 @@ export default {
           item.idscrollTop = document.getElementById(item.value).offsetTop;
         });
       });
+      
       let tempAnchor = 0;
       this.anchorList.forEach((el, index) => {
-        if (currScrollTopVal >= this.anchorList[index].idscrollTop) {
-          if (
-            this.anchorList[index + 1] &&
-            currScrollTopVal <= this.anchorList[index + 1].idscrollTop
-          ) {
-            tempAnchor = index + 1;
-          } else {
-            tempAnchor = this.anchorList.length;
+        if(currScrollTopVal < this.anchorList[1].idscrollTop - 100){
+          tempAnchor = 0;
+        } else{
+          if (currScrollTopVal >= this.anchorList[index].idscrollTop) {
+            if (this.anchorList[index + 1] && currScrollTopVal <= this.anchorList[index + 1].idscrollTop) {
+              tempAnchor = index + 1;
+            } else {
+              tempAnchor = this.anchorList.length;
+            }
           }
         }
       });
@@ -2559,7 +2625,7 @@ export default {
       handler(newVal) {
         this.personBasicInfo = {...this.addInitPersonBasicInfo};
       }
-    }
+    },
   },
   destroyed(){
     window.removeEventListener('scroll', this.scrollAddListening, true);

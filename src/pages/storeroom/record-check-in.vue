@@ -639,8 +639,13 @@ export default {
        */
       this.operateStatus = statusVal;
       this.currentRowData = editDataObj;   //当前行数据
+
       if(editDataObj){
         //档案入库操作
+        this.positionAdjustForm.formInputs.forEach(element => {
+          element.val = void 0;
+          element.status = '';
+        });
         this.getPositionForm(editDataObj.key);
       } else{
         if (statusVal == 1) {
@@ -661,6 +666,7 @@ export default {
             if (tempLen == this.checkTableData.length) {
               this.batchAdjustFrom.formInputs.forEach(element => {
                 element.val = void 0;
+                element.status = '';
                 if(element.key === 'whId'){
                   element.children = this.roomDataArr;
                 }
@@ -859,60 +865,65 @@ export default {
         formDataObj['resultData']
       );
       if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
-        if(this.operateStatus === 1){
-          //位置调整
-          currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000, 'waId': this.tempWaId})
-          let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
-          this.$http.fetchPost('archDocument@editShelvesInfo.action', newCurrDataObj).then(res => {
-            if(Number(res.code) === 0){
-              this.$message.success('位置调整成功!');
-              this.getTableData(this.tempCondition, 1, 10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else{
-              this.$message.error("抱歉，操作失败，请刷新后重试！");
-            }
-          }).catch(error => {
-            this.$message.error("抱歉，网络异常！");
-          })
-        } else if(this.operateStatus === 3){
-          //档案入库
-          currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000})
-          let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
-          this.$http.fetchPost('archDocument@setShelvesInfo.action', newCurrDataObj).then(res => {
-            if(Number(res.code) === 0){
-              this.$message.success('档案入库成功！');
-              this.getTableData(this.tempCondition, 1, 10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else{
-              this.$message.error('抱歉，操作失败，请刷新后重试！')
-            }
-          }).catch(error => {
-            this.$message.error("抱歉，网络异常！");
-          })
+        if(Number(this.freeCapacity) !== 0){
+          //判断空闲容量部位0
+          if(this.operateStatus === 1){
+            //位置调整
+            currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000, 'waId': this.tempWaId})
+            let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
+            this.$http.fetchPost('archDocument@editShelvesInfo.action', newCurrDataObj).then(res => {
+              if(Number(res.code) === 0){
+                this.$message.success('位置调整成功!');
+                this.getTableData(this.tempCondition, 1, 10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else{
+                this.$message.error("抱歉，操作失败，请刷新后重试！");
+              }
+            }).catch(error => {
+              this.$message.error("抱歉，网络异常！");
+            })
+          } else if(this.operateStatus === 3){
+            //档案入库
+            currObjData = Object.assign({}, currObjData, {'a01000': this.tempA01000})
+            let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
+            this.$http.fetchPost('archDocument@setShelvesInfo.action', newCurrDataObj).then(res => {
+              if(Number(res.code) === 0){
+                this.$message.success('档案入库成功！');
+                this.getTableData(this.tempCondition, 1, 10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else{
+                this.$message.error('抱歉，操作失败，请刷新后重试！')
+              }
+            }).catch(error => {
+              this.$message.error("抱歉，网络异常！");
+            })
+          } else{
+            //批量分配档案位置
+            currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr, 'lableNu': ''});
+            let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
+            this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
+              if(Number(res.code)=== 0){
+                this.$message.success('批量分配档案操作成功！');
+                this.getTableData(this.tempCondition, 1, 10);
+                setTimeout(() => {
+                  this.visible = false;
+                  this.confirmLoading = false;
+                }, 2000);
+              } else{
+                this.$message.error('抱歉,操作失败，请刷新后重试！');
+              }
+            }).catch(error => {
+              this.$message.error('抱歉,网络异常');
+            })
+          }
         } else{
-          //批量分配档案位置
-          currObjData = Object.assign({}, currObjData, {'idsStr': this.batchDistributeIdStr, 'lableNu': ''});
-          let newCurrDataObj = this.getWhdCodeFun(currObjData, formDataObj['resultData']);
-          this.$http.fetchPost('archDocument@batchSetShelvesInfo.action', newCurrDataObj).then(res => {
-            if(Number(res.code)=== 0){
-              this.$message.success('批量分配档案操作成功！');
-              this.getTableData(this.tempCondition, 1, 10);
-              setTimeout(() => {
-                this.visible = false;
-                this.confirmLoading = false;
-              }, 2000);
-            } else{
-              this.$message.error('抱歉,操作失败，请刷新后重试！');
-            }
-          }).catch(error => {
-            this.$message.error('抱歉,网络异常');
-          })
+          this.$message.warning('当前空闲容量为0，请重新选择区域！');
         }
       }
     },

@@ -302,7 +302,7 @@ export default {
               a0101: element.a0101,
               a0104: element.a0104 == "1" ? "男" : "女",
               a0184: element.a0184,
-              archivesIdentity: element.archivesIdentity == "1" ? "干部" : "工人",
+              archivesIdentity: element.archivesIdentity ? (element.archivesIdentity == "1" ? "干部" : "工人") : '',
               shelvesNo: (element.whdArea ? element.whdArea : '') + '区' + (element.waColumnCode ? element.waColumnCode : '')  + (element.waLayerCode ? element.waLayerCode : '') + '排' + (element.orderNo ? element.orderNo : '') + '号',
               inwareOperatorName: element.inwareOperatorName,
               archHandover: element.archHandover,

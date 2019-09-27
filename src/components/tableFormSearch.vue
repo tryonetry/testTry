@@ -291,7 +291,7 @@ export default {
 
     // 清除input框
     emptyInput(item){
-      console.log(item)
+      // console.log(item)
     },
 
     //table上面Form查询
@@ -559,7 +559,7 @@ export default {
 
                     //whdAreaTowhdCode：通过库房的id和分区数找密集架
                     else if(resultObj.operate && resultObj.operate === 'whdAreaTowhdCode'){
-                      console.log(resultObj);
+                      // console.log(resultObj);
                       let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
                       let tempResultArr = [];
                       this.$http.fetchPost('archDocument@getWhdList.action',{
@@ -921,7 +921,7 @@ export default {
     // 上传提示
     uploadChange(info){
       if (info.file.status !== 'uploading') {
-        console.log(info.file, info.fileList);
+        // console.log(info.file, info.fileList);
       }
       if (info.file.status === 'done') {
         this.$message.success(`${info.file.name} 上传成功！`);

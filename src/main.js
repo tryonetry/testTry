@@ -26,6 +26,9 @@ Vue.use(antd);
 Vue.use(print);
 Vue.use(VueParticles);
 Vue.config.productionTip = false;
+Vue.prototype.$message.config({
+  maxCount: 1
+});
 
 Vue.use(VueAMap);
 

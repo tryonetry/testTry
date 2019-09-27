@@ -312,7 +312,7 @@ export default {
             });
           }
 
-          console.log(_this.chartsDataObj)
+          // console.log(_this.chartsDataObj)
           
           _this.drawChartFun(_this.chartsDataObj);
         } else{
@@ -333,7 +333,7 @@ export default {
         startTime: (!condition || !condition.startDate) ? '' : condition.startDate,
         endTime: (!condition || !condition.endDate) ? '' : condition.endDate,
       }).then(res => {
-        console.log(res);
+        // console.log(res);
         if(Number(res.code) === 0){
           this.UpdateTableDataFun(this.tempBrowse, res);
         } else{

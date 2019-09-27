@@ -69,7 +69,7 @@ export default {
        handler:function(newVal){
           this.treeDataObj = newVal;
           if(newVal.checkStrictly){
-            console.log(1);
+            // console.log(1);
             this.checkStrictly = newVal.checkStrictly;
           }
           if(newVal.dataArr.length > 0){
