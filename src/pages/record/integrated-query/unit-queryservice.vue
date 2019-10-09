@@ -688,7 +688,7 @@ export default {
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
         // console.log(this.companyDataArr)
-        this.getTableData(null,1,10);
+        // this.getTableData(null,1,10);
         // 生成导出列的Json对象 和 生成选择的导出列的 options
         let tempJson = {};
         let tempSelectOptions = [];

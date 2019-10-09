@@ -339,6 +339,8 @@ export default {
                     // console.log(end);
                     _this.loading = false;
                 })
+            }else{
+                _this.$message.warning("请至少选择一条数据进行操作");
             }
         },
 
@@ -350,7 +352,7 @@ export default {
         const _this = this;
 
         // 初始化数据
-        this.getTableData(null,1,10);
+        // this.getTableData(null,1,10);
 
         // 查询经办人
         this.$http.fetchGet('fileConnect@archTurnOverList.action',{})
