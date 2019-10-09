@@ -485,7 +485,7 @@ export default {
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getAgentOptions();
-    this.getTableData(null, 1, 10);
+    //this.getTableData(null, 1, 10);
     let dpiArr = this.utils.js_getDPI();
     this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);
   },

@@ -2340,7 +2340,8 @@ export default {
               }
               //通过id验证身份证号码---添加/编辑的分别验证
               this.$http.fetchPost('informationPool@checkPerson.action', {
-                a0184: val
+                a0184: val,
+                a01000: this.currRowDataId
               }).then(res => {
                 if(Number(res.code) === 0){
                   //重复：已经存在

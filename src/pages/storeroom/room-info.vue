@@ -429,10 +429,10 @@ export default {
               if (Number(res.code) === 0) {
                 this.$message.success("添加成功");
                 this.getTableData(this.tempCondition, 1, 10);
-                setTimeout(() => {
-                  this.visible = false;
-                  this.confirmLoading = false;
-                }, 2000);
+                this.visible = false;
+                this.confirmLoading = false;
+              } else if(Number(res.code) === 2){
+                this.$message.warning('库房编号已存在，请勿重复添加！');
               } else {
                 this.$message.error("添加失败");
               }

@@ -338,7 +338,7 @@ export default {
           limit: limitNum,
           whdCode: !condition || !condition.whdCode ? "" : condition.whdCode,
           whdName: !condition || !condition.whdName ? "" : condition.whdName,
-          whId: !condition || !condition.whId ? "" : condition.whId,
+          whId: !condition || !condition.whId ? "001" : condition.whId,
           whAreaName:
             !condition || !condition.whAreaName ? "" : condition.whAreaName
         })
@@ -463,6 +463,9 @@ export default {
           whdGridNum: "",
           whdDesc: ""
         };
+        this.roomShelfForm.formInputs.forEach(el => {
+          el.status = '';
+        });
         if (this.selectTreeNode) {
           if (this.selectTreeNode.pId.length > 10) {
             this.visible = true;
@@ -504,10 +507,10 @@ export default {
               if (Number(res.code) === 0) {
                 this.$message.success("添加成功！");
                 this.getTableData(this.tempCondition, 1,10);
-                setTimeout(() => {
-                  this.visible = false;
-                  this.confirmLoading = false;
-                }, 2000);
+                this.visible = false;
+                this.confirmLoading = false;
+              } else if(Number(res.code) === 2){
+                this.$message.warning('同一分区下密集架名称和编号不能重复！');
               } else {
                 this.$message.error("添加失败！");
               }
