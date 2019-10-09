@@ -54,8 +54,8 @@
         <div slot="title" class="roomModalTitleSlot">
           <p>{{operateStatus== 1? '添加信息': (operateStatus==2? '浏览信息' :'编辑信息')}}</p>
           <span>{{currentRowData && currentRowData.a0101}}</span>
-          <span style="margin-left: 30px;">籍贯：{{currentRowData && currentRowData.a0111}}</span>
-          <span style="margin-left: 30px;">学历：{{currentRowData && this.conVersionData(currentRowData.a0914)}}</span>
+          <span style="margin-left: 30px;" v-if="operateStatus != 1">籍贯：{{currentRowData && currentRowData.a0111}}</span>
+          <span style="margin-left: 30px;" v-if="operateStatus != 1">学历：{{currentRowData && this.conVersionData(currentRowData.a0914)}}</span>
         </div>
 
 

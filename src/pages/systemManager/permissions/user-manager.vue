@@ -93,10 +93,10 @@ export default {
           formInputs: [
             //input
             {
-              title: "用户名称",
+              title: "用户名",
               type: "text",
               required: false,
-              placeholder: "请输入用户名称",
+              placeholder: "请输入用户名",
               key: "userName",
               name: "userName",
               val: void 0,
@@ -133,7 +133,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "用户姓名",
+            title: "用户名",
             dataIndex: "userName",
             key: "userName",
             width: 250,
@@ -188,7 +188,7 @@ export default {
               colWidth:[12,24],
           },
           {
-              title: '用户姓名',
+              title: '用户名',
               type: "text",
               required: true,
               placeholder: "请输入用户名",
