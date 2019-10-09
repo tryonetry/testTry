@@ -420,7 +420,7 @@ export default {
           tempTableData.forEach((element, index) => {
             this.initArr.tabledataArr.push({
               num: (pageNum - 1) * limitNum + index + 1,
-              key: element.reviewId,
+              key: element.id,
               a0100a: element.a0100a,
               a0101: element.a0101,
               a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
@@ -428,8 +428,8 @@ export default {
               shelvesNo: element.shelvesNo,
               applyName: element.applyName,
               applyDate: element.applyDate,
-              outwareOperatorName: element.outwareOperatorName,
-              outwareDesc: element.outwareDesc,
+              outwareOperatorName: element.operatorName,
+              outwareDesc: element.outwareDesc
             })
           });
         } else{

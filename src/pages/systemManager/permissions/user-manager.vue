@@ -498,6 +498,7 @@ export default {
         }).then(res => {
           if(Number(res.code) === 0){
             this.$message.success("删除成功!");
+            this.getTableData(this.tempCondition,1,10);
           }else{
             this.$message.warning("抱歉,删除失败,请重试");
           }
