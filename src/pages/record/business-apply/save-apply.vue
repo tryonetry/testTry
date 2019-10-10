@@ -318,7 +318,10 @@ export default {
             this.reviewModal = true;
             // console.log(currRowdata);
             this.baseData.forEach(item => {
-                Object.assign(item,{val:currRowdata[item.name]})
+                if(item.name === "agent"){
+                    Object.assign(item,{val:currRowdata[item.name] === '1' ? '男' : (currRowdata[item.name] === '2' ? '女' : (currRowdata[item.name] === '9' ? '未说明的性别' : '未知的性别'))});
+                }
+                Object.assign(item,{val:currRowdata[item.name]});
             });
             
         },
