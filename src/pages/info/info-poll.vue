@@ -387,7 +387,7 @@ export default {
                 num: (pageNum - 1) * limitNum + index + 1, //序号
                 a0101: element.a0101, //姓名
                 a0107: element.a0107, //出生日期
-                a0104: element.a0104 === "1" ? "男" : "女", //性别
+                a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')), //性别
                 a0888: element.a0888, //毕业院校
                 a0134: element.a0134, //参加工作日期
                 a0202a: element.a0202a, //工作单位名称
@@ -480,7 +480,19 @@ export default {
         }
       } else if (statusVal == 2) {
         //浏览
+        //当点击浏览--热度加1；刷新表格数据
+        this.$http.fetchPost('informationPool@a01Browse.action', {
+          a01000: data.key,
+          pageView: Number(data.pageView) + 1
+        }).then(res => {
+          //console.log(res);
+          if(Number(res.code) === 0){
+            this.getTableData(this.tempCondition, this.tempPageSize, 10);
+          }
+        })
+        
         this.showModalFun();
+        
       } else {
         //编辑
         this.showModalFun();

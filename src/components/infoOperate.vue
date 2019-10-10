@@ -75,7 +75,7 @@
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
-                    >{{personBasicInfo.a0104==='1'?'男': '女'}}</span>
+                    >{{personBasicInfo.a0104 === '1' ? '男' : (personBasicInfo.a0104 === '2' ? '女' : (personBasicInfo.a0104 === '9' ? '未说明的性别' : '未知的性别'))}}</span>
                     <a-radio-group
                       :options="genderOptions"
                       v-model="personBasicInfo.a0104"

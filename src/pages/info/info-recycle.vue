@@ -232,7 +232,7 @@ export default {
                 key: element.a01000,
                 num: (pageNum - 1) * limitNum + index + 1, //序号
                 a0101: element.a0101,
-                a0104: element.a0104 === "1" ? "男" : "女",
+                a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
                 a0107: element.a0107,
                 a0131: element.a0131,
                 a0111: element.a0111,
