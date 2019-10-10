@@ -284,7 +284,7 @@
                         :showUploadList="false"
                         :beforeUpload="beforeUpload"
                         @change="uploadPhoto"
-                        action="http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
+                        action="http://192.168.1.222:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
                       >
                         <a-button type="primary">上传照片</a-button>
                       </a-upload>
@@ -1500,7 +1500,7 @@ export default {
           { 
             dataIndex: "dc030001", 
             key: "dc030001",
-            width: 250,
+            width: 200,
             slots: { title: '存档编号_requireTitle' },
             scopedSlots: { customRender: "dc030001_editInput" } 
           },
@@ -1508,13 +1508,13 @@ export default {
             title: '索引号',
             dataIndex: "a0002", 
             key: "a0002",
-            width: 150,
+            width: 100,
             scopedSlots: { customRender: "a0002_editInput" } 
           },
           { 
             dataIndex: "dc030003", 
             key: "dc030003",
-            width: 200,
+            width: 150,
             slots: { title: '存档状态_requireTitle' },
             scopedSlots: { customRender: "dc030003_editSelectInput" },
             itemChildren:[],
@@ -1522,7 +1522,7 @@ export default {
           { 
             dataIndex: "dc030004", 
             key: "dc030004",
-            width: 200,
+            width: 150,
             slots: { title: '存档性质_requireTitle' },
             scopedSlots: { customRender: "dc030004_editSelectInput" },
             itemChildren:[]
@@ -1545,7 +1545,7 @@ export default {
           {  
             dataIndex: "a3803", 
             key: "a3803",
-            width: 300,
+            width: 400,
             slots: { title: '转入原因_requireTitle' },
             scopedSlots: { customRender: "a3803_editSelectInput" },
             itemChildren:[]  
@@ -1561,7 +1561,7 @@ export default {
             title: '原存档单位行政区划',
             dataIndex: "dc030009", 
             key: "dc030009",
-            width: 350,
+            width: 300,
             scopedSlots: { customRender: "dc030009_editAddressInput" },
           },
           { 
