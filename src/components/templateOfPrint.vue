@@ -71,7 +71,11 @@ export default {
                         "overflow":"overflow",
                     };
                     for(let styleName in mapObj){
-                        item.style[styleName] = cssObj[mapObj[styleName]];
+                        if(styleName === "font-size"){
+                            item.style[styleName] = Number(cssObj[mapObj[styleName]].substr(0,cssObj[mapObj[styleName]].length - 2)) - 4 + "px";
+                        }else{
+                            item.style[styleName] = cssObj[mapObj[styleName]];
+                        }
                     }
                 // }
             })
