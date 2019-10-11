@@ -2317,9 +2317,9 @@ export default {
       // let flag = true;
       if (val) {
         if (regways) {
+          let regResult = this.regs[regways](val);
           if(regways === 'testid'){
             //身份证重复验证
-            let regResult = this.regs[regways](val);
             if (regResult === 0) {
               this.$message.error(tip);
             } else{
@@ -2352,6 +2352,10 @@ export default {
                   this.$message.error('抱歉，网络异常！');
                 })
               }
+            }
+          } else{
+            if (regResult === 0) {
+              this.$message.error(tip);
             }
           }
         } else {
