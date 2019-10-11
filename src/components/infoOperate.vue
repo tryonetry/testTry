@@ -2338,18 +2338,20 @@ export default {
                 this.birthday = moment(new Date(), 'YYYY-MM-DD');
                 this.$set(this.personBasicInfo, 'a0104', '1')
               }
-              //通过id验证身份证号码---添加/编辑的分别验证
-              this.$http.fetchPost('informationPool@checkPerson.action', {
-                a0184: val,
-                a01000: this.currRowDataId
-              }).then(res => {
-                if(Number(res.code) === 0){
-                  //重复：已经存在
-                  this.$message.error('该人员已经存在，请勿重复添加');
-                }
-              }).catch(error => {
-                this.$message.error('抱歉，网络异常！');
-              })
+              if(Number(val)){
+                //通过id验证身份证号码---添加/编辑的分别验证: 18/15个0  不参与验证
+                this.$http.fetchPost('informationPool@checkPerson.action', {
+                  a0184: val,
+                  a01000: this.currRowDataId
+                }).then(res => {
+                  if(Number(res.code) === 0){
+                    //重复：已经存在
+                    this.$message.error('该人员已经存在，请勿重复添加');
+                  }
+                }).catch(error => {
+                  this.$message.error('抱歉，网络异常！');
+                })
+              }
             }
           }
         } else {
