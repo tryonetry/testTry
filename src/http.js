@@ -3,7 +3,7 @@ import qs from 'qs'
 
 // axios.defaults.timeout = 20000; 
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-axios.defaults.baseURL = 'http://192.168.1.222:8181/hasngcadrefile/';   //配置接口地址
+axios.defaults.baseURL = 'http://192.168.1.215:8181/hasngcadrefile/';   //配置接口地址
 axios.defaults.withCredentials=true; // 带cookie
 
 axios.interceptors.request.use(

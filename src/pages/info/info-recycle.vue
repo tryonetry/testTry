@@ -165,8 +165,8 @@ export default {
           },
           {
             title: "工作单位",
-            dataIndex: "a0824",
-            key: "a0824",
+            dataIndex: "a0202a",
+            key: "a0202a",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -239,6 +239,7 @@ export default {
                 a0888: element.a0888,
                 a3707c: element.a3707c,
                 a0824: element.a0824,
+                a0202a: element.a0202a,
                 uLastModifiedDate: element.uLastModifiedDate,
                 uLastModifieder: element.uLastModifieder
               });

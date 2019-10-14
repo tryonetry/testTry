@@ -47,7 +47,7 @@ export default {
             currentList:[],
            
             initParamsObj: {
-                host: '192.168.1.222',   //主机地址
+                host: '192.168.1.215',   //主机地址
                 port: '7777',   //主机服务端口
                 token: 'c179b71f839643899bce954235b0e394',  //授权码 
                 appname: 'arch',   //应用ID

@@ -523,64 +523,74 @@ export default {
     },
 
     treeNodeHandle(handleType){
-      // console.log(this.treeNodeObj);
+      //console.log(this.treeDataObj.dataArr);
       this.resetAddForm();
       // handleType 0-添加 1-编辑 2-删除 3-分配人员 4-授权
-      if(this.treeNodeObj && this.treeNodeObj.key){
-        switch (handleType) {
-          case 0:
-            this.addEditModal = true;
-            this.addEditModalTitle = "添加用户组";
-            this.modalIsInAdd = true;
-            this.userGroupName = "";
-            this.addFormData.formInputs[0].isHide = false;
-            this.addFormData.formInputs[1].isHide = true;
-            this.addFormData.formInputs[0].val = "";
-            break;
-          case 1:
-            this.addEditModal = true;
-            this.modalIsInAdd = false;
-            if(this.treeNodeObj.isLeaf){
-              this.addEditModalTitle = "用户编辑";
-              this.addFormData.formInputs[0].isHide = true;
-              this.addFormData.formInputs[1].isHide = false;
-              this.addFormData.formInputs[1].val = this.treeNodeObj.pId;
-            }else{
-              this.addEditModalTitle = "编辑用户组";
+      if(this.treeDataObj.dataArr.length > 0){
+        if(this.treeNodeObj && this.treeNodeObj.key){
+          switch (handleType) {
+            case 0:
+              this.addEditModal = true;
+              this.addEditModalTitle = "添加用户组";
+              this.modalIsInAdd = true;
+              this.userGroupName = "";
               this.addFormData.formInputs[0].isHide = false;
               this.addFormData.formInputs[1].isHide = true;
-              this.addFormData.formInputs[0].val = this.treeNodeObj.title;
-            }
-            break;
-          case 2:
-            this.$http.fetchPost("userGroup@deleteUserGroupById.action",{
-              id:this.treeNodeObj.key
-            }).then(res => {
-              if(Number(res.code) === 0){
-                this.$message.success("删除成功!");
-                this.initFetch();
-                this.resetDisabled();
-                this.treeNodeObj = null;
+              this.addFormData.formInputs[0].val = "";
+              break;
+            case 1:
+              this.addEditModal = true;
+              this.modalIsInAdd = false;
+              if(this.treeNodeObj.isLeaf){
+                this.addEditModalTitle = "用户编辑";
+                this.addFormData.formInputs[0].isHide = true;
+                this.addFormData.formInputs[1].isHide = false;
+                this.addFormData.formInputs[1].val = this.treeNodeObj.pId;
               }else{
-                this.$message.warning("删除失败,请重试");
+                this.addEditModalTitle = "编辑用户组";
+                this.addFormData.formInputs[0].isHide = false;
+                this.addFormData.formInputs[1].isHide = true;
+                this.addFormData.formInputs[0].val = this.treeNodeObj.title;
               }
-            }).catch(err => {
-              this.$message.error('抱歉，网络异常，请稍后重试！');
-            })
-            break;
-          case 3:
-            this.divisionVisiable = true;
-            this.getDivisionTableData(null,1,99999);
-            break;
-          case 4:
-            this.permissionVisiable = true;
-            this.getPermissionTableData(null,1,99999);
-            break;
-          default:
-            break;
+              break;
+            case 2:
+              this.$http.fetchPost("userGroup@deleteUserGroupById.action",{
+                id:this.treeNodeObj.key
+              }).then(res => {
+                if(Number(res.code) === 0){
+                  this.$message.success("删除成功!");
+                  this.initFetch();
+                  this.resetDisabled();
+                  this.treeNodeObj = null;
+                }else{
+                  this.$message.warning("删除失败,请重试");
+                }
+              }).catch(err => {
+                this.$message.error('抱歉，网络异常，请稍后重试！');
+              })
+              break;
+            case 3:
+              this.divisionVisiable = true;
+              this.getDivisionTableData(null,1,99999);
+              break;
+            case 4:
+              this.permissionVisiable = true;
+              this.getPermissionTableData(null,1,99999);
+              break;
+            default:
+              break;
+          }
+        }else{
+          this.$message.warning("请选择需要操作的树节点");
         }
-      }else{
-        this.$message.warning("请选择需要操作的树节点");
+      } else{
+        this.addEditModal = true;
+        this.addEditModalTitle = "添加用户组";
+        this.modalIsInAdd = true;
+        this.userGroupName = "";
+        this.addFormData.formInputs[0].isHide = false;
+        this.addFormData.formInputs[1].isHide = true;
+        this.addFormData.formInputs[0].val = "";
       }
     },
 
@@ -688,10 +698,10 @@ export default {
 
       // userGroup@insertUserGroup.action ugCode
       if(this.modalIsInAdd){
-
+        console.log(result);
         // 添加
         this.$http.fetchPost("userGroup@insertUserGroup.action",{
-          ugCode:this.treeNodeObj.key,
+          ugCode: this.treeNodeObj && this.treeNodeObj.key ? this.treeNodeObj.key : 0,
           ...result.postObj, //ugName
         }).then(res => {
           if(Number(res.code) === 0){

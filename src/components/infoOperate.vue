@@ -284,7 +284,7 @@
                         :showUploadList="false"
                         :beforeUpload="beforeUpload"
                         @change="uploadPhoto"
-                        action="http://192.168.1.222:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
+                        action="http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
                       >
                         <a-button type="primary">上传照片</a-button>
                       </a-upload>
@@ -2630,7 +2630,9 @@ export default {
     ramdomKey: {
       immediate: true,
       handler(newVal) {
-        this.personBasicInfo = {...this.addInitPersonBasicInfo};
+        if(this.operateStatusVal === 1){
+          this.personBasicInfo = {...this.addInitPersonBasicInfo};
+        }
       }
     },
   },
