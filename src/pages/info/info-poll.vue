@@ -340,7 +340,7 @@ export default {
     },
   },
   created() {
-    this.getTableData(null, this.tempPageSize, 10);
+    //this.getTableData(null, this.tempPageSize, 10);
   },
   computed: {
     checkTableData: function() {
