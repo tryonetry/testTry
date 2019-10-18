@@ -137,7 +137,9 @@
     <!-- 内容 -->
     <a-layout>
       <!-- 左侧栏 -->
-      <a-layout-sider collapsible v-if="currentMainIndex !== 2 && currentMainIndex !== 3" v-model="collapsed" width="200" style="background: #f0f2f5;">
+      <!-- currentMainIndex !== 2 && currentMainIndex !== 3 -->
+      
+      <a-layout-sider collapsible v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'" v-model="collapsed" width="200" style="background: #f0f2f5;">
         <a-menu
           mode="inline"
           :defaultSelectedKeys="submenuDefaultSelect"
@@ -181,7 +183,7 @@
         </a-menu>
       </a-layout-sider>
       <!-- 内容栏 -->
-      <a-layout :style="currentMainIndex !== 2 && currentMainIndex !== 3 ? 'padding: 0 5px 24px' : ''">
+      <a-layout :style="isHasNavPath !== '/analysis' && isHasNavPath !== '/report' ? 'padding: 0 5px 24px' : ''">
         <!-- 面包屑 -->
         <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="currentMainIndex !== 2 && currentMainIndex !== 3">
           <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>
@@ -219,6 +221,7 @@ export default {
       collapsed: false,  
       menuId: "",
       currentMainIndex:0, //当前顶部 index
+      isHasNavPath: null,  //有无左侧导航栏--path--大数据分析，流动人才报告
       clicked: false,
       hovered: false,
       changePswVisiable:false, //修改密码弹层显示
@@ -264,6 +267,7 @@ export default {
     this.getMenuData();
     this.currentPath = this.$route.path;
     // this.routeChange(this.currentPath);
+    this.isHasNavPath = this.$route.path;
     
     
   },
@@ -532,6 +536,7 @@ export default {
       this.menuDefaultSelect = [key];
       // this.menuId = key;
       this.currentMainIndex = index;
+      this.isHasNavPath = path;
 
       // 获取sessionStorage中的值
       if (sessionStorage.getItem(currId)) {

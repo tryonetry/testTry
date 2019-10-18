@@ -1,4 +1,4 @@
-<!-- template -->
+<!-- template：该模块当前目录下删除；转到：档案库房管理---档案查(借)阅服务部分 -->
 <template>
   <div class="outer">
     <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable">

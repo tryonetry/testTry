@@ -397,7 +397,6 @@ export default {
                 a0111: element.a0111,
                 a0824: element.a0824,
                 a0834: element.a0834,
-                a0888: element.a0888,
                 a0131: element.a0131,
                 imgPath: element.imgPath,
                 a0914: element.a0914

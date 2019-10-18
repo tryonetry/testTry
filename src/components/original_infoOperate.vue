@@ -271,7 +271,7 @@
                         :showUploadList="false"
                         :beforeUpload="beforeUpload"
                         @change="uploadPhoto"
-                        action = "http://192.168.1.222:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
+                        action = "http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
                       >
                         <a-button type="primary">上传照片</a-button>
                         
