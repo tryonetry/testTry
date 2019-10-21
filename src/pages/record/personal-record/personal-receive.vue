@@ -55,7 +55,7 @@ export default {
       // console.log(reultFormData)
       if(reultFormData.isRight){
         this.confirmLoading = true;
-        this.$http.fetchPost('fileConnect@insertPersonalArch.action',{
+        this.$http.fetchPost('personalArch@insertPersonalArch.action',{
           ...reultFormData.postObj,
         })
         .then(res => {
