@@ -582,6 +582,7 @@ export default {
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 
 .viewContent {
@@ -591,7 +592,6 @@ export default {
 
 .noviewContent {
   width: 100%;
-  overflow: auto;
 }
 .tableLink {
   color: #2d8cf0;

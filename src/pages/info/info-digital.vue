@@ -1,6 +1,6 @@
 <template>
   <div class="outer">
-    <TableView :totalCount="tableTotalNum" :initArrData="initArr" @searchTable="getTableData">
+    <TableView :totalCount="tableTotalNum" :initArrData="initArr" @searchTable="getTableData" :loading="tableLoading">
       <div slot="tableAction" slot-scope="slotPropsData">
         <a href="javascript:;" class="primaryBtnColor" @click="openModel('directoryModalState',slotPropsData.currRowdata)">档案目录</a>
         <!-- <a href="javascript:;" class="infoBtnColor">档案编辑</a> -->
@@ -151,6 +151,7 @@ export default {
         tabledataArr: [],
       },
       tableTotalNum:0,
+      tableLoading: false,
       // 弹框状态
       directoryModalState:false,
       // directoryModalConfirm:false,
@@ -163,15 +164,28 @@ export default {
   },
   created(){
     this.initArr.formData.formInputs[1].children = this.treeData;
-    this.getTableData(null,1,10);
+    //this.getTableData(null,1,10);
+  },
+  watch: {
+    treeData: {
+      immediate: true,
+      handler(newVal, oldVal){
+        if(newVal && newVal.length > 0){
+          this.initArr.formData.formInputs[1].children = this.treeData;
+        }
+      }
+    }
   },
   computed:{
       treeData:function(){
-        return this.$store.getters.getInfoPollTreeData
+        if(this.$store.getters.getInfoPollTreeData){
+          return this.$store.getters.getInfoPollTreeData
+        } else{
+          return null;
+        }
       },
   },
   methods: {
-
     getTableData(condition, pageNum, limitNum) {
       /***
        * 功能：点击查询按钮，根据子组件返回的结果重新获取table数据
@@ -179,44 +193,40 @@ export default {
        *  */
       // console.log(condition);
       const _this = this;
-      this.$http.fetchGet('digitalArchives@personnelList.action',{
-        page:pageNum,
-        limit:limitNum,
-        name:(!condition || !condition.name) ? '' : condition.name,
-        nodeId:(!condition || !condition.organ) ? '' : condition.organ,
-        orgtype:(!condition || !condition.organ) ? '' : condition.organ.length > 10 ? "1":"0",  // 机构 为1 非机构节点为 0
-      }).then((res)=>{
-        if(Number(res.code) === 0){
-          // 整理数据
-          this.initArr.tabledataArr = [];
-          this.tableTotalNum = res.count;
-          res.data.forEach((item,index)=>{
-            let oneRowData = {
-              key: item.a01000,
-              num: index+1,
-              photo: _this.$targetHost+item.imgPath.substr(2),
-              name: item.a0101,
-              address:item.a3711,
-              graduate:item.a0888,
-              // organ: "01",
-            };
-            this.initArr.tabledataArr.push(oneRowData);
-          });
-        }
-      });
-
-      // let tempData = [];
-      // if(condition.length === 0){
-      //   this.initArr.tabledataArr = initableArr;
-      // } else{
-      //   tempData = initableArr.filter(item => {
-      //      return Object.keys(condition).every(key =>{
-      //         return String(item[key]).toLowerCase().includes(String(condition[key]).trim().toLowerCase())
-      //      });
-      //    });
-      // }
-      // console.log(tempData);
-      // this.initArr.tabledataArr = tempData;
+      if(condition && condition.organ.length > 10){
+        this.tableLoading = true;
+        this.$http.fetchPost('digitalArchives@personnelList.action',{
+          page:pageNum,
+          limit:limitNum,
+          name:(!condition || !condition.name) ? '' : condition.name,
+          nodeId:(!condition || !condition.organ) ? '' : condition.organ,
+          orgtype:(!condition || !condition.organ) ? '' : condition.organ.length > 10 ? "1":"0",  // 机构 为1 非机构节点为 0
+        }).then((res)=>{
+          if(Number(res.code) === 0){
+            // 整理数据
+            this.initArr.tabledataArr = [];
+            this.tableTotalNum = res.count;
+            res.data.forEach((item,index)=>{
+              this.initArr.tabledataArr.push({
+                key: item.a01000,
+                num: (pageNum - 1) * limitNum + index + 1,
+                photo: _this.$targetHost+item.imgPath.substr(2),
+                name: item.a0101,
+                address:item.a3711,
+                graduate:item.a0888
+              })
+            });
+          } else{
+            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+          }
+        }).catch(err => {
+          this.$message.error('抱歉，网络异常！');
+        }).finally(end => {
+          this.tableLoading = false;
+        });
+      } else{
+        this.$message.warning('请选择具体的机构名称！');
+      }
     },
     // 关闭所有的弹框为 false
     handleCancel(){

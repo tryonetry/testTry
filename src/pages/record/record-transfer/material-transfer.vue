@@ -505,7 +505,7 @@ export default {
         },
         directoryData:function(){
             if(this.$store.getters.getDirectoryData){
-                // this.splitDirectoryData(this.$store.getters.getDirectoryData);
+                this.splitDirectoryData(this.$store.getters.getDirectoryData);
                 return this.$store.getters.getDirectoryData;
             }else{
                 return null;

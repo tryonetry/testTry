@@ -264,6 +264,7 @@ export default {
   created() {
     // 改变导航
     this.getNavData();
+    this.getTreeData();
     this.getMenuData();
     this.currentPath = this.$route.path;
     // this.routeChange(this.currentPath);
@@ -316,6 +317,38 @@ export default {
           this.$message.error('抱歉,网络异常,请刷新重试');
         })
     },
+
+    
+    getTreeData() {
+      /***
+       * 功能：获取tree数据
+       */
+      this.$http.fetchGet("informationPool@getParentId.action", {})
+      .then(res => {
+        if(Number(res.code) === 0){
+          // console.log(res.data)
+          this.getNewTreeData(res.data);
+        }
+      });
+    },
+    getNewTreeData(dataArr) {
+      /***
+       * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
+       */
+      dataArr.forEach(el => {
+        el.title = el.name;
+        el.key = el.id;
+        el.value = el.id;
+        el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true:null;
+        delete el.name;
+        delete el.id;
+        if (el.children) {
+          this.getNewTreeData(el.children);
+        }
+      });
+      this.$store.dispatch("getinfoPollTreeData", dataArr);
+    },
+
     // password blur
     pswInputBlur(status,val){
       if(status === 0){
@@ -658,7 +691,8 @@ export default {
       });
 
 
-    }
+    },
+
   },
 
   watch: {
