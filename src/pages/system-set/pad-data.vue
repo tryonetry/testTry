@@ -315,6 +315,9 @@ export default {
        * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
        */
       dataArr.forEach(el => {
+        if(el.id === '01'){
+          el.disabled = true;
+        }
         el.title = el.name;
         el.key = el.id;
         el.value = el.id;
