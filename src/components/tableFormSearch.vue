@@ -52,7 +52,7 @@
           :treeData="item.children"
           :placeholder="item.placeholder"
           :treeDefaultExpandedKeys="['01']"
-          @change="treeSelect"
+          @change="treeSelect(item, index)"
           @blur="commonRequiredBlur(item,index)"
           v-model="item.val"
           allowClear
@@ -419,12 +419,13 @@ export default {
         
       })
       // this.form.resetFields();
-      this.$emit("searchForm", this.formData.formInputs); //禅道提的--重置完--查询表格数据
+      //this.$emit("searchForm", this.formData.formInputs); //禅道提的--重置完--查询表格数据
     },
 
-    treeSelect(value) {
-      this.treeSelectObj.value = value;
+    treeSelect(item, index) {
+      this.treeSelectObj.value = item.val;
       this.listeningChange();
+      this.commonRequiredBlur(item, index);
     },
 
     // 联动处理

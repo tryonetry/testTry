@@ -402,9 +402,22 @@ export default {
           }
         }
       });
-      this.$emit("searchTable", this.condition, 1, 10);
-      // this.tabledata = this.$parent.initArr.tabledataArr;
-      this.currentPageNum = 1;
+      
+      let isSearchFlagArr = [];
+      for(let prop in this.condition){
+        if(this.condition[prop] && this.condition[prop] != 'undefined' && this.condition[prop].__proto__.constructor !== Array){
+          isSearchFlagArr.push(this.condition[prop]);
+        }
+      }
+      
+      if(isSearchFlagArr.length > 0){
+        this.$emit("searchTable", this.condition, 1, 10);
+         // this.tabledata = this.$parent.initArr.tabledataArr;
+         this.currentPageNum = 1;
+      } else{
+         this.$message.warning('请输入查询条件,进行此操作！');
+      }
+      
     },
 
     // check table 选择

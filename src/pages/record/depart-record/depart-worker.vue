@@ -90,7 +90,7 @@ export default {
               name: 'a0184',
               postname: 'a0184',
               maxlength:18,
-              val: '612525199508144314'
+              val: void 0
             }
           ],
           formBtns: [

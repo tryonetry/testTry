@@ -227,8 +227,8 @@ export default {
                     },
                     {
                         title: "委托存档单位名称",
-                        dataIndex: "a0888",
-                        key: "a0888",
+                        dataIndex: "companyName",
+                        key: "companyName",
                         width: 250,
                         scopedSlots: { customRender: "cursorTitle" }
                     },

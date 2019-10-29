@@ -101,7 +101,7 @@
                <div class="secondCircle">
                  <div class="contentCircle">
                    <img :src="imgUrl" v-if="tempPersonData && tempPersonData.imgPath"/>
-                   <img v-else src="../../assets/image/defaulthead.png" />
+                   <img v-else :src='defaultGender' />
                  </div>
                </div>
                <div class="detail_div detail_div_name"><Portrait :infoObj="nameObj"></Portrait></div>
@@ -325,6 +325,12 @@ export default {
       currentRowData: null,  //当前行数据
       dictoryDataArr: [],  //字典数据
       imgUrl: '',  //个人画像图片地址
+      defaultGender: '',  //默认个人画像：区分男女
+      defaultImages: [
+        {src: require("../../assets/image/defaulthead.png")},
+        {src: require("../../assets/image/defaultheadboy.png")},
+        {src: require("../../assets/image/defaultheadgirl.png")}
+      ]
     };
   },
   watch: {
@@ -365,6 +371,7 @@ export default {
       this.tempCondition = condition;
       this.tableLoading = true;
       this.tempPageSize = pageNum;
+      this.$store.dispatch("getinfoTableCheckData", []);   //重新dispatch
       this.$http
         .fetchGet("informationPool@findA01ListByState.action", {
           status: 1,
@@ -399,7 +406,8 @@ export default {
                 a0834: element.a0834,
                 a0131: element.a0131,
                 imgPath: element.imgPath,
-                a0914: element.a0914
+                a0914: element.a0914,
+                gender: element.a0104
               });
             });
           } else{
@@ -550,6 +558,7 @@ export default {
         this.collegeObj['value'] = this.tempPersonData['a0888'] ? this.tempPersonData['a0888'] : '毕业院校';
         this.addressObj['value'] = this.tempPersonData['a0111'] ? this.tempPersonData['a0111'] : '地址';
         this.imgUrl = this.$targetHost + this.tempPersonData.imgPath.substr(2);
+        this.defaultGender  = this.tempPersonData.gender == '1' ? this.defaultImages[1].src : (this.tempPersonData.gender == '2' ? this.defaultImages[2].src : this.defaultImages[0].src);
       }
     },
     
@@ -564,6 +573,7 @@ export default {
         this.exportDataArr = this.checkTableData;
       } else{
         this.$message.error('请至少选择一条数据进行操作！');
+        this.exportDataArr = [];
       }
     },
     // exportAllFun(){

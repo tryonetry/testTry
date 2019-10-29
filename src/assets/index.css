@@ -400,6 +400,9 @@ input{
   width: 100%;
 }
 
+.right_container .ant-table-fixed-right{
+  z-index: 1;
+}
 
 @media screen and (max-width: 1250px) {
   #components-layout-demo-top-side-2 .logo {

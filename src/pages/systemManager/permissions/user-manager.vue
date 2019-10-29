@@ -205,7 +205,7 @@ export default {
           },
           {
               title: '所属机构',
-              otherType: "select",
+              otherType: "treeselect",
               required: true,
               placeholder: "请选择所属机构",
               key: "orgId",
@@ -281,16 +281,26 @@ export default {
   },
 
   //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    treeData:function(){
+      if(this.$store.getters.getInfoPollTreeData){
+        return this.$store.getters.getInfoPollTreeData
+      } else{
+        return null;
+      }
+    }
+  },
 
   //监控data中的数据变化
   watch: {
-    //obj:{
-    //    handler:function(val,oldval){
-    //
-    //    },
-    //    deep:true,//深度监听
-    //}
+    treeData: {
+      immediate: true,
+      handler(newVal, oldVal){
+        if(newVal && newVal.length > 0){
+          this.addFormData.formInputs[2].children = this.treeData;
+        }
+      }
+    }
   },
 
   //方法集合
@@ -375,50 +385,55 @@ export default {
         userId:this.currUserData && this.currUserData.userId,
       }).then(res => {
         let result = this.$refs.addForm.getFormData();
-        if(Number(res.code) === 2 && result.isRight){
-          // 验证通过
-          if(!this.currUserData){
+        if(result.isRight){
+          if(Number(res.code) === 2 && result.isRight){
+            // 验证通过
+            if(!this.currUserData){
 
-            // 添加
-            this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
-              ...result.postObj,
-            }).then(res => {
+              // 添加
+              this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
+                ...result.postObj,
+              }).then(res => {
 
-              if(Number(res.code) === 0){
-                this.$message.success("添加成功!");
-                this.getTableData(this.tempCondition,this.currentPage,10);
-                this.handleCancel();
-              }else{
-                this.$message.warning("抱歉,添加失败,请重试!");
-              }
-            }).catch(err => {
-              this.$message.error("抱歉,网络异常,请稍后重试");
-            })
+                if(Number(res.code) === 0){
+                  this.$message.success("添加成功!");
+                  this.getTableData(this.tempCondition,this.currentPage,10);
+                  this.handleCancel();
+                }else{
+                  this.$message.warning("抱歉,添加失败,请重试!");
+                }
+              }).catch(err => {
+                this.$message.error("抱歉,网络异常,请稍后重试");
+              })
 
-          }else if(this.currUserData.userId){
+            }else if(this.currUserData.userId){
 
-            // 编辑
-            this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
-              ...result.postObj,
-              userId:this.currUserData.userId,
-            }).then(res => {
-              // console.log(res);
-              if(Number(res.code) === 0){
-                this.$message.success("编辑修改成功!");
-                this.getTableData(this.tempCondition,this.currentPage,10);
-                this.handleCancel();
-              }else{
-                this.$message.warning("抱歉,编辑修改失败,请重试!");
-              }
-            }).catch(err => {
-              this.$message.error("抱歉,网络异常,请稍后重试");
-            })
+              // 编辑
+              this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
+                ...result.postObj,
+                userId:this.currUserData.userId,
+              }).then(res => {
+                // console.log(res);
+                if(Number(res.code) === 0){
+                  this.$message.success("编辑修改成功!");
+                  this.getTableData(this.tempCondition,this.currentPage,10);
+                  this.handleCancel();
+                }else{
+                  this.$message.warning("抱歉,编辑修改失败,请重试!");
+                }
+              }).catch(err => {
+                this.$message.error("抱歉,网络异常,请稍后重试");
+              })
 
+            }
+          }else{
+            // 验证不通过
+            this.$message.warning("抱歉,登录名已存在!");
           }
-        }else{
-          // 验证不通过
-          this.$message.warning("抱歉,登录名已存在!");
+        } else{
+          this.$message.warning("抱歉，必填项不能为空!");
         }
+        
       });
       
     },
@@ -515,18 +530,19 @@ export default {
     this.getTableData(this.tempCondition,1,10);
 
     // 获取机构
-    this.$http.fetchPost("user@findOrg.action",{})
-      .then(res => {
-        if(Number(res.code) === 0){
-          res.data.forEach(item => {
-            this.addFormData.formInputs[2].children.push({
-              itemCode:item.b01000,
-              itemName:item.b0101,
-            })
-          })
+    this.addFormData.formInputs[2].children = this.treeData;
+    // this.$http.fetchPost("user@findOrg.action",{})
+    //   .then(res => {
+    //     if(Number(res.code) === 0){
+    //       res.data.forEach(item => {
+    //         this.addFormData.formInputs[2].children.push({
+    //           itemCode:item.b01000,
+    //           itemName:item.b0101,
+    //         })
+    //       })
           
-        }
-      })
+    //     }
+    //   })
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）

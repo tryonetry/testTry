@@ -764,7 +764,7 @@ export default {
         a0117: "01",
         a0127: "1",
         a0131: "1",
-        a0134: moment(new Date()).format("YYYY-MM-DD"),
+        a0134: moment(new Date()).format("YYYY-MM"),
         a0139: "",
         a0141: "01",
         a0181: "",
@@ -1744,6 +1744,16 @@ export default {
         .then(res => {
           if (Number(res.code) === 0) {
             this.personBasicInfo = res.data;
+            for(let prop in res.data){
+              if(prop == 'a0107'){
+                this.birthday = res.data[prop] ? moment(res.data[prop], 'YYYY-MM-DD') : void 0;
+              } else if(prop == 'a0807'){
+                this.graduateDate = res.data[prop] ? moment(res.data[prop], 'YYYY-MM-DD') : void 0;
+              } else if(prop == 'a0134'){
+                this.workDate = res.data[prop] ? moment(res.data[prop], 'YYYY-MM') : void 0;
+              }
+            }
+            
             this.imgUrl =
               this.$targetHost + this.personBasicInfo.imgPath.substr(2);
             this.hjCode = res.data["a0111d"].split(".");
@@ -2219,7 +2229,7 @@ export default {
           tempData = this.professionalArr;
         } else if (keyVal === "a0202d") {
           //工作职位(岗位)类型
-          tempData = this.professionalArr;
+          tempData = this.positionArr;
         } else if(keyVal === 'delagate'){
           tempData = this.delagateUnitList;
         }
@@ -2632,6 +2642,10 @@ export default {
       handler(newVal) {
         if(this.operateStatusVal === 1){
           this.personBasicInfo = {...this.addInitPersonBasicInfo};
+          this.birthday = moment(new Date(), 'YYYY-MM-DD');
+          this.graduateDate = moment(new Date(), 'YYYY-MM-DD');
+          this.workDate = moment(new Date(), 'YYYY-MM-DD');
+          this.imgUrl = '';
         }
       }
     },
