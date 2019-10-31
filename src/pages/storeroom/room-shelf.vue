@@ -142,8 +142,8 @@ export default {
             title: "密集架名称",
             dataIndex: "whdName",
             key: "whdName",
-            width: 150,
-            fixed: "left",
+            width: 200,
+            // fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -178,7 +178,7 @@ export default {
             title: "总容量",
             dataIndex: "whdTotalNum",
             key: "whdTotalNum",
-            width: 100,
+            width: 120,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -332,15 +332,16 @@ export default {
        * */
       this.tableLoading = true;
       this.tempCondition = condition;
+      console.log(this.selectTreeNode);
       this.$http
         .fetchPost("wareHouse@getWareHouseDetailList.action", {
           page: pageNum,
           limit: limitNum,
           whdCode: !condition || !condition.whdCode ? "" : condition.whdCode,
           whdName: !condition || !condition.whdName ? "" : condition.whdName,
-          whId: !condition || !condition.whId ? "001" : condition.whId,
+          whId: !condition || !condition.whId ? (this.selectTreeNode && this.selectTreeNode['pId'] ? this.selectTreeNode['pId'] : '001') : condition.whId,
           whAreaName:
-            !condition || !condition.whAreaName ? "" : condition.whAreaName
+            !condition || !condition.whAreaName ? (this.selectTreeNode && this.selectTreeNode['title'] ? this.selectTreeNode['title'] : '') : condition.whAreaName
         })
         .then(res => {
           if (Number(res.code) === 0) {
