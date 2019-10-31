@@ -201,7 +201,7 @@ export default {
 
                     // form btns
                     formBtns: [
-                        { title: "查询", htmltype: "submit", operate: "searchForm" },
+                        { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' },
                         { title: "重置", htmltype: "button", operate: "resetForm" }
                     ]
                 },

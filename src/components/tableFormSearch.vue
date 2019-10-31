@@ -208,7 +208,7 @@
         class="buttonOperate"
         type="primary"
         :html-type="el.htmltype"
-        @click="operate($event, el.operate)"
+        @click="operate($event, el , el.operate)"
       >{{el.title}}</a-button>
       <!-- other Btns -->
       <slot></slot>
@@ -255,6 +255,7 @@ export default {
           xxl: { span: 13}
         }
       },
+      operateIsLimit: null,  //查询操作是否被限制：无条件不能查询--true；不限制：有无条件都可查询--false 
     };
   },
   watch:{
@@ -285,7 +286,8 @@ export default {
   methods: {
     moment,
     // 操作项  data:操作的函数名称
-    operate(e, data) {
+    operate(e, el, data) {
+      this.operateIsLimit = el.isLimit ? el.isLimit : true
       this[data](e);
     },
 
@@ -296,8 +298,9 @@ export default {
 
     //table上面Form查询
     searchForm(event) {
+      //console.log(this.operateIsLimit);
       event.preventDefault();
-      this.$emit("searchForm", this.formData.formInputs);
+      this.$emit("searchForm", this.formData.formInputs, this.operateIsLimit);   
     },
 
     //监听input值得变化
@@ -418,7 +421,7 @@ export default {
         }
         
       })
-      // this.form.resetFields();
+      //this.form.resetFields();  //重置
       //this.$emit("searchForm", this.formData.formInputs); //禅道提的--重置完--查询表格数据
     },
 

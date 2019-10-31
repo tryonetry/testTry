@@ -374,10 +374,11 @@ export default {
     },
 
     // 通过form获取数据
-    searchFormFun(data) {
+    searchFormFun(data, isOperateLimit) {
       /***
        * 功能：调用父组件的searchTable函数，重新获取tableData值
-       * data:form点击查询按钮获取需要的查询结果
+       * data:form点击查询按钮获取需要的查询结果；
+       * isOperateLimit：判断查询操作是否根据条件被限制；若为true--必须输入查询条件才可查询；否则为false--不需要查询条件也可查询
        */
       data.forEach(element => {
 
@@ -403,20 +404,29 @@ export default {
         }
       });
       
-      let isSearchFlagArr = [];
-      for(let prop in this.condition){
-        if(this.condition[prop] && this.condition[prop] != 'undefined' && this.condition[prop].__proto__.constructor !== Array){
-          isSearchFlagArr.push(this.condition[prop]);
+      //console.log(isOperateLimit);
+      if(isOperateLimit != 'no'){
+        //被限制--必须有条件才可查询
+        let isSearchFlagArr = [];
+        for(let prop in this.condition){
+          if(this.condition[prop] && this.condition[prop] != 'undefined' && this.condition[prop].__proto__.constructor !== Array){
+            isSearchFlagArr.push(this.condition[prop]);
+          }
         }
+        
+        if(isSearchFlagArr.length > 0){
+          this.$emit("searchTable", this.condition, 1, 10);
+          // this.tabledata = this.$parent.initArr.tabledataArr;
+          this.currentPageNum = 1;
+        } else{
+          this.$message.warning('请输入查询条件,进行此操作！');
+        }
+      } else{
+        //不被限制--不输入条件也可查询
+        this.$emit("searchTable", this.condition, 1, 10);
+        this.currentPageNum = 1;
       }
       
-      if(isSearchFlagArr.length > 0){
-        this.$emit("searchTable", this.condition, 1, 10);
-         // this.tabledata = this.$parent.initArr.tabledataArr;
-         this.currentPageNum = 1;
-      } else{
-         this.$message.warning('请输入查询条件,进行此操作！');
-      }
       
     },
 
