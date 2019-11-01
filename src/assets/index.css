@@ -217,7 +217,7 @@ input[readonly]{
   .analysisOne {
     padding: 20px;
     width: 100%;
-    height: 75%;
+    height: 65%;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -226,14 +226,14 @@ input[readonly]{
     /* box-shadow: 10px 0 10px #ccc; */
   }
   .leftAnalysis {
-    width: 450px;
+    width: 550px;
     height: 100%;
     border-right: 1px dashed #ccc;
     padding-right: 20px;
   }
   
   .tableAnalysis {
-    width: calc(100% - 450px);
+    width: calc(100% - 550px);
     height: 100%;
   }
   
@@ -245,7 +245,7 @@ input[readonly]{
   
   .analysisTwo {
     width: 100%;
-    height: calc(100% - 75%);
+    height: calc(100% - 65%);
     /* overflow: hidden; */
     padding: 0 20px;
     display: flex;

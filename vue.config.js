@@ -20,6 +20,7 @@ module.exports = {
             //配置跨域
             '/': {
                 target: "192.168.1.215:8181",
+                // target: ApiUrl.proxyAddress,
                 ws: false,
                 changOrigin: true,
                 pathRewrite: {

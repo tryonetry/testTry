@@ -278,13 +278,14 @@
                   </td>
                   <td colspan="2" v-show="operateStatusVal !== 2">
                     <div>
+                      <!-- action="http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action" -->
                       <a-upload
                         class="avatar-uploader"
                         listType="picture"
                         :showUploadList="false"
                         :beforeUpload="beforeUpload"
                         @change="uploadPhoto"
-                        action="http://192.168.1.215:8181/hasngcadrefile/informationPool@uploadImgNoUsed.action"
+                        :action="imgUploadUrl"
                       >
                         <a-button type="primary">上传照片</a-button>
                       </a-upload>
@@ -712,7 +713,9 @@ export default {
     DocDirectory,
     TableView
   },
-  created() {},
+  created() {
+    
+  },
   mounted() {
     this.getColumnDataFun(this.operateStatusVal);   //根据当前操作值--替换表头
     this.getDelagateUnitListFun();  //获取委托存档单位：单位列表数据
@@ -1606,6 +1609,7 @@ export default {
       
       
       imgUrl: "", //照片地址
+      imgUploadUrl: this.$targetHost + 'hasngcadrefile/informationPool@uploadImgNoUsed.action',  //照片上传地址
       statusVal: null, //人才信息总库页面：操作状态： 1-添加， 2-浏览， 3-编辑
       birthday: moment(new Date(), "YYYY-MM-DD"), //出生日期
       graduateDate: moment(new Date(), "YYYY-MM-DD"), //最高学历毕业日期
@@ -2318,6 +2322,7 @@ export default {
       //清空当前图片
       this.imgUrl = "";
     },
+
 
     regInput(val, minLength, maxLength, regways, tip, e, key) {
       /***

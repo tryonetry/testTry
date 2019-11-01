@@ -139,6 +139,7 @@ export default {
       initArr: {
         treeflag: true, //左侧tree是否存在
         tableCheck: true, //table是否可以check
+        superimposeWidth: true,
         formData: {
           //form inputs
           formInputs: [
@@ -189,13 +190,6 @@ export default {
             dataIndex: "a0101",
             fixed: "left",
             key: "a0101",
-            width: 150,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "性别",
-            dataIndex: "a0104",
-            key: "a0104",
             width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -204,6 +198,13 @@ export default {
             dataIndex: "a0107",
             key: "a0107",
             width: 150,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "性别",
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -224,7 +225,7 @@ export default {
             title: "工作单位及职务",
             dataIndex: "a0202a",
             key: "a0202a",
-            width: 300,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -361,7 +362,8 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+  },
   methods: {
     getTableData(condition, pageNum, limitNum) {
       /***

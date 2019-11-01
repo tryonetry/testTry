@@ -1,6 +1,6 @@
 <!-- template -->
 <template>
-  <div class="outer">
+  <div class="outer" style="padding-bottom: 10px;">
     <div class="analysisOne">
       <div class="leftAnalysis">
         <RecordAnalysis :chartsData="firstChartData" ref="charts"></RecordAnalysis>
@@ -1082,4 +1082,5 @@ export default {
   font-size: 14px;
   border-radius: 4px;
 }
+
 </style>

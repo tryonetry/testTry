@@ -6,10 +6,10 @@
       centered
       title="修改密码"
       :visible="changePswVisiable"
-      width="32%"
+      width="40%"
       @ok="handleChange"
       @cancel="handleCancel"
-      style="height:38%;overflow: hidden;"
+      style="height:50%;overflow: hidden;"
       :maskClosable='false'
       :confirmLoading="confirmLoading"
     >
