@@ -92,10 +92,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "e0104",
               name: "e0104",
               val: void 0,
@@ -185,6 +185,15 @@ export default {
             width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
+           {
+            title: "接收日期",
+            fixed: "left",
+            width: 120,
+            dataIndex: "e0106a",
+            key: "e0106a",
+            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
+            scopedSlots: { customRender: "cursorTitle" }
+          },
           {
             title: "存档编号",
             dataIndex: "e0101",
@@ -209,7 +218,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证/社保卡号",
+            title: "公民身份号码/社保卡号",
             dataIndex: "e0104",
             key: "e0104",
             width: 200,
@@ -219,14 +228,14 @@ export default {
             title: "材料类别",
             dataIndex: "e0105",
             key: "e0105",
-            width: 200,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "材料名称",
             dataIndex: "e0106",
             key: "e0106",
-            width: 200,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -240,21 +249,22 @@ export default {
             title: "经办人",
             dataIndex: "e0108a",
             key: "e0108a",
-            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "状态",
             dataIndex: "e0112Name",
             key: "e0112Name",
-            width: 150,
+            width: 100,
+            fixed: 'right',
             scopedSlots: { customRender: "cursorTitle" }
           },
-          {
-            title: "接收日期",
-            dataIndex: "e0106a",
-            key: "e0106a",
-            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
+           {
+            title: "是否在库",
+            dataIndex: "isInware",
+            key: "isInware",
+            fixed: 'right',
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
         ],
@@ -338,7 +348,8 @@ export default {
               e0108: element.e0108,
               e0108a: element.e0108a,
               e0112: element.e0112,
-              e0112Name: element.e0112 === '0' ? '已接收' : '待接收'
+              e0112Name: element.e0112 === '0' ? '已接收' : '待接收',
+              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
             })
           });
         } else{

@@ -196,20 +196,20 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "姓名",
-                        dataIndex: "a0101",
-                        key: "a0101",
-                        fixed: "left",
-                        width: 150,
-                        scopedSlots: { customRender: "customize" }
-                    },
-                    {
                         title: "存档编号",
                         dataIndex: "a0100a",
                         key: "a0100a",
                         fixed: "left",
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "姓名",
+                        dataIndex: "a0101",
+                        key: "a0101",
+                        fixed: "left",
+                        width: 150,
+                        scopedSlots: { customRender: "customize" }
                     },
                     {
                         title: "身份证号/社保卡号",
@@ -219,9 +219,9 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "手机号码",
-                        dataIndex: "a3707c",
-                        key: "a3707c",
+                        title: "委托存档单位编号",
+                        dataIndex: "companyNumber",
+                        key: "companyNumber",
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
@@ -233,9 +233,9 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "委托存档单位编号",
-                        dataIndex: "companyNumber",
-                        key: "companyNumber",
+                        title: "手机号码",
+                        dataIndex: "a3707c",
+                        key: "a3707c",
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
@@ -252,11 +252,14 @@ export default {
                         key: "uCreateDate",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    // {
-                    //     title: "操作",
-                    //     key: "action",
-                    //     scopedSlots: { customRender: "action" }
-                    // }
+                    {
+                        title: "档案状态",
+                        dataIndex: "isInware",
+                        key: "isInware",
+                        fixed: 'right',
+                        width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    }
                 ],
                 // table数据
                 tabledataArr: [],
@@ -541,6 +544,7 @@ export default {
                         Object.assign(element,{
                             key:element.a01000,
                             num: (pageNum - 1) * limitNum + index + 1,
+                            isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
                         });
                     });
                 }else{

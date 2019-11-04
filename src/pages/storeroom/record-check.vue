@@ -212,10 +212,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "a0184",
               name: "a0184",
               val: void 0,
@@ -298,7 +298,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证/社保卡号",
+            title: "公民身份号码/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
             width: 350,
@@ -312,14 +312,14 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "单位编号",
+            title: "委托存档单位编号",
             dataIndex: "companyNumber",
             key: "companyNumber",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "单位名称",
+            title: "委托存档单位名称",
             dataIndex: "companyName",
             key: "companyName",
             width: 200,
@@ -458,10 +458,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入(完整的)身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "a0184",
               name: "a0184",
               val: void 0,
@@ -473,10 +473,10 @@ export default {
               status: ""
             },
             {
-              title: "单位编号",
+              title: "委托存档单位编号",
               type: "text",
               required: false,
-              placeholder: "请输入单位编号",
+              placeholder: "请输入委托存档单位编号",
               key: "companyNumber",
               name: "companyNumber",
               val: void 0,
@@ -488,10 +488,10 @@ export default {
               status: ""
             },
             {
-                title: '单位名称',
+                title: '委托存档单位名称',
                 otherType: 'searchSelect',
                 required: false,
-                placeholder: "请选择单位名称",
+                placeholder: "请选择委托存档单位名称",
                 key: 'companyId',
                 name: 'companyId',
                 val: void 0,
@@ -529,7 +529,7 @@ export default {
             title: "存档编号",
             dataIndex: "a0100A",
             key: "a0100A",
-            width: 200,
+            width: 150,
             fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -537,19 +537,27 @@ export default {
             title: "姓名",
             dataIndex: "a0101",
             key: "a0101",
-            width: 150,
+            width: 100,
             fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
+          }, {
+            title: "性别",
+            fixed: "left",
+            dataIndex: "a0104",
+            key: "a0104",
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" }
           },
            {
-            title: "身份证/社保卡号",
+            title: "公民身份号码/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
-            width: 350,
+            width:120,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "存档日期",
+            width: 100,
             dataIndex: "uCreateDate",
             key: "uCreateDate",
             scopedSlots: { customRender: "cursorTitle" }

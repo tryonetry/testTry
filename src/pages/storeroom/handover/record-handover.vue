@@ -87,10 +87,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "e0104",
               name: "e0104",
               val: void 0,
@@ -179,12 +179,13 @@ export default {
             fixed: 'left',
             width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
-          },
+          },         
            {
             title: "接收日期",
-            width: 200,
+            width: 150,
             dataIndex: "e0106a",
             key: "e0106a",
+            fixed: 'left',
             sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -212,7 +213,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证/社保卡号",
+            title: "公民身份号码/社保卡号",
             dataIndex: "e0104",
             key: "e0104",
             width: 300,
@@ -222,13 +223,23 @@ export default {
             title: "经办人",
             dataIndex: "e0108a",
             key: "e0108a",
-            width: 200,
+            // width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "状态",
+            width: 100,
             dataIndex: "e0112Name",
             key: "e0112Name",
+            fixed: 'right',
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "是否在库",
+            dataIndex: "isInware",
+            key: "isInware",
+            fixed: 'right',
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
          
@@ -349,7 +360,8 @@ export default {
               e0108a: element.e0108a,
               e0106a: element.e0106a,
               e0112: element.e0112,
-              e0112Name: element.e0112 === '0' ? '已接收' : '待接收'
+              e0112Name: element.e0112 === '0' ? '已接收' : '待接收',
+              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
             })
           });
         } else{

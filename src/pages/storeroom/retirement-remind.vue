@@ -87,10 +87,10 @@ export default {
               status: ""
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
               required: false,
-              placeholder: "请输入身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "a0184",
               name: "a0184",
               val: void 0,
@@ -181,7 +181,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证号",
+            title: "公民身份号码/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
             width: 200,
@@ -298,7 +298,7 @@ export default {
               archivesIdentity: element.archivesIdentity === '1' ? '干部' : (element.archivesIdentity === '2' ? '工人' : '其他'),
               archiveStatus: element.archiveStatus === '0' ? '待入库' : (element.archiveStatus === '1' ? '已入库' : '接收待入库'),
               remainMonth: element.remainMonth,
-              isInware: element.isInware === '0' ? '待入库' : (element.isInware === '1' ? '已入库' : (element.isInware === '7' ? '已转出' :(element.isInware === '9' ? '已接收待入库' : '')))
+              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出')
             })
           });
         } else{
