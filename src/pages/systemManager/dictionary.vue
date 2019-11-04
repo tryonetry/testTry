@@ -298,7 +298,7 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
-            title: "编号",
+            title: "编码",
             dataIndex: "itemCode",
             key: "itemCode",
             width: 150,

@@ -188,13 +188,6 @@ export default {
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "出生日期",
-            dataIndex: "a0107",
-            key: "a0107",
-            width: 100,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
             title: "所属机构",
             dataIndex: "b0101",
             key: "b0101",
@@ -212,6 +205,13 @@ export default {
             title: "档案状态",
             dataIndex: "archiveStatus",
             key: "archiveStatus",
+            width: 100,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
+            title: "出生日期",
+            dataIndex: "a0107",
+            key: "a0107",
             width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },

@@ -9,7 +9,7 @@
           href="javascrit:;"
           class="primaryBtnColor"
           @click="editOperate(slotPropsData.currRowdata)"
-        >编辑信息</a>
+        >进入</a>
       </div>
     </TableView>
     <div class="modal">
@@ -103,6 +103,13 @@ export default {
             fixed: "left",
             width: 100
           },
+           { 
+            title: "存档编号", 
+            dataIndex: "a0100A", 
+            key: "a0100A",
+            fixed: "left",
+            width:200,
+          },
           { 
             title: "姓名", 
             dataIndex: "a0101", 
@@ -111,29 +118,25 @@ export default {
             width:250, 
           },
           { 
-            title: "身份证/社保卡号",
-            dataIndex: "a0184", 
-            key: "a0184",
-            width:250,
-          },
-          { 
             title: "性别", 
             dataIndex: "a0104",
             key: "a0104",
             width:200,
           },
           { 
+            title: "公民身份证号/社保卡号",
+            dataIndex: "a0184", 
+            key: "a0184",
+            width:250,
+          },
+          
+          { 
             title: "电话号码", 
             dataIndex: "a3707C", 
             key: "a3707C",
             width:250,
           },
-          { 
-            title: "存档编号", 
-            dataIndex: "a0100A", 
-            key: "a0100A",
-            width:200,
-          },
+         
           {
             title: "存档日期",
             dataIndex: "uCreateDate",

@@ -39,6 +39,7 @@ export default {
       initArr: {
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check
+        superimposeWidth: true,
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -112,7 +113,7 @@ export default {
 
           // form btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm" },
+            { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' },
             { title: "重置", htmltype: "button", operate: "resetForm" }
           ]
         },
@@ -138,14 +139,14 @@ export default {
             title: "模块",
             dataIndex: "moduleId",
             key: "moduleId",
-            width: 200,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "内容",
             dataIndex: "content",
             key: "content",
-            width: 300,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -159,21 +160,21 @@ export default {
             title: "时间",
             dataIndex: "createDate",
             key: "createDate",
-            width: 200,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "状态",
             dataIndex: "status",
             key: "status",
-            width: 150,
+            width: 120,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作机构",
             dataIndex: "creatorOrgId",
             key: "creatorOrgId",
-            width: 200,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

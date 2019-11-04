@@ -304,10 +304,10 @@ export default {
                             status: '',
                         },
                         {
-                            title: '身份证/社保卡号',
+                            title: '公民身份号码/社保卡号',
                             type: "text",
                             required: false,
-                            placeholder: "请输入身份证/社保卡号",
+                            placeholder: "请输入公民身份号码/社保卡号",
                             key: "applyIdNum",
                             name: "applyIdNum",
                             val: void 0,
@@ -344,7 +344,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份证号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "applyIdNum",
                         key: "applyIdNum",
                         width: 200,
@@ -365,7 +365,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "证明材料类型",
+                        title: "证明类型",
                         dataIndex: "proofType",
                         key: "proofType",
                         width: 200,

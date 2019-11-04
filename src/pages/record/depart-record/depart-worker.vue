@@ -108,46 +108,45 @@ export default {
             width: 100
           },
           { 
-            title: "姓名", 
-            dataIndex: "a0101", 
-            key: "a0101", 
-            fixed: "left",
-            width: 200,
-          },
-          { 
-            title: "身份证/社保卡号", 
-            dataIndex: "a0184", 
-            key: "a0184", 
-            fixed: "left",
-            width: 200,
-          },
-          { 
-            title: "委托存档单位名称", 
-            dataIndex: "companyName", 
-            key: "companyName",
-            width: 300,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          { 
-            title: "委托存档单位编号", 
-            dataIndex: "oldArchiveUnit", 
-            key: "oldArchiveUnit",
-            width: 200,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
-          { 
             title: "统一社会信用代码", 
             dataIndex: "businessLicense", 
             key: "businessLicense",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
-          { 
+            { 
+            title: "委托存档单位编号", 
+            dataIndex: "oldArchiveUnit", 
+            key: "oldArchiveUnit",
+            width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+           { 
+            title: "委托存档单位名称", 
+            dataIndex: "companyName", 
+            key: "companyName",
+            width: 300,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+           { 
             title: "存档编号", 
             dataIndex: "a0100A", 
             key: "a0100A",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
+          },
+          { 
+            title: "姓名", 
+            dataIndex: "a0101", 
+            key: "a0101", 
+            width: 200,
+          },
+          { 
+            title: "身份证/社保卡号", 
+            dataIndex: "a0184", 
+            key: "a0184", 
+           
+            width: 200,
           },
           { 
             title: "存档日期", 
