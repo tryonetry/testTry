@@ -125,7 +125,7 @@ export default {
                             disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
                         },
                         {
-                            title: '经办人名称',
+                            title: '经办人',
                             otherType: 'searchSelect',
                             required: false,
                             placeholder: "请选择经办人",

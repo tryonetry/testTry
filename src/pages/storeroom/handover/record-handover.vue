@@ -117,10 +117,10 @@ export default {
               status: ""
             },
             {
-              title: "经办人名称",
+              title: "经办人",
               otherType: "searchSelect",
               required: false,
-              placeholder: "请选择经办人名称",
+              placeholder: "请选择经办人",
               key: "e0108",
               name: "e0108",
               val: void 0,
