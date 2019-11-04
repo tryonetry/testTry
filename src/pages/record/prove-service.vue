@@ -351,7 +351,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "电话号码",
+                        title: "联系电话",
                         dataIndex: "applyTelNum",
                         key: "applyTelNum",
                         width: 150,
