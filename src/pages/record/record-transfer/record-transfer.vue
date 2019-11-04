@@ -173,21 +173,30 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 100,
-                        // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                        scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                    },
+                    {
+                        title: "接受日期",
+                        dataIndex: "auCreateDate",
+                        key: "auCreateDate",
+                        fixed: "left",
+                        width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "e0101",
+                        key: "e0101",
+                        width: 150,
+                        fixed: "left",
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
                         dataIndex: "e0102",
                         key: "e0102",
                         fixed: "left",
-                        width: 200,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
-                        title: "身份证号",
-                        dataIndex: "e0104",
-                        key: "e0104",
-                        width: 250,
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
@@ -198,10 +207,10 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "存档编号",
-                        dataIndex: "e0101",
-                        key: "e0101",
-                        width: 250,
+                        title: "公民身份号码/社保卡号",
+                        dataIndex: "e0104",
+                        key: "e0104",
+                        width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
@@ -211,20 +220,12 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "移交状态",
-                        dataIndex: "e0109",
-                        key: "e0109",
-                        fixed: "right",
-                        width: 150,
-                        // scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
                         title: "接收状态",
                         dataIndex: "e0112",
                         key: "e0112",
                         fixed: "right",
                         width: 150,
-                        // scopedSlots: { customRender: "cursorTitle" }
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "在库状态",
@@ -232,6 +233,7 @@ export default {
                         key: "isInware",
                         fixed: "right",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     // {
                     //     title: "操作",

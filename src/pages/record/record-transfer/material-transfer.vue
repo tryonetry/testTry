@@ -146,20 +146,6 @@ export default {
                             postname:'e0101',
                             status: '',
                         },
-                        // date
-                        {
-                            title: '接收日期',
-                            otherType: 'daterange',
-                            required: false,
-                            placeholder: '选择接受日期',
-                            key: "materialTransferStartDate-materialTransferEndDate",
-                            name: "materialTransferStartDate-materialTransferEndDate",
-                            val: [void 0 , void 0],
-                            postname: "materialTransferStartDate-materialTransferEndDate",
-                            status: '',
-                            disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
-                            disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
-                        },
                         {
                             title: '经办人',
                             otherType: 'searchSelect',
@@ -176,6 +162,21 @@ export default {
                             ],
                             status: '',
                         },
+                        // date
+                        {
+                            title: '移交日期',
+                            otherType: 'daterange',
+                            required: false,
+                            placeholder: '选择移交日期',
+                            key: "materialTransferStartDate-materialTransferEndDate",
+                            name: "materialTransferStartDate-materialTransferEndDate",
+                            val: [void 0 , void 0],
+                            postname: "materialTransferStartDate-materialTransferEndDate",
+                            status: '',
+                            disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
+                            disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
+                        },
+                        
                         // select/searchSelect
                         {
                             title: '移交状态',
@@ -214,7 +215,23 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 60,
-                        // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                        scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                    },
+                    {
+                        title: "接收日期",
+                        dataIndex: "auCreateDate",
+                        key: "auCreateDate",
+                        width: 150,
+                        fixed: "left",
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "e0101",
+                        key: "e0101",
+                        width: 200,
+                        fixed: "left",
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
@@ -229,28 +246,16 @@ export default {
                         dataIndex: "e0103",
                         key: "e0103",
                         width: 80,
-                    },
-                    {
-                        title: "身份证号",
-                        dataIndex: "e0104",
-                        key: "e0104",
-                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "存档编号",
-                        dataIndex: "e0101",
-                        key: "e0101",
+                        title: "公民身份号码/社保卡号",
+                        dataIndex: "e0104",
+                        key: "e0104",
                         width: 200,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    {
-                        title: "接收日期",
-                        dataIndex: "auCreateDate",
-                        key: "auCreateDate",
-                        width: 150,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
+                    
                     {
                         title: "材料类别",
                         dataIndex: "e0105",
@@ -266,7 +271,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "档案位置编号",
+                        title: "档案位置号",
                         dataIndex: "e0107",
                         key: "e0107",
                         width: 200,
@@ -280,28 +285,20 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "移交状态",
+                        title: "状态",
                         dataIndex: "e0109",
                         key: "e0109",
                         fixed: "right",
                         width: 150,
-                        // scopedSlots: { customRender: "cursorTitle" }
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
-                    {
-                        title: "接收状态",
-                        dataIndex: "e0112",
-                        key: "e0112",
-                        fixed: "right",
-                        width: 150,
-                        // scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    
                     {
                         title: "在库状态",
                         dataIndex:'isInware',
                         key: "isInware",
                         width: 150,
-                        fixed:'right'
+                        fixed:'right',
+                        scopedSlots: { customRender: "cursorTitle" }
                     }
                 ],
                 // table数据
@@ -379,33 +376,32 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 150,
-                        // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                        scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
+                    },
+                    {
+                        title: "存档编号",
+                        dataIndex: "a0100a",
+                        key: "a0100a",
+                        width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
-                        width: 300,
-                        fixed: "left",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "性别",
                         dataIndex: "a0104",
                         key: "a0104",
-                        width: 200,
+                        width: 100,
                     },
                     {
                         title: "身份证号",
                         dataIndex: "a0184",
                         key: "a0184",
-                        width: 300,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
-                        title: "存档编号",
-                        dataIndex: "a0100a",
-                        key: "a0100a",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
