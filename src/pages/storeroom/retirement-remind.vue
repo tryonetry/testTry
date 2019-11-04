@@ -218,6 +218,7 @@ export default {
           {
             title: "退休剩余时间（月）",
             dataIndex: "remainMonth",
+            fixed: 'right',
             key: "remainMonth",
             scopedSlots: { customRender: "cursorTitle" }
           },
@@ -226,7 +227,7 @@ export default {
             dataIndex: "isInware",
             key: "isInware",
             fixed: 'right',
-            width: 200,
+            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           }
         ],
