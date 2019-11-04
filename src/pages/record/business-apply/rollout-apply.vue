@@ -218,7 +218,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份号码/社保卡号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "applyIdNum",
                         key: "applyIdNum",
                         width: 300,

@@ -153,7 +153,7 @@ export default {
                             title: '姓名',
                             type: "text",
                             required: false,
-                            placeholder: "请输入姓名",
+                            placeholder: "请输入申请人姓名",
                             key: "applyName",
                             name: "applyName",
                             val: void 0,
@@ -198,7 +198,7 @@ export default {
                         // scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "姓名",
+                        title: "申请人",
                         dataIndex: "applyName",
                         key: "applyName",
                         fixed: "left",
@@ -206,10 +206,17 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份证号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "applyIdNum",
                         key: "applyIdNum",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                     {
+                        title: "最高学历",
+                        dataIndex: "applyDegree",
+                        key: "applyDegree",
+                        width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
@@ -219,13 +226,7 @@ export default {
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    {
-                        title: "最高学历",
-                        dataIndex: "applyDegree",
-                        key: "applyDegree",
-                        width: 150,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
+                   
                     
                     {
                         title: "毕业院校",

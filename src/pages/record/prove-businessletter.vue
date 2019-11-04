@@ -283,7 +283,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份证号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "idNum",
                         key: "idNum",
                         fixed: "left",
@@ -319,19 +319,20 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "委托存档单位名称",
-                        dataIndex: "dwmc",
-                        key: "dwmc",
-                        width: 200,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
                         title: "委托存档单位编号",
                         dataIndex: "dwbh",
                         key: "dwbh",
                         width: 150,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
+                    {
+                        title: "委托存档单位名称",
+                        dataIndex: "dwmc",
+                        key: "dwmc",
+                        width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    
                     {
                         title: "工作单位名称",
                         dataIndex: "fzdw",
