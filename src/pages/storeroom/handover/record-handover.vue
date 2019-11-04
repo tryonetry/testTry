@@ -241,6 +241,9 @@ export default {
             fixed: 'right',
             width: 150,
             scopedSlots: { customRender: "cursorTitle" }
+
+
+            
           },
          
         ],
