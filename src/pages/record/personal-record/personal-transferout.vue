@@ -260,6 +260,15 @@ export default {
         formData: {
           //form inputs
           formInputs: [
+             {
+              title: "存档编号",
+              type: "text",
+              placeholder: "请输入存档编号",
+              key: "archSerialNum",
+              name: "archSerialNum",
+              postname: "archSerialNum",
+              val: void 0
+            },
             {
               title: "姓名",
               type: "text",
@@ -278,15 +287,7 @@ export default {
               postname: "applyIdNum",
               val: void 0
             },
-            {
-              title: "存档编号",
-              type: "text",
-              placeholder: "请输入存档编号",
-              key: "archSerialNum",
-              name: "archSerialNum",
-              postname: "archSerialNum",
-              val: void 0
-            },
+           
             {
               title: "申请状态",
               otherType: "select",
@@ -388,17 +389,17 @@ export default {
             key: "confNumber",
             width:150,
           },
+           { 
+            title: "邮寄编号备注", 
+            dataIndex: "confNumberRemark", 
+            key: "confNumberRemark",
+          },
           { 
             title: "邮寄日期", 
             dataIndex: "confNumberDate", 
             key: "confNumberDate",
             sorter: (a, b) => a.uCreateDate && b.uCreateDate && Number(a.uCreateDate.replace(/-/g,'')) - Number(b.uCreateDate.replace(/-/g,'')),
             width:150,
-          },
-          { 
-            title: "邮寄编号备注", 
-            dataIndex: "confNumberRemark", 
-            key: "confNumberRemark",
           },
           {
             title: "操作",

@@ -98,6 +98,15 @@ export default {
         formData: {
           //form inputs
           formInputs: [
+             {
+              title: "委托存档单位编号",
+              type: "text",
+              placeholder: "请输入委托存档单位编号",
+              key: "companyNumber",
+              name: 'companyNumber',
+              postname: '',
+              val: void 0
+            },
             {
               title: "委托存档单位名称",
               type: "text",
@@ -107,15 +116,7 @@ export default {
               postname: 'companyName',
               val: void 0
             },
-            {
-              title: "委托存档单位编号",
-              type: "text",
-              placeholder: "请输入委托存档单位编号",
-              key: "companyNumber",
-              name: 'companyNumber',
-              postname: '',
-              val: void 0
-            },
+           
             {
               title: "统一社会信用代码",
               type: "text",
@@ -148,18 +149,19 @@ export default {
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
-          { 
-            title: "委托存档单位名称", 
-            dataIndex: "companyName", 
-            key: "companyName",
-            width: 300,
-            scopedSlots: { customRender: "cursorTitle" }
-          },
+        
           { 
             title: "委托存档单位编号", 
             dataIndex: "companyNumber", 
             key: "companyNumber",
             width: 200,
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+            { 
+            title: "委托存档单位名称", 
+            dataIndex: "companyName", 
+            key: "companyName",
+            width: 300,
             scopedSlots: { customRender: "cursorTitle" }
           },
           { 
