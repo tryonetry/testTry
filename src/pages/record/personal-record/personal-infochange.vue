@@ -71,9 +71,9 @@ export default {
               val: void 0
             },
             {
-              title: "身份证/社保卡号",
+              title: "公民身份号码/社保卡号",
               type: "text",
-              placeholder: "请输入身份证/社保卡号",
+              placeholder: "请输入公民身份号码/社保卡号",
               key: "a0184",
               name: "a0184",
               postname: "a0184",
@@ -131,7 +131,7 @@ export default {
           },
           
           { 
-            title: "电话号码", 
+            title: "联系电话", 
             dataIndex: "a3707C", 
             key: "a3707C",
             width:250,

@@ -94,7 +94,7 @@ export default {
           { title: "身份证号", dataIndex: "idCard", key: "idCard" },
           { title: "姓名", dataIndex: "name", key: "name" },
           { title: "性别", dataIndex: "gender", key: "gender" },
-          { title: "电话号码", dataIndex: "phone", key: "phone" },
+          { title: "联系电话", dataIndex: "phone", key: "phone" },
           { title: "档案编号", dataIndex: "recordNum", key: "recordNum" },
           {
             title: "存档日期",

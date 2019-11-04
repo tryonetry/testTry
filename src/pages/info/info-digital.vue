@@ -119,32 +119,37 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 80
+            width: 80,
+            scopedSlots: { customRender: "cursorTitle" }
           },
           { 
             title: "姓名", 
             dataIndex: "name", 
             key: "name", 
             width: 200, 
-            fixed: "left"
+            fixed: "left",
+            scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "身份证/社保卡号", 
+            title: "公民身份号码/社保卡号", 
             dataIndex: "a0184", 
             key: "a0184", 
             width: 200, 
+            scopedSlots: { customRender: "cursorTitle" }
           },
           // { title: "照片", dataIndex: "photo", key: "photo", width: 200, scopedSlots: { customRender: "img" }},
           { 
             title: "籍贯", 
             dataIndex: "address", 
             key: "address", 
-            width: 300 
+            width: 300,
+            scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "毕业院校",
             dataIndex: "graduate",
-            key: "graduate"
+            key: "graduate",
+            scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "操作",

@@ -44,7 +44,7 @@
                     >{{personBasicInfo.a0101}}</a-input>
                   </td>
                   <td colspan="4">
-                    身份证/社保卡号
+                    公民身份号码/社保卡号
                     <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">

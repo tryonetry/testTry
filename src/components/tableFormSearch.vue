@@ -698,7 +698,7 @@ export default {
                             if(Number(res.code) === 0){
                               //弹出确认退档操作
                               if(res.isInware === '2' && res.archiveStatus === '7'){
-                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此身份证/社保卡号重复';
+                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
                                 _this.$set(_this.formData.formInputs[index],'status','error');
                                 _this.$confirm({
                                   title: '是否进行退档操作 ?',
@@ -724,7 +724,7 @@ export default {
                                 })
                               }else{
                                 _this.formData.formInputs[index][resultObj.name] = '';
-                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此身份证/社保卡号重复';
+                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
                                 _this.$set(_this.formData.formInputs[index],'status','error');
                               }
                             }else{

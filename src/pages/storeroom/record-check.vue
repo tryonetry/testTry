@@ -424,6 +424,7 @@ export default {
         //档案现场借出传得tableView数据
         treeflag: false, //左侧tree是否存在
         tableCheck: true, //table是否可以check
+        superimposeWidth:true,
         formData: {
           //forminputs data
           formInputs: [
@@ -552,12 +553,11 @@ export default {
             title: "公民身份号码/社保卡号",
             dataIndex: "a0184",
             key: "a0184",
-            width:120,
+            width:200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "存档日期",
-            width: 100,
             dataIndex: "uCreateDate",
             key: "uCreateDate",
             scopedSlots: { customRender: "cursorTitle" }

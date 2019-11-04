@@ -305,10 +305,10 @@ export default {
                             colWidth:[12,24],
                         },
                         {
-                            title: '身份证/社保卡号',
+                            title: '公民身份号码/社保卡号',
                             type: "text",
                             required: false,
-                            placeholder: "请输入身份证/社保卡号",
+                            placeholder: "请输入公民身份号码/社保卡号",
                             key: "a0184",
                             name: "a0184",
                             val: void 0,
@@ -348,113 +348,132 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 80,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "存档编号",
-                        dataIndex: "a0100A",
-                        key: "a0100A",
+                        title: "委托存档单位名称",
+                        dataIndex: "a0202A",
+                        key: "a0202A",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "性别",
                         dataIndex: "a0104",
                         key: "a0104",
                         width: 100,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份号码/社保卡号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "出生日期",
                         dataIndex: "a0107",
                         key: "a0107",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "曾用名",
                         dataIndex: "a0139",
                         key: "a0139",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "籍贯",
                         dataIndex: "a0111",
                         key: "a0111",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "民族",
                         dataIndex: "a0117",
                         key: "a0117",
                         width: 100,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "户籍所在地",
                         dataIndex: "a0181",
                         key: "a0181",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "现居住地",
                         dataIndex: "a3711",
                         key: "a3711",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "婚姻状况",
                         dataIndex: "a0131",
                         key: "a0131",
                         width: 100,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "健康状况",
                         dataIndex: "a0127",
                         key: "a0127",
                         width: 100,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "政治面貌",
                         dataIndex: "a0141",
                         key: "a0141",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "参加工作日期",
                         dataIndex: "a0134",
                         key: "a0134",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "紧急联系人",
                         dataIndex: "partyDuties",
                         key: "partyDuties",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "电子邮箱",
                         dataIndex: "a3708",
                         key: "a3708",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "手机号码",
                         dataIndex: "a3707C",
                         key: "a3707C",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "备注",
                         dataIndex: "remarks",
                         key: "remarks",
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                 ],
                 tabledataArr:[],

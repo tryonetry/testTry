@@ -162,10 +162,10 @@ export default {
                             status: '',
                         },
                         {
-                            title: '身份证/社保卡号',
+                            title: '公民身份号码/社保卡号',
                             type: "text",
                             required: false,
-                            placeholder: "请输入身份证/社保卡号",
+                            placeholder: "请输入公民身份号码/社保卡号",
                             key: "a0184",
                             name: "a0184",
                             val: void 0,
@@ -453,7 +453,7 @@ export default {
             baseInfoData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
                 { label:"性别", val:void 0 ,name:'a0104'},
-                { label:"身份证/社保卡号", val:void 0 ,name:'a0184'},
+                { label:"公民身份号码/社保卡号", val:void 0 ,name:'a0184'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"出生日期", val:void 0 ,name:'a0107'},
                 { label:"籍贯", val:void 0 ,name:'a0111'},

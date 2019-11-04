@@ -427,10 +427,10 @@ export default {
                             status: '',
                         },
                         {
-                            title: '身份证/社保卡号',
+                            title: '公民身份号码/社保卡号',
                             type: "text",
                             required: false,
-                            placeholder: "请输入身份证/社保卡号",
+                            placeholder: "请输入公民身份号码/社保卡号",
                             key: "a0184",
                             name: "a0184",
                             val: void 0,

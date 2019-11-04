@@ -283,7 +283,7 @@ export default {
           key: "e0103",
         },
         {
-          title: "身份证/社保卡号",
+          title: "公民身份号码/社保卡号",
           dataIndex: "e0104",
           key: "e0104",
         },
