@@ -207,18 +207,18 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "委托存档单位名称",
-                        dataIndex: "companyName",
-                        key: "companyName",
-                        width: 350,
-                        scopedSlots: { customRender: "customize" }
-                    },
-                    {
                         title: "委托存档单位编号",
                         dataIndex: "companyNumber",
                         key: "companyNumber",
                         width: 300,
                         scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
+                        title: "委托存档单位名称",
+                        dataIndex: "companyName",
+                        key: "companyName",
+                        width: 350,
+                        scopedSlots: { customRender: "customize" }
                     },
                     {
                         title: "联系人",
@@ -243,8 +243,8 @@ export default {
                     // },
                     {
                         title: "立户日期",
-                        dataIndex: "registrationDate",
-                        key: "registrationDate",
+                        dataIndex: "tatsudoDate",
+                        key: "tatsudoDate",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {

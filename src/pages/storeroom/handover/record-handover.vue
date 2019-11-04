@@ -181,6 +181,15 @@ export default {
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
+            title: "接收日期",
+            dataIndex: "e0106a",
+            key: "e0106a",
+            width: 200,
+            fixed: 'left',
+            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
+            scopedSlots: { customRender: "cursorTitle" }
+          },
+          {
             title: "存档编号",
             dataIndex: "e0101",
             key: "e0101",
@@ -221,16 +230,10 @@ export default {
             title: "状态",
             dataIndex: "e0112Name",
             key: "e0112Name",
-            width: 200,
+            // width: 200,
             scopedSlots: { customRender: "cursorTitle" }
-          },
-          {
-            title: "接收日期",
-            dataIndex: "e0106a",
-            key: "e0106a",
-            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
-            scopedSlots: { customRender: "cursorTitle" }
-          },
+          }
+          
         ],
         // table数据
         tabledataArr: []

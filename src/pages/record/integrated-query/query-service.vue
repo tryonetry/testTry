@@ -45,7 +45,7 @@
                         </div>
                     </a-tab-pane>
 
-                    <a-tab-pane tab="委托存档单位信息" key="2" >
+                    <a-tab-pane tab="委托存档单位" key="2" >
                         <TableView
                             :initArrData="initArr1"
                             :totalCount="tableTotalNum1"
@@ -212,7 +212,7 @@ export default {
                         scopedSlots: { customRender: "customize" }
                     },
                     {
-                        title: "身份证号/社保卡号",
+                        title: "公民身份证号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
@@ -240,7 +240,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "档案位置编号",
+                        title: "档案位置号",
                         dataIndex: "shelvesNo",
                         key: "shelvesNo",
                         width: 150,
@@ -257,7 +257,7 @@ export default {
                         dataIndex: "isInware",
                         key: "isInware",
                         fixed: 'right',
-                        width: 150,
+                        width: 100,
                         scopedSlots: { customRender: "cursorTitle" }
                     }
                 ],
@@ -277,43 +277,43 @@ export default {
                         width: 150,
                     },
                     {
-                        title: "单位名称",
-                        dataIndex: "companyName ",
-                        key: "companyName ",
-                        width: 300,
-                    },
-                    {
-                        title: "单位编号",
+                        title: "委托存档单位编号",
                         dataIndex: "companyNumber",
                         key: "companyNumber",
-                        width: 200,
+                        width: 150,
                     },
                     {
-                        title: "统一社会信用代码",
+                        title: "委托存档单位名称",
+                        dataIndex: "companyName ",
+                        key: "companyName ",
+                        width: 250,
+                    },
+                    {
+                        title: "委托存档单位统一社会信用代码",
                         dataIndex: "b0114",
                         key: "b0114",
-                        width: 200,
+                        width: 250,
                     },
                     {
-                        title: "单位机构类型",
+                        title: "委托存档单位机构类型",
                         dataIndex: "companyNature",
                         key: "companyNature",
-                        width: 150,
+                        width: 180,
                     },
                     {
-                        title: "所属行业",
+                        title: "委托存档单位所属行业",
                         dataIndex: "companyManagementRange",
                         key: "companyManagementRange",
-                        width: 150,
+                        width: 180,
                     },
                     {
-                        title: "经济类型",
+                        title: "委托存档单位经济类型",
                         dataIndex: "economicType",
                         key: "economicType",
-                        width: 150,
+                        width: 180,
                     },
                     {
-                        title: "行政区划",
+                        title: "委托存档单位行政区划",
                         dataIndex: "areaName",
                         key: "areaName",
                     },
@@ -345,7 +345,7 @@ export default {
                         width: 150,
                     },
                     {
-                        title: "身份证/社保卡号",
+                        title: "公民身份证号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
@@ -413,7 +413,7 @@ export default {
                         width: 150,
                     },
                     {
-                        title: "身份证/社保卡号",
+                        title: "公民身份证号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
