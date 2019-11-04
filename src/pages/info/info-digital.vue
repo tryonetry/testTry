@@ -79,6 +79,7 @@ export default {
       initArr: {
         treeflag: false, //左侧tree是否存在
         tableCheck: false,
+        superimposeWidth: true,
         formData: {
           // inputs
           formInputs: [
@@ -127,8 +128,13 @@ export default {
             width: 200, 
             fixed: "left"
           },
-          { title: "照片", dataIndex: "photo", key: "photo", width: 200, scopedSlots: { customRender: "img" }},
-          
+          {
+            title: "身份证/社保卡号", 
+            dataIndex: "a0184", 
+            key: "a0184", 
+            width: 200, 
+          },
+          // { title: "照片", dataIndex: "photo", key: "photo", width: 200, scopedSlots: { customRender: "img" }},
           { 
             title: "籍贯", 
             dataIndex: "address", 
@@ -213,7 +219,8 @@ export default {
                 photo: _this.$targetHost+item.imgPath.substr(2),
                 name: item.a0101,
                 address:item.a3711,
-                graduate:item.a0888
+                graduate:item.a0888,
+                a0184: item.a0184
               })
             });
           } else{
