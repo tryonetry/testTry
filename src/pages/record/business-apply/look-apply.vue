@@ -177,7 +177,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "被查阅人",
+                        title: "申请人",
                         dataIndex: "applyName",
                         key: "applyName",
                         fixed: "left",
@@ -185,7 +185,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "被查阅人身份号码/社保卡号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "applyIdNum",
                         key: "applyIdNum",
                         width: 300,

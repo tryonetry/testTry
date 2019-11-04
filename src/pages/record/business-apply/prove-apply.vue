@@ -129,7 +129,7 @@ export default {
                             title: '姓名',
                             type: "text",
                             required: false,
-                            placeholder: "请输入姓名",
+                            placeholder: "请输入申请人姓名",
                             key: "applyName",
                             name: "applyName",
                             val: void 0,
@@ -224,7 +224,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份号码/社保卡号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "applyIdNum",
                         key: "applyIdNum",
                         width: 300,
