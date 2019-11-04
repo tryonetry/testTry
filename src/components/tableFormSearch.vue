@@ -234,20 +234,20 @@ export default {
       defaultCon: {
         labelCol: {
           sm: { span: 6 },
-          xl: { span: 6 },
-          xxl: { span: 6 }
+          xl: { span: 8 },
+          xxl: { span: 8 }
         },
         wrapperCol: {
           sm: { span: 18 },
           xl: { span: 16 },
-          xxl: { span: 15 }
+          xxl: { span: 16 }
         }
       },
       textareaCon: {
         labelCol: {
           sm: { span: 6 },
-          xl: { span: 3 },
-          xxl: { span: 2 }
+          xl: { span: 4 },
+          xxl: { span: 3 }
         },
         wrapperCol: {
           sm: { span: 18 },
