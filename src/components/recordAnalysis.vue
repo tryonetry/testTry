@@ -151,10 +151,10 @@ export default {
             show: false
           },
           toolbox: {
-            show: true,
-            feature: {
-              saveAsImage: {}
-            }
+            show: false,
+            // feature: {
+            //   saveAsImage: {}
+            // }
           },
           radar: {
             //   shape: "circle",
