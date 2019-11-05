@@ -206,8 +206,8 @@ export default {
           },
           {
             title: "库房位置",
-            dataIndex: "shelvesNo ",
-            key: "shelvesNo ",
+            dataIndex: "shelvesNo",
+            key: "shelvesNo",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
