@@ -1,7 +1,7 @@
 <!-- 单位立户或单位信息变更 -->
 <template>
   <div class="outer" style="overflow-y:auto;padding-right:20px;">
-    <TableFromSearch :formDataArr="departInfoArr"  ref="accountInfoForm">
+    <TableFromSearch :formDataArr="departInfoArr"  ref="accountInfoForm" :layout="departLayout">
       <a-row slot="otherForm" class="btnRow">
         <a-col :span='24' align="middle">
           <a-button class="btnMargin" type="primary" @click="submitInfoBtn" :loading="saveLoading" >{{btnTitle}}</a-button>
@@ -302,10 +302,37 @@ export default {
           },
         ]
       },
+      departLayout: {
+        defaultCon: {
+          labelCol: {
+            sm: { span: 8 },
+            xl: { span: 10 },
+            xxl: { span: 11 }
+          },
+          wrapperCol: {
+            sm: { span: 16 },
+            xl: { span: 14 },
+            xxl: { span: 13 }
+          }
+        },
+        textareaCon: {
+          labelCol: {
+            sm: { span: 8 },
+            xl: { span: 5 },
+            xxl: { span: 4 }
+          },
+          wrapperCol: {
+            sm: { span: 16 },
+            xl: { span: 19 },
+            xxl: { span: 12}
+          }
+        }
+      },
       saveLoading:false,
       btnTitle:'提交',
       tempEnterPriceData:{},
       hasEnterPriceData:false,
+      
     };
   },
 

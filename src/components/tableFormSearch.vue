@@ -234,25 +234,25 @@ export default {
       defaultCon: {
         labelCol: {
           sm: { span: 8 },
-          xl: { span: 10 },
-          xxl: { span: 11 }
+          xl: { span: 8 },
+          xxl: { span: 8 }
         },
         wrapperCol: {
           sm: { span: 16 },
-          xl: { span: 14 },
-          xxl: { span: 13 }
+          xl: { span: 16 },
+          xxl: { span: 16 }
         }
       },
       textareaCon: {
         labelCol: {
           sm: { span: 8 },
-          xl: { span: 5 },
-          xxl: { span: 4 }
+          xl: { span: 4 },
+          xxl: { span: 3 }
         },
         wrapperCol: {
           sm: { span: 16 },
-          xl: { span: 19 },
-          xxl: { span: 12}
+          xl: { span: 16 },
+          xxl: { span: 13}
         }
       },
       operateIsLimit: null,  //查询操作是否被限制：无条件不能查询--true；不限制：有无条件都可查询--false 

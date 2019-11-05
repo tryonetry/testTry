@@ -110,20 +110,6 @@ export default {
                             postname:'e0101',
                             status: '',
                         },
-                        // date
-                        {
-                            title: '接收日期',
-                            otherType: 'daterange',
-                            required: false,
-                            placeholder: '选择接受日期',
-                            key: "materialTransferStartDate-materialTransferEndDate",
-                            name: "materialTransferStartDate-materialTransferEndDate",
-                            val: [void 0 , void 0],
-                            postname: "materialTransferStartDate-materialTransferEndDate",
-                            status: '',
-                            disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
-                            disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
-                        },
                         {
                             title: '经办人',
                             otherType: 'searchSelect',
@@ -135,6 +121,20 @@ export default {
                             val: void 0,
                             children: [],
                             status: '',
+                        },
+                        // date
+                        {
+                            title: '移交日期',
+                            otherType: 'daterange',
+                            required: false,
+                            placeholder: '选择移交日期',
+                            key: "materialTransferStartDate-materialTransferEndDate",
+                            name: "materialTransferStartDate-materialTransferEndDate",
+                            val: [void 0 , void 0],
+                            postname: "materialTransferStartDate-materialTransferEndDate",
+                            status: '',
+                            disabledDate: 'disabledEndDate',   //函数名：只能选今天和今天以前的
+                            disabledStartDate: 'disabledStartDate',  //函数名：只能选今天和今天以后的
                         },
                         // select/searchSelect
                         {

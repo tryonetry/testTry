@@ -126,6 +126,21 @@ export default {
                     formInputs:[
                         // select/searchSelect
                         {
+                            title: '委托存档单位编号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入单位编号",
+                            key: "companyNumber",
+                            name: "companyNumber",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'companyNumber',
+                            status: '',
+                        },
+                        {
                             title: '委托存档单位名称',
                             otherType: 'searchSelect',
                             required: false,
@@ -143,21 +158,6 @@ export default {
                             status: '',
                         },
                         //input
-                        {
-                            title: '委托存档单位编号',
-                            type: "text",
-                            required: false,
-                            placeholder: "请输入单位编号",
-                            key: "companyNumber",
-                            name: "companyNumber",
-                            val: void 0,
-                            maxlength: 20,
-                            minlength: 0,
-                            reg: '',
-                            tip: '',
-                            postname:'companyNumber',
-                            status: '',
-                        },
                         {
                             title: '统一社会信用代码',
                             type: "text",

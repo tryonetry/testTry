@@ -412,6 +412,21 @@ export default {
 
                         //input
                         {
+                            title: '存档编号',
+                            type: "text",
+                            required: false,
+                            placeholder: "请输入存档编号",
+                            key: "a0100A",
+                            name: "a0100A",
+                            val: void 0,
+                            maxlength: 20,
+                            minlength: 0,
+                            reg: '',
+                            tip: '',
+                            postname:'a0100A',
+                            status: '',
+                        },
+                        {
                             title: '姓名',
                             type: "text",
                             required: false,
@@ -441,21 +456,7 @@ export default {
                             postname:'a0184',
                             status: '',
                         },
-                        {
-                            title: '存档编号',
-                            type: "text",
-                            required: false,
-                            placeholder: "请输入存档编号",
-                            key: "a0100A",
-                            name: "a0100A",
-                            val: void 0,
-                            maxlength: 20,
-                            minlength: 0,
-                            reg: '',
-                            tip: '',
-                            postname:'a0100A',
-                            status: '',
-                        },
+                        
                     ],
 
                     // form btns
@@ -475,6 +476,13 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
+                        title: "存档编号",
+                        dataIndex: "a0100A",
+                        key: "a0100A",
+                        width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
@@ -482,19 +490,13 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "身份证号",
+                        title: "公民身份号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 300,
                         scopedSlots: { customRender: "cursorTitle" }
                     },
-                    {
-                        title: "存档编号",
-                        dataIndex: "a0100A",
-                        key: "a0100A",
-                        width: 250,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
+                    
                     {
                         title: "委托存档单位编号",
                         dataIndex: "oldArchiveUnit",
