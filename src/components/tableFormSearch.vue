@@ -63,7 +63,7 @@
           v-if="!item.type && item.otherType==='select'"
           v-model="item.val"
           :placeholder="item.placeholder"
-          :disabled = "item.disabled ? item.disabled : false"
+          :disabled ="item.disabled ? item.disabled : false"
           @change='selectChange(item)'
           @blur="commonRequiredBlur(item,index)"
           allowClear
