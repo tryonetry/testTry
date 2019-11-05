@@ -19,7 +19,7 @@
               <thead>
                 <tr>
                   <th colspan="24">
-                    <h2>人员基本信息表</h2>
+                    <h2 style="font-size: 18px;">人员基本信息表</h2>
                   </th>
                 </tr>
               </thead>

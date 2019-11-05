@@ -233,26 +233,26 @@ export default {
       treeSelectObj: {},
       defaultCon: {
         labelCol: {
-          sm: { span: 6 },
-          xl: { span: 8 },
-          xxl: { span: 8 }
+          sm: { span: 8 },
+          xl: { span: 10 },
+          xxl: { span: 11 }
         },
         wrapperCol: {
-          sm: { span: 18 },
-          xl: { span: 16 },
-          xxl: { span: 16 }
+          sm: { span: 16 },
+          xl: { span: 14 },
+          xxl: { span: 13 }
         }
       },
       textareaCon: {
         labelCol: {
-          sm: { span: 6 },
-          xl: { span: 4 },
-          xxl: { span: 3 }
+          sm: { span: 8 },
+          xl: { span: 5 },
+          xxl: { span: 4 }
         },
         wrapperCol: {
-          sm: { span: 18 },
-          xl: { span: 20 },
-          xxl: { span: 13}
+          sm: { span: 16 },
+          xl: { span: 19 },
+          xxl: { span: 12}
         }
       },
       operateIsLimit: null,  //查询操作是否被限制：无条件不能查询--true；不限制：有无条件都可查询--false 

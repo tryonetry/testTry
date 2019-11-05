@@ -1,6 +1,6 @@
 <!-- 单位立户或单位信息变更 -->
 <template>
-  <div class="outer" style="overflow-y:auto;">
+  <div class="outer" style="overflow-y:auto;padding-right:20px;">
     <TableFromSearch :formDataArr="departInfoArr"  ref="accountInfoForm">
       <a-row slot="otherForm" class="btnRow">
         <a-col :span='24' align="middle">
@@ -133,14 +133,14 @@ export default {
             title: "注册资本(万元)",
             type: "text",
             required: false,
-            placeholder: "请输入注册资本(万元)",
+            placeholder: "请输入阿拉伯数字(单位/万元)",
             key: "companyRegisteredCapital",
             name: "companyRegisteredCapital",
             val: '',
             postname: "companyRegisteredCapital",
             maxlength: 20,
             minlength: 0,
-            tip: '* 请输入正确的注册资本',
+            tip: '* 请输入阿拉伯数字(单位/万元)',
             reg: "testOnlyNum",
             status: '',
           },
@@ -271,7 +271,7 @@ export default {
             status: '',
           },
           {
-            title: "统一社会信用代码",
+            title: "委托存档单位统一社会信用代码",
             type: "text",
             required: true,
             placeholder: "请输入以数字开头的18位数字或数字与大写字母组合",
