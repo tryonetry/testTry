@@ -55,10 +55,11 @@ export default {
     //监控data中的数据变化
     watch: {
         baseData:{
-           handler:function(newVal){
+            immediate:true,
+            handler:function(newVal){
                this.handleData(newVal);
-           },
-           deep:true,//深度监听
+            },
+            deep:true,//深度监听
         }
     },
 

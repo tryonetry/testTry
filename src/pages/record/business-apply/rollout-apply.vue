@@ -146,10 +146,10 @@ export default {
                             status: '',
                         },
                         {
-                            title: '存档编号',
+                            title: '档案编号',
                             type: "text",
                             required: false,
-                            placeholder: "请输入存档编号",
+                            placeholder: "请输入档案编号",
                             key: "recordNum",
                             name: "recordNum",
                             val: void 0,

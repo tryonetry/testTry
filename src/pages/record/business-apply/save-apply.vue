@@ -127,12 +127,12 @@ export default {
             baseData:[
                 { label:"申请人", val:void 0 ,name:'applyName'},
                 { label:"性别", val:void 0 ,name:'agent'},
-                { label:"身份号码/社保卡号", val:void 0 ,name:'applyIdNum'},
-                { label:"手机号", val:void 0 ,name:'applyTelNum'},
-                { label:"申请日期", val:void 0 ,name:'applyDate'},
-                { label:"毕业日期", val:void 0 ,name:'finishSchoolTime'},
-                { label:"现工作单位", val:void 0 ,name:'nowCompany'},
+                { label:"公民身份号码/社保卡号", val:void 0 ,name:'applyIdNum'},
                 { label:"档案所在单位", val:void 0 ,name:'blongCompany'},
+                { label:"现工作单位", val:void 0 ,name:'nowCompany'},
+                { label:"毕业日期", val:void 0 ,name:'finishSchoolTime'},
+                { label:"手机号码", val:void 0 ,name:'applyTelNum'},
+                { label:"申请日期", val:void 0 ,name:'applyDate'},
                 { label:"申请转入原因", val:void 0 ,name:'syncCause'},
                 { label:"身份证正面", val:void 0 ,name:'identityFront',isImg:true},
                 { label:"身份证反面", val:void 0 ,name:'identityReverse',isImg:true},
@@ -319,12 +319,12 @@ export default {
             this.reviewModal = true;
             // console.log(currRowdata);
             this.baseData.forEach(item => {
-                if(item.name === "agent"){
+                if(item.name == "agent"){
                     Object.assign(item,{val:currRowdata[item.name] === '1' ? '男' : (currRowdata[item.name] === '2' ? '女' : (currRowdata[item.name] === '9' ? '未说明的性别' : '未知的性别'))});
+                } else{
+                    Object.assign(item,{val:currRowdata[item.name]});
                 }
-                Object.assign(item,{val:currRowdata[item.name]});
             });
-            
         },
 
         //撤销
