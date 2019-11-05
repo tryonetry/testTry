@@ -251,7 +251,7 @@ export default {
         },
         wrapperCol: {
           sm: { span: 16 },
-          xl: { span: 16 },
+          xl: { span: 20 },
           xxl: { span: 13}
         }
       },
