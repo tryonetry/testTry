@@ -70,13 +70,11 @@
 <script>
 import TableView from "@/components/tableView";
 import moment from "moment";
-import JsonExcel from "vue-json-excel";
 export default {
   name: "RecordUseStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
-    TableView,
-    JsonExcel
+    TableView
   },
   props: [""],
 

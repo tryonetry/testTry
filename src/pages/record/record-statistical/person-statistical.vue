@@ -38,15 +38,13 @@ const renderContent = (value, row, index, colSpan, data) => {
 
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
-import JsonExcel from "vue-json-excel";
 import moment from "moment";
 export default {
   name: "PersonStatistical",
   //import引入的组件需要注入到对象中才能使用
   components: {
     RecordAnalysis,
-    TableView,
-    JsonExcel
+    TableView
   },
   props: [""],
 

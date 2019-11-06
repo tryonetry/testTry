@@ -1,0 +1,63 @@
+{
+  "_from": "vue-json-excel",
+  "_id": "vue-json-excel@0.2.98",
+  "_inBundle": false,
+  "_integrity": "sha512-hPA3/cOe5nGbEZiJyfpdBIdqBExxF6EhMhpX6vC654PYbTVzdzp7O9ZsC1AgqbgRDR8VjzAaPaEeHg2vGS88FQ==",
+  "_location": "/vue-json-excel",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "vue-json-excel",
+    "name": "vue-json-excel",
+    "escapedName": "vue-json-excel",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-json-excel/-/vue-json-excel-0.2.98.tgz",
+  "_shasum": "1d882fd97f8bd7caa1864014e3680b2ddd0e94bc",
+  "_spec": "vue-json-excel",
+  "_where": "F:\\myProjectWorkSpace\\testTry\\talent-backend",
+  "author": {
+    "name": "Jose Javier Espinoza"
+  },
+  "bugs": {
+    "url": "https://github.com/jecovier/vue-json-excel/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "downloadjs": "^1.4.7"
+  },
+  "deprecated": false,
+  "description": "Download your JSON as an excel or CSV file directly from the browser",
+  "homepage": "https://github.com/jecovier/vue-json-excel#readme",
+  "keywords": [
+    "vue",
+    "vuejs",
+    "vue2",
+    "Excel",
+    "xls",
+    "csv",
+    "json",
+    "export",
+    "json excel",
+    "download",
+    "component"
+  ],
+  "license": "MIT",
+  "main": "JsonExcel.vue",
+  "name": "vue-json-excel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jecovier/vue-json-excel.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.2.98"
+}

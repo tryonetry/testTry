@@ -19,6 +19,8 @@ import VueParticles from 'vue-particles';
 import VueAMap from 'vue-amap';
 import ApiUrl from '../public/config'
 
+import JsonExcel from "./lib/plugin/vue-json-excel";
+
 Vue.prototype.printJS = printJS;
 Vue.prototype.$echarts = echarts;
 Vue.prototype.$http = http;
@@ -29,6 +31,8 @@ Vue.prototype.$readHost = ApiUrl.ApiUrl.readAddress;
 Vue.use(antd);
 Vue.use(print);
 Vue.use(VueParticles);
+Vue.component('JsonExcel', JsonExcel);   //注册为全局组件
+
 Vue.config.productionTip = false;
 Vue.prototype.$message.config({
   maxCount: 1

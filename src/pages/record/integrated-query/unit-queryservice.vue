@@ -95,12 +95,11 @@
 import FormHeader from "@/components/formHeader";
 import ShowBasicInfo from '@/components/showBasicInfo';
 import TableView from "@/components/tableView";
-import JsonExcel from 'vue-json-excel';
 
 export default {
     name:"UnitQueryservice",
     //import引入的组件需要注入到对象中才能使用
-    components: {FormHeader, ShowBasicInfo,TableView,JsonExcel},
+    components: {FormHeader, ShowBasicInfo,TableView},
     props:[""],
 
     data() {

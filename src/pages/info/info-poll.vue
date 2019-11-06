@@ -123,7 +123,6 @@
 <script>
 import TableView from "@/components/tableView";
 import InfoOperate from "@/components/infoOperate";
-import JsonExcel from "vue-json-excel";
 import moment from "moment";
 import Portrait from '@/components/info/portrait'
 export default {
@@ -131,7 +130,6 @@ export default {
   components: {
     TableView,
     InfoOperate,
-    JsonExcel,
     Portrait
   },
   data() {

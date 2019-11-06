@@ -19,12 +19,11 @@
 import TableView from "@/components/tableView";
 import utils from "../../utils/util.js";
 import moment from "moment";
-import JsonExcel from 'vue-json-excel'
 
 export default {
   name: "RecordInSearch",
   //import引入的组件需要注入到对象中才能使用
-  components: { TableView, JsonExcel },
+  components: { TableView },
   props: [""],
 
   data() {
