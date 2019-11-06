@@ -165,7 +165,7 @@
                                 系我中心档案托管人员，档案管理编号：{{currRow && currRow.a0100A}}。
                             </p>
                             <p>
-                                <textarea class="textAreaStyle" name="" id="" rows="4" maxlength="200" placeholder="请输入开具证明的内容..."></textarea>
+                                <textarea class="textAreaStyle" name="" id="" rows="4" maxlength="200" placeholder="请输入开具证明的内容..." style="width: 100%; height: 75px;"></textarea>
                             </p>
                             <p class="indent">特此证明。</p>
                             <div class="bottomRight">

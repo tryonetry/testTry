@@ -360,6 +360,7 @@ export default {
             key: index,
             num: index + 1,
             A0101: element.A0101 ? element.A0101 : '',
+            A0100A: element.A0100A ? element.A0100A : '',
             COMPANYNAME: element.COMPANYNAME ? element.COMPANYNAME : '',
             COMPANYNATURE: element.COMPANYNATURE ? element.COMPANYNATURE : '',
             U_CREATEDATE: element.U_CREATEDATE ? element.U_CREATEDATE : '',
