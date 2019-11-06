@@ -124,8 +124,8 @@ export default {
           },
           { 
             title: "姓名", 
-            dataIndex: "name", 
-            key: "name", 
+            dataIndex: "a0101", 
+            key: "a0101", 
             width: 200, 
             fixed: "left",
             scopedSlots: { customRender: "cursorTitle" }
@@ -140,15 +140,15 @@ export default {
           // { title: "照片", dataIndex: "photo", key: "photo", width: 200, scopedSlots: { customRender: "img" }},
           { 
             title: "籍贯", 
-            dataIndex: "address", 
-            key: "address", 
+            dataIndex: "a0111", 
+            key: "a0111", 
             width: 300,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
-            title: "毕业院校",
-            dataIndex: "graduate",
-            key: "graduate",
+            title: "最高学历",
+            dataIndex: "a0834",
+            key: "a0834",
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -221,10 +221,10 @@ export default {
               this.initArr.tabledataArr.push({
                 key: item.a01000,
                 num: (pageNum - 1) * limitNum + index + 1,
-                photo: _this.$targetHost+item.imgPath.substr(2),
-                name: item.a0101,
-                address:item.a3711,
-                graduate:item.a0888,
+                // photo: _this.$targetHost+item.imgPath.substr(2),
+                a0101: item.a0101,
+                a0111:item.a0111,
+                a0834:item.a0834,
                 a0184: item.a0184
               })
             });
