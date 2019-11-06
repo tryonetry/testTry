@@ -914,8 +914,8 @@ export default {
     background: #fff;
 }
 .leftTree{
-    width: 14%;
-    min-width: 170px;
+    width: 16%;
+    min-width: 215px;
     height: 100%;
     float: left;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -923,8 +923,8 @@ export default {
 }
 .rightTable{
     height: 100%;
-    width: 86%;
-    max-width: calc(100% - 170px);
+    width: 84%;
+    max-width: calc(100% - 215px);
     float: right;
     padding: 10px 20px;
     display: flex;
@@ -932,7 +932,7 @@ export default {
 }
 .treeBtnContainer{
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   padding-bottom: 15px;
 }
 .addEditModalContainer{

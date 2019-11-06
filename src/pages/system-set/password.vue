@@ -77,7 +77,11 @@
           <span></span>
           {{confirmPswTip}}
         </p>
-        <button type="button" class="savePswOperate ant-btn ant-btn-primary" @click="handleChange">确认修改</button>
+        <div class="btnOperate">
+          <button type="button" class="savePswOperate ant-btn ant-btn-primary" @click="handleChange">确认修改</button>
+          <button type="button" class="savePswOperate ant-btn ant-btn-default" @click="resertChange">重置</button>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -207,6 +211,18 @@ export default {
         this.$message.console.error("抱歉,网络错误,请稍后重试!");
       })
     },
+    resertChange(){
+      //重置密码
+      this.oldPsw = '';
+      this.oldPswTip = "";
+      this.newPsw = "";
+      this.oldEye = false;
+      this.newEye = false;
+      this.confirmEye = false;
+      this.newPswTip = "";
+      this.confirmPsw = "";
+      this.confirmPswTip = "";
+    }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -285,8 +301,12 @@ export default {
   color: #333333;
 }
 
+.btnOperate{
+  display: flex;
+}
+
 .savePswOperate{
-    width: 80%;
+    width: 30%;
     margin-left: 20%;
     height: 38px;
 }
