@@ -127,7 +127,7 @@ export default {
               title: "档案位置号",
               type: "text",
               required: false,
-              placeholder: "请输入档案位置号",
+              placeholder: "请输入档案位置号(区-层-列-号)",
               key: "shelvesNo",
               name: "shelvesNo",
               val: void 0,

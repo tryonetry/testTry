@@ -349,7 +349,7 @@ export default {
               e0108a: element.e0108a,
               e0112: element.e0112,
               e0112Name: element.e0112 === '0' ? '已接收' : '待接收',
-              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
+              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '已出库'),
             })
           });
         } else{
