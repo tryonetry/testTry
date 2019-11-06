@@ -68,10 +68,7 @@ export default {
        deep: true,
        handler:function(newVal){
           this.treeDataObj = newVal;
-          if(newVal.checkStrictly){
-            // console.log(1);
-            this.checkStrictly = newVal.checkStrictly;
-          }
+          this.checkStrictly = newVal.checkStrictly;
           if(newVal.dataArr.length > 0){
             this.generateList(this.treeDataObj.dataArr);
           }

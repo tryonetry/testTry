@@ -47,12 +47,14 @@
       </div>
       <a-tabs defaultActiveKey="1" :activeKey="activeTabKey" @change="tabChange" style="height:400px" tabPosition="left">
         <a-tab-pane class="tabPane" tab="功能菜单" key="1">
+          <div class="contactCheck"><a-checkbox @change="featureOnChange">关联子节点</a-checkbox></div>
           <div class="paneLoading" v-if="featureTreeLoading">
             <a-spin tip="Loading..." />
           </div>
           <OtherTree v-else :treeDataObj="featureMenuTree" @acceptCheckNode="accepttreeNodeFun(arguments,'featureMenuTree')"></OtherTree>
         </a-tab-pane>
         <a-tab-pane class="tabPane" tab="机构授权" key="2">
+          <div class="contactCheck"><a-checkbox @change="organOnChange">关联子节点</a-checkbox></div>
           <div class="paneLoading" v-if="orgTreeLoading">
             <a-spin tip="Loading..." />
           </div>
@@ -594,6 +596,26 @@ export default {
 
     },
 
+    featureOnChange(e){
+      //功能菜单--是否关联子节点
+      if(e.target.checked){
+        //关联 
+        this.featureMenuTree.checkStrictly = false;
+      } else{
+        //不关联
+        this.featureMenuTree.checkStrictly = true;
+      }
+    },
+    organOnChange(e){
+      //机构授权--是否关联子节点
+      if(e.target.checked){
+        //关联 
+        this.orgPermissionTree.checkStrictly = false;
+      } else{
+        //不关联
+        this.orgPermissionTree.checkStrictly = true;
+      }
+    }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -640,5 +662,9 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
+}
+.contactCheck{
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
