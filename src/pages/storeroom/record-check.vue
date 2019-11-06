@@ -879,17 +879,17 @@ export default {
     checkTableData: function() {
       return this.$store.getters.getinfoTableCheckData;
     },
-    
+    companyList:function(){
+        if(this.$store.getters.getCompanyData){
+            return this.$store.getters.getCompanyData;
+        }else{
+            return null;
+        }
+    }
   },
 
   //监控data中的数据变化
   watch: {
-    //obj:{
-    //    handler:function(val,oldval){
-    //
-    //    },
-    //    deep:true,//深度监听
-    //}
 
   },
 
@@ -1027,6 +1027,16 @@ export default {
        * 功能:now-->现场查借阅modal;  
        */
       this.mulitipleOperateVal = currOpeVal;
+      this.sceneLoanDataInitArr.formData.formInputs.forEach(item => {
+        if(item.key === 'companyId'){
+          this.companyList.forEach(el => {
+            item.children.push({
+              itemCode: el.id,
+              itemName: el.companyName
+            })
+          })
+        }
+      })
       this.sceneVisible = true;
       this.clearSceneTable();
       this.$store.dispatch("getinfoTableCheckData", []);
