@@ -2651,6 +2651,9 @@ export default {
           this.graduateDate = moment(new Date(), 'YYYY-MM-DD');
           this.workDate = moment(new Date(), 'YYYY-MM-DD');
           this.imgUrl = '';
+        } else{
+          this.getBasicInfo(this.currRowDataId);
+          this.getPersonOtherInfo(this.currRowDataId);
         }
       }
     },
