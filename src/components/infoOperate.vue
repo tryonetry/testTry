@@ -2655,6 +2655,9 @@ export default {
           this.getBasicInfo(this.currRowDataId);
           this.getPersonOtherInfo(this.currRowDataId);
         }
+        this.$nextTick(function(){
+          document.getElementsByClassName("right_container")[0].scrollTop = 0;
+        })
       }
     },
   },
