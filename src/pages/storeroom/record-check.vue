@@ -711,7 +711,7 @@ export default {
             title: '函件上传',
             otherType: 'upload',
             multiple: false,
-            action:this.$targetHost + 'archBorrow@uploadBusinessLetter.action',
+            action:this.$targetHost + 'hasngcadrefile/archBorrow@uploadBusinessLetter.action',
             listType: 'picture',
             accept: '.jpg, .png, .gif, .bmp, .jpeg',
             val: void 0,
