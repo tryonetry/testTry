@@ -569,7 +569,12 @@ export default {
     },
 
     accepttreeNodeFun(args,arrStrName){
-      this[arrStrName].checkedKeys = args[0].checked;
+      if(!this[arrStrName].checkStrictly){
+        //选择关联子节点时
+        this[arrStrName].checkedKeys = args[0];
+      } else{
+        this[arrStrName].checkedKeys = args[0].checked;
+      }
     },
 
     permissionTreeConfirm(){
