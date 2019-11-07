@@ -42,7 +42,7 @@
             :visible="editVisiable"
             @cancel="handleCancel"
             :width="'50%'"
-            style="height:40%;overflow: hidden;"
+            style="height:60%;overflow: hidden;"
             :maskClosable='false'
         >
             <template slot="footer">
@@ -588,9 +588,9 @@ export default {
             editModal:{
                 defaultCon: {
                     labelCol: {
-                        sm: { span: 4 },
-                        xl: { span: 4 },
-                        xxl: { span: 4 }
+                        sm: { span: 6 },
+                        xl: { span: 6 },
+                        xxl: { span: 6 }
                     },
                     wrapperCol: {
                         sm: { span: 18 },
@@ -601,28 +601,28 @@ export default {
             },
             addModal:{
                 defaultCon: {
-                labelCol: {
-                    sm: { span: 6 },
-                    xl: { span: 6 },
-                    xxl: { span: 6 }
-                },
-                wrapperCol: {
-                    sm: { span: 18 },
-                    xl: { span: 16 },
-                    xxl: { span: 16 }
-                }
+                    labelCol: {
+                        sm: { span: 8 },
+                        xl: { span: 8 },
+                        xxl: { span: 8 }
+                    },
+                    wrapperCol: {
+                        sm: { span: 16 },
+                        xl: { span: 16 },
+                        xxl: { span: 16 }
+                    }
                 },
                 textareaCon: {
-                labelCol: {
-                    sm: { span: 6 },
-                    xl: { span: 6 },
-                    xxl: { span: 3 }
-                },
-                wrapperCol: {
-                    sm: { span: 18 },
-                    xl: { span: 16 },
-                    xxl: { span: 20 }
-                }
+                    labelCol: {
+                        sm: { span: 8 },
+                        xl: { span: 8 },
+                        xxl: { span: 4 }
+                    },
+                    wrapperCol: {
+                        sm: { span: 16 },
+                        xl: { span: 16 },
+                        xxl: { span: 20 }
+                    }
                 },
             },
 
