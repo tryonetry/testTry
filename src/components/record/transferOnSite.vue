@@ -141,7 +141,7 @@ export default {
                 { label:"电子邮箱", val:void 0 ,name:'a3708'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"紧急联系人", val:void 0 ,name:'partyDuties'},
-                { label:"紧急联系人电话", val:void 0 ,name:'emergencyPhone'},
+                { label:"紧急联系人电话", val:void 0 ,name:'emergencyTel'},
                 { label:"参加工作日期", val:void 0 ,name:'a0134'},
                 { label:"籍贯", val:void 0 ,name:'a0111'},
                 { label:"户籍所在地", val:void 0 ,name:'a0181'},
