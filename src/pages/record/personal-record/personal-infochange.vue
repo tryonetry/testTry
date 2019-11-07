@@ -207,9 +207,19 @@ export default {
 
     // 点击进入
     editOperate(currdata) {
-      this.currentPersonData = currdata;
-      // console.log(this.currentPersonData)
-      this.modalState = true;
+      this.$http.fetchPost('personalArch@getPersonalArchById.action',{
+        a01000: currdata.key
+      }).then(res => {
+        if(Number(res.code) === 0){
+          this.currentPersonData = currdata;
+          this.modalState = true;
+        } else{
+          this.$message.warning('抱歉，获取数据失败，请刷新后重试!');
+        }
+      }).catch(err => {
+        this.$message.error('抱歉，网络异常！');
+      })
+      
     },
 
     // 提交
