@@ -101,33 +101,38 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 100
+            width: 100,
+            scopedSlots: { customRender: "cursorTitle" }
           },
            { 
             title: "存档编号", 
             dataIndex: "a0100A", 
             key: "a0100A",
             fixed: "left",
-            width:200,
+            width:150,
+            scopedSlots: { customRender: "cursorTitle" }
           },
           { 
             title: "姓名", 
             dataIndex: "a0101", 
             key: "a0101",
             fixed: "left",
-            width:250, 
+            width:150, 
+            scopedSlots: { customRender: "cursorTitle" }
           },
           { 
             title: "性别", 
             dataIndex: "a0104",
             key: "a0104",
-            width:200,
+            width:120,
+            scopedSlots: { customRender: "cursorTitle" }
           },
           { 
             title: "公民身份证号/社保卡号",
             dataIndex: "a0184", 
             key: "a0184",
             width:250,
+            scopedSlots: { customRender: "cursorTitle" }
           },
           
           { 
@@ -135,6 +140,7 @@ export default {
             dataIndex: "a3707C", 
             key: "a3707C",
             width:250,
+            scopedSlots: { customRender: "cursorTitle" }
           },
          
           {
@@ -142,6 +148,7 @@ export default {
             dataIndex: "uCreateDate",
             key: "uCreateDate",
             sorter: (a, b) => Number(a.uCreateDate.replace(/-/g,'')) - Number(b.uCreateDate.replace(/-/g,'')),
+            scopedSlots: { customRender: "cursorTitle" },
             // width:250,
           },
           {
