@@ -305,7 +305,7 @@ export default {
        * 功能：获取tree数据
        */
       this.$http
-        .fetchPost("module@getParentModule.action", {
+        .fetchPost("role@getModuleTree.action", {
           id: "0"
         })
         .then(res => {
