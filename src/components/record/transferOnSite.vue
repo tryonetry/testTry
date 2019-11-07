@@ -46,6 +46,7 @@
         <TableFromSearch 
             :formDataArr='isAction ? formDataAction : isInner ? formDataInner : !isEnterprice ? formDataNotInner : formDataEnterprice'
             ref="tableForm"
+            :layout="detailLayout"
         >
         </TableFromSearch>
     </div>
@@ -575,6 +576,34 @@ export default {
                     }
                 ]
             },
+
+            detailLayout: {
+                //转出信息layout
+                defaultCon: {
+                    labelCol: {
+                        sm: { span: 8 },
+                        xl: { span: 8 },
+                        xxl: { span: 10 }
+                    },
+                    wrapperCol: {
+                    sm: { span: 16 },
+                    xl: { span: 16 },
+                    xxl: { span: 14 }
+                    }
+                },
+                textareaCon: {
+                    labelCol: {
+                    sm: { span: 8 },
+                    xl: { span: 4 },
+                    xxl: { span: 3 }
+                    },
+                    wrapperCol: {
+                    sm: { span: 16 },
+                    xl: { span: 20 },
+                    xxl: { span: 13}
+                    }
+                },
+            }
         };
     },
 

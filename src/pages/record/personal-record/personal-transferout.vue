@@ -339,14 +339,14 @@ export default {
             title: "申请日期", 
             dataIndex: "applyDate", 
             key: "applyDate",
-            width:150,
+            width:100,
             sorter: (a, b) => a.uCreateDate && b.uCreateDate && Number(a.uCreateDate.replace(/-/g,'')) - Number(b.uCreateDate.replace(/-/g,'')),
           },
           { 
             title: "转出原因", 
             dataIndex: "transferOutCause", 
             key: "transferOutCause",
-            width:350,
+            width:200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           { 
