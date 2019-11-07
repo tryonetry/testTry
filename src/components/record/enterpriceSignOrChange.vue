@@ -521,6 +521,8 @@ export default {
           if(item.name === 'companyNature') item.children = Data.organizationTypeList;
           // 单位经济类型
           if(item.name === 'economicType') item.children = Data.economicTypeList;
+          //委托存档单位所属行业
+          if(item.name === 'industryNature') item.children = Data.belongIndustryList;
       })
     },
 
