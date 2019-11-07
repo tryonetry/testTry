@@ -61,6 +61,7 @@ export default {
         .then(res => {
           if(Number(res.code) === 0){
             _this.$message.success('提交成功');
+            _this.$refs.accountInfoForm.clearDataAndStatus();
           }else{
             _this.$message.warning('抱歉,提交失败,请重试');
           }
