@@ -9,7 +9,7 @@
             :label-col="defaultLayout.labelCon"
             :wrapper-col="defaultLayout.wrapperCol"
           >
-            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate"/>
+            <a-range-picker class="formSearchDate" format="YYYY-MM" v-model="currDate" :mode="rangeMode" @change="rangeChange"  @panelChange="rangePanelChange"/>
           </a-form-item>
         </a-col>
         <a-form-item  :wrapper-col="{ span: 14, offset: 4 }">
@@ -90,6 +90,7 @@ export default {
         moment(moment().subtract(1, "month"), "YYYY-MM"),
         moment(new Date(), "YYYY-MM")
       ],
+      rangeMode: ['month', 'month'], 
       tempSearch: {},  //临时：当前查询条件
 
       tableTotalNum: 0, //档案接收--table--总条数
@@ -428,6 +429,13 @@ export default {
       
     },
     
+    rangeChange(value){
+      this.currDate = value;
+    },
+    rangePanelChange(value, mode){
+      this.currDate = value;
+    },
+
     handleSubmit(e) {
       /**
        * 功能：选择完时间：查询按钮功能

@@ -24,7 +24,7 @@
             :label-col="{xs: {span: 0}, xl: {span: 0}, xxl: {span: 0}}"
             :wrapper-col="{xs: {span: 24}, xl: {span: 24}, xxl: {span: 24}}"
           >
-            <a-range-picker class="formSearchDate" :format="dateRangeFormat" v-model="currDate"/>
+            <a-range-picker class="formSearchDate" :format="dateRangeFormat" v-model="currDate" :mode="rangeMode"  @change="rangeChange" @panelChange="rangePanelChange"/>
           </a-form-item>
         </a-col>
         <a-form-item  :wrapper-col="{ span: 14, offset: 4 }">
@@ -90,6 +90,7 @@ export default {
         moment(moment().subtract(7, "day"), "YYYY-MM-DD"),
         moment(new Date(), "YYYY-MM-DD")
       ],
+      rangeMode: ['date', 'date'],   //默认日期格式为--日期选择范围
       tempSearch: {},  //临时：当前查询条件
       tempTiemval:1,  //临时： 默认查询为：date格式
       
@@ -255,10 +256,18 @@ export default {
       if(e.target.value === 'date'){
         this.dateRangeFormat  = 'YYYY-MM-DD';
         this.tempTiemval = 1;
+        this.rangeMode = ['date', 'date'];
       } else{
         this.dateRangeFormat = 'YYYY-MM';
         this.tempTiemval = 2;
+        this.rangeMode = ['month', 'month'];
       }
+    },
+    rangeChange(value){
+      this.currDate = value;
+    },
+    rangePanelChange(value, mode){
+      this.currDate = value;
     },
     handleSubmit(e) {
       /**
@@ -267,9 +276,9 @@ export default {
       e.preventDefault();
       this.tempSearch = {};
       if (this.currDate.length > 0) {
-        this.tempSearch.startDate = this.moment(this.currDate[0]._d).format("YYYY-MM-DD");
-        this.tempSearch.endDate = this.moment(this.currDate[1]._d).format("YYYY-MM-DD");
-        this.getChartData(this.tempSearch);
+        this.tempSearch.startDate = this.dateSearchType == 'date' ?  this.moment(this.currDate[0]._d).format("YYYY-MM-DD") : this.moment(this.currDate[0]._d).format("YYYY-MM");
+        this.tempSearch.endDate = this.dateSearchType == 'date' ? this.moment(this.currDate[1]._d).format("YYYY-MM-DD") : this.moment(this.currDate[1]._d).format("YYYY-MM");
+        this.getChartsData(this.tempSearch);
         this.getTableData(this.tempSearch);
       } else{
         this.$message.error('查询日期不能为空！')
