@@ -58,7 +58,7 @@ export default {
             dataIndex: "num",
             key: "num",
             fixed: "left",
-            width: 60,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" } //鼠标滑上去tip显示当前，不写的话则不显示
           },
           {
@@ -73,7 +73,7 @@ export default {
             title: "编号",
             dataIndex: "muCode",
             key: "muCode",
-            width: 300,
+            width: 250,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -87,13 +87,15 @@ export default {
             title: "类别",
             dataIndex: "muType",
             key: "muType",
-            width: 150,
+            // width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
             title: "是否启用",
             dataIndex: "muState",
             key: "muState",
+            fixed: 'right',
+            width: 150,
             scopedSlots: { customRender: "action2" }
           }
         ],
