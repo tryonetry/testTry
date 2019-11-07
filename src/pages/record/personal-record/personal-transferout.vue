@@ -339,7 +339,7 @@ export default {
             title: "申请日期", 
             dataIndex: "applyDate", 
             key: "applyDate",
-            width:100,
+            width:120,
             sorter: (a, b) => a.uCreateDate && b.uCreateDate && Number(a.uCreateDate.replace(/-/g,'')) - Number(b.uCreateDate.replace(/-/g,'')),
           },
           { 
