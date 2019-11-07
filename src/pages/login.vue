@@ -71,7 +71,7 @@ export default {
                     sessionStorage.setItem("loginData", JSON.stringify({isLogin:true,loginUser:res.userInfo}));
                     this.$router.push('/');
                 }else{
-                    this.$message.warning("登录失败,请重试");
+                    this.$message.warning(res.message);
                 }
             }).catch(err => {
                 this.$message.error("抱歉,网络错误,请稍后重试!");
