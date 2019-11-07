@@ -42,7 +42,7 @@
             :visible="editVisiable"
             @cancel="handleCancel"
             :width="'50%'"
-            style="height:60%;overflow: hidden;"
+            style="height:50%;overflow: hidden;"
             :maskClosable='false'
         >
             <template slot="footer">
