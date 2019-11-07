@@ -211,7 +211,7 @@ export default {
         a01000: currdata.key
       }).then(res => {
         if(Number(res.code) === 0){
-          this.currentPersonData = currdata;
+          this.currentPersonData = res.data;
           this.modalState = true;
         } else{
           this.$message.warning('抱歉，获取数据失败，请刷新后重试!');

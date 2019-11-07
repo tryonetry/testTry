@@ -26,10 +26,10 @@ function idcardToBirthday(idNum){
     return  [{name: 'val', data: '' }];
   }
   if(idNum.length === 18){
-    return [{name: 'val', data: idNum.substr(6,8) }];
+    return [{name: 'val', data: idNum =='000000000000000000' ? moment(new Date()).format('YYYY-MM-DD') : idNum.substr(6,8) }];
   }else if(idNum.length === 15){
     // console.log('19'+idNum.substr(6,6))
-    return [{name: 'val', data: '19'+idNum.substr(6,6) }];
+    return [{name: 'val', data: idNum =='000000000000000' ? moment(new Date()).format('YYYY-MM-DD') : '19'+idNum.substr(6,6) }];
   }
   return  [{name: 'val', data: '' }];
 }
@@ -744,6 +744,7 @@ export default {
     
     currentPersonData:{
       handler:function(newVal,oldVal){
+        console.log(newVal);
         this.clearDataAndStatus();
         if(newVal && newVal.a01000){
           this.insertData(newVal,true)
