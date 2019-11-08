@@ -955,7 +955,7 @@ export default {
             width: 150 
           },
           { title: "学习起始日期", dataIndex: "a0804", key: "a0804", width: 150  },
-          { title: "学习终止日期", dataIndex: "a0807a08", key: "a0807a08" }
+          { title: "学习终止日期", dataIndex: "a0807", key: "a0807" }
         ],
         tabledataArr:[]
       },
@@ -975,7 +975,7 @@ export default {
           'a0901a_editSelectInput',
           'a0801a_editSelectInput',
           'a0804_editDateInput',
-          'a0807a08_editDateInput',
+          'a0807_editDateInput',
           '所在学校_requireTitle',
           '教育类别_requireTitle',
           '学习形式_requireTitle',
@@ -1039,9 +1039,9 @@ export default {
           },
           {
             title:'学习终止日期',
-            dataIndex: "a0807a08",
-            key: "a0807a08",
-            scopedSlots: { customRender: "a0807a08_editDateInput" },
+            dataIndex: "a0807",
+            key: "a0807",
+            scopedSlots: { customRender: "a0807_editDateInput" },
             dateFormat: "YYYY-MM-DD"
           },
           {
@@ -1783,14 +1783,6 @@ export default {
           if(el.key === 'a0215c') el.itemChildren = this.positionLevelArr; //专业技术职务级别
         });
 
-        //档案转接数据
-        this.archiveEditInitArr.columnsArr.forEach(el => {
-          if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
-          if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
-          if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
-          if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
-        });
-
         this.workInitArr = this.workEditInitArr;  //工作经历
         this.eduInitArr = this.eduEditInitArr;  //教育经历
         this.familyInitArr = this.familyEditInitArr;  //家庭情况
@@ -1800,9 +1792,24 @@ export default {
         this.professionalInitArr = this.professionalEditInitArr;  //专业与职业技术
         if(Number(operateVal) === 1){
           //档案转接--添加
+          //档案转接数据--添加
+          this.archiveAddInitArr.columnsArr.forEach(el => {
+            if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
+            if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
+            if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
+            if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
+          });
           this.archiveInitArr = this.archiveAddInitArr;  //档案转接数据--添加表头
+          console.log(this.archiveInitArr);
         } else{
           //编辑
+          //档案转接数据--编辑
+          this.archiveEditInitArr.columnsArr.forEach(el => {
+            if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
+            if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
+            if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
+            if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
+          });
           this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据--编辑表头
         }
         
