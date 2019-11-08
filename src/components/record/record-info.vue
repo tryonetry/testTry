@@ -333,10 +333,10 @@ export default {
                 children: []
               },
               {
-                title: "参加工作日期",
-                otherType: "date",
+                title: "参加工作年月",
+                otherType: "month",
                 required: false,
-                placeholder: "请选择参加工作日期",
+                placeholder: "请选择参加工作年月",
                 key: "a0134",
                 name: "a0134",
                 val: void 0,
@@ -344,7 +344,7 @@ export default {
                 maxlength: 20,
                 minlength: 0,
                 reg: "",
-                tip: "* 请选择参加工作日期",
+                tip: "* 请选择参加工作年月",
                 status: ""
               },
               {

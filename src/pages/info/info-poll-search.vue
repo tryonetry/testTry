@@ -126,7 +126,7 @@ import InfoOperate from "@/components/infoOperate";
 import moment from "moment";
 import Portrait from '@/components/info/portrait'
 export default {
-  name: "InfoPoll",
+  name: "InfoPollSearch",
   components: {
     TableView,
     InfoOperate,
@@ -195,7 +195,7 @@ export default {
             title: "出生日期",
             dataIndex: "a0107",
             key: "a0107",
-            width: 120,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -216,7 +216,7 @@ export default {
             title: "参加工作年月",
             dataIndex: "a0134",
             key: "a0134",
-            width: 150,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

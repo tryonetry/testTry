@@ -36,6 +36,16 @@ const routes = [
                 },
             },
             {
+                path: 'talentinfo/infopollsearch', name: 'infopollsearch', component: resolve => require(['../pages/info/info-poll-search.vue'], resolve),
+                meta: {
+                    title: '人才信息管理',
+                    breadcrumbList: [{
+                        name: "人才信息查询",
+                        path: 'talentinfo/infopollsearch',
+                    }]
+                },
+            },
+            {
                 path: 'talentinfo/infocruit', name: 'infocruit', component: resolve => require(['../pages/info/info-cruit.vue'], resolve),
                 meta: {
                     title: '人才信息管理',

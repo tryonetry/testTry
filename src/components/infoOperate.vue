@@ -1451,6 +1451,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        superimposeWidth: true,
         formData: {},
         columnsArr: [
           { title: "存档编号", dataIndex: "dc030001", key: "dc030001", width: 300 },
@@ -1472,8 +1473,8 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        superimposeWidth: true,
         formData: {},
-        superimposeWidth:true,
         editableCol:[
           'dc030001_editInput',
           'a0002_editInput',
@@ -1606,6 +1607,111 @@ export default {
         ],
         tabledataArr:[]
       },
+      archiveAddInitArr:{
+        isEditAndAdd: true,
+        addMaxLength: 1,
+        treeflag: false,
+        tableCheck: false,
+        noPagination: true, // 分页是否不显示
+        bordered: true, // 表格 border 是否显示
+        superimposeWidth: true,
+        formData: {},
+        editableCol:[
+          'dc030001_editInput',
+          'a0002_editInput',
+          'dc030003_editSelectInput',
+          'dc030004_editSelectInput',
+          'a3807a_editInput',
+          'a3801_editDateInput',
+          'a3803_editSelectInput',
+          'a3802_editInput',
+          'dc030009_editAddressInput',
+          '存档编号_requireTitle',
+          '存档状态_requireTitle',
+          '存档性质_requireTitle',
+          '现档案管理机构名称_requireTitle',
+          '转入日期_requireTitle',
+          '转入原因_requireTitle',
+          '原存档单位名称_requireTitle',
+        ],
+        columnsArr:[
+          { 
+            dataIndex: "dc030001", 
+            key: "dc030001",
+            width: 200,
+            slots: { title: '存档编号_requireTitle' },
+            scopedSlots: { customRender: "dc030001_editInput" } 
+          },
+          { 
+            title: '索引号',
+            dataIndex: "a0002", 
+            key: "a0002",
+            width: 120,
+            scopedSlots: { customRender: "a0002_editInput" } 
+          },
+          { 
+            dataIndex: "dc030003", 
+            key: "dc030003",
+            width: 150,
+            slots: { title: '存档状态_requireTitle' },
+            scopedSlots: { customRender: "dc030003_editSelectInput" },
+            itemChildren:[],
+          },
+          { 
+            dataIndex: "dc030004", 
+            key: "dc030004",
+            width: 150,
+            slots: { title: '存档性质_requireTitle' },
+            scopedSlots: { customRender: "dc030004_editSelectInput" },
+            itemChildren:[]
+          },
+          {
+            dataIndex: "a3807a",
+            key: "a3807a",
+            width: 300,
+            slots: { title: '现档案管理机构名称_requireTitle' },
+            scopedSlots: { customRender: "a3807a_editInput" } 
+          },
+          {  
+            dataIndex: "a3801", 
+            key: "a3801",
+            width: 200,
+            slots: { title: '转入日期_requireTitle' },
+            scopedSlots: { customRender: "a3801_editDateInput" },
+            dateFormat: "YYYY-MM-DD" 
+          },
+          {  
+            dataIndex: "a3803", 
+            key: "a3803",
+            width: 400,
+            slots: { title: '转入原因_requireTitle' },
+            scopedSlots: { customRender: "a3803_editSelectInput" },
+            itemChildren:[]  
+          },
+          {
+            dataIndex: "a3802",
+            key: "a3802",
+            width: 300,
+            slots: { title: '原存档单位名称_requireTitle' },
+            scopedSlots: { customRender: "a3802_editInput" } 
+          },
+          { 
+            title: '原存档单位行政区划',
+            dataIndex: "dc030009", 
+            key: "dc030009",
+            // width: 300,
+            scopedSlots: { customRender: "dc030009_editAddressInput" },
+          },
+          {
+            title: "操作",
+            key: "action",
+            width: 150,
+            fixed: 'right',
+            scopedSlots: { customRender: "action" }
+          }
+        ],
+        tabledataArr:[]
+      },
       
       
       imgUrl: "", //照片地址
@@ -1692,7 +1798,14 @@ export default {
         this.languageInitArr = this.languageEditInitArr;  //语言能力
         this.trainerInitArr = this.trainerEditInitArr;  //培训经历
         this.professionalInitArr = this.professionalEditInitArr;  //专业与职业技术
-        this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据
+        if(Number(operateVal) === 1){
+          //档案转接--添加
+          this.archiveInitArr = this.archiveAddInitArr;  //档案转接数据--添加表头
+        } else{
+          //编辑
+          this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据--编辑表头
+        }
+        
       } else{
         //浏览--tableview传值
         this.workInitArr = this.workViewInitArr;  //工作经历

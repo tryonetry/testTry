@@ -452,18 +452,18 @@ export default {
             },
             baseInfoData:[
                 { label:"姓名", val:void 0 ,name:'a0101'},
-                { label:"性别", val:void 0 ,name:'a0104'},
+                { label:"性别", val:void 0 ,name:'a0104_Name'},
                 { label:"公民身份号码/社保卡号", val:void 0 ,name:'a0184'},
                 { label:"曾用名", val:void 0 ,name:'a0139'},
                 { label:"出生日期", val:void 0 ,name:'a0107'},
                 { label:"籍贯", val:void 0 ,name:'a0111'},
-                { label:"民族", val:void 0 ,name:'a0117'},
+                { label:"民族", val:void 0 ,name:'a0117_Name'},
                 { label:"户籍状态", val:void 0 ,name:'hujiState'},
                 { label:"户籍所在地", val:void 0 ,name:'a0181'},
                 { label:"现居住地址", val:void 0 ,name:'a3711'},
-                { label:"婚姻状况", val:void 0 ,name:'a0131'},
-                { label:"健康状况", val:void 0 ,name:'a0127'},
-                { label:"政治面貌", val:void 0 ,name:'a0141'},
+                { label:"婚姻状况", val:void 0 ,name:'a0131_Name'},
+                { label:"健康状况", val:void 0 ,name:'a0127_Name'},
+                { label:"政治面貌", val:void 0 ,name:'a0141_Name'},
                 { label:"参加工作日期", val:void 0 ,name:'a0134'},
                 { label:"紧急联系人", val:void 0 ,name:'partyDuties'},
                 { label:"电子邮箱", val:void 0 ,name:'a3708'},
@@ -475,8 +475,8 @@ export default {
                 { label:"缺少材料", val:void 0 ,name:'lackMaterials',oneRow:true},
             ],
             educationData:[
-                { label:"最高学位", val:void 0 ,name:'a0914'},
-                { label:"最高学历", val:void 0 ,name:'a0834'},
+                { label:"最高学位", val:void 0 ,name:'a0914_Name'},
+                { label:"最高学历", val:void 0 ,name:'a0834_Name'},
                 { label:"最高学历毕业日期", val:void 0 ,name:'a0807'},
                 { label:"最高学历毕业院校", val:void 0 ,name:'a0888'},
                 { label:"最高专业技术职务", val:void 0 ,name:'majorPost'},
@@ -484,9 +484,9 @@ export default {
             ],
             saveRecordData:[
                 { label:"存档编号", val:void 0 ,name:'a0100A'},
-                { label:"存档性质", val:void 0 ,name:'personType'},
+                { label:"存档性质", val:void 0 ,name:'personType_Name'},
                 { label:"存档位置号", val:void 0 ,name:'shelvesNo'},
-                { label:"来档方式", val:void 0 ,name:'source'},
+                { label:"来档方式", val:void 0 ,name:'source_Name'},
                 { label:"邮寄编号", val:void 0 ,name:'confNumber'},
             ],
         };
@@ -613,7 +613,7 @@ export default {
                     a01000:currRowdata.a01000
                 }).then(res => {
                     if(Number(res.code) === 0){
-                        // console.log(res.data);
+                        console.log(res.data);
                         const { insertDataToBaseInfo, baseInfoData, educationData, saveRecordData } = this;
                         insertDataToBaseInfo(baseInfoData,res.data);
                         insertDataToBaseInfo(educationData,res.data);

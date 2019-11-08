@@ -95,7 +95,7 @@
 import FormHeader from "@/components/formHeader";
 import ShowBasicInfo from '@/components/showBasicInfo';
 import TableView from "@/components/tableView";
-
+import moment from "moment";
 export default {
     name:"UnitQueryservice",
     //import引入的组件需要注入到对象中才能使用
@@ -147,12 +147,7 @@ export default {
                             key: 'id',
                             name: 'id',
                             val: void 0,
-                            children: [
-                                {
-                                    itemCode: '',
-                                    itemName: ''
-                                }
-                            ],
+                            children: [],
                             postname:'id',
                             status: '',
                         },
@@ -522,7 +517,7 @@ export default {
             // 导出列的json对象
             fieldsJson:null,
             exportFiledsJson:null,
-            fieldsName:"xxxxxxxxxx",
+            fieldsName:"",
         };
     },
 
@@ -552,7 +547,7 @@ export default {
     //方法集合
     methods: {
         handlerCompanyData(dataArr){
-            this.initArr.formData.formInputs[0].children = [...dataArr].map((item)=>{
+            this.initArr.formData.formInputs[1].children = [...dataArr].map((item)=>{
                 return {itemCode:item.id,itemName:item.companyName}
             });
         },
@@ -642,6 +637,7 @@ export default {
                         const {insertDataToBaseInfo,baseInfoData,destroyData} = this;
                         insertDataToBaseInfo(baseInfoData,res.data);
                         insertDataToBaseInfo(destroyData,res.data);
+                        this.fieldsName = res.data.companyName + '代理人员列表' + moment(new Date()).format("YYYY-MM-DD hh:mm:ss")
                         this.visiable = true;
                         
                     }else{
