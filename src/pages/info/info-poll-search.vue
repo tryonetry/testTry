@@ -10,7 +10,7 @@
       @accepttreeNode="accepttreeNodeFun"
     >
       <span slot="formAction">
-        <a-button class="buttonOperate" type="primary" @click="operateFun({},1)">添加</a-button>
+        <!-- <a-button class="buttonOperate" type="primary" @click="operateFun({},1)">添加</a-button> -->
         <a-button class="buttonOperate" @click="portraitView">个人画像</a-button>
         <JsonExcel :data="exportDataArr" :fields="exportFiledsJson" :name="fieldsName" style="display: inline-block;">
           <a-button class="buttonOperate" @click="exportFun">导出</a-button>
@@ -24,7 +24,7 @@
           data-type="浏览"
           class="primaryBtnColor"
         >浏览</a>
-        <a
+        <!-- <a
           href="javascript:;"
           @click="operateFun(slotPropsData.currRowdata, 3)"
           data-type="编辑"
@@ -36,7 +36,7 @@
           @confirm="deleteFun(slotPropsData.currRowdata, slotPropsData.currTableData)"
         >
           <a href="javascript:;" class="errorBtnColor">删除</a>
-        </a-popconfirm>
+        </a-popconfirm> -->
       </div>
     </TableView>
     <!-- 添加信息模态框 -->

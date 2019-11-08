@@ -2607,7 +2607,9 @@ export default {
       let tempLanguageDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.languageInitArr.tabledataArr)));
       let tempProfessDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.professionalInitArr.tabledataArr)));
       let tempArchiveDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.archiveInitArr.tabledataArr)));
-      tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';
+      
+      // tempBasicInfo.upUnitId = this.addTreeNode["key"] ? this.addTreeNode["key"] : '';  //旧版本--有左侧树
+      tempBasicInfo.upUnitId = JSON.parse(sessionStorage.getItem('loginData')).loginUser['orgId'];  //新版本--去掉左侧树
       
       let postdataArr = [];
       // 先把数组转成str， 在转码，解码

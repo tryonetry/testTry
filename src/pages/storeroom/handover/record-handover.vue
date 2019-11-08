@@ -26,7 +26,7 @@
       >
         <div class="modalInnerContainer">
           <!-- 打印模板 -->
-          <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+          <TemplateOfPrint :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
               <div slot="printContent" class="printContent">
                 <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
                 <div class="bottom">
@@ -186,7 +186,6 @@ export default {
             dataIndex: "e0106a",
             key: "e0106a",
             fixed: 'left',
-            sorter: (a, b) => a.e0106a && b.e0106a && Number(a.e0106a.replace(/-/g,'')) - Number(b.e0106a.replace(/-/g,'')),
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -241,9 +240,6 @@ export default {
             fixed: 'right',
             width: 150,
             scopedSlots: { customRender: "cursorTitle" }
-
-
-            
           },
          
         ],
@@ -256,7 +252,6 @@ export default {
       confirmLoading: false, //确认加载状态 默认为false
       modalWidth: '',  //modal的宽度
 
-      fileNum: 'XXXXX91295295161',  //打印---文件编号
       firstTitle: '江西省人才流动中心', //打印--大标题
       secondTitle: '档案交接清单',  //打印---小标题
       nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期

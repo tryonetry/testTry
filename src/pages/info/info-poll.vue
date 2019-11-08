@@ -11,19 +11,18 @@
     >
       <span slot="formAction">
         <a-button class="buttonOperate" type="primary" @click="operateFun({},1)">添加</a-button>
-        <a-button class="buttonOperate" @click="portraitView">个人画像</a-button>
+        <!-- <a-button class="buttonOperate" @click="portraitView">个人画像</a-button> -->
         <JsonExcel :data="exportDataArr" :fields="exportFiledsJson" :name="fieldsName" style="display: inline-block;">
           <a-button class="buttonOperate" @click="exportFun">导出</a-button>
         </JsonExcel>
-        <!-- <a-button class="buttonOperate" @click="exportAllFun">导出全部</a-button> -->
       </span>
       <div slot="tableAction" slot-scope="slotPropsData">
-        <a
+        <!-- <a
           href="javascript:;"
           @click="operateFun(slotPropsData.currRowdata, 2)"
           data-type="浏览"
           class="primaryBtnColor"
-        >浏览</a>
+        >浏览</a> -->
         <a
           href="javascript:;"
           @click="operateFun(slotPropsData.currRowdata, 3)"
@@ -135,7 +134,7 @@ export default {
   data() {
     return {
       initArr: {
-        treeflag: true, //左侧tree是否存在
+        treeflag: false, //左侧tree是否存在
         tableCheck: true, //table是否可以check
         superimposeWidth: true,
         formData: {
@@ -168,7 +167,7 @@ export default {
           ],
           // form btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm" }
+            { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' }
             // { title: "添加", htmltype: "button", operate: "addOperate" },
             // { title: "个人对象", htmltype: "button", operate: "view" }
           ]
@@ -345,7 +344,7 @@ export default {
     },
   },
   created() {
-    //this.getTableData(null, this.tempPageSize, 10);
+    this.getTableData(null, this.tempPageSize, 10);
   },
   computed: {
     checkTableData: function() {
@@ -475,16 +474,20 @@ export default {
       this.operateDataId = data.key;
       this.currentRowData = data;
       if (statusVal == 1) {
-        let treenode = this.selectTreeNode;
-        if (treenode) {
-          if (treenode.key.length > 4) {
-            this.showModalFun();
-          } else {
-            this.$message.error("请在具体机构中添加信息");
-          }
-        } else {
-          this.$message.error("请先选择机构");
-        }
+        //原始--左侧有树--必须选择机构才能添加
+        // let treenode = this.selectTreeNode;
+        // if (treenode) {
+        //   if (treenode.key.length > 4) {
+        //     this.showModalFun();
+        //   } else {
+        //     this.$message.error("请在具体机构中添加信息");
+        //   }
+        // } else {
+        //   this.$message.error("请先选择机构");
+        // }
+
+        //现在--去掉左侧机构
+        this.showModalFun();
       } else if (statusVal == 2) {
         //浏览
         //当点击浏览--热度加1；刷新表格数据
@@ -576,10 +579,7 @@ export default {
         this.exportDataArr = [];
       }
     },
-    // exportAllFun(){
-    //   //导出全部
-      
-    // },
+
     getDictResultName(keyVal, itemCodeVal, dictDataArr){
        /**
         * 功能：通过itemCode值在字典数据里查找对应的itemName

@@ -176,7 +176,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }   //鼠标滑上去tip显示当前，不写的话则不显示
                     },
                     {
-                        title: "接受日期",
+                        title: "接收日期",
                         dataIndex: "auCreateDate",
                         key: "auCreateDate",
                         fixed: "left",
