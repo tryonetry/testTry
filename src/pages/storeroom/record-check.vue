@@ -977,6 +977,7 @@ export default {
               num: (pageNum - 1) * limitNum + index + 1,
               key: element.a01000,
               a0100A: element.a0100A,
+              a0104:  element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
               a0101: element.a0101,
               a0184: element.a0184,
               uCreateDate: element.uCreateDate,
