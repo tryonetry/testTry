@@ -380,7 +380,8 @@ export default {
           jgType: !condition || !condition.type ? "" : condition.type,
           a0101: !condition || !condition.a0101 ? "" : condition.a0101,
           a0100a: !condition || !condition.a0100a ? "" : condition.a0100a,
-          a0184: !condition || !condition.a0184 ? "" : condition.a0184
+          a0184: !condition || !condition.a0184 ? "" : condition.a0184,
+          infoFlag: '1',   //新增
         })
         .then(res => {
           if (Number(res.code) === 0) {
