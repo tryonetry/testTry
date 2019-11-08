@@ -1495,10 +1495,7 @@ export default {
           '现档案管理机构名称_requireTitle',
           '转入日期_requireTitle',
           '转入原因_requireTitle',
-          '原存档单位名称_requireTitle',
-          '转出日期_requireTitle',
-          '转出原因_requireTitle',
-          '转往档案单位名称_requireTitle'
+          '原存档单位名称_requireTitle'
         ],
         columnsArr:[
           { 
@@ -1569,26 +1566,26 @@ export default {
             scopedSlots: { customRender: "dc030009_editAddressInput" },
           },
           { 
+            title: '转出日期',
             dataIndex: "dc030010", 
             key: "dc030010",
             width: 200,
-            slots: { title: '转出日期_requireTitle' },
             scopedSlots: { customRender: "dc030010_editDateInput" },
             dateFormat: "YYYY-MM-DD" 
           },
           {  
+            title: '转出原因',
             dataIndex: "dc030011", 
             key: "dc030011",
             width: 300,
-            slots: { title: '转出原因_requireTitle' },
             scopedSlots: { customRender: "dc030011_editSelectInput" },
             itemChildren:[]  
           },
           {
+            title: '转往档案单位名称',
             dataIndex: "dc030012",
             key: "dc030012",
             width: 300,
-            slots: { title: '转往档案单位名称_requireTitle' },
             scopedSlots: { customRender: "dc030012_editInput" } 
           },
           { 
