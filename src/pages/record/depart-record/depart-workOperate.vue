@@ -2,7 +2,7 @@
 <template>
   <!-- 单位职工录入 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
         <div slot="tableAction" slot-scope="slotPropsData">
           <a href="javascrit:;" @click="editOperate(slotPropsData.currRowdata)" class="primaryBtnColor">录入职工信息</a>
         </div>
@@ -216,6 +216,7 @@ export default {
         },
       },
       tableTotalNum:0,
+      tableLoading: false,
       changeModalShow:false,
       confirmLoading:false,
       currentEnterprice:{},
@@ -246,27 +247,46 @@ export default {
        * 参数：condition:form查询结果：{}
       **/
       this.tempCondition = condition;
+      this.tableLoading = true;
       this.$http.fetchPost('companyInfo@getCompanyInfoList.action',{
           page: pageNum,
           limit: limitNum,
           ...condition
       }).then((res)=>{
           if(Number(res.code) === 0){
-              this.tableTotalNum = res.count;
-              // console.log(this.tableTotalNum)
-              this.initArr.tabledataArr = res.data;
-              this.initArr.tabledataArr.forEach((element, index) => {
-                Object.assign(element,{
-                  key:element.id,
-                  num: (pageNum - 1) * limitNum + index + 1,
-                  transferType: element.transferType === '1' ? '集体转集体' : element.transferType === '2' ? '集体转个人' : element.transferType === '3' ? '个人转集体' : '',
-                });
-              });
+            this.tableTotalNum = res.count;
+            // console.log(this.tableTotalNum)
+            let tempTableData = res.data;
+            this.initArr.tabledataArr = [];
+            tempTableData.forEach((element, index) => {
+              this.initArr.tabledataArr.push({
+                key:element.id,
+                num: (pageNum - 1) * limitNum + index + 1,
+                transferType: element.transferType === '1' ? '集体转集体' : element.transferType === '2' ? '集体转个人' : element.transferType === '3' ? '个人转集体' : '',
+                businessLicense: element.businessLicense,
+                companyNumber: element.companyNumber,
+                companyName: element.companyName,
+                contactPhone: element.contactPhone,
+                tatsudoDate: element.tatsudoDate
+              })
+            });
+              // this.initArr.tabledataArr = res.data;
+              // this.initArr.tabledataArr.forEach((element, index) => {
+              //   Object.assign(element,{
+              //     key:element.id,
+              //     num: (pageNum - 1) * limitNum + index + 1,
+              //     transferType: element.transferType === '1' ? '集体转集体' : element.transferType === '2' ? '集体转个人' : element.transferType === '3' ? '个人转集体' : '',
+              //   });
+              // });
 
               // console.log(this.initArr.tabledataArr)
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
           }
+      }).catch(err => {
+          _this.$message.error('抱歉,网络异常,请稍后重试');
+      }).finally(end => {
+          _this.tableLoading = false;
       })
     },
 

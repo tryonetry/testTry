@@ -2,7 +2,7 @@
 <template>
   <!-- 单位职工信息变更 -->
   <div class="outer">
-    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum">
+    <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
         <div slot="tableAction" slot-scope="slotPropsData">
           <a href="javascrit:;" @click="editOperate(slotPropsData.currRowdata)" class="primaryBtnColor">编辑</a>
         </div>
@@ -230,6 +230,7 @@ export default {
         },
       },
       tableTotalNum:0,
+      tableLoading: false,
       changeModalShow:false,
       confirmLoading:false,
       currentPersonData:{},
@@ -261,6 +262,7 @@ export default {
        * 参数：condition:form查询结果：{}
       **/
       this.tempCondition = condition;
+      this.tableLoading = true;
       this.$http.fetchPost('companyInfo@getPersonalArchList.action',{
           page: pageNum,
           limit: limitNum,
@@ -283,6 +285,10 @@ export default {
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
           }
+      }).catch(err => {
+          _this.$message.error('抱歉,网络异常,请稍后重试');
+      }).finally(end => {
+          _this.tableLoading = false;
       })
     },
 

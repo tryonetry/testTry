@@ -765,6 +765,7 @@ export default {
     },
 
     currentEnterprice:{
+      immediate: true,
       handler:function(newVal){
         if(newVal && newVal.id){
           this.clearDataAndStatus();
