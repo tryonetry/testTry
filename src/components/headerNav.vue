@@ -135,11 +135,11 @@
     </a-layout-header>
 
     <!-- 内容 -->
-    <a-layout>
+    <a-layout id="components-layout-demo-custom-trigger">
       <!-- 左侧栏 -->
       <!-- currentMainIndex !== 2 && currentMainIndex !== 3 -->
       
-      <a-layout-sider collapsible v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'" v-model="collapsed" width="200" style="background: #f0f2f5;">
+      <a-layout-sider :trigger="null" collapsible v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'" v-model="collapsed" width="200" style="background: #f0f2f5;">
         <a-menu
           mode="inline"
           :defaultSelectedKeys="submenuDefaultSelect"
@@ -184,11 +184,20 @@
       </a-layout-sider>
       <!-- 内容栏 -->
       <a-layout :style="isHasNavPath !== '/analysis' && isHasNavPath !== '/report' ? 'padding: 0 5px 24px' : ''">
-        <!-- 面包屑 -->
-        <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="currentMainIndex !== 2 && currentMainIndex !== 3">
-          <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>
-          <a-breadcrumb-item v-for="(item, index) in breadcrumb" :key="index">{{item.name}}</a-breadcrumb-item>
-        </a-breadcrumb>
+        <div class="navHeader">
+          <a-icon
+            class="trigger"
+            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+            @click="()=> collapsed = !collapsed"
+            style="cursor:pointer; font-size: 18px;"
+          />
+          <!-- 面包屑 -->
+          <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="currentMainIndex !== 2 && currentMainIndex !== 3">
+            <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>
+            <a-breadcrumb-item v-for="(item, index) in breadcrumb" :key="index">{{item.name}}</a-breadcrumb-item>
+          </a-breadcrumb>
+        </div>
+        
         <!-- head nav 的 路由跳转 -->
         <router-view></router-view>
       </a-layout>
@@ -824,6 +833,14 @@ export default {
 }
 .eyeIcon:hover{
   color: #333333;
+}
+
+.navHeader{
+    display: flex;
+    background: rgb(255, 255, 255);
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 15px;
 }
 </style>
 

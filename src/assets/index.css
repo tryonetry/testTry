@@ -89,7 +89,7 @@ input[readonly]{
 
   .ant-layout-sider{
     background: #fff !important;
-    margin-bottom: 48px;
+    /* margin-bottom: 48px; */
   }
 
   .ant-layout-sider-trigger{
