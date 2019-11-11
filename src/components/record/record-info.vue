@@ -114,6 +114,7 @@ export default {
     "currentPersonData",
     "isStaff",
     "currentEnterprice",
+    "disabledFlag"
   ],
 
   data() {
@@ -716,7 +717,10 @@ export default {
             ],
           },
           companyList:null,
-          hasDataDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum','personType']
+          //hasDataDisabledOptions: [], //disabled--禁止输入项
+          personDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum','personType'],  //个人--信息变更--disabled项
+          departWorkDisabled: ['personType', 'confNumber', 'a0101', 'a0184'], //单位--信息变更--disabled项
+          departWorkOperateDisabled: ['personType', 'a0100A' ], //单位---职工录入--disabled
     };
   },
 
@@ -743,12 +747,19 @@ export default {
     },
     
     currentPersonData:{
+      immediate: true,
       handler:function(newVal,oldVal){
-        console.log(newVal);
         this.clearDataAndStatus();
         if(newVal && newVal.a01000){
           this.insertData(newVal,true)
-          this.disableSomeOption(this.hasDataDisabledOptions);
+          if(this.disabledFlag == '1'){
+            this.disableSomeOption(this.personDisabledOptions);
+          } else if(this.disabledFlag == '2'){
+            this.disableSomeOption(this.departWorkDisabled);
+          } else if(this.disabledFlag == '3'){
+            this.disableSomeOption(this.departWorkOperateDisabled);
+          }
+          
         }
       },
     },
@@ -758,7 +769,14 @@ export default {
         if(newVal && newVal.id){
           this.clearDataAndStatus();
           this.insertData(newVal)
-          this.disableSomeOption(this.hasDataDisabledOptions);
+          // this.disableSomeOption(this.hasDataDisabledOptions);
+          if(this.disabledFlag == '1'){
+            this.disableSomeOption(this.personDisabledOptions);
+          } else if(this.disabledFlag == '2'){
+            this.disableSomeOption(this.departWorkDisabled);
+          } else if(this.disabledFlag == '3'){
+            this.disableSomeOption(this.departWorkOperateDisabled);
+          }
           this.insertCompanyData();
         }
       }
@@ -904,10 +922,17 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    const {currentPersonData,hasDataDisabledOptions,disableSomeOption,insertData,currentEnterprice} = this;
+    const {currentPersonData,personDisabledOptions,departWorkDisabled,departWorkOperateDisabled,disableSomeOption,insertData,currentEnterprice} = this;
 
     if((currentPersonData && currentPersonData.a01000) || (currentEnterprice && currentEnterprice.id)){
-      disableSomeOption(hasDataDisabledOptions);
+      // disableSomeOption(hasDataDisabledOptions);
+      if(this.disabledFlag == '1'){
+        this.disableSomeOption(this.personDisabledOptions);
+      } else if(this.disabledFlag == '2'){
+        this.disableSomeOption(this.departWorkDisabled);
+      } else if(this.disabledFlag == '3'){
+        this.disableSomeOption(this.departWorkOperateDisabled);
+      }
       insertData(currentPersonData,true);
       insertData(currentEnterprice);
     }

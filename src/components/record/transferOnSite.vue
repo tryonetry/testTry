@@ -51,6 +51,28 @@
         </TableFromSearch>
     </div>
 
+
+    <div class="addModal">
+      <a-modal
+        centered
+        title="材料借出"
+        :visible="lendVisible"
+        :width="'578px'"
+        @cancel="lendCancel"
+        style="height:50%;overflow: hidden;z-index: 1005;"
+        :maskClosable='false'
+      >
+        <template slot="footer">
+            <a-button key="back" @click="lendCancel">取 消</a-button>
+        </template>
+        <div class="lendContent">
+            <div class="lend_name">{{lendName}}档案材料：</div>
+            <div class="lend_detail" v-for="(item, index) in this.lendInfo" :key="index">
+               《{{item.materialId}}》于{{item.borrowDate}}被借出；
+            </div>
+        </div>
+      </a-modal>
+    </div>
 </div>
 </template>
 
@@ -603,7 +625,11 @@ export default {
                     xxl: { span: 13}
                     }
                 },
-            }
+            },
+
+            lendVisible: false,
+            lendInfo: [],
+            lendName: '',
         };
     },
 
@@ -673,6 +699,35 @@ export default {
                 _this.$message.error('抱歉,网络异常,请稍后重试');
                 _this.isInner ? _this.clearBaseInfoData('innerData') : _this.clearBaseInfoData('notInnerData');
             });
+
+            if(!this.isInner){
+                //转出--现场转出申请
+                this.$http.fetchPost('fileConnect@findMaterialByIdNum.action', {
+                    applyIdNum:_this.idCardNum,
+                    applyA0100A:_this.saveRecordNum
+                }).then(res => {
+                    console.log(res);
+                    if(Number(res.code) === 0){
+                        if(res.data && res.data.length > 0){
+                            _this.lendInfo = res.data;
+                            _this.lendName = res.data[0].applyName;
+                            _this.lendVisible = true;
+                            setTimeout(() => {
+                                _this.lendVisible = false;
+                            }, 5000)
+                        }
+                    } else{
+                        _this.$message.warning('抱歉，材料借出信息获取失败，请刷新后重试！');
+                    }
+                }).catch(err => {
+                    _this.$message.error('抱歉,网络异常,请稍后重试');
+                })
+            } 
+        },
+
+        //借出材料信息--modal
+        lendCancel(){
+            this.lendVisible = false; 
         },
 
         // 处理数据
@@ -980,4 +1035,8 @@ export default {
         width: 250px;
     }
 
+    .lendContent{
+        font-size: 16px;
+        line-height: 30px;
+    }
 </style>

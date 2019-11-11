@@ -30,7 +30,7 @@
           <span>{{currentPersonData && currentPersonData.a0101}}</span>
         </div>
         <div class="recordInfoContainer">
-          <RecordInfo :currentPersonData='currentPersonData' ref="accountInfoForm"></RecordInfo>
+          <RecordInfo :currentPersonData='currentPersonData' :disabledFlag="1" ref="accountInfoForm"></RecordInfo>
         </div>
       </a-modal>
     </div>

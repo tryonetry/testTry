@@ -31,7 +31,7 @@
           <span>{{currentEnterprice.companyName}}</span>
         </div>
         <div class="insertContainer">
-          <RecordInfo :isStaff='true' :currentEnterprice='currentEnterprice' ref="accountInfoForm"></RecordInfo>
+          <RecordInfo :isStaff='true' :currentEnterprice='currentEnterprice'  :disabledFlag="3" ref="accountInfoForm"></RecordInfo>
         </div>
       </a-modal>
     </div>

@@ -5,7 +5,7 @@
     <RecordInfo ref="accountInfoForm">
       <a-row slot="operationAction">
         <a-col :span="24" align="middle">
-          <a-button class="btnMargin" type="primary" @click="submitInfoBtn" :loading='confirmLoading'>立即提交</a-button>
+          <a-button class="btnMargin" type="primary"  @click="submitInfoBtn" :loading='confirmLoading'>立即提交</a-button>
         </a-col>
       </a-row>
     </RecordInfo>

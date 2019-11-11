@@ -117,7 +117,7 @@
           </TemplateOfPrint>
         </div>
         <template slot="footer">
-            <a-button key="back" @click="handleCancel">取 消</a-button>
+            <a-button key="back" @click="printCancel">取 消</a-button>
             <a-button key="submit" type="primary"  @click="print">打 印</a-button>
         </template>
       </a-modal>
@@ -1130,7 +1130,7 @@ export default {
       /**
        * 功能：打印modal--打印操作
        */
-      // this.$refs.printPage.printFun();
+      this.$refs.print.printFun();
     }
   },
 

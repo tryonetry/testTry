@@ -31,7 +31,7 @@
           <span>{{currentPersonData.a0101}}</span>
         </div>
         <div class="insertContainer">
-          <RecordInfo :isStaff='isStaff' :currentPersonData='currentPersonData' ref="accountInfoForm"></RecordInfo>
+          <RecordInfo :isStaff='isStaff' :currentPersonData='currentPersonData'  :disabledFlag="2" ref="accountInfoForm"></RecordInfo>
         </div>
       </a-modal>
     </div>

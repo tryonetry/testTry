@@ -75,7 +75,7 @@
 
         <!-- 现场查借阅modal -->
         <div class="sceneBorrow" v-if="mulitipleOperateVal === 'now' || mulitipleOperateVal === 'batchNow'">
-           <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" :loading="sceneTableLoading" @searchTable="getSceneTableData" ref="sceneTableView">
+           <TableView :initArrData="sceneLoanDataInitArr" :totalCount="sceneTableTotalNum" :layout="sceneLayout" :loading="sceneTableLoading" @searchTable="getSceneTableData" ref="sceneTableView">
             <span slot="formAction">
               <a-button class="buttonOperate" type="danger" @click="clearSceneTable">清除累计查询</a-button>
               <a-button class="buttonOperate" @click="multipleOperate('batchNow')">批量查(借)阅</a-button>
@@ -580,6 +580,21 @@ export default {
           },
         ],
         tabledataArr: []
+      },
+      sceneLayout: {
+        //现场查借阅-layout
+        defaultCon: {
+          labelCol: {
+            sm: { span: 10 },
+            xl: { span: 10 },
+            xxl: { span: 10 }
+          },
+          wrapperCol:{
+            sm: { span: 14 },
+            xl: { span: 14 },
+            xxl: { span: 14 }
+          }
+        }
       },
       tempSceneCondition: {},  //档案现场查借阅临时查询条件
       multipleForm: {      //批量查借阅modal---tableFormSearch

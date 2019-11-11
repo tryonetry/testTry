@@ -154,12 +154,7 @@ export default {
                             key: 'e0108',
                             name: 'e0108',
                             val: void 0,
-                            children: [
-                                {
-                                    itemCode: '',
-                                    itemName: '请选择经办人'
-                                }
-                            ],
+                            children: [],
                             status: '',
                         },
                         // date
@@ -463,11 +458,13 @@ export default {
                         title: "备注",
                         dataIndex: "e0114",
                         key: "e0114",
-                        width: 500,
+                        // width: 500,
                         scopedSlots: { customRender: "e0114_editInput" },
                     },
                     {
                         title: "操作",
+                        width: 150,
+                        fixed: 'right',
                         scopedSlots: { customRender: "action" }
                     }
                 ],
@@ -727,7 +724,7 @@ export default {
                     res.data.forEach(item => {
                         personArr.push({itemCode:item.e0108,itemName:item.e0108a})
                     });
-                    _this.$set(_this.initArr.formData.formInputs[4],'children',personArr);
+                    _this.$set(_this.initArr.formData.formInputs[3],'children',personArr);
                 }
             })
             .catch(err => {

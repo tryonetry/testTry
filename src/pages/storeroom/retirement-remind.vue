@@ -162,7 +162,7 @@ export default {
             dataIndex: "a0100a",
             key: "a0100a",
             fixed:'left',
-            width: 200,
+            width: 150,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -177,7 +177,7 @@ export default {
             title: "性别",
             dataIndex: "a0104",
             key: "a0104",
-            width: 100,
+            width: 80,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -191,7 +191,7 @@ export default {
             title: "所属机构",
             dataIndex: "b0101",
             key: "b0101",
-            width: 300,
+            width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -212,7 +212,6 @@ export default {
             title: "出生日期",
             dataIndex: "a0107",
             key: "a0107",
-            width: 100,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {
@@ -220,6 +219,7 @@ export default {
             dataIndex: "remainMonth",
             fixed: 'right',
             key: "remainMonth",
+            width: 180,
             scopedSlots: { customRender: "cursorTitle" }
           },
           {

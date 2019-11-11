@@ -364,7 +364,7 @@ export default {
                     res.data.forEach(item => {
                         personArr.push({itemCode:item.e0108,itemName:item.e0108a})
                     });
-                    _this.$set(_this.initArr.formData.formInputs[4],'children',personArr);
+                    _this.$set(_this.initArr.formData.formInputs[3],'children',personArr);
                 }
             })
             .catch(err => {
