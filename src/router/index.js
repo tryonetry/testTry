@@ -407,7 +407,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "库房信息管理",
-                        path: 'room/roomInfo',
+                        path: 'roomInfo',
                     }]
                 },
             },
@@ -419,7 +419,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案密集架管理",
-                        path: 'room/shelf',
+                        path: 'shelf',
                     }]
                 },
             },
@@ -431,7 +431,7 @@ const routes = [
                     title: '档案库房管理 / 档案交接服务',
                     breadcrumbList: [{
                         name: "档案交接",
-                        path: 'room/recordHandOver'
+                        path: 'recordHandOver'
                     }]
                 }
             },  
@@ -443,7 +443,7 @@ const routes = [
                     title: '档案库房管理 / 档案交接服务',
                     breadcrumbList: [{
                         name: "材料交接",
-                        path: 'room/materialHandOver'
+                        path: 'materialHandOver'
                     }]
                 }
             }, 
@@ -455,7 +455,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案入库登记",
-                        path: 'room/recordCheckIn',
+                        path: 'recordCheckIn',
                     }]
                 },
             },
@@ -467,7 +467,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案入库登记查询",
-                        path: 'room/recordInSearch',
+                        path: 'recordInSearch',
                     }]
                 },
             },
@@ -479,7 +479,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案查阅服务",
-                        path: 'room/recordCheck',
+                        path: 'recordCheck',
                     }]
                 },
             },
@@ -491,7 +491,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案出库登记",
-                        path: 'room/recordCheckOut',
+                        path: 'recordCheckOut',
                     }]
                 },
             }, 
@@ -503,7 +503,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "档案出库登记查询",
-                        path: 'room/recordOutSearch',
+                        path: 'recordOutSearch',
                     }]
                 },
             },
@@ -515,7 +515,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "材料借出服务",
-                        path: 'room/materialLend',
+                        path: 'materialLend',
                     }]
                 },
             }, 
@@ -527,7 +527,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "人员退休提醒",
-                        path: 'room/retirementRemind',
+                        path: 'retirementRemind',
                     }]
                 },
             },  
@@ -539,7 +539,7 @@ const routes = [
                     title: '档案库房管理',
                     breadcrumbList: [{
                         name: "个人电子档案预览",
-                        path: 'room/recordPreview',
+                        path: 'recordPreview',
                     }]
                 },
             },                   
@@ -646,7 +646,7 @@ const routes = [
                     title: '系统维护',
                     breadcrumbList: [{
                         name: "字典",
-                        path: 'system/dictionary',
+                        path: 'dictionary',
                     }]
                 },
             },
@@ -670,7 +670,7 @@ const routes = [
                     title: '系统设置',
                     breadcrumbList: [{
                         name: "修改密码",
-                        path: 'systemset/password',
+                        path: 'password',
                     }]
                 },
             },
@@ -681,7 +681,7 @@ const routes = [
                     title: '系统设置',
                     breadcrumbList: [{
                         name: "Pad数据生成",
-                        path: 'systemset/paddata',
+                        path: 'paddata',
                     }]
                 },
             },
@@ -692,7 +692,7 @@ const routes = [
                     title: '系统设置',
                     breadcrumbList: [{
                         name: "模块管理",
-                        path: 'systemset/modulemanager',
+                        path: 'modulemanager',
                     }]
                 },
             },

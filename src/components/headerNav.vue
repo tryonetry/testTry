@@ -192,7 +192,8 @@
             style="cursor:pointer; font-size: 18px;"
           />
           <!-- 面包屑 -->
-          <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="currentMainIndex !== 2 && currentMainIndex !== 3">
+          <!-- v-if="currentMainIndex !== 2 && currentMainIndex !== 3" -->
+          <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'">
             <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>
             <a-breadcrumb-item v-for="(item, index) in breadcrumb" :key="index">{{item.name}}</a-breadcrumb-item>
           </a-breadcrumb>
