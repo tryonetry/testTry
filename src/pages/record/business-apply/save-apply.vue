@@ -128,7 +128,7 @@ export default {
                 { label:"申请人", val:void 0 ,name:'applyName'},
                 { label:"性别", val:void 0 ,name:'agent'},
                 { label:"公民身份号码/社保卡号", val:void 0 ,name:'applyIdNum'},
-                { label:"档案所在单位", val:void 0 ,name:'originalArchiveOrg'},
+                { label:"档案管理机构", val:void 0 ,name:'originalArchiveOrg'},
                 { label:"现工作单位", val:void 0 ,name:'nowCompany'},
                 { label:"毕业日期", val:void 0 ,name:'finishSchoolTime'},
                 { label:"手机号码", val:void 0 ,name:'applyTelNum'},
@@ -243,7 +243,7 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "原档案管理机构",
+                        title: "档案管理机构",
                         dataIndex: "originalArchiveOrg",
                         key: "originalArchiveOrg",
                         scopedSlots: { customRender: "cursorTitle" }
