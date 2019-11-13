@@ -261,6 +261,7 @@ export default {
             tempTableData.forEach((element, index) => {
               this.initArr.tabledataArr.push({
                 key:element.id,
+                id: element.id,
                 num: (pageNum - 1) * limitNum + index + 1,
                 transferType: element.transferType === '1' ? '集体转集体' : element.transferType === '2' ? '集体转个人' : element.transferType === '3' ? '个人转集体' : '',
                 businessLicense: element.businessLicense,
@@ -328,6 +329,7 @@ export default {
         .then(res => {
           if(Number(res.code) === 0){
             _this.$message.success('录入成功');
+            _this.changeModalShow = false;
           }else{
             _this.$message.warning('抱歉,录入失败,请重试');
           }

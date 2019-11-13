@@ -116,8 +116,8 @@ export default {
           },
             { 
             title: "委托存档单位编号", 
-            dataIndex: "oldArchiveUnit", 
-            key: "oldArchiveUnit",
+            dataIndex: "companyNum", 
+            key: "companyNum",
             width: 200,
             scopedSlots: { customRender: "cursorTitle" }
           },

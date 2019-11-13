@@ -216,10 +216,11 @@
 
         <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
         <div slot="tableAction" slot-scope="slotPropsData">
+             <!-- @click="showAndPrint(slotPropsData.currRowdata)" -->
             <a
                 v-if="slotPropsData.currRowdata.printState !== '已打印'"
                 href="javascript:;"
-                @click="showAndPrint(slotPropsData.currRowdata)"
+                @click="previewPrint(slotPropsData.currRowdata)"
                 class="primaryBtnColor"
             >预览打印</a>
             <a
@@ -679,6 +680,12 @@ export default {
             
             
         },
+
+        previewPrint(currData){
+            console.log(currData);
+            this.printVisiable = true;
+        },
+
 
         print(){
             this.$refs.print.printFun();

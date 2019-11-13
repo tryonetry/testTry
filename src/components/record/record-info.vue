@@ -719,7 +719,7 @@ export default {
           companyList:null,
           //hasDataDisabledOptions: [], //disabled--禁止输入项
           personDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum','personType'],  //个人--信息变更--disabled项
-          departWorkDisabled: ['personType', 'confNumber', 'a0101', 'a0184'], //单位--信息变更--disabled项
+          departWorkDisabled: ['personType', 'a0101', 'a0184', 'companyNum', 'companyId', 'confNumber', 'source'], //单位--信息变更--disabled项
           departWorkOperateDisabled: ['personType', 'a0100A' ], //单位---职工录入--disabled
     };
   },
@@ -923,16 +923,16 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    const {currentPersonData,personDisabledOptions,departWorkDisabled,departWorkOperateDisabled,disableSomeOption,insertData,currentEnterprice} = this;
+    const {currentPersonData,personDisabledOptions,departWorkDisabled,departWorkOperateDisabled,disableSomeOption,insertData,currentEnterprice, disabledFlag} = this;
 
     if((currentPersonData && currentPersonData.a01000) || (currentEnterprice && currentEnterprice.id)){
       // disableSomeOption(hasDataDisabledOptions);
-      if(this.disabledFlag == '1'){
-        this.disableSomeOption(this.personDisabledOptions);
-      } else if(this.disabledFlag == '2'){
-        this.disableSomeOption(this.departWorkDisabled);
-      } else if(this.disabledFlag == '3'){
-        this.disableSomeOption(this.departWorkOperateDisabled);
+      if(disabledFlag == '1'){
+        disableSomeOption(personDisabledOptions);
+      } else if(disabledFlag == '2'){
+        disableSomeOption(departWorkDisabled);
+      } else if(disabledFlag == '3'){
+        disableSomeOption(departWorkOperateDisabled);
       }
       insertData(currentPersonData,true);
       insertData(currentEnterprice);
