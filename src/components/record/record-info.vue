@@ -22,7 +22,7 @@ function UnitNatureToCompanyShow(val){
   }else{
     return [{name:'isHide',data:true}]
   }
-}
+} 
 
 // 身份证号到出生日期
 function idcardToBirthday(idNum){
@@ -68,12 +68,27 @@ function idCardToAddress(idNum){
 }
 
 // 身份证号对应本身
+// function idCardToSelf(idNum){
+//   if(!idNum || idNum.length <= 0){
+//     return  [{name: 'val', data: '' }];
+//   }else{
+//     return [{name:"val",data:idNum, operate:'recordInfoIdCard'}]
+//   }
+// }
 function idCardToSelf(idNum){
-  if(!idNum || idNum.length <= 0){
-    return  [{name: 'val', data: '' }];
-  }else{
-    return [{name:"val",data:idNum, operate:'recordInfoIdCard'}]
-  }
+  return new Promise(function(resolve, reject){
+    if(!idNum || idNum.length <= 0){
+      resolve([
+        {name: 'val', data: '' }
+      ])  
+    } else{
+      if(regs.testid(idNum) === 1){
+        window.isWithdrawFileFun(idNum, ['a0107','a0104','a0111D','a0184']);
+      } else{
+        reject("请填写正确的身份证号码！");
+      }
+    }
+  })
 }
 
 // 委托单位名称 To 委托单位编号
@@ -151,6 +166,8 @@ function schoolToGraduate(val){
 
 import moment from "moment";
 import TableFromSearch from "../tableFormSearch";
+import { Promise } from 'q';
+import regs from '../../utils/regexp';
 export default {
   name: "RecordInfo",
   //import引入的组件需要注入到对象中才能使用
@@ -1022,6 +1039,45 @@ export default {
 
       });
     },
+
+    //退档操作
+    isWithdrawFileFun(idNum, contactKeyArr){
+      const _this = this;
+      this.$http.fetchPost('personalArch@checkRepeat.action', {a0184: idNum}).then(res => {
+          if(Number(res.code) === 0){
+            //弹出确认退档操作   --判断personId
+            if(res.personId){
+                this.$confirm({
+                  title: '是否进行退档操作 ?',
+                  content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
+                  onOk() {
+                    _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
+                      .then(res => {
+                        if(Number(res.code) === 0){
+                          _this.formData.formInputs.forEach(el => {
+                            contactKeyArr.forEach(item => {
+                              if(item === el.key){
+                                el.val = void 0;
+                                el.status = void 0;
+                              }
+                            });
+                          });
+                          _this.$message.success('退档操作成功,可前往信息变更页查询信息');
+                        }else{
+                          _this.$message.error('退档操作失败,请稍后重试');
+                          return false;
+                        }
+                      })
+                      .catch(err => {
+                        _this.$message.error('抱歉,网络出错了,请稍后重试')
+                      })
+                  },
+                  onCancel() {},
+                })
+            }
+          } 
+        })
+    }
     
   },
 
@@ -1079,7 +1135,7 @@ export default {
 
   //生命周期 - 挂载完成（可以访问DOM元素）
   mounted() {
-
+    window.isWithdrawFileFun = this.isWithdrawFileFun;
   },
 
   beforeCreate() {}, //生命周期 - 创建之前

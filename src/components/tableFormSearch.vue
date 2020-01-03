@@ -225,6 +225,7 @@ import {isMoment} from "moment";
 import moment from 'moment';
 import address from '../../public/json/address.js';
 import regs from '../../src/utils/regexp';
+import { Promise, reject } from 'q';
 
 export default {
   name: "TableFromSearch",
@@ -465,411 +466,432 @@ export default {
         let connectToFunArr = itemData.connectToFun;
         // console.log(connectToArr);
         // 遍历关联函数和关联项
-        connectToArr.forEach((item,i)=>{
-          _this.formData.formInputs.forEach((input,index)=>{
+        connectToArr.forEach((item, i) => {
+          _this.formData.formInputs.forEach((input, index) => {
             if(input.key === item){
-              let resultObjArr = connectToFunArr[i](itemData.val);
-              if(resultObjArr.length > 0){
-              // console.log(resultObjArr)
-
-                resultObjArr.forEach((resultObj) => {
-
-                  // 当为时间格式的时候
+              //函数调用后的结果一个promise对象
+              let _result = Promise.resolve(connectToFunArr[i](itemData.val, input, index, _this.formData));
+              _result.then(res => {
+                res.forEach((resultObj) => {
                   if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
                     _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+                  }else if(!resultObj.operate){
+                    _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data :void 0;
                   }
-
-                  // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
-                  else if(
-                    (itemData.name === 'transferCompanyId' || 
-                    itemData.name === 'companyId' ||  itemData.name === 'dwmc') && 
-                    (input.name === 'transferCompanyNum' || 
-                    input.name === 'companyNum' || input.name === 'dwbh') && 
-                    resultObj.name === 'val'
-                  ){
-                    _this.formData.formInputs[index][resultObj.name] = void 0;
-                    // 将匹配的下拉框的 itemCode 赋值
-                    itemData.children.forEach(cr => {
-                      if(cr.itemCode === resultObj.data){
-                        _this.formData.formInputs[index][resultObj.name] = cr.itemId ? cr.itemId : void 0;
-                      }
-                    });
-                  }
-                  // 特殊项处理 name : companyNum -> recordInfo 且关联项为 companyId
-                  else if(
-                    (itemData.name === 'companyNum' ||
-                    itemData.name === 'transferCompanyNum' || itemData.name === 'dwbh') && 
-                    (input.name === 'companyId' || 
-                    input.name === 'transferCompanyId' || input.name === 'dwmc') && 
-                    resultObj.name === 'val'
-                  ){
-                    // 将输入的值 匹配下拉框
-                    let hasMatched = false;
-                    input.children.forEach((row,j) => {
-                      if(resultObj.data === row.itemId && resultObj.data){
-                        _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
-                        hasMatched = true;
-                      }
-                    });
-                    // 尚未匹配到
-                    if(!hasMatched){
-                      _this.formData.formInputs[index]['val'] = void 0;
-                      _this.$set(_this.formData.formInputs[index],'status','warning');
-                    }else{
-                      _this.$set(_this.formData.formInputs[index],'status','success');
-                    }
-                  }
-
-                  // 特殊处理项 [停用]
-                  else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
-                    // 为 select 选项
-                    // *_* 规则
-                    if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
-                      // console.log(1)
-                      let hasMatched = false;
-                      input.children.forEach((row,j) => {
-                        if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
-                          _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
-                          hasMatched = true;
-                        }
-                      });
-                      // 扔尚未匹配到
-                      if(!hasMatched){
-                        _this.formData.formInputs[index]['val'] = void 0;
-                        _this.$set(_this.formData.formInputs[index],'status','error');
-                      }else{
-                        _this.$set(_this.formData.formInputs[index],'status','success');
-                      }
-                    }
+                });
+              }).catch(err => {
+                this.$message.error(err);
+              })
+            }
+          });
+        });
 
 
-                    // whIdTowhdArea:通过库房找分区
-                    else if(resultObj.operate && resultObj.operate === 'whIdTowhdArea'){
-                      let resultArr = [];
-                      this.$http.fetchPost('wareHouse@getWareHouseList.action', {
-                        page: 1,
-                        limit: 10,
-                      }).then(res => {
-                        if(Number(res.code) === 0){
-                          res.data.forEach(item => {
-                            if(item.whId == resultObj.data){
-                              for(let i = item.whAreaStartNum; i <= item.whAreaNum; i++){
-                                resultArr.push({
-                                  itemCode: '' + i,
-                                  itemName: '第' + i + '区'
-                                })
-                              }
+        // connectToArr.forEach((item,i)=>{
+        //   _this.formData.formInputs.forEach((input,index)=>{
+        //     if(input.key === item){
+        //       let resultObjArr = connectToFunArr[i](itemData.val);
+        //       if(resultObjArr.length > 0){
+        //       // console.log(resultObjArr)
 
-                              //查询容量：空闲容量和总容量
-                              let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
-                              _this.getCapacityDataFun(currCapacity);
-                            }
-                          });
-                          _this.formData.formInputs[index][resultObj.name] = resultArr;    //resultArr赋值给分区的children
-                          _this.formData.formInputs[index]['val'] = void 0;                //默认把分区的val赋值为void 0 
-                          _this.formData.formInputs.forEach(item => {                      //当库房一更改，同时把密集架，层号，列号全清空，且把val赋值为void 0 
-                            if(item.key === 'whdCode' || item.key === 'waColumnCode' || item.key === 'waLayerCode'){
-                              item.children = [];
-                              item.val = void 0;
-                            }
-                            if(item.key === 'orderNo'){
-                              _this.$set(item, 'disabled', true);
-                              item.val = void 0;
-                            }
-                          });
-                        } else{
-                          this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
-                        }
-                      }).catch(error => {
-                        this.$message.error('抱歉，网络异常！')
-                      })
-                    }
+        //         resultObjArr.forEach((resultObj) => {
 
-                    //whdAreaTowhdCode：通过库房的id和分区数找密集架
-                    else if(resultObj.operate && resultObj.operate === 'whdAreaTowhdCode'){
-                      // console.log(resultObj);
-                      let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
-                      let tempResultArr = [];
-                      this.$http.fetchPost('archDocument@getWhdList.action',{
-                        whId: currWhId,
-                        whdArea: resultObj.data
-                      }).then(res => {
-                        if(Number(res.code) === 0){
-                          res.data.forEach(element => {
-                            tempResultArr.push({
-                              itemCode: element.whdId,
-                              itemName: '第' +  element.whdCode + '号密集架'
-                            })
-                          });
-                          _this.formData.formInputs[index][resultObj.name] = tempResultArr;   //tempResultArr赋值给密集架的children
-                          _this.formData.formInputs[index]['val'] = void 0;                   //默认密集架的val值为void 0
-                          _this.formData.formInputs.forEach(item => {                         //同时把层号和列号children赋为[];val为void0
-                            if(item.key === 'waColumnCode' || item.key === 'waLayerCode'){
-                              item.children = [];
-                              item.val = void 0;
-                            }
-                            if(item.key === 'orderNo'){
-                              _this.$set(item, 'disabled', true);
-                              item.val = void 0;
-                            }
-                          });
-                        } else{
-                          this.$message.error('抱歉，暂未获取到密集架数据；请刷新后重试！')
-                        }
-                      }).catch(error => {
-                        this.$message.error('抱歉，网络异常！')
-                      })
-                    }
+        //           // 当为时间格式的时候
+        //           if(!input.type && (input.otherType === 'date' || input.otherType === 'month' || input.otherType === 'daterange')){
+        //             _this.formData.formInputs[index][resultObj.name] = resultObj.data ? moment(resultObj.data) : void 0;
+        //           }
 
-                    // whdCodeTowanCode 根据密集架获取列号和层号
-                    else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
-                      let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
-                      let currWhArea = _this.formData.formInputs[1]['val'];
+        //           // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
+        //           else if(
+        //             (itemData.name === 'transferCompanyId' || 
+        //             itemData.name === 'companyId' ||  itemData.name === 'dwmc') && 
+        //             (input.name === 'transferCompanyNum' || 
+        //             input.name === 'companyNum' || input.name === 'dwbh') && 
+        //             resultObj.name === 'val'
+        //           ){
+        //             _this.formData.formInputs[index][resultObj.name] = void 0;
+        //             // 将匹配的下拉框的 itemCode 赋值
+        //             itemData.children.forEach(cr => {
+        //               if(cr.itemCode === resultObj.data){
+        //                 _this.formData.formInputs[index][resultObj.name] = cr.itemId ? cr.itemId : void 0;
+        //               }
+        //             });
+        //           }
+        //           // 特殊项处理 name : companyNum -> recordInfo 且关联项为 companyId
+        //           else if(
+        //             (itemData.name === 'companyNum' ||
+        //             itemData.name === 'transferCompanyNum' || itemData.name === 'dwbh') && 
+        //             (input.name === 'companyId' || 
+        //             input.name === 'transferCompanyId' || input.name === 'dwmc') && 
+        //             resultObj.name === 'val'
+        //           ){
+        //             // 将输入的值 匹配下拉框
+        //             let hasMatched = false;
+        //             input.children.forEach((row,j) => {
+        //               if(resultObj.data === row.itemId && resultObj.data){
+        //                 _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+        //                 hasMatched = true;
+        //               }
+        //             });
+        //             // 尚未匹配到
+        //             if(!hasMatched){
+        //               _this.formData.formInputs[index]['val'] = void 0;
+        //               _this.$set(_this.formData.formInputs[index],'status','warning');
+        //             }else{
+        //               _this.$set(_this.formData.formInputs[index],'status','success');
+        //             }
+        //           }
 
-                      //查询容量：空闲容量和总容量
-                      let currWhdCodeName = '';
-                      _this.formData.formInputs[2].children.forEach(el => {
-                        if(el.itemCode === resultObj.data){
-                          currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
-                        }
-                      })
-                      let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': resultObj.data, 'whdCode': currWhdCodeName});
-                      _this.getCapacityDataFun(currCapacity);
+        //           // 特殊处理项 [停用]
+        //           else if(!input.type && (input.otherType === 'select' || input.otherType === 'searchSelect' )){
+        //             // 为 select 选项
+        //             // *_* 规则
+        //             if(typeof(resultObj.data) === 'string' && resultObj.data.indexOf('@_@') > -1 && resultObj.name !== 'disabled'){
+        //               // console.log(1)
+        //               let hasMatched = false;
+        //               input.children.forEach((row,j) => {
+        //                 if('_'+resultObj.data.substr(resultObj.data.indexOf('@_@')+3) === row.itemCode.substr(row.itemCode.indexOf('_'))){
+        //                   _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0; 
+        //                   hasMatched = true;
+        //                 }
+        //               });
+        //               // 扔尚未匹配到
+        //               if(!hasMatched){
+        //                 _this.formData.formInputs[index]['val'] = void 0;
+        //                 _this.$set(_this.formData.formInputs[index],'status','error');
+        //               }else{
+        //                 _this.$set(_this.formData.formInputs[index],'status','success');
+        //               }
+        //             }
+
+
+        //             // whIdTowhdArea:通过库房找分区
+        //             else if(resultObj.operate && resultObj.operate === 'whIdTowhdArea'){
+        //               let resultArr = [];
+        //               this.$http.fetchPost('wareHouse@getWareHouseList.action', {
+        //                 page: 1,
+        //                 limit: 10,
+        //               }).then(res => {
+        //                 if(Number(res.code) === 0){
+        //                   res.data.forEach(item => {
+        //                     if(item.whId == resultObj.data){
+        //                       for(let i = item.whAreaStartNum; i <= item.whAreaNum; i++){
+        //                         resultArr.push({
+        //                           itemCode: '' + i,
+        //                           itemName: '第' + i + '区'
+        //                         })
+        //                       }
+
+        //                       //查询容量：空闲容量和总容量
+        //                       let currCapacity = Object.assign({}, currCapacity, {'whId': item.whId});
+        //                       _this.getCapacityDataFun(currCapacity);
+        //                     }
+        //                   });
+        //                   _this.formData.formInputs[index][resultObj.name] = resultArr;    //resultArr赋值给分区的children
+        //                   _this.formData.formInputs[index]['val'] = void 0;                //默认把分区的val赋值为void 0 
+        //                   _this.formData.formInputs.forEach(item => {                      //当库房一更改，同时把密集架，层号，列号全清空，且把val赋值为void 0 
+        //                     if(item.key === 'whdCode' || item.key === 'waColumnCode' || item.key === 'waLayerCode'){
+        //                       item.children = [];
+        //                       item.val = void 0;
+        //                     }
+        //                     if(item.key === 'orderNo'){
+        //                       _this.$set(item, 'disabled', true);
+        //                       item.val = void 0;
+        //                     }
+        //                   });
+        //                 } else{
+        //                   this.$message.error('抱歉，暂未获取到分区数据；请刷新后重试！')
+        //                 }
+        //               }).catch(error => {
+        //                 this.$message.error('抱歉，网络异常！')
+        //               })
+        //             }
+
+        //             //whdAreaTowhdCode：通过库房的id和分区数找密集架
+        //             else if(resultObj.operate && resultObj.operate === 'whdAreaTowhdCode'){
+        //               // console.log(resultObj);
+        //               let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+        //               let tempResultArr = [];
+        //               this.$http.fetchPost('archDocument@getWhdList.action',{
+        //                 whId: currWhId,
+        //                 whdArea: resultObj.data
+        //               }).then(res => {
+        //                 if(Number(res.code) === 0){
+        //                   res.data.forEach(element => {
+        //                     tempResultArr.push({
+        //                       itemCode: element.whdId,
+        //                       itemName: '第' +  element.whdCode + '号密集架'
+        //                     })
+        //                   });
+        //                   _this.formData.formInputs[index][resultObj.name] = tempResultArr;   //tempResultArr赋值给密集架的children
+        //                   _this.formData.formInputs[index]['val'] = void 0;                   //默认密集架的val值为void 0
+        //                   _this.formData.formInputs.forEach(item => {                         //同时把层号和列号children赋为[];val为void0
+        //                     if(item.key === 'waColumnCode' || item.key === 'waLayerCode'){
+        //                       item.children = [];
+        //                       item.val = void 0;
+        //                     }
+        //                     if(item.key === 'orderNo'){
+        //                       _this.$set(item, 'disabled', true);
+        //                       item.val = void 0;
+        //                     }
+        //                   });
+        //                 } else{
+        //                   this.$message.error('抱歉，暂未获取到密集架数据；请刷新后重试！')
+        //                 }
+        //               }).catch(error => {
+        //                 this.$message.error('抱歉，网络异常！')
+        //               })
+        //             }
+
+        //             // whdCodeTowanCode 根据密集架获取列号和层号
+        //             else if(resultObj.operate && resultObj.operate === 'whdCodeTowanCode'){
+        //               let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+        //               let currWhArea = _this.formData.formInputs[1]['val'];
+
+        //               //查询容量：空闲容量和总容量
+        //               let currWhdCodeName = '';
+        //               _this.formData.formInputs[2].children.forEach(el => {
+        //                 if(el.itemCode === resultObj.data){
+        //                   currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+        //                 }
+        //               })
+        //               let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': resultObj.data, 'whdCode': currWhdCodeName});
+        //               _this.getCapacityDataFun(currCapacity);
                       
 
-                      _this.$http.fetchPost('archDocument@getWhdList.action',{
-                        whId: currWhId,
-                        whdArea: currWhArea
-                      }).then(res => {
-                        if(Number(res.code) === 0){
-                          let currCloumnArr = [], currLayerArr = [];
-                          res.data.forEach(element => {
-                            if(element.whdId === resultObj.data){
-                              for(let i = 1; i <= element.whdColumnNum; i++){
-                                currCloumnArr.push({
-                                  itemCode: '' + i,
-                                  itemName: '第' + i + '列'
-                                })
-                              }
-                              for(let j = 1; j <= element.whdLayerNum; j++){
-                                currLayerArr.push({
-                                  itemCode: '' + j,
-                                  itemName: '第' + j + '层'
-                                })
-                              }
-                            }
+        //               _this.$http.fetchPost('archDocument@getWhdList.action',{
+        //                 whId: currWhId,
+        //                 whdArea: currWhArea
+        //               }).then(res => {
+        //                 if(Number(res.code) === 0){
+        //                   let currCloumnArr = [], currLayerArr = [];
+        //                   res.data.forEach(element => {
+        //                     if(element.whdId === resultObj.data){
+        //                       for(let i = 1; i <= element.whdColumnNum; i++){
+        //                         currCloumnArr.push({
+        //                           itemCode: '' + i,
+        //                           itemName: '第' + i + '列'
+        //                         })
+        //                       }
+        //                       for(let j = 1; j <= element.whdLayerNum; j++){
+        //                         currLayerArr.push({
+        //                           itemCode: '' + j,
+        //                           itemName: '第' + j + '层'
+        //                         })
+        //                       }
+        //                     }
 
-                            _this.formData.formInputs.forEach(item => {
-                              if(item.key === 'waColumnCode'){
-                                //列号
-                                item.children = currCloumnArr;
-                                item.val = void 0;
-                              } else if(item.key === 'waLayerCode'){
-                                //层号
-                                item.children = currLayerArr;
-                                item.val = void 0;
-                              } else if(item.key === 'orderNo'){
-                                _this.$set(item, 'disabled', true);
-                                item.val = void 0;
-                              }
-                            });
-                          });
-                        } else{
-                          this.$message.error('抱歉，暂未获取到列号和层号数据；请刷新后重试！')
-                        }
-                      }).catch(error => {
-                        this.$message.error('抱歉，网络异常！')
-                      })
-                    }
+        //                     _this.formData.formInputs.forEach(item => {
+        //                       if(item.key === 'waColumnCode'){
+        //                         //列号
+        //                         item.children = currCloumnArr;
+        //                         item.val = void 0;
+        //                       } else if(item.key === 'waLayerCode'){
+        //                         //层号
+        //                         item.children = currLayerArr;
+        //                         item.val = void 0;
+        //                       } else if(item.key === 'orderNo'){
+        //                         _this.$set(item, 'disabled', true);
+        //                         item.val = void 0;
+        //                       }
+        //                     });
+        //                   });
+        //                 } else{
+        //                   this.$message.error('抱歉，暂未获取到列号和层号数据；请刷新后重试！')
+        //                 }
+        //               }).catch(error => {
+        //                 this.$message.error('抱歉，网络异常！')
+        //               })
+        //             }
 
-                    // select或searchSelect的其他情况
-                    else if(!resultObj.operate){
-                      let hasMatched = false;
-                      if(resultObj.name === 'val'){
-                        // console.log(resultObj.data)
-                        input.children.forEach((row,j) => {
-                          // console.log(row.itemCode === resultObj.data);
-                          if((resultObj.data === row.itemCode) && !hasMatched){
-                            _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0;
-                            hasMatched = true;
-                          }
-                        });
-                        // 扔尚未匹配到
-                        if(!hasMatched){
-                          _this.formData.formInputs[index]['val'] = void 0;
-                          _this.$set(_this.formData.formInputs[index],'status','error');
-                        }else{
-                          _this.$set(_this.formData.formInputs[index],'status','success');
-                        }
-                      }else{
-                        _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                      }
-                    }
-                  }
+        //             // select或searchSelect的其他情况
+        //             else if(!resultObj.operate){
+        //               let hasMatched = false;
+        //               if(resultObj.name === 'val'){
+        //                 // console.log(resultObj.data)
+        //                 input.children.forEach((row,j) => {
+        //                   // console.log(row.itemCode === resultObj.data);
+        //                   if((resultObj.data === row.itemCode) && !hasMatched){
+        //                     _this.formData.formInputs[index][resultObj.name] = row.itemCode ? row.itemCode : void 0;
+        //                     hasMatched = true;
+        //                   }
+        //                 });
+        //                 // 扔尚未匹配到
+        //                 if(!hasMatched){
+        //                   _this.formData.formInputs[index]['val'] = void 0;
+        //                   _this.$set(_this.formData.formInputs[index],'status','error');
+        //                 }else{
+        //                   _this.$set(_this.formData.formInputs[index],'status','success');
+        //                 }
+        //               }else{
+        //                 _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+        //               }
+        //             }
+        //           }
 
-                  // 当关联的数据为 是否隐藏
-                  else if(resultObj && resultObj.name === 'isHide'){
-                    _this.$set(_this.formData.formInputs[index],'isHide',resultObj.data)
-                    // console.log(_this.formData.formInputs[index])
-                  }
+        //           // 当关联的数据为 是否隐藏
+        //           else if(resultObj && resultObj.name === 'isHide'){
+        //             _this.$set(_this.formData.formInputs[index],'isHide',resultObj.data)
+        //             // console.log(_this.formData.formInputs[index])
+        //           }
 
-                  // 特殊处理 record-info 页面的单独操作 -> recordInfoIdCard
-                  else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
+        //           // 特殊处理 record-info 页面的单独操作 -> recordInfoIdCard
+        //           else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
                    
-                    _this.formData.formInputs[index]['tip'] = '* 请输入正确的身份证号';
-                    _this.$http.fetchPost('personalArch@checkRepeat.action',{a0184:resultObj.data})
-                        .then(res => {
-                          if(Number(res.code) === 0){
-                            //弹出确认退档操作   --判断personId
-                            if(res.personId){
-                                _this.formData.formInputs[index][resultObj.name] = '';
-                                _this.$confirm({
-                                  title: '是否进行退档操作 ?',
-                                  content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
-                                  onOk() {
-                                    _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
-                                      .then(res => {
-                                        if(Number(res.code) === 0){
-                                          _this.formData.formInputs[index][resultObj.name] = '';
-                                          _this.$set(_this.formData.formInputs[index],'status',void 0);
-                                          _this.$message.success('退档操作成功,可前往信息变更页查询信息');
-                                        }else{
-                                          // _this.formData.formInputs[index][resultObj.name] = '';
-                                          _this.$message.error('退档操作失败,请稍后重试');
-                                          return false;
-                                        }
-                                      })
-                                      .catch(err => {
-                                        _this.$message.error('抱歉,网络出错了,请稍后重试')
-                                      })
-                                  },
-                                  onCancel() {},
-                                })
-                            } else{
-                              _this.formData.formInputs[index][resultObj.name] = '';
-                              _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
-                              _this.$set(_this.formData.formInputs[index],'status','error');
-                              _this.$message.warning('姓名：' + res.a0101 + '；身份证号：' + res.a0184 + '；机构名称：' + res.orgName + '；  此用户已存在！')
-                            }
+        //             _this.formData.formInputs[index]['tip'] = '* 请输入正确的身份证号';
+        //             _this.$http.fetchPost('personalArch@checkRepeat.action',{a0184:resultObj.data})
+        //                 .then(res => {
+        //                   if(Number(res.code) === 0){
+        //                     //弹出确认退档操作   --判断personId
+        //                     if(res.personId){
+        //                         _this.formData.formInputs[index][resultObj.name] = '';
+        //                         _this.$confirm({
+        //                           title: '是否进行退档操作 ?',
+        //                           content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
+        //                           onOk() {
+        //                             _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
+        //                               .then(res => {
+        //                                 if(Number(res.code) === 0){
+        //                                   _this.formData.formInputs[index][resultObj.name] = '';
+        //                                   _this.$set(_this.formData.formInputs[index],'status',void 0);
+        //                                   _this.$message.success('退档操作成功,可前往信息变更页查询信息');
+        //                                 }else{
+        //                                   // _this.formData.formInputs[index][resultObj.name] = '';
+        //                                   _this.$message.error('退档操作失败,请稍后重试');
+        //                                   return false;
+        //                                 }
+        //                               })
+        //                               .catch(err => {
+        //                                 _this.$message.error('抱歉,网络出错了,请稍后重试')
+        //                               })
+        //                           },
+        //                           onCancel() {},
+        //                         })
+        //                     } else{
+        //                       _this.formData.formInputs[index][resultObj.name] = '';
+        //                       _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+        //                       _this.$set(_this.formData.formInputs[index],'status','error');
+        //                       _this.$message.warning('姓名：' + res.a0101 + '；身份证号：' + res.a0184 + '；机构名称：' + res.orgName + '；  此用户已存在！')
+        //                     }
 
 
-                            // if(res.isInware === '2' && res.archiveStatus === '7'){
-                            //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
-                            //   _this.$set(_this.formData.formInputs[index],'status','error');
-                            //   _this.$confirm({
-                            //     title: '是否进行退档操作 ?',
-                            //     content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
-                            //     onOk() {
-                            //       _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
-                            //         .then(res => {
-                            //           if(Number(res.code) === 0){
-                            //             _this.formData.formInputs[index][resultObj.name] = '';
-                            //             _this.$set(_this.formData.formInputs[index],'status',void 0);
-                            //             _this.$message.success('退档操作成功,可前往信息变更页查询信息');
-                            //           }else{
-                            //             // _this.formData.formInputs[index][resultObj.name] = '';
-                            //             _this.$message.error('退档操作失败,请稍后重试');
-                            //             return false;
-                            //           }
-                            //         })
-                            //         .catch(err => {
-                            //           _this.$message.error('抱歉,网络出错了,请稍后重试')
-                            //         })
-                            //     },
-                            //     onCancel() {},
-                            //   })
-                            // }else{
-                            //   _this.formData.formInputs[index][resultObj.name] = '';
-                            //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
-                            //   _this.$set(_this.formData.formInputs[index],'status','error');
-                            // }
-                          }
-                        })
-                        .catch(err => {
-                          _this.$message.error('抱歉,网络出错了,请重试')
-                        })
+        //                     // if(res.isInware === '2' && res.archiveStatus === '7'){
+        //                     //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+        //                     //   _this.$set(_this.formData.formInputs[index],'status','error');
+        //                     //   _this.$confirm({
+        //                     //     title: '是否进行退档操作 ?',
+        //                     //     content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
+        //                     //     onOk() {
+        //                     //       _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
+        //                     //         .then(res => {
+        //                     //           if(Number(res.code) === 0){
+        //                     //             _this.formData.formInputs[index][resultObj.name] = '';
+        //                     //             _this.$set(_this.formData.formInputs[index],'status',void 0);
+        //                     //             _this.$message.success('退档操作成功,可前往信息变更页查询信息');
+        //                     //           }else{
+        //                     //             // _this.formData.formInputs[index][resultObj.name] = '';
+        //                     //             _this.$message.error('退档操作失败,请稍后重试');
+        //                     //             return false;
+        //                     //           }
+        //                     //         })
+        //                     //         .catch(err => {
+        //                     //           _this.$message.error('抱歉,网络出错了,请稍后重试')
+        //                     //         })
+        //                     //     },
+        //                     //     onCancel() {},
+        //                     //   })
+        //                     // }else{
+        //                     //   _this.formData.formInputs[index][resultObj.name] = '';
+        //                     //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+        //                     //   _this.$set(_this.formData.formInputs[index],'status','error');
+        //                     // }
+        //                   }
+        //                 })
+        //                 .catch(err => {
+        //                   _this.$message.error('抱歉,网络出错了,请重试')
+        //                 })
                     
-                  }
+        //           }
 
-                  //waLayerCodeToOrderNo 根据选择的层号拿顺序
-                  else if(input.type && resultObj && resultObj.operate === 'waLayerCodeToOrderNo'){
-                    let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
-                    let currWhArea = _this.formData.formInputs[1]['val'];   //当前分区的itemCode
-                    let currWhdCode = _this.formData.formInputs[2]['val'];   //当前密集架的itemCode
-                    let currCloumn = _this.formData.formInputs[3]['val'];  //当前列号的itemCode
+        //           //waLayerCodeToOrderNo 根据选择的层号拿顺序
+        //           else if(input.type && resultObj && resultObj.operate === 'waLayerCodeToOrderNo'){
+        //             let currWhId = _this.formData.formInputs[0]['val'];  //当前库房的id值
+        //             let currWhArea = _this.formData.formInputs[1]['val'];   //当前分区的itemCode
+        //             let currWhdCode = _this.formData.formInputs[2]['val'];   //当前密集架的itemCode
+        //             let currCloumn = _this.formData.formInputs[3]['val'];  //当前列号的itemCode
                     
-                    //查询容量：空闲容量和总容量
-                    let currWhdCodeName = '';
-                    _this.formData.formInputs[2].children.forEach(el => {
-                      if(el.itemCode === currWhdCode){
-                        currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
-                      }
-                    });
-                    let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': currWhdCode, 'whdCode': currWhdCodeName, 'waColumnCode': currCloumn, 'waLayerCode': resultObj.data});
-                    _this.getCapacityDataFun(currCapacity);
+        //             //查询容量：空闲容量和总容量
+        //             let currWhdCodeName = '';
+        //             _this.formData.formInputs[2].children.forEach(el => {
+        //               if(el.itemCode === currWhdCode){
+        //                 currWhdCodeName = el['itemName'].substr(el['itemName'].indexOf('第') + 1, el['itemName'].indexOf('号密集架') - 1)
+        //               }
+        //             });
+        //             let currCapacity = Object.assign({}, currCapacity, {'whId': currWhId, 'whdArea': currWhArea, 'whdId': currWhdCode, 'whdCode': currWhdCodeName, 'waColumnCode': currCloumn, 'waLayerCode': resultObj.data});
+        //             _this.getCapacityDataFun(currCapacity);
 
-                    //查询顺序号
-                    _this.$http.fetchPost('archDocument@getFillOrderNo.action',{
-                      whId: currWhId,
-                      whdArea: currWhArea,
-                      whdId: currWhdCode,
-                      whdCode: currWhdCodeName,
-                      waColumnCode: currCloumn,
-                      waLayerCode: resultObj.data
-                    }).then(res => {
-                      if(Number(res.code) === 0){
-                        _this.formData.formInputs.forEach(el => {
-                          if(el.key === 'orderNo'){
-                            el.val = res.orderNo;
-                            _this.$set(el, 'disabled', false);
-                          }
-                        });
-                      } else{
-                        _this.$message.error('抱歉，获取顺序数据失败，请刷新后重试！')
-                      }
-                    }).catch(error => {
-                      _this.$message.error('抱歉，网络异常！')
-                    })
-                  }
+        //             //查询顺序号
+        //             _this.$http.fetchPost('archDocument@getFillOrderNo.action',{
+        //               whId: currWhId,
+        //               whdArea: currWhArea,
+        //               whdId: currWhdCode,
+        //               whdCode: currWhdCodeName,
+        //               waColumnCode: currCloumn,
+        //               waLayerCode: resultObj.data
+        //             }).then(res => {
+        //               if(Number(res.code) === 0){
+        //                 _this.formData.formInputs.forEach(el => {
+        //                   if(el.key === 'orderNo'){
+        //                     el.val = res.orderNo;
+        //                     _this.$set(el, 'disabled', false);
+        //                   }
+        //                 });
+        //               } else{
+        //                 _this.$message.error('抱歉，获取顺序数据失败，请刷新后重试！')
+        //               }
+        //             }).catch(error => {
+        //               _this.$message.error('抱歉，网络异常！')
+        //             })
+        //           }
 
-                  //expectReturnDate 根据materialId即：a10000检索当前输入材料名称是否重复
-                  else if(input.type && resultObj && resultObj.operate === 'expectReturnDate'){
-                    if(resultObj['materialId']){
-                      _this.$http.fetchPost('materialBorrow@checkExpectReturnDate.action', {
-                        expectReturnDate: resultObj['data'],
-                        materialId: resultObj['materialId']
-                      }).then(res => {
-                        if(Number(res.code) === 0){
-                          //此材料可借出
-                          _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                        } else if(Number(res.code) === 5){
-                          //此材料已借出
-                          _this.formData.formInputs[index][resultObj.name] = void 0;
-                          _this.formData.formInputs[index]['status'] = 'error';
-                          _this.formData.formInputs[index]['tip'] = '此材料已借出，请勿重复借出！';
-                        } else{
-                          //异常
-                          _this.$message.error('抱歉，验证失败，请刷新后重试！')
-                        }
-                      }).catch(error => {
-                        _this.$message.error('抱歉，网络异常！')
-                      })
-                    }
-                  }
+        //           //expectReturnDate 根据materialId即：a10000检索当前输入材料名称是否重复
+        //           else if(input.type && resultObj && resultObj.operate === 'expectReturnDate'){
+        //             if(resultObj['materialId']){
+        //               _this.$http.fetchPost('materialBorrow@checkExpectReturnDate.action', {
+        //                 expectReturnDate: resultObj['data'],
+        //                 materialId: resultObj['materialId']
+        //               }).then(res => {
+        //                 if(Number(res.code) === 0){
+        //                   //此材料可借出
+        //                   _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+        //                 } else if(Number(res.code) === 5){
+        //                   //此材料已借出
+        //                   _this.formData.formInputs[index][resultObj.name] = void 0;
+        //                   _this.formData.formInputs[index]['status'] = 'error';
+        //                   _this.formData.formInputs[index]['tip'] = '此材料已借出，请勿重复借出！';
+        //                 } else{
+        //                   //异常
+        //                   _this.$message.error('抱歉，验证失败，请刷新后重试！')
+        //                 }
+        //               }).catch(error => {
+        //                 _this.$message.error('抱歉，网络异常！')
+        //               })
+        //             }
+        //           }
 
-                  // 其他项
-                  else if(!resultObj.operate){
-                    // console.log(resultObj.data)
-                    _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                    // console.log(_this.formData.formInputs[index])
-                  }
+        //           // 其他项
+        //           else if(!resultObj.operate){
+        //             // console.log(resultObj.data)
+        //             _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+        //             // console.log(_this.formData.formInputs[index])
+        //           }
 
-                });
+        //         });
 
-              }
-            }
-          })
-        });
+        //       }
+        //     }
+        //   })
+        // });
 
       }
     },
