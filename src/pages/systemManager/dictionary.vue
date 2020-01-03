@@ -427,7 +427,7 @@ export default {
             key: "itemName",
             name: "itemName",
             val: void 0,
-            maxlength: 20,
+            maxlength: 100,
             minlength: 0,
             reg: "",
             tip: "",

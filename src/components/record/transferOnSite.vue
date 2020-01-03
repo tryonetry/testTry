@@ -34,6 +34,9 @@
         >查询</a-button>
     </div>
 
+    <!-- 如果为单位委托--提示 -->
+    <div class="isDepartMessage" v-if="!isInner && tempPersonTypeMessage === '01'">* 先将档案转为个人方可操作'</div>
+    <div class="isDepartMessage" v-else-if="isInner && !tempPersonTypeMessage">请在"信息变更"完善存档信息</div>
     <!-- 基本信息 -->
     <FormHeader :formTitle='"存档人员基本信息"'></FormHeader>
     <div class="detailContent">
@@ -51,6 +54,22 @@
         </TableFromSearch>
     </div>
 
+    <!-- 上传函件 -->
+    <FormHeader :formTitle='"上传函件"' v-if="!isInner && tempPersonTypeMessage === '02'"></FormHeader>
+    <div class="uploadCon" v-if="!isInner && tempPersonTypeMessage === '02'">
+        <a-upload :fileList="fileList" :remove="handleRemove" :beforeUpload="beforeUpload" :multiple="true">
+            <a-button> <a-icon type="upload" /> 上传函件 </a-button>
+        </a-upload>
+        <!-- <a-button
+            type="primary"
+            @click="handleUpload"
+            :disabled="fileList.length === 0"
+            :loading="uploading"
+            style="margin-top: 16px;display:none;"
+        >
+        {{uploading ? '上传中' : '开始上传' }}
+        </a-button> -->
+    </div>
 
     <div class="addModal">
       <a-modal
@@ -80,7 +99,7 @@
 
 // 调转方式到委托单位名称和委托单位编号的显示
 function UnitNatureToCompanyShow(val){
-  if(val == '1'){
+  if(val == '1' || val == '3'){
     return [{name:'isHide',data:false}]
   }else{
     return [{name:'isHide',data:true}]
@@ -115,6 +134,19 @@ function companyNumToName(numVal){
       {name:'status',data:void 0},
     ]
   }
+}
+
+//投递方式  To 转往单位地址
+function transfermodeToAddressFun(val){
+    if(String(val) === '1' || String(val) === '2'){
+        return [
+            {name: 'required', data: true}
+        ]
+    } else{
+        return [
+            {name: 'required', data: false}
+        ]
+    }
 }
 
 import FormHeader from "../formHeader";
@@ -214,7 +246,6 @@ export default {
                         reg: 'testid',
                         tip: '* 请输入正确的申请人公民身份号码/社保卡号',
                         status: '',
-                        disabled:true,
                     },
                     {
                         title: "转出日期",
@@ -241,7 +272,7 @@ export default {
                         key: "transferOutCause",
                         val: void 0,
                         postname: "transferOutCause",
-                        tip:'* 请选择转出方式',
+                        tip:'* 请选择转出原因',
                         children: [],
                         status: "",
                         disabled:true,
@@ -348,7 +379,7 @@ export default {
                     {
                         title: '邮政编码',
                         type: "text",
-                        required: true,
+                        required: false,
                         placeholder: "请输入邮政编码",
                         key: "postalCode",
                         name: "postalCode",
@@ -361,23 +392,27 @@ export default {
                         status: '',
                     },
                     {
-                        title: "申请日期",
-                        otherType: "date",
-                        required: false,
-                        placeholder: "请选择申请日期",
-                        key: "applyDate",
-                        name: "applyDate",
-                        val: moment(new Date()),
-                        postname: "a0107",
-                        maxlength: 20,
-                        minlength: 0,
-                        reg: "",
-                        tip: "* 请选择申请日期",
-                        disabled:true,
-                        status: ""
+                        title: "投递方式",
+                        otherType: "select",
+                        required: true,
+                        placeholder: "请选择投递方式",
+                        name: "transfermode",
+                        key: "transfermode",
+                        val: void 0,
+                        postname: "transfermode",
+                        tip:'* 请选择投递方式',
+                        children: [
+                            {itemCode: '1', itemName: '机要'},
+                            {itemCode: '2', itemName: '邮递'},
+                            {itemCode: '3', itemName: '自带'},
+                            {itemCode: '5', itemName: '其它'},
+                        ],
+                        status: "",
+                        connectTo:['archiveDirectionAddress'], 
+                        connectToFun: [transfermodeToAddressFun]
                     },
                     {
-                        title: "转出方式",
+                        title: "转出原因",
                         otherType: "select",
                         required: true,
                         placeholder: "请选择转出原因",
@@ -447,6 +482,22 @@ export default {
                         minlength: 0,
                         reg: "",
                         tip: "* 请选择转往单位行政区划",
+                        status: ""
+                    },
+                    {
+                        title: "申请日期",
+                        otherType: "date",
+                        required: false,
+                        placeholder: "请选择申请日期",
+                        key: "applyDate",
+                        name: "applyDate",
+                        val: moment(new Date()),
+                        postname: "a0107",
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: "",
+                        tip: "* 请选择申请日期",
+                        disabled:true,
                         status: ""
                     },
                     {
@@ -535,9 +586,9 @@ export default {
                         postname: "transferType",
                         tip:'* 请选择调转方式',
                         children: [
-                            {itemCode:"1",itemName:"集体转集体"},
-                            {itemCode:"2",itemName:"集体转个人"},
-                            {itemCode:"3",itemName:"个人转集体", isdisabled: true},
+                            {itemCode:"1",itemName:"单位转单位"},
+                            {itemCode:"2",itemName:"单位转个人"},
+                            {itemCode:"3",itemName:"个人转单位"},
                         ],
                         connectTo:['transferCompanyId','transferCompanyNum'], //关联到委托单位编号
                         connectToFun:[UnitNatureToCompanyShow,UnitNatureToCompanyShow], 
@@ -630,6 +681,12 @@ export default {
             lendVisible: false,
             lendInfo: [],
             lendName: '',
+            tempPersonTypeMessage: '02',  //查出结果的存档性质
+            // lettersList:[],  //上传函件默认列表
+            fileList: [],
+            tempUploadA01000:'',
+            // uploading: false,
+            tempUploadFile: [],
         };
     },
 
@@ -639,6 +696,7 @@ export default {
     //监控data中的数据变化
     watch: {
         showRandom:{
+            immediate: true,
             handler:function(val){
                 if(!this.isInner){
                     this.isEnterprice = false;
@@ -661,7 +719,10 @@ export default {
         clearBaseInfoData(baseDataName){
             this.handleData(baseDataName,null);
             this.id = null;
+            // this.lettersList = [];  //清空--upload
+            this.tempPersonTypeMessage = '02';
         },
+        
 
         // 清除 form数据
         claerForm(dataName){
@@ -685,11 +746,35 @@ export default {
             }).then(res => {
                 if(Number(res.code) === 0 && res.data){
                     //数据处理
+                    _this.tempUploadA01000 = res.data.a01000;
+                    _this.tempPersonTypeMessage = res.data.personType.split('-')[1];
                     if(!_this.isInner){
                         // 非内部调转
                         _this.handleData('notInnerData',res.data);
                     }else{
                         _this.handleData('innerData',res.data);
+                        let tempPersonTypeChildren = [];
+                        this.formDataInner.formInputs[1].children = [];
+                        if(res.data.personType && res.data.personType.split('-')[1] === '02'){
+                            tempPersonTypeChildren = [
+                                {itemCode:"1",itemName:"单位转单位", isdisabled: true},
+                                {itemCode:"2",itemName:"单位转个人", isdisabled: true},
+                                {itemCode:"3",itemName:"个人转集体"},
+                            ]
+                        } else if(res.data.personType && res.data.personType.split('-')[1] === '01'){
+                            tempPersonTypeChildren = [
+                                {itemCode:"1",itemName:"单位转单位"},
+                                {itemCode:"2",itemName:"单位转个人"},
+                                {itemCode:"3",itemName:"个人转单位", isdisabled: true},
+                            ]
+                        } else{
+                            tempPersonTypeChildren = [
+                                {itemCode:"1",itemName:"单位转单位", isdisabled: true},
+                                {itemCode:"2",itemName:"单位转个人", isdisabled: true},
+                                {itemCode:"3",itemName:"个人转单位", isdisabled: true},
+                            ]
+                        }
+                        this.formDataInner.formInputs[1].children = tempPersonTypeChildren;
                     }
                 }else{
                     _this.$message.error('查询失败或档案信息不存在!');
@@ -706,7 +791,6 @@ export default {
                     applyIdNum:_this.idCardNum,
                     applyA0100A:_this.saveRecordNum
                 }).then(res => {
-                    console.log(res);
                     if(Number(res.code) === 0){
                         if(res.data && res.data.length > 0){
                             _this.lendInfo = res.data;
@@ -852,6 +936,12 @@ export default {
                                 // console.log(res)
                                 if(Number(res.code) === 0){
                                     _this.$message.success('申请转出成功');
+                                    //个人申请转出--upload上传函件
+                                    if(_this.tempfileList && _this.tempfileList.length > 0){
+                                        for(let i = 0; i < _this.tempfileList.length; i++){
+                                            _this.uploadPost(_this.tempfileList[i]);
+                                        }
+                                    }
                                     _this.closeMoal();
                                 }else{
                                     _this.$message.error('抱歉,转出申请失败,请重试');
@@ -917,6 +1007,49 @@ export default {
             
         },
 
+        //上传的函件--删除
+        handleRemove(file) {
+            const index = this.fileList.indexOf(file);
+            const newFileList = this.fileList.slice();
+            newFileList.splice(index, 1);
+            this.fileList = newFileList;
+        },
+        //上传函件--列表
+        beforeUpload(file) {
+            const isJPG = file.type === "image/jpeg" || file.type === "image/jpg" || file.type === 'image/png';
+            if (!isJPG) {
+                this.$message.error("请上传JPEG、PNG或JPG格式!");
+            } else{
+                this.fileList = [...this.fileList, file];
+                this.tempfileList = [...this.fileList];
+                return false;
+            }
+            
+        },
+        //上传函件--开始上传：功能
+        // handleUpload() {
+        //     const { fileList } = this;
+        //     this.tempfileList = [...fileList];
+        // },
+        //上传函件--开始上传：功能
+        uploadPost(currfile){
+            let dataObj = new FormData();
+            this.$set(dataObj, 'files', currfile);
+            
+            this.$set(dataObj, 'a01000', this.tempUploadA01000);
+            // this.uploading = true;
+
+            this.$http.fetchPost('personArchBrowse@personArchBrowseInsert.action', dataObj,{headers:{'Content-Type':'multipart/form-data'}}).then(res => {
+                if(Number(res.code) === 0){
+                    // this.uploading = false;
+                    this.$message.success('上传成功！');
+                
+                } else{
+                    // this.uploading = false;
+                    this.$message.error('上传失败！');
+                }
+            })
+        }
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
@@ -934,7 +1067,7 @@ export default {
             this.transferOutShow();
         }
 
-        // 获取转出方式
+        // 获取转出原因
         this.$http.fetchPost('archTransferOut@getSceneArchTransferOut.action',null)
             .then(res => {
                 if(Number(res.code) === 0){
@@ -1038,5 +1171,15 @@ export default {
     .lendContent{
         font-size: 16px;
         line-height: 30px;
+    }
+
+    .isDepartMessage{
+        font-size: 16px;
+        color: red;
+        padding-left: 20px;
+        margin-bottom: 10px;
+    }
+    .uploadCon{
+        margin: 0 8% 46px;
     }
 </style>

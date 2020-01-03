@@ -13,6 +13,7 @@
 
 <script>
 import TableView from "@/components/tableView";
+import utils from '../../utils/util'
 export default {
   name: "RetirementRemind",
   //import引入的组件需要注入到对象中才能使用
@@ -292,14 +293,14 @@ export default {
               num: (pageNum - 1) * limitNum + index + 1,
               a0100a: element.a0100a,
               a0101: element.a0101,
-              a0104:element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女': ''),
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
               a0184: element.a0184,
               a0107: element.a0107,
               b0101: element.b0101,
               archivesIdentity: element.archivesIdentity === '1' ? '干部' : (element.archivesIdentity === '2' ? '工人' : '其他'),
               archiveStatus: element.archiveStatus === '0' ? '待入库' : (element.archiveStatus === '1' ? '已入库' : '接收待入库'),
               remainMonth: element.remainMonth,
-              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出')
+              isInware: utils.isInwareStatusFun(element.archiveStatus, element.isInware),
             })
           });
         } else{

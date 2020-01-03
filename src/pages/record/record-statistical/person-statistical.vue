@@ -39,6 +39,7 @@ const renderContent = (value, row, index, colSpan, data) => {
 import RecordAnalysis from "@/components/recordAnalysis";
 import TableView from "@/components/tableView";
 import moment from "moment";
+import utils from '../../../utils/util';
 export default {
   name: "PersonStatistical",
   //import引入的组件需要注入到对象中才能使用
@@ -58,6 +59,7 @@ export default {
         bordered: true,  //table--边框
         superimposeWidth: true,
         noPagination: true,  //table--无分页
+        isNoTitle: true,  //表格上--标题不显示
         formData:{
           formInputs:[],
           formBtns:[],
@@ -77,7 +79,7 @@ export default {
           dataIndex: "data1",
           key: "data1",
           fixed:'left',
-          width: 200,
+          width: 300,
           customRender: (text, row, index) => {
             return renderContent(text, row, index, 0, this.initArr.tabledataArr);
           }
@@ -182,7 +184,7 @@ export default {
           dataIndex: "data1",
           key: "data1",
           fixed: "left",
-          width: 200,
+          width: 300,
           customRender: (text, row, index) => {
             return renderContent(text, row, index, 0, this.initArr.tabledataArr);
           }
@@ -388,7 +390,7 @@ export default {
           dataIndex: "data7",
           key: "data7",
           fixed: "left",
-          width: 200,
+          width: 300,
           customRender: (text, row, index) => {
             return renderContent(text, row, index, 0, this.initArr.tabledataArr);
           }
@@ -920,6 +922,7 @@ export default {
             sum0: totalRowObj.data6
           })
         }
+        console.log(resultTableDataArr);
         return resultTableDataArr;
       } else{
         return [];
@@ -998,8 +1001,8 @@ export default {
         }).then(res => {
           if(Number(res.code) === 0){
             if(res.data.path){
-              this.exportUrl = this.$targetHost + res.data.path.substr(3);
-              this.exportFileName = res.data.path.substr(16);
+              this.exportUrl = this.$targetHost + utils.getImageUrl(res.data.path, 2);
+              this.exportFileName = utils.getImageUrl(res.data.path, 1);
             } 
           } else{
             this.$message.warning('抱歉，导出失败，请刷新后重试！');

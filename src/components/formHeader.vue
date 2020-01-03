@@ -69,6 +69,7 @@ export default {
     .formHeader{
         width: 100%;
         height: 40px;
+        line-height: 40px;
         display: flex;
         align-items: center;
         box-sizing: border-box;

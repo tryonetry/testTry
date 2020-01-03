@@ -2,6 +2,7 @@
 <template>
 <div class="loginOut" @keyup.enter="handleLogin">
     <vue-particles color="#dedede" :clickEffect="false"></vue-particles>
+    <div class="loginTitle"></div>
     <div class="loginInputContainer">
         <a-input type="text" class="loginInput" placeholder="请输入用户名" v-model="user" ref="userInput"></a-input>
         <a-input type="password" class="loginInput" placeholder="请输入密码" v-model="password" ref="passInput"></a-input>
@@ -120,6 +121,18 @@ export default {
         position: relative;
         overflow: hidden;
     }
+
+    .loginTitle{
+        position: absolute;
+        width: 753px;
+        height: 147px;
+        left: 48%;
+        top: 50%;
+        margin-left: -376px;
+        margin-top: -298px;
+        background: url('../assets/image/logintitle.png') no-repeat;
+    }
+
     .loginInputContainer{
         background: #ffffff;
         width: 500px;

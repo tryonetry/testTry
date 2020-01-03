@@ -1,3 +1,4 @@
+
 module.exports = {
     configureWebpack: config => {
         if (process.env.NODE_ENV === 'production') {
@@ -16,17 +17,17 @@ module.exports = {
         hotOnly: false, //热更新（webpack已实现了，这里false即可）
         hot:true,
         inline:true,
-        proxy: {
-            //配置跨域
-            '/': {
-                target: "192.168.1.215:8181",
-                ws: false,
-                changOrigin: true,
-                pathRewrite: {
-                    '^/': '/'
-                }
-            }
-        }
+        // proxy: {
+        //     //配置跨域
+        //     '/': {
+        //         target: "192.168.1.211:8181",
+        //         ws: false,
+        //         changOrigin: true,
+        //         pathRewrite: {
+        //             '^/': '/'
+        //         }
+        //     }
+        // }
 
     }
 }

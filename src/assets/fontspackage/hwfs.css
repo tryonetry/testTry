@@ -1,0 +1,10 @@
+@font-face{
+    font-family: 'HWFS';
+    src: url('华文仿宋.ttf');
+    src: url('华文仿宋.eot') format('eot');
+    src: url('华文仿宋.otf') format('otf');
+    src: url('华文仿宋.woff') format('woff');
+    src: url('华文仿宋.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}

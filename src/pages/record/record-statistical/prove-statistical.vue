@@ -73,6 +73,7 @@ export default {
         tableCheck: false, //table是否可以check,
         bordered: true, //table--边框
         superimposeWidth: true,
+        isNoTitle: true,  //表格上--标题不显示
         formData: {
           formInputs: [],
           formBtns: []

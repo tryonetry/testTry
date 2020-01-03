@@ -5,11 +5,11 @@
     <TableView :initArrData="initArr"  @accepttreeNode="accepttreeNodeFun">
       <!-- tableFormSearch里添加其他按钮 -->
       <div slot="underSearchCont" class="orgTitle">
-        <p>{{isOrg ? "机构名称 : " : "行政区划 : " }}{{ orgObj && orgObj.title }} <span v-if="orgObj && orgObj.key && orgObj.key.length < 4" class="canAddOrg">[当前行政区划不可添加机构]</span></p>
+        <p>{{orgObj && orgObj.type == '1' ? "机构名称 : " : "行政区划 : " }}{{ orgObj && orgObj.title }} <span v-if="orgObj && orgObj.key && (orgObj.key.length < 4 || orgObj.type == '1')" class="canAddOrg">[当前行政区划不可添加机构]</span></p>
       </div>
       <span slot="formAction" class="formBtns">
-          <a-button type="primary" @click="handleAdd" v-if="!isOrg">添加到当前行政区</a-button>
-          <a-button type="primary" @click="handleChange" v-if="isOrg">立即修改</a-button>
+          <a-button type="primary" @click="handleAdd" v-if="orgObj && orgObj.key && orgObj.key.length >= 4 && orgObj.type == '0'">添加到当前行政区</a-button>
+          <a-button type="primary" @click="handleChange" v-if="orgObj && orgObj.key && orgObj.key.length >= 4 && orgObj.type == '1'">立即修改</a-button>
           <a-button @click="handleReset">重 置</a-button>
           <a-popconfirm
             title="确定要删除当前机构吗?"
@@ -17,7 +17,7 @@
             cancelText="取消"
             @confirm="handleDelete"
           >
-            <a-button type="danger" v-if="isOrg">删除当前机构</a-button>
+            <a-button type="danger" v-if="orgObj && orgObj.key && orgObj.key.length >= 4 && orgObj.type == '1'">删除当前机构</a-button>
           </a-popconfirm>
       </span>
 
@@ -29,6 +29,7 @@
 
 <script>
 import TableView from "@/components/tableView";
+import utils from '../../../utils/util'
 export default {
   name: "OrganManager",
   //import引入的组件需要注入到对象中才能使用
@@ -37,7 +38,6 @@ export default {
 
   data() {
     return {
-      isOrg:null, // 是否为机构 null表示未选择任何节点
       orgObj:null,
       tableTotalNum: 0, //总页数：默认为0
       // tableView传值方式
@@ -45,6 +45,7 @@ export default {
         treeflag: true, //左侧tree是否存在
         tableCheck: false, //table是否可以check
         isHasNotTable: true,  //table是否存在： 存在：false； 不存在：true
+        isNoTitle: true,  //表格上--标题不显示
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -55,14 +56,14 @@ export default {
               type: "text",
               required: true,
               placeholder: "请输入存档机构名称",
-              key: "",
-              name: "",
+              key: "b0101",
+              name: "b0101",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "* 请输入存档机构名称",
-              postname: "",
+              postname: "b0101",
               status: ""
             },
             {
@@ -70,55 +71,136 @@ export default {
               type: "text",
               required: false,
               placeholder: "请输入机构简称",
-              key: "",
-              name: "",
+              key: "b0104",
+              name: "b0104",
               val: void 0,
               maxlength: 20,
               minlength: 0,
               reg: "",
               tip: "",
+              postname: "b0104",
+              status: ""
+            },
+            {
+              title: "机构编号",
+              type: "text",
+              required: true,
+              placeholder: "请输入机构编号",
+              key: "b0114",
+              name: "b0114",
+              val: void 0,
+              maxlength: 6,
+              minlength: 6,
+              reg: "",
+              tip: "* 请输入6位机构编号",
               postname: "",
               status: ""
             },
-             // select/searchSelect
             {
-              title: "是否为代理机构",
+              title: "机构地址",
+              type: "text",
+              required: true,
+              placeholder: "请输入机构地址",
+              key: "b0117",
+              name: "b0117",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "b0117",
+              tip: "* 请输入机构地址",
+              postname: "",
+              status: ""
+            },
+            {
+              title: "联系电话",
+              type: "text",
+              required: true,
+              placeholder: "请输入联系电话",
+              key: "b0107",
+              name: "b0107",
+              val: void 0,
+              maxlength: 20,
+              minlength: 0,
+              reg: "",
+              tip: "* 请输入联系电话",
+              postname: "b0107",
+              status: ""
+            },
+            {
+              title: "邮政编码",
+              type: "text",
+              required: true,
+              placeholder: "请输入邮政编码",
+              key: "b0111",
+              name: "b0111",
+              val: void 0,
+              maxlength: 6,
+              minlength: 6,
+              reg: "",
+              tip: "* 请输入正确的邮政编码",
+              postname: "b0111",
+              status: ""
+            },
+            {
+              title: "是否拥有库房",
               otherType: "select",
-              required: false,
-              placeholder: "请选择是否为代理机构",
-              key: "",
-              name: "",
+              required: true,
+              placeholder: "请选择是否拥有库房",
+              key: "b0106",
+              name: "b0106",
               val: void 0,
               children: [
                 {
-                  itemCode: "1",
-                  itemName: "是"
+                  itemCode: "0",
+                  itemName: "有"
                 },
                 {
-                  itemCode: "0",
-                  itemName: "否"
+                  itemCode: "1",
+                  itemName: "没有"
                 }
               ],
               status: "",
               isHide:false,
             },
-            {
-              title: "所在行政区",
-              type: "text",
-              required: false,
-              placeholder: "所在行政区",
-              key: "",
-              name: "",
-              val: void 0,
-              maxlength: 20,
-              minlength: 0,
-              reg: "",
-              tip: "",
-              postname: "",
-              status: "",
-              disabled:true,
-              isHide:false,
-            },
+             // select/searchSelect
+            // {
+            //   title: "是否为代理机构",
+            //   otherType: "select",
+            //   required: false,
+            //   placeholder: "请选择是否为代理机构",
+            //   key: "",
+            //   name: "",
+            //   val: void 0,
+            //   children: [
+            //     {
+            //       itemCode: "1",
+            //       itemName: "是"
+            //     },
+            //     {
+            //       itemCode: "0",
+            //       itemName: "否"
+            //     }
+            //   ],
+            //   status: "",
+            //   isHide:false,
+            // },
+            // {
+            //   title: "所在行政区",
+            //   type: "text",
+            //   required: false,
+            //   placeholder: "所在行政区",
+            //   key: "",
+            //   name: "",
+            //   val: void 0,
+            //   maxlength: 20,
+            //   minlength: 0,
+            //   reg: "",
+            //   tip: "",
+            //   postname: "",
+            //   status: "",
+            //   disabled:true,
+            //   isHide:false,
+            // },
           ],
 
           // form btns
@@ -148,53 +230,60 @@ export default {
 
     // tree 选择
     accepttreeNodeFun(newTreeData){
-      
       this.orgObj = newTreeData;
-      if(newTreeData.isLeaf){
-        this.initArr.formData.formInputs[2].isHide = false;
-        this.initArr.formData.formInputs[3].isHide = false;
-        this.isOrg = true;
+      if(newTreeData.type == '1'){
         this.$http.fetchGet("orgManage@findOrgManageById.action", {
           id:newTreeData.key
         }).then(res => {
           if(Number(res.code) === 0){
-            // b0101 机构名字
-            // b0104 机构简称
-            // isAgent "0" "1" 是否为代理
-            // city.name 所在区划分
-            this.initArr.formData.formInputs[0].val = res.data.b0101;
-            this.initArr.formData.formInputs[1].val = res.data.b0104;
-            this.initArr.formData.formInputs[2].val = res.data.isAgent;
-            this.initArr.formData.formInputs[3].val = res.data.city.name;
+            this.initArr.formData = utils.getNewFormSearch(res.data, this.initArr.formData);
+
           }else{
             this.$message.warning("获取数据失败,请重试");
           }
         }).catch(err => {
           this.$message.error("网络异常,请稍后重试");
         })
-
-      }else{
-        this.isOrg = false;
+      } else{
         this.reset();
-        this.initArr.formData.formInputs[3].val = newTreeData.title;
-        this.initArr.formData.formInputs[2].isHide = true;
-        this.initArr.formData.formInputs[3].isHide = true;
       }
     },
 
     // 添加机构到行政区划
     handleAdd(){
       let orgName = this.initArr.formData.formInputs[0].val;
-      if(this.orgObj.key.length < 4){
+      if(this.orgObj.key.length < 4 || this.orgObj.type == '1'){
         this.$message.warning("请选择可加机构的行政区划");
         return;
       }
-      if((orgName || String(orgName) === "0") && this.orgObj && this.orgObj.key){
+      
+      let requireCount = 0,requireCountVal = 0;
+      this.initArr.formData.formInputs.forEach(el => {
+        if(el.required){
+          requireCount ++;
+          if(el.val){
+            if(el.name === 'b0114' || el.name === 'b0111'){
+              if(el.val.length == 6){
+                requireCountVal++;
+              }
+            } else{
+              requireCountVal++;
+            }
+          }
+        }
+      });
+      
+      
+      if(Number(requireCount) === Number(requireCountVal)){
         this.$http.fetchPost("orgManage@addGovOrg.action",{
           pid:this.orgObj.key,
           orgTotalName:orgName,
           orgSampleName:this.initArr.formData.formInputs[1].val,
-          // isAgent:this.initArr.formData.formInputs[2].val,
+          b0114: this.initArr.formData.formInputs[2].val,
+          b0117: this.initArr.formData.formInputs[3].val,
+          b0107: this.initArr.formData.formInputs[4].val,
+          b0111: this.initArr.formData.formInputs[5].val,
+          b0106: this.initArr.formData.formInputs[6].val,
           unitType:"1",
           status:0,
         }).then(res => {
@@ -209,7 +298,21 @@ export default {
           this.$message.error("抱歉,网络异常,请稍后重试");
         });
       }else{
-        this.$message.warning("存档机构名称不能为空");
+        this.initArr.formData.formInputs.forEach(el => {
+          if(el.required){
+            if(el.val){
+              if(el.name === 'b0114' || el.name === 'b0111'){
+                if(el.val.length !== 6){
+                  el.status = 'error';
+                }
+              } else{
+                el.status = 'success';
+              }
+            } else{
+              el.status = 'error';
+            }
+          }
+        });
       }
 
     },
@@ -219,23 +322,61 @@ export default {
 
       let orgName = this.initArr.formData.formInputs[0].val;
 
-      if((orgName || String(orgName) === "0")&& this.orgObj.pId && this.orgObj && this.orgObj.key){
+      let requireCount = 0,requireCountVal = 0;
+      this.initArr.formData.formInputs.forEach(el => {
+        if(el.required){
+          requireCount ++;
+          if(el.val){
+            if(el.name === 'b0114' || el.name === 'b0111'){
+              if(el.val.length == 6){
+                requireCountVal++;
+              }
+            } else{
+              requireCountVal++;
+            }
+          }
+        }
+      });
+
+
+      if(Number(requireCount) === Number(requireCountVal)){
         this.$http.fetchPost("orgManage@editOrg.action",{
           id:this.orgObj.key,
+          upUnitId:this.orgObj.pId,
           orgTotalName:orgName,
-          UpUnitId:this.orgObj.pId,
           orgSampleName:this.initArr.formData.formInputs[1].val,
-          isAgent:this.initArr.formData.formInputs[2].val,
+          b0114: this.initArr.formData.formInputs[2].val,
+          b0117: this.initArr.formData.formInputs[3].val,
+          b0107: this.initArr.formData.formInputs[4].val,
+          b0111: this.initArr.formData.formInputs[5].val,
+          b0106: this.initArr.formData.formInputs[6].val,
         }).then(res => {
           if(Number(res.code) === 0){
             this.$message.success("修改成功!");
             this.getTreeData();
+            this.orgObj.title = orgName;
           }else{
             this.$message.warning("抱歉,修改失败,请重试");
           }
         }).catch(err => {
           this.$message.error("抱歉,网络异常,请稍后重试");
         })
+      } else{
+        this.initArr.formData.formInputs.forEach(el => {
+          if(el.required){
+            if(el.val){
+              if(el.name === 'b0114' || el.name === 'b0111'){
+                if(el.val.length !== 6){
+                  el.status = 'error';
+                }
+              } else{
+                el.status = 'success';
+              }
+            } else{
+              el.status = 'error';
+            }
+          }
+        });
       }
     },
 

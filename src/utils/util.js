@@ -214,8 +214,40 @@ const utils = {
         result = JSON.parse(JSON.stringify(_utilTempTreeArr));
         _utilTempTreeArr = [];
         return result;
-    }
+    },
 
-    
+    isInwareStatusFun(archiveStatus, isInware){
+        /**
+         * 功能：判断档案的在库状态---全局页面
+         * 参数：archiveStatus：archiveStatus; isInware: isInware
+         */
+        let resultVal = '';
+        if(archiveStatus && isInware){
+            if(Number(archiveStatus) === 0 && Number(isInware) === 0){
+                resultVal = '待入库';
+            } else if(Number(archiveStatus) === 1 && Number(isInware) === 0){
+                resultVal = '在库';
+            } else if(Number(archiveStatus) === 1 && Number(isInware) === 1){
+                resultVal = '已借出';
+            } else if(Number(archiveStatus) === 7 && Number(isInware) === 2){
+                resultVal = '已转出';
+            }
+        } else{
+            resultVal = '';
+        }
+        return resultVal;
+    },
+
+    getImageUrl(currPath, pathLen){
+        /**
+         * 功能：获取图片地址：linux和windows都匹配
+         * 参数：currPath：当前后台给的路径； pathLen：要从当前路径截取后几位
+         */
+        let tempPathArr = currPath.split('/'), resultPath = '';
+        for(let i = Number(pathLen) - 1; i >= 0; i --){
+            resultPath += tempPathArr[tempPathArr.length - i - 1] + '/';
+        }
+        return resultPath.substring(0, resultPath.length - 1);
+    }
 }
 export default utils;

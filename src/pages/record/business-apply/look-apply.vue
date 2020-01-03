@@ -287,7 +287,7 @@ export default {
                 Object.assign(item,{val:currRowdata[item.name]})
             });
             // console.log(currRowdata);
-            let imgFiles = JSON.parse(currRowdata.applyFilePath);
+            let imgFiles = currRowdata.applyFilePath ?  JSON.parse(currRowdata.applyFilePath) : '';
             // 多条图片数据
             if(imgFiles && imgFiles.length > 0){
                 imgFiles.forEach((item,index) => {
@@ -317,6 +317,8 @@ export default {
 
             this.$http.fetchPost('archBorrow@archBorrowApproval.action',{
                 archiveId:this.currentData.archiveId,
+                applyName: this.currentData.applyName,
+                applyIdNum: this.currentData.applyIdNum,
                 isInware:this.currentData.isInware,
                 applyId:this.currentData.id,
                 approvalState: String(state),
@@ -395,9 +397,6 @@ export default {
     }
     .titleSlot>p{
         margin-right: 40px;
-    }
-    .titleSlot>span{
-        color:#2d8cf0;
     }
     .content{
         height: 100%;

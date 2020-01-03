@@ -346,6 +346,7 @@ export default {
   },
   created() {
     //this.getTableData(null, this.tempPageSize, 10);
+    this.$store.dispatch("getinfoTableCheckData", []);   //重新dispatch
   },
   computed: {
     checkTableData: function() {
@@ -394,7 +395,7 @@ export default {
                 num: (pageNum - 1) * limitNum + index + 1, //序号
                 a0101: element.a0101, //姓名
                 a0107: element.a0107, //出生日期
-                a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')), //性别
+                a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))), //性别
                 a0888: element.a0888, //毕业院校
                 a0134: element.a0134, //参加工作日期
                 a0202a: element.a0202a, //工作单位名称
@@ -550,7 +551,7 @@ export default {
         this.tempPersonData = this.checkTableData[0];
         this.personVisible = true;
         this.nameObj['value'] = this.tempPersonData['a0101'] ? this.tempPersonData['a0101'] : '姓名';
-        this.genderObj['value'] = this.tempPersonData['a0104'] === "1" ? "男" : "女";
+        this.genderObj['value'] = this.tempPersonData['a0104'] === '1' ? '男' : (this.tempPersonData['a0104'] === '2' ? '女' : (this.tempPersonData['a0104'] === '9' ? '未说明的性别' : '未知的性别')); //性别
         this.ageObj['value'] = this.tempPersonData['a0107'] ? this.tempPersonData['a0107'] : '年龄';
         this.eduObj['value'] = this.getDictResultName('educationList', this.tempPersonData['a0834'], this.dictoryDataArr);
         this.professObj['value'] = this.tempPersonData['a0824'] ? this.tempPersonData['a0824'] : '专业';

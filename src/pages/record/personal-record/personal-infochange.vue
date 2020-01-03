@@ -6,7 +6,7 @@
     <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
       <div slot="tableAction" slot-scope="slotPropsData">
         <a
-          href="javascrit:;"
+          href="javascript:;"
           class="primaryBtnColor"
           @click="editOperate(slotPropsData.currRowdata)"
         >进入</a>
@@ -200,7 +200,7 @@ export default {
               this.initArr.tabledataArr = res.data;
               this.initArr.tabledataArr.forEach((element, index) => {
 
-                Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1,a0104:element.a0104 === "1" ? "男" : "女"});
+                Object.assign(element,{key:element.a01000,num: (pageNum - 1) * limitNum + index + 1,a0104:element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : '')))});
               });
           }else{
               _this.$message.error("抱歉,暂时未查到数据!");
@@ -226,7 +226,6 @@ export default {
       }).catch(err => {
         this.$message.error('抱歉，网络异常！');
       })
-      
     },
 
     // 提交
@@ -289,20 +288,17 @@ export default {
 
 <style scoped>
 .modal{
-    max-height: 80%;
-  }
-  .titleSlot{
-    display: flex;
-  }
-  .titleSlot>p{
-    margin-right: 40px;
-  }
-  .titleSlot>span{
-    color:#2d8cf0;
-  }
-  .recordInfoContainer{
-    height: 700px;
-    max-height: 700px;
-    overflow: auto;
-  }
+  max-height: 80%;
+}
+.titleSlot{
+  display: flex;
+}
+.titleSlot>p{
+  margin-right: 40px;
+}
+.recordInfoContainer{
+  height: 700px;
+  max-height: 700px;
+  overflow: auto;
+}
 </style>

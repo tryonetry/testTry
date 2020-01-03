@@ -10,6 +10,13 @@
 
       <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
       <div slot="tableAction" slot-scope="slotPropsData">
+        <!-- 浏览函件 -->
+        <a
+          href="javascript:;"
+          data-type="浏览函件"
+          class="primaryBtnColor"
+          @click="viewLettersFun(slotPropsData.currRowdata)"
+        >浏览函件</a>
         <!-- 已入库：无操作；只显示状态 -->
         <a
           v-if="slotPropsData.currRowdata.borrowState === '11'"
@@ -67,6 +74,7 @@
         :maskClosable="false"
         style="height:85%;overflow: hidden;"
         :footer="mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? null : void 0"
+        :class="mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? 'noFooterBody' : ''"
       >
         <div slot="title" class="roomModalTitleSlot">
           <p>{{mulitipleOperateVal==='now' || mulitipleOperateVal === 'batchNow' ? '档案现场查(借)阅' : '档案归还登记'}}</p>
@@ -106,7 +114,7 @@
         width="80%"
         @cancel="handleCancel"
         :maskClosable="false"
-        style="height:85%;overflow: hidden;"
+        style="height:85%;overflow: hidden;z-index: 1005;"
       >
         <div slot="title" class="roomModalTitleSlot">
           <p>批量查(借)阅</p>
@@ -115,7 +123,21 @@
 
         <!-- 批量查借阅 -->
         <div class="batchBorrow">
+          <!-- 批量查借阅--基础信息 -->
           <TableFromSearch :formDataArr="multipleForm" :layout="layoutModal" ref="multipleTableForm" ></TableFromSearch>
+          <!-- 上传函件 -->
+          <a-row>
+            <a-col :xs="{ span: 6}" :xl="{ span: 6}" :xxl="{ span: 3}" style="text-align:right;color:rgba(0, 0, 0, 0.85);    padding-right: 8px;">
+              上传函件&nbsp;:
+            </a-col>
+            <a-col :xs="{ span: 18 }" :xl="{ span: 18}" :xxl="{ span: 21}">
+              <div class="uploadCon">
+                  <a-upload :fileList="fileList" :remove="handleRemove" :beforeUpload="beforeUpload" :multiple="true">
+                      <a-button> <a-icon type="upload" /> 上传函件 </a-button>
+                  </a-upload>
+              </div>
+            </a-col>
+          </a-row>
           <div class="right" slot="otherForm">
              <!-- 表格头部 -->
             <div class="materialHead">
@@ -123,6 +145,7 @@
                   <li>序 号</li>
                   <li>查(借)阅人<i class="required">*</i></li>
                   <li>查(借)阅人身份证号码<i class="required">*</i></li>
+                  <li>联系方式</li>
                   <li>操 作</li>
               </ul>
             </div>
@@ -139,6 +162,10 @@
                         <li @click.stop="bundleClick(index,'idNum',$event)">
                             <input v-if='row.inEdit && row.inEdit.idNum' type="text" @blur="isRegIdNum(row.borrowerTelNum, index, 'idNum', $event)" v-model="row.borrowerTelNum"/>
                             <span v-else>{{row.borrowerTelNum}}</span>
+                        </li>
+                        <li @click.stop="bundleClick(index,'phone',$event)">
+                            <input v-if='row.inEdit && row.inEdit.phone' type="text"  v-model="row.borrowerPhone"/>
+                            <span v-else>{{row.borrowerPhone}}</span>
                         </li>
                         <li class="actions">
                             <a-popconfirm
@@ -169,6 +196,35 @@
         </template>
       </a-modal>
     </div>
+
+    <!-- 浏览函件 -->
+    <div class="addModal">
+      <a-modal
+        centered
+        :visible="viewLettervisible"
+        :width="'90%'"
+        @cancel="handleViewCancel"
+        style="height:85%;overflow: hidden;"
+        :maskClosable='false'
+      >
+        <template slot="footer">
+            <a-button key="back" @click="handleViewCancel">取 消</a-button>
+        </template>
+        <!-- title -->
+        <div slot="title" class="roomModalTitleSlot">
+          <p>浏览函件</p>
+          <span>{{viewCurrentData && viewCurrentData.a0101}} </span>
+        </div>
+        <div class="viewLetterModalForm">
+          <div class="letterList" v-viewer="{navbar:false, scalable: false}">
+            <div class="letterItem" v-for="(item, index) in fileList" :key="index">
+              <img :src="item.url" :alt="item.name" />
+              <p>{{item.name}}</p>
+            </div>
+          </div>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
@@ -176,7 +232,8 @@
 import TableView from "@/components/tableView";
 import TableFromSearch from '@/components/tableFormSearch';
 import regs from '../../utils/regexp';
-import utils from '../../utils/util'
+import utils from '../../utils/util';
+import moment from "moment";
 export default {
   name: "RecordCheck",
   //import引入的组件需要注入到对象中才能使用
@@ -256,6 +313,30 @@ export default {
             //   disabledDate: "disabledEndDate", //函数名：只能选今天和今天以前的
             //   disabledStartDate: "disabledStartDate" //函数名：只能选今天和今天以后的
             },
+          {
+              title: "查询类型",
+              otherType: "select",
+              required: false,
+              placeholder: "请选择查询类型",
+              key: "borrowState",
+              name: "borrowState",
+              val: void 0,
+              children: [
+                {
+                  itemCode: "8",
+                  itemName: "查(借)阅待借出"  //网站--带借出
+                },
+                {
+                  itemCode: "9",
+                  itemName: "查(借)阅待归还"
+                },
+                {
+                  itemCode: "11",
+                  itemName: "查(借)阅记录"
+                },
+              ],
+              status: ""
+            }
           ],
 
           // form btns
@@ -405,7 +486,7 @@ export default {
           {
             title: "操作",
             key: "action",
-            width: 150,
+            width: 250,
             fixed: 'right',
             scopedSlots: { customRender: "action" }
           }
@@ -722,21 +803,12 @@ export default {
             tip: "* 请输入备注",
             status: ""
           },
-          {
-            title: '函件上传',
-            otherType: 'upload',
-            multiple: false,
-            action:this.$targetHost + 'hasngcadrefile/archBorrow@uploadBusinessLetter.action',
-            listType: 'picture',
-            accept: '.jpg, .png, .gif, .bmp, .jpeg',
-            val: void 0,
-            name: 'file',
-            key: 'file',
-            postname: 'file',
-            colWidth: [12, 24]
-          }
         ]
       },
+      fileList:[],  //批量查借阅---函件上传列表
+      viewLettervisible:false,  //浏览函件
+      viewCurrentData: null,  //浏览函件---当前行数据
+
       // layoutModal 布局
       layoutModal:{
         defaultCon: {
@@ -827,7 +899,7 @@ export default {
             tip: '请输入经办人',
             postname:'returnOperatorName',
             status: '',
-            colWidth: [12, 24]
+            colWidth: [12, 24],
           },
           {
             title: "归还说明",
@@ -924,7 +996,8 @@ export default {
           applyIdNum: (!condition || !condition.a0184) ? '' : condition.a0184,
           archSerialNum: (!condition || !condition.a0100a) ? '' : condition.a0100a,
           startDate: (!condition || !condition.startDate) ? '' : condition.startDate,
-          endDate: (!condition || !condition.endDate) ? '' : condition.endDate
+          endDate: (!condition || !condition.endDate) ? '' : condition.endDate,
+          borrowState: (!condition || !condition.borrowState) ? '' : condition.borrowState
       }).then(res => {
           if(Number(res.code) === 0){
             this.tableTotalNum = res.count;
@@ -936,7 +1009,7 @@ export default {
                    key: element.id,
                    a0100a: element.a0100a,
                    a0101: element.a0101,
-                   a0104: element.a0104 === '1' ? '男' : '女',
+                   a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
                    a0184: element.a0184,
                    shelvesNo: element.shelvesNo,
                    companyNumber: element.companyNumber,
@@ -992,13 +1065,13 @@ export default {
               num: (pageNum - 1) * limitNum + index + 1,
               key: element.a01000,
               a0100A: element.a0100A,
-              a0104:  element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
+              a0104:  element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
               a0101: element.a0101,
               a0184: element.a0184,
               uCreateDate: element.uCreateDate,
               shelvesNo: element.shelvesNo,
               isInware: element.isInware,
-              isInwareName: element.isInware === '0' ? '在库' : (element.isInware === '1' ? '已出库' : '已转出')
+              isInwareName: utils.isInwareStatusFun(element.archiveStatus, element.isInware),
             })
           });
         } else{
@@ -1070,6 +1143,12 @@ export default {
         if(element.key === 'a0101' || element.key === 'a0184'){
           element.isHide = true;
           element.val = void 0;
+        } else if(element.key === 'borrowDate'){
+          element.val = moment(new Date(), 'YYYY-MM-DD');
+          element.disabled = true;
+        } else if(element.key === 'borrowOperatorName'){
+          element.val = JSON.parse(sessionStorage.getItem('loginData'))['loginUser']['userName'];
+          element.disabled = true;
         } else{
           element.val = void 0;
         }
@@ -1217,9 +1296,11 @@ export default {
         if(this.listDirectory.length >=2){   //判断table：表格数据必须大于2条
           let tempListTableArr = [...this.listDirectory];
           let borrorwTableObj = this.getNewBorrowTable(tempListTableArr); 
+          console.log(borrorwTableObj);
           if(borrorwTableObj['tempFalg']){  //判断table 表格已填数据必填项不能为空
             currPostObj['borrowers'] = utils.borrowFun(borrorwTableObj['borrowData'], 'borrower');   //table：查借阅人
             currPostObj['borrowerTelNums'] = utils.borrowFun(borrorwTableObj['borrowData'], 'borrowerTelNum');  //table:查借阅人身份证号码
+            currPostObj['identityFrontPath'] = utils.borrowFun(borrorwTableObj['borrowData'], 'borrowerPhone');  //table:查借阅人手机号码
             if(this.mulitipleOperateVal === 'batchAudit' || this.mulitipleOperateVal === 'checkout'){   //判断执行---批量查借阅操作:batchAudit-->批量查借阅； batchNow-->批量查借阅现场查(借)阅--批量查借阅；
               //操作为batchAudit-->客户提出申请后再借出； 
               currPostObj.bacch = '0';
@@ -1281,6 +1362,7 @@ export default {
         delete item.idNum;
         delete item.inEdit;
         delete item.name;
+        delete item.phone;
         if(item.borrower && item.borrowerTelNum && regs.testid(item.borrowerTelNum)){
           tempFalg =  true;
           newData.push(item);
@@ -1307,7 +1389,11 @@ export default {
           if(element.status) {
             element.status = void 0;
           }
+          if(element.key === 'returnOperatorName'){
+            element.disabled = true;
+          }
         });
+        currRowData = Object.assign({}, currRowData, {returnOperatorName: JSON.parse(sessionStorage.getItem('loginData'))['loginUser']['userName']})
         _this.returnForm = utils.getNewFormSearch(currRowData, _this.returnForm)
       } else if(operateVal === 'checkout'){
         //借出
@@ -1319,6 +1405,7 @@ export default {
             element.disabled = true;
           }
         });
+
         _this.multipleForm = utils.getNewFormSearch(currRowData, _this.multipleForm);
         if(currRowData.borrower && currRowData.borrowerTelNum){
           _this.listDirectory = _this.getListDirectoryDataArr(currRowData.borrower, currRowData.borrowerTelNum);
@@ -1394,6 +1481,47 @@ export default {
           this.$message.error('抱歉，网络异常！');
         })
       }
+    },
+
+    handleRemove(file){
+      /**
+       * 功能：批量查借阅--函件上传--移除
+       */
+      const index = this.fileList.indexOf(file);
+      const newFileList = this.fileList.slice();
+      newFileList.splice(index, 1);
+      this.fileList = newFileList;
+    },
+    beforeUpload(file){
+      /**
+       * 功能：批量查借阅--函件上传--
+       */
+      const isJPG = file.type === "image/jpeg" || file.type === "image/jpg" || file.type === 'image/png';
+      if (!isJPG) {
+          this.$message.error("请上传JPEG、PNG或JPG格式!");
+      } else{
+          this.fileList = [...this.fileList, file];
+          return false;
+      }
+    },
+    uploadPost(currfile){
+      /**
+       * 功能：批量查借阅--函件上传--上传
+       */
+      console.log('111');
+    },
+
+    handleViewCancel(){
+      this.viewLettervisible = false;
+    },
+
+    viewLettersFun(currData){
+      /**
+       * 功能：浏览函件
+       */
+      console.log(currData);
+      this.viewCurrentData = currData;
+      this.viewLettervisible = true;
     }
   },
   
@@ -1401,6 +1529,7 @@ export default {
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     //this.getTableData(null, 1, 10);
+    this.$store.dispatch("getinfoTableCheckData", []);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）
@@ -1500,14 +1629,17 @@ export default {
     width: 10%;
 }
 .right ul li:nth-child(2){
-    width: 30%;
+    width: 20%;
     cursor: pointer;
 }
 .right ul li:nth-child(3){
-    width: 40%;
+    width: 30%;
     cursor: pointer;
 }
 .right ul li:nth-child(4){
+    width: 20%;
+}
+.right ul li:nth-child(5){
     width: 20%;
 }
 

@@ -76,11 +76,26 @@
                       class="info_view"
                       v-show="operateStatusVal == 2"
                     >{{personBasicInfo.a0104 === '1' ? '男' : (personBasicInfo.a0104 === '2' ? '女' : (personBasicInfo.a0104 === '9' ? '未说明的性别' : '未知的性别'))}}</span>
-                    <a-radio-group
+                    <!-- <a-radio-group
                       :options="genderOptions"
                       v-model="personBasicInfo.a0104"
                       v-show="operateStatusVal !== 2"
-                    />
+                    /> -->
+                    <a-select
+                      class="info_select"
+                      placeholder="请选择"
+                      v-model="personBasicInfo.a0104"
+                      v-show="operateStatusVal !== 2"
+                      ref="reqiuredList2"
+                      data-type="basicInfoRequire"
+                      :allowClear='true'
+                    >
+                      <a-select-option
+                        v-for="(item, index) in genderOptions"
+                        :value="item.itemCode"
+                        :key="index"
+                      >{{item.itemName}}</a-select-option>
+                    </a-select>
                   </td>
                   <td colspan="2">
                     民族
@@ -97,8 +112,11 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0117"
                       v-show="operateStatusVal !== 2"
+                      showSearch
+                      :filterOption="filterOption"
                       ref="reqiuredList3"
                       data-type="basicInfoRequire"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in nationalArr"
@@ -113,14 +131,26 @@
                   </td>
                   <td colspan="2">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0107}}</span>
-                    <a-date-picker
+                    <!-- <a-date-picker
                       class="info_date"
+                      format='YYYYMMDD'
                       v-show="operateStatusVal !== 2"
                       v-model="birthday"
                       @change="birthdayChange"
                       ref="reqiuredList4"
                       data-type="basicInfoRequire"
-                    />
+                    /> -->
+                    <a-input
+                      class="info_input required_input"
+                      type="text"
+                      placeholder="出生日期"
+                      maxlength="8"
+                      v-model="personBasicInfo.a0107"
+                      v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.a0107, 8, 8, null, '请输入正确的出生日期(8位，例：19900101)', $event, 'a0107')"
+                      ref="reqiuredList4"
+                      data-type="basicInfoRequire"
+                    ></a-input>
                   </td>
                 </tr>
                 <tr>
@@ -149,6 +179,9 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0141"
                       v-show="operateStatusVal !== 2"
+                      showSearch
+                      :allowClear='true'
+                      :filterOption="filterOption"
                       ref="reqiuredList5"
                       data-type="basicInfoRequire"
                     >
@@ -159,7 +192,9 @@
                       >{{item.itemName}}</a-select-option>
                     </a-select>
                   </td>
-                  <td colspan="2">手机号码</td>
+                  <td colspan="2">
+                    手机号码<sup style="color:red;">*</sup>
+                  </td>
                   <td colspan="2">
                     <span
                       class="info_view"
@@ -171,13 +206,15 @@
                       placeholder="手机号码"
                       v-model="personBasicInfo.a3707c"
                       v-show="operateStatusVal !== 2"
-                      @blur="regInput(personBasicInfo.a3707c, null, null, 'testMobile', '请输入正确的手机号码', $event, 'a0101')"
+                      @blur="regInput(personBasicInfo.a3707c, 11, 11, 'testMobile', '请输入正确的手机号码(11位)', $event, 'a0101')"
+                      ref="reqiuredList6"
+                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="4">婚姻状况</td>
-                  <td colspan="4">
+                  <td colspan="2">
                     <span
                       class="info_view"
                       v-show="operateStatusVal == 2"
@@ -185,8 +222,11 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0131"
                       v-show="operateStatusVal !== 2"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in marriageArr"
@@ -195,8 +235,32 @@
                       >{{item.itemName}}</a-select-option>
                     </a-select>
                   </td>
-                  <td colspan="4">电子邮箱</td>
-                  <td colspan="4">
+                  <td colspan="4">参加组织时间<sup style="color:red;">*</sup></td>
+                  <td colspan="2">
+                    <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.joinPartyDate}}</span>
+                    <!-- <a-date-picker
+                      class="info_date"
+                      format='YYYYMMDD'
+                      v-show="operateStatusVal !== 2"
+                      v-model="joinPartyDate"
+                      @change="jionPartyDateChange"
+                      ref="reqiuredList7"
+                      data-type="basicInfoRequire"
+                    /> -->
+                    <a-input
+                      class="info_input required_input"
+                      type="text"
+                      placeholder="参加组织时间"
+                      maxlength="8"
+                      v-model="personBasicInfo.joinPartyDate"
+                      v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.joinPartyDate, 8, 8, null, '请输入正确的参加组织时间(8位，例：19900101)', $event, 'joinPartyDate')"
+                      ref="reqiuredList7"
+                      data-type="basicInfoRequire"
+                    ></a-input>
+                  </td>
+                  <td colspan="2">电子邮箱</td>
+                  <td colspan="2">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a3708}}</span>
                     <a-input
                       class="info_input"
@@ -219,12 +283,17 @@
                       class="info_view"
                       v-show="operateStatusVal == 2"
                     >{{this.conVersionData('a0834', personBasicInfo.a0834, 'itemCode')}}</span>
+                    
+                    <!-- @change="schoolChange" -->
                     <a-select
                       class="info_select"
                       placeholder="请选择"
                       v-model="personBasicInfo.a0834"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList6"
+                      showSearch
+                      :allowClear='true'
+                      :filterOption="filterOption"
+                      ref="reqiuredList8"
                       data-type="basicInfoRequire"
                     >
                       <a-select-option
@@ -246,10 +315,14 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :allowClear='true'
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0914"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList7"
+                      ref="reqiuredList9"
                       data-type="basicInfoRequire"
+                      data-isSelect="degreeSelect"
                     >
                       <a-select-option
                         v-for="(item, index) in degreeArr"
@@ -272,7 +345,7 @@
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0888, 2, 20, null, '请输入正确的毕业院校', $event, 'a0888')"
-                      ref="reqiuredList8"
+                      ref="reqiuredList10"
                       data-type="basicInfoRequire"
                     ></a-input>
                   </td>
@@ -300,17 +373,29 @@
                   </td>
                   <td colspan="2">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0807}}</span>
-                    <a-date-picker
+                    <!-- <a-date-picker
                       class="info_date"
+                      format='YYYYMMDD'
                       @change="graduateChange"
                       v-model="graduateDate"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList9"
+                      ref="reqiuredList11"
                       data-type="basicInfoRequire"
-                    />
+                    /> -->
+                    <a-input
+                      class="info_input required_input"
+                      type="text"
+                      placeholder="最高学历毕业日期"
+                      maxlength="8"
+                      v-model="personBasicInfo.a0807"
+                      v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.a0807, 8, 8, null, '请输入正确的最高学历毕业日期(8位，例：19900101)', $event, 'a0807')"
+                      ref="reqiuredList11"
+                      data-type="basicInfoRequire"
+                    ></a-input>
                   </td>
                   <td colspan="2">
-                    最高学历所学专业
+                    最高学历所学专业名称
                     <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="6">
@@ -318,12 +403,12 @@
                     <a-input
                       class="info_input  required_input"
                       type="text"
-                      placeholder="最高学历所学专业"
+                      placeholder="最高学历所学专业名称"
                       v-model="personBasicInfo.a0824"
                       v-show="operateStatusVal !== 2"
                       maxlength="20"
                       @blur="regInput(personBasicInfo.a0824, 2, 20, null, '请输入正确的专业名称', $event, 'a0824')"
-                      ref="reqiuredList10"
+                      ref="reqiuredList12"
                       data-type="basicInfoRequire"
                     ></a-input>
                   </td>
@@ -339,9 +424,12 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
+                      :allowClear='true'
                       v-model="personBasicInfo.a0827"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList11"
+                      ref="reqiuredList13"
                       data-type="basicInfoRequire"
                     >
                       <a-select-option
@@ -364,6 +452,7 @@
                       placeholder="请选择"
                       v-model="personBasicInfo.a0127"
                       v-show="operateStatusVal !== 2"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in healthArr"
@@ -374,7 +463,6 @@
                   </td>
                   <td colspan="2">
                     工作单位名称
-                    <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="6">
                     <span
@@ -382,34 +470,44 @@
                       v-show="operateStatusVal == 2"
                     >{{personBasicInfo.a0202a}}</span>
                     <a-input
-                      class="info_input required_input"
+                      class="info_input"
                       type="text"
                       placeholder="工作单位名称"
                       v-model="personBasicInfo.a0202a"
                       v-show="operateStatusVal !== 2"
                       maxlength="40"
                       @blur="regInput(personBasicInfo.a0202a, 2, 40, null, '请输入正确的工作单位', $event, 'a0202a')"
-                      ref="reqiuredList12"
-                      data-type="basicInfoRequire"
                     ></a-input>
                   </td>
-                  <td colspan="2">参加工作年月</td>
+                  <td colspan="2">参加工作日期<sup style="color:red;">*</sup></td>
                   <td colspan="2">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a0134}}</span>
-                    <a-month-picker
+                    <!-- <a-date-picker
                       class="info_date"
-                      format="YYYY-MM"
-                      placeholder="参加工作年月"
+                      format='YYYYMMDD'
+                      placeholder="参加工作日期"
+                      @change="joinWorkChange"
                       v-model="workDate"
                       v-show="operateStatusVal !== 2"
-                      @change="joinWorkChange"
-                    />
+                      ref="reqiuredList14"
+                      data-type="basicInfoRequire"
+                    /> -->
+                     <a-input
+                      class="info_input required_input"
+                      type="text"
+                      placeholder="参加工作日期"
+                      maxlength="8"
+                      v-model="personBasicInfo.a0134"
+                      v-show="operateStatusVal !== 2"
+                      @blur="regInput(personBasicInfo.a0134, 8, 8, null, '请输入正确的参加工作日期(8位，例：19900101)', $event, 'a0134')"
+                      ref="reqiuredList14"
+                      data-type="basicInfoRequire"
+                    ></a-input>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="4">
                     工作职位（岗位）类型
-                    <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">
                     <span
@@ -419,10 +517,11 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0202d"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList13"
-                      data-type="basicInfoRequire"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in positionArr"
@@ -433,7 +532,6 @@
                   </td>
                   <td colspan="6">
                     工作单位机构类型
-                    <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">
                     <span
@@ -443,10 +541,11 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0202c"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList14"
-                      data-type="basicInfoRequire"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in workUnitArr"
@@ -459,7 +558,6 @@
                 <tr>
                   <td colspan="4">
                     工作单位经济类型
-                    <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">
                     <span
@@ -469,10 +567,11 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0202b"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList15"
-                      data-type="basicInfoRequire"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in economicArr"
@@ -483,7 +582,6 @@
                   </td>
                   <td colspan="6">
                     工作单位所属行业
-                    <sup style="color:red;">*</sup>
                   </td>
                   <td colspan="4">
                     <span
@@ -493,10 +591,11 @@
                     <a-select
                       class="info_select"
                       placeholder="请选择"
+                      showSearch
+                      :filterOption="filterOption"
                       v-model="personBasicInfo.a0211"
                       v-show="operateStatusVal !== 2"
-                      ref="reqiuredList16"
-                      data-type="basicInfoRequire"
+                      :allowClear='true'
                     >
                       <a-select-option
                         v-for="(item, index) in industryArr"
@@ -518,13 +617,13 @@
                       v-show="operateStatusVal !== 2"
                     ></a-input>
                   </td>
-                  <td colspan="2">邮编</td>
+                  <td colspan="2">邮政编码</td>
                   <td colspan="4">
                     <span class="info_view" v-show="operateStatusVal == 2">{{personBasicInfo.a3714}}</span>
                     <a-input
                       class="info_input"
                       type="text"
-                      placeholder="邮编"
+                      placeholder="邮政编码"
                       v-model="personBasicInfo.a3714"
                       v-show="operateStatusVal !== 2"
                     ></a-input>
@@ -553,7 +652,10 @@
                       v-show="operateStatusVal !== 2"
                     ></a-input>
                   </td>
-                  <td colspan="6">户籍行政区划</td>
+                  <td colspan="6">
+                    户籍行政区划
+                    <sup style="color:red;">*</sup>
+                  </td>
                   <td colspan="4">
                     <span
                       class="info_view"
@@ -567,6 +669,11 @@
                       v-model="hjCode"
                       :fieldNames="{label:'name',value:'code',children:'children'}"
                       @change="hujiCodeChange"
+                      :allowClear='false'
+                      changeOnSelect
+                      :showSearch='true'
+                      ref="reqiuredList15" 
+                      data-type="basicInfoRequire"
                     />
                   </td>
                 </tr>
@@ -585,9 +692,11 @@
                       v-show="operateStatusVal !== 2"
                       :fieldNames="{label:'name',value:'code',children:'children'}"
                       @change="birthdayCodeChange"
+                      changeOnSelect
+                      :showSearch='true'
                     />
                   </td>
-                  <td colspan="6">工作地行政区划</td>
+                  <td colspan="6">工作地点行政区划</td>
                   <td colspan="4">
                     <span
                       class="info_view"
@@ -601,6 +710,8 @@
                       v-model="workCode"
                       :fieldNames="{label:'name',value:'code',children:'children'}"
                       @change="workCodeChange"
+                      changeOnSelect
+                      :showSearch='true'
                     />
                   </td>
                 </tr>
@@ -758,7 +869,8 @@ export default {
         a0101: "",
         a0101py: "",
         a0104: "1",
-        a0107: moment(new Date()).format("YYYY-MM-DD"),
+        // a0107: moment(new Date()).format("YYYYMMDD"),
+        a0107: void 0,
         a0111: "",
         a0111d: "",
         a0111dName: "",
@@ -767,22 +879,23 @@ export default {
         a0117: "01",
         a0127: "1",
         a0131: "1",
-        a0134: moment(new Date()).format("YYYY-MM"),
+        // a0134: moment(new Date()).format("YYYYMMDD"),
+        a0134: '19000101',
         a0139: "",
-        a0141: "01",
+        a0141: void 0,   //政治面貌
         a0181: "",
         a0184: "",
         a0202a: "",
-        a0202b: "100",
-        a0202c: "10",
-        a0202d: "10300",
+        a0202b: void 0,   //工作单位经济类型
+        a0202c: void 0,  //工作单位机构类型
+        a0202d: void 0,  //工作职位（岗位）类型
         a0203: "",
         a0203Name: "",
-        a0211: "0100",
-        a0807: moment(new Date()).format("YYYY-MM-DD"),
+        a0211: void 0,   //工作单位所属行业
+        a0807: void 0,  //最高学历毕业日期
         a0824: "",
         a0827: "990000",
-        a0834: "11",
+        a0834: void 0,   //最高学历
         a0888: "",
         a0914: "900",
         a01000: "",
@@ -810,14 +923,25 @@ export default {
         uLastModifieder: "",
         uLastModifiederOrgID: "",
         uSortNo: "",
-        companyId: ''
+        companyId: '',
+        // joinPartyDate: moment(new Date()).format("YYYYMMDD")
+        joinPartyDate: void 0,
       },
       politicsStatusArr: [], //政治面貌
       nationalArr: [], //民族
-      genderOptions: [
-        //性别
-        { label: "男", value: "1" },
-        { label: "女", value: "2" }
+      // genderOptions: [
+      //   //性别--radio
+      //   { label: "男", value: "1" },
+      //   { label: "女", value: "2" },
+      //   { label: "未说明的性别", value: "9" },
+      //   { label: "未知的性别", value: "0" }
+      // ],
+      //性别--select
+      genderOptions:[
+        { itemName: "男", itemCode: "1" },
+        { itemName: "女", itemCode: "2" },
+        { itemName: "未说明的性别", itemCode: "9" },
+        { itemName: "未知的性别", itemCode: "0" }
       ],
       marriageArr: [], //婚姻状况
       educationArr: [], //学历
@@ -841,7 +965,7 @@ export default {
       saveRecordStaArr: [], //存档状态
       saveRecordNatureArr: [], //存档性质
       inReasonArr: [], //转入原因
-      outReasonArr: [], //传出原因
+      outReasonArr: [], //转出原因
 
       workInitArr:null,  //工作经历表头
       workTableLoading: false,
@@ -851,6 +975,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr:[
           { title: "所在工作单位名称", dataIndex: "a0157a", key: "a0157a", width: 350 },
@@ -868,49 +993,46 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           "a0157a_editInput",
-          "a4801_editDateInput",
-          "a4804_editDateInput",
+          "a4801_editInput",
+          "a4804_editInput",
           "a0215a_editInput",
           "a0215a_editInput",
-          "a0202dwork_editInput",
-          '所在工作单位名称_requireTitle',
-          '从事工作或担任职务_requireTitle',
-          '工作起始日期_requireTitle',
-          '工作终止日期_requireTitle'
+          "a0202dwork_editInput"
         ],
         columnsArr: [
           {
+            title: '所在工作单位名称',
             dataIndex: "a0157a",
             key: "a0157a",
             width: 350,
-            slots: { title: '所在工作单位名称_requireTitle' },
             scopedSlots: { customRender: "a0157a_editInput" }
           },
           {
+            title: '从事工作或担任职务',
             dataIndex: "a0215a",
             key: "a0215a",
             width: 300,
-            slots: { title: '从事工作或担任职务_requireTitle' },
             scopedSlots: { customRender: "a0215a_editInput" }
           },
           {
+            title: '工作起始日期',
             dataIndex: "a4801",
             key: "a4801",
             width: 200,
-            slots: { title: '工作起始日期_requireTitle' },
-            scopedSlots: { customRender: "a4801_editDateInput" },
-            dateFormat: "YYYY-MM-DD"
+            scopedSlots: { customRender: "a4801_editInput" },
+            dateFormat: "YYYYMMDD"
           },
           {
+            title: '工作终止日期',
             dataIndex: "a4804",
             key: "a4804",
             width: 250,
-            slots: { title: '工作终止日期_requireTitle' },
-            scopedSlots: { customRender: "a4804_editDateInput" },
-            dateFormat: "YYYY-MM-DD"
+            scopedSlots: { customRender: "a4804_editInput" },
+            dateFormat: "YYYYMMDD"
           },
           {
             title: "单位证明人",
@@ -936,6 +1058,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "所在学校", dataIndex: "a0814", key: "a0814", width: 300 },
@@ -955,7 +1078,7 @@ export default {
             width: 150 
           },
           { title: "学习起始日期", dataIndex: "a0804", key: "a0804", width: 150  },
-          { title: "学习终止日期", dataIndex: "a0807", key: "a0807" }
+          { title: "学习终止日期", dataIndex: "a0807a08", key: "a0807a08" }
         ],
         tabledataArr:[]
       },
@@ -966,6 +1089,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           "a0814_editInput", 
@@ -974,34 +1098,30 @@ export default {
           'a0824a08_editSelectInput',
           'a0901a_editSelectInput',
           'a0801a_editSelectInput',
-          'a0804_editDateInput',
-          'a0807_editDateInput',
-          '所在学校_requireTitle',
-          '教育类别_requireTitle',
-          '学习形式_requireTitle',
-          '所获学历_requireTitle'
+          'a0804_editInput',
+          'a0807a08_editInput'
         ],
         columnsArr: [
           {
+            title:'所在学校',
             dataIndex: "a0814",
             key: "a0814",
             width: 200,
-            slots: { title: '所在学校_requireTitle' },
             scopedSlots: { customRender: "a0814_editInput" }
           },
           {
+            title:'教育类别',
             dataIndex: "a0837",
             key: "a0837",
             width: 150,
-            slots: { title: '教育类别_requireTitle' },
             scopedSlots: { customRender: "a0837_editSelectInput" },
             itemChildren: []
           },
           {
+            title:'学习形式',
             dataIndex: "a0838",
             key: "a0838",
             width: 150,
-            slots: { title: '学习形式_requireTitle' },
             scopedSlots: { customRender: "a0838_editSelectInput" },
             itemChildren:[]
           },
@@ -1022,10 +1142,10 @@ export default {
             itemChildren:[]
           },
           {
+            title:'所获学历',
             dataIndex: "a0801a",
             key: "a0801a",
             width: 200,
-            slots: { title: '所获学历_requireTitle' },
             scopedSlots: { customRender: "a0801a_editSelectInput" },
             itemChildren:[]
           },
@@ -1034,15 +1154,15 @@ export default {
             dataIndex: "a0804",
             key: "a0804",
             width: 200,
-            scopedSlots: { customRender: "a0804_editDateInput" },
-            dateFormat: "YYYY-MM-DD"
+            scopedSlots: { customRender: "a0804_editInput" },
+            dateFormat: "YYYYMMDD"
           },
           {
             title:'学习终止日期',
-            dataIndex: "a0807",
-            key: "a0807",
-            scopedSlots: { customRender: "a0807_editDateInput" },
-            dateFormat: "YYYY-MM-DD"
+            dataIndex: "a0807a08",
+            key: "a0807a08",
+            scopedSlots: { customRender: "a0807a08_editInput" },
+            dateFormat: "YYYYMMDD"
           },
           {
             title: "操作",
@@ -1062,6 +1182,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "姓名", dataIndex: "a3601", key: "a3601", width: 400 },
@@ -1076,27 +1197,26 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           'a3601_editInput',
           'a3604a_editSelectInput',
-          'a3611_editInput',
-          '姓名_requireTitle',
-          '与本人关系_requireTitle'
+          'a3611_editInput'
         ],
         columnsArr: [
           { 
+            title: '姓名',
             dataIndex: "a3601", 
             key: "a3601",
             width:400,
-            slots: { title: '姓名_requireTitle' },
             scopedSlots: { customRender: "a3601_editInput" }
           },
           { 
+            title: '与本人关系',
             dataIndex: "a3604a", 
             key: "a3604a",
             width:400,
-            slots: { title: '与本人关系_requireTitle' },
             scopedSlots: { customRender: "a3604a_editSelectInput" },
             itemChildren: []
           },
@@ -1124,6 +1244,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "奖励名称", dataIndex: "a14Z204a", key: "a14Z204a", width: 200 },
@@ -1141,18 +1262,15 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           'a14Z204a_editSelectInput',
-          'a14Z211_editDateInput',
+          'a14Z211_editInput',
           'a14Z214a_editInput',
           'a14Z304a_editSelectInput',
-          'a14Z307_editDateInput',
-          'a14Z311a_editInput',
-          '奖励批准日期_requireTitle',
-          '奖励批准单位名称_requireTitle',
-          '处分批准日期_requireTitle',
-          '处分批准单位名称_requireTitle'
+          'a14Z307_editInput',
+          'a14Z311a_editInput'
         ],
         columnsArr:[
           { 
@@ -1164,18 +1282,18 @@ export default {
             itemChildren:[]
           },
           { 
+            title: "奖励批准日期", 
             dataIndex: "a14Z211", 
             key: "a14Z211",
             width: 200,
-            slots: { title: '奖励批准日期_requireTitle' },
-            scopedSlots: { customRender: "a14Z211_editDateInput" },
-            dateFormat: "YYYY-MM-DD" 
+            scopedSlots: { customRender: "a14Z211_editInput" },
+            dateFormat: "YYYYMMDD" 
           },
           { 
+            title: "奖励批准单位名称", 
             dataIndex: "a14Z214a", 
             key: "a14Z214a",
             width: 250,
-            slots: { title: '奖励批准单位名称_requireTitle' },
             scopedSlots: { customRender: "a14Z214a_editInput" } 
           },
           { 
@@ -1187,17 +1305,17 @@ export default {
             itemChildren:[]  
           },
           { 
+            title: "处分批准日期", 
             dataIndex: "a14Z307", 
             key: "a14Z307",
             width: 200,
-            slots: { title: '处分批准日期_requireTitle' },
-            scopedSlots: { customRender: "a14Z307_editDateInput" },
-            dateFormat: "YYYY-MM-DD"  
+            scopedSlots: { customRender: "a14Z307_editInput" },
+            dateFormat: "YYYYMMDD"  
           },
           { 
+            title: "处分批准单位名称", 
             dataIndex: "a14Z311a", 
             key: "a14Z311a",
-            slots: { title: '处分批准单位名称_requireTitle' },
             scopedSlots: { customRender: "a14Z311a_editInput" }  
           },
           {
@@ -1218,6 +1336,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "语种", dataIndex: "dc010701", key: "dc010701", width: 350 },
@@ -1232,28 +1351,27 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           'dc010701_editSelectInput',
           'dc010702_editSelectInput',
-          'remark_editInput',
-          '语种_requireTitle',
-          '熟练程度_requireTitle'
+          'remark_editInput'
         ],
         columnsArr:[
           {  
+            title: '语种',
             dataIndex: "dc010701", 
             key: "dc010701",
             width: 300,
-            slots: { title: '语种_requireTitle' },
             scopedSlots: {customRender: "dc010701_editSelectInput" },
             itemChildren:[]
           },
           {  
+            title: '熟练程度',
             dataIndex: "dc010702", 
             key: "dc010702",
             width: 300,
-            slots: { title: '熟练程度_requireTitle' },
             scopedSlots: {customRender: "dc010702_editSelectInput" },
             itemChildren:[] 
           },
@@ -1281,6 +1399,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "培训班名称", dataIndex: "a1131", key: "a1131", width: 400 },
@@ -1296,46 +1415,43 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol:[
           'a1131_editInput',
-          'a1107_editDateInput',
-          'a1111_editDateInput',
-          'a1114A_editInput',
-          '培训班名称_requireTitle',
-          '培训起始日期_requireTitle',
-          '培训终止日期_requireTitle',
-          '培训主办单位名称_requireTitle'
+          'a1107_editInput',
+          'a1111_editInput',
+          'a1114A_editInput'
         ],
         columnsArr:[
           {  
+            title: '培训班名称',
             dataIndex: "a1131", 
             key: "a1131",
             width: 400,
-            slots: { title: '培训班名称_requireTitle' },
             scopedSlots: { customRender: "a1131_editInput" },
 
           },
           { 
+            title: '培训起始日期',
             dataIndex: "a1107", 
             key: "a1107",
             width: 300,
-            slots: { title: '培训起始日期_requireTitle' },
-            scopedSlots: { customRender: "a1107_editDateInput" },
-            dateFormat: "YYYY-MM-DD" 
+            scopedSlots: { customRender: "a1107_editInput" },
+            dateFormat: "YYYYMMDD" 
           },
           { 
+            title: '培训终止日期',
             dataIndex: "a1111", 
             key: "a1111",
             width: 300,
-            slots: { title: '培训终止日期_requireTitle' },
-            scopedSlots: { customRender: "a1111_editDateInput" },
-            dateFormat: "YYYY-MM-DD"  
+            scopedSlots: { customRender: "a1111_editInput" },
+            dateFormat: "YYYYMMDD"  
           },
           { 
+            title: '培训主办单位名称',
             dataIndex: "a1114A", 
             key: "a1114A",
-            slots: { title: '培训主办单位名称_requireTitle' },
             scopedSlots: { customRender: "a1114A_editInput" }   
           },
           {
@@ -1356,6 +1472,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         columnsArr: [
           { title: "专业技术职务名", dataIndex: "a0215a", key: "a0215a", width: 300 },
@@ -1373,14 +1490,15 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol: [
           'a0215a_editSelectInput',
           'a0215c_editSelectInput',
-          'a0604_editDateInput',
+          'a0604_editInput',
           'a0601_editSelectInput',
           'a0602_editSelectInput',
-          'a0603_editDateInput'
+          'a0603_editInput'
         ],
         columnsArr: [
           { 
@@ -1404,8 +1522,8 @@ export default {
             dataIndex: "a0604", 
             key: "a0604",
             width: 200,
-            scopedSlots: { customRender: "a0604_editDateInput" },
-            dateFormat: "YYYY-MM-DD"  
+            scopedSlots: { customRender: "a0604_editInput" },
+            dateFormat: "YYYYMMDD"  
           },
           { 
             title: "职业(工种)资格名称", 
@@ -1427,8 +1545,8 @@ export default {
             title: "职业(工种)资格日期",
             dataIndex: "a0603", 
             key: "a0603",
-            scopedSlots: { customRender: "a0603_editDateInput" },
-            dateFormat: "YYYY-MM-DD"  
+            scopedSlots: { customRender: "a0603_editInput" },
+            dateFormat: "YYYYMMDD"  
           },
           {
             title: "操作",
@@ -1451,6 +1569,7 @@ export default {
         tableCheck: false,
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
+        isNoTitle: true,  //表格上--标题不显示
         superimposeWidth: true,
         formData: {},
         columnsArr: [
@@ -1474,6 +1593,7 @@ export default {
         noPagination: true, // 分页是否不显示
         bordered: true, // 表格 border 是否显示
         superimposeWidth: true,
+        isNoTitle: true,  //表格上--标题不显示
         formData: {},
         editableCol:[
           'dc030001_editInput',
@@ -1481,11 +1601,11 @@ export default {
           'dc030003_editSelectInput',
           'dc030004_editSelectInput',
           'a3807a_editInput',
-          'a3801_editDateInput',
+          'a3801_editInput',
           'a3803_editSelectInput',
           'a3802_editInput',
           'dc030009_editAddressInput',
-          'dc030010_editDateInput',
+          'dc030010_editInput',
           'dc030011_editSelectInput',
           'dc030012_editInput',
           'dc030013_editAddressInput',
@@ -1495,7 +1615,10 @@ export default {
           '现档案管理机构名称_requireTitle',
           '转入日期_requireTitle',
           '转入原因_requireTitle',
-          '原存档单位名称_requireTitle'
+          '原存档单位名称_requireTitle',
+          '转出日期_requireTitle',
+          '转出原因_requireTitle',
+          '转往档案单位名称_requireTitle',
         ],
         columnsArr:[
           { 
@@ -1540,8 +1663,8 @@ export default {
             key: "a3801",
             width: 200,
             slots: { title: '转入日期_requireTitle' },
-            scopedSlots: { customRender: "a3801_editDateInput" },
-            dateFormat: "YYYY-MM-DD" 
+            scopedSlots: { customRender: "a3801_editInput" },
+            dateFormat: "YYYYMMDD" 
           },
           {  
             dataIndex: "a3803", 
@@ -1566,26 +1689,26 @@ export default {
             scopedSlots: { customRender: "dc030009_editAddressInput" },
           },
           { 
-            title: '转出日期',
             dataIndex: "dc030010", 
             key: "dc030010",
             width: 200,
-            scopedSlots: { customRender: "dc030010_editDateInput" },
-            dateFormat: "YYYY-MM-DD" 
+            slots: { title: '转出日期_requireTitle' },
+            scopedSlots: { customRender: "dc030010_editInput" },
+            dateFormat: "YYYYMMDD" 
           },
           {  
-            title: '转出原因',
-            dataIndex: "dc030011", 
+            dataIndex: "dc030011",
             key: "dc030011",
             width: 300,
+            slots: { title: '转出原因_requireTitle' },
             scopedSlots: { customRender: "dc030011_editSelectInput" },
             itemChildren:[]  
           },
           {
-            title: '转往档案单位名称',
             dataIndex: "dc030012",
             key: "dc030012",
             width: 300,
+            slots: { title: '转往档案单位名称_requireTitle' },
             scopedSlots: { customRender: "dc030012_editInput" } 
           },
           { 
@@ -1604,123 +1727,18 @@ export default {
         ],
         tabledataArr:[]
       },
-      archiveAddInitArr:{
-        isEditAndAdd: true,
-        addMaxLength: 1,
-        treeflag: false,
-        tableCheck: false,
-        noPagination: true, // 分页是否不显示
-        bordered: true, // 表格 border 是否显示
-        superimposeWidth: true,
-        formData: {},
-        editableCol:[
-          'dc030001_editInput',
-          'a0002_editInput',
-          'dc030003_editSelectInput',
-          'dc030004_editSelectInput',
-          'a3807a_editInput',
-          'a3801_editDateInput',
-          'a3803_editSelectInput',
-          'a3802_editInput',
-          'dc030009_editAddressInput',
-          '存档编号_requireTitle',
-          '存档状态_requireTitle',
-          '存档性质_requireTitle',
-          '现档案管理机构名称_requireTitle',
-          '转入日期_requireTitle',
-          '转入原因_requireTitle',
-          '原存档单位名称_requireTitle',
-        ],
-        columnsArr:[
-          { 
-            dataIndex: "dc030001", 
-            key: "dc030001",
-            width: 200,
-            slots: { title: '存档编号_requireTitle' },
-            scopedSlots: { customRender: "dc030001_editInput" } 
-          },
-          { 
-            title: '索引号',
-            dataIndex: "a0002", 
-            key: "a0002",
-            width: 120,
-            scopedSlots: { customRender: "a0002_editInput" } 
-          },
-          { 
-            dataIndex: "dc030003", 
-            key: "dc030003",
-            width: 150,
-            slots: { title: '存档状态_requireTitle' },
-            scopedSlots: { customRender: "dc030003_editSelectInput" },
-            itemChildren:[],
-          },
-          { 
-            dataIndex: "dc030004", 
-            key: "dc030004",
-            width: 150,
-            slots: { title: '存档性质_requireTitle' },
-            scopedSlots: { customRender: "dc030004_editSelectInput" },
-            itemChildren:[]
-          },
-          {
-            dataIndex: "a3807a",
-            key: "a3807a",
-            width: 300,
-            slots: { title: '现档案管理机构名称_requireTitle' },
-            scopedSlots: { customRender: "a3807a_editInput" } 
-          },
-          {  
-            dataIndex: "a3801", 
-            key: "a3801",
-            width: 200,
-            slots: { title: '转入日期_requireTitle' },
-            scopedSlots: { customRender: "a3801_editDateInput" },
-            dateFormat: "YYYY-MM-DD" 
-          },
-          {  
-            dataIndex: "a3803", 
-            key: "a3803",
-            width: 400,
-            slots: { title: '转入原因_requireTitle' },
-            scopedSlots: { customRender: "a3803_editSelectInput" },
-            itemChildren:[]  
-          },
-          {
-            dataIndex: "a3802",
-            key: "a3802",
-            width: 300,
-            slots: { title: '原存档单位名称_requireTitle' },
-            scopedSlots: { customRender: "a3802_editInput" } 
-          },
-          { 
-            title: '原存档单位行政区划',
-            dataIndex: "dc030009", 
-            key: "dc030009",
-            // width: 300,
-            scopedSlots: { customRender: "dc030009_editAddressInput" },
-          },
-          {
-            title: "操作",
-            key: "action",
-            width: 150,
-            fixed: 'right',
-            scopedSlots: { customRender: "action" }
-          }
-        ],
-        tabledataArr:[]
-      },
-      
       
       imgUrl: "", //照片地址
       imgUploadUrl: this.$targetHost + 'hasngcadrefile/informationPool@uploadImgNoUsed.action',  //照片上传地址
       statusVal: null, //人才信息总库页面：操作状态： 1-添加， 2-浏览， 3-编辑
-      birthday: moment(new Date(), "YYYY-MM-DD"), //出生日期
-      graduateDate: moment(new Date(), "YYYY-MM-DD"), //最高学历毕业日期
-      workDate: moment(new Date(), "YYYY-MM-DD"), //参加工作年月
+      // birthday: moment(new Date(), "YYYYMMDD"), //出生日期
+      // graduateDate: null, //最高学历毕业日期
+      // workDate: moment('1900-01-01', 'YYYYMMDD'), //参加工作日期
+      // joinPartyDate: moment(new Date(), "YYYYMMDD"),  //参加组织时间
       addTreeNode: "", //当为添加操作时，选择的treeNode值
-      hjCode: [], //户籍行政区划
+      hjCode: ['36', '', ''], //户籍行政区划
       birthdayCode: [], //出生地行政区划
-      workCode: [], //工作地行政区划
+      workCode: [], //工作地点行政区划
     };
   },
   updated() {},
@@ -1740,6 +1758,7 @@ export default {
     }
   },
   methods: {
+    moment,
     getColumnDataFun(operateVal){
       /**
        * 功能：根据操作替换当前table--表头 
@@ -1780,6 +1799,14 @@ export default {
           if(el.key === 'a0215c') el.itemChildren = this.positionLevelArr; //专业技术职务级别
         });
 
+        //档案转接数据
+        this.archiveEditInitArr.columnsArr.forEach(el => {
+          if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
+          if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
+          if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
+          if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
+        });
+
         this.workInitArr = this.workEditInitArr;  //工作经历
         this.eduInitArr = this.eduEditInitArr;  //教育经历
         this.familyInitArr = this.familyEditInitArr;  //家庭情况
@@ -1787,28 +1814,8 @@ export default {
         this.languageInitArr = this.languageEditInitArr;  //语言能力
         this.trainerInitArr = this.trainerEditInitArr;  //培训经历
         this.professionalInitArr = this.professionalEditInitArr;  //专业与职业技术
-        if(Number(operateVal) === 1){
-          //档案转接--添加
-          //档案转接数据--添加
-          this.archiveAddInitArr.columnsArr.forEach(el => {
-            if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
-            if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
-            if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
-            if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
-          });
-          this.archiveInitArr = this.archiveAddInitArr;  //档案转接数据--添加表头
-          console.log(this.archiveInitArr);
-        } else{
-          //编辑
-          //档案转接数据--编辑
-          this.archiveEditInitArr.columnsArr.forEach(el => {
-            if(el.key === 'dc030003') el.itemChildren = this.saveRecordStaArr; //存档状态
-            if(el.key === 'dc030004') el.itemChildren = this.saveRecordNatureArr;   //存档性质
-            if(el.key === 'a3803')  el.itemChildren = this.inReasonArr;  //转入原因
-            if(el.key === 'dc030011') el.itemChildren = this.outReasonArr;   //转出原因
-          });
-          this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据--编辑表头
-        }
+        this.archiveInitArr = this.archiveEditInitArr;  //档案转接数据
+        
         
       } else{
         //浏览--tableview传值
@@ -1866,18 +1873,26 @@ export default {
           if (Number(res.code) === 0) {
             this.personBasicInfo = res.data;
             for(let prop in res.data){
-              if(prop == 'a0107'){
-                this.birthday = res.data[prop] ? moment(res.data[prop], 'YYYY-MM-DD') : void 0;
-              } else if(prop == 'a0807'){
-                this.graduateDate = res.data[prop] ? moment(res.data[prop], 'YYYY-MM-DD') : void 0;
-              } else if(prop == 'a0134'){
-                this.workDate = res.data[prop] ? moment(res.data[prop], 'YYYY-MM') : void 0;
+              // if(prop == 'a0107'){
+              //   this.birthday = res.data[prop] ? moment(res.data[prop], 'YYYYMMDD') : moment(new Date(), 'YYYYMMDD');
+              // } else if(prop == 'a0807'){
+              //   this.graduateDate = res.data[prop] ? moment(res.data[prop], 'YYYYMMDD') : moment(new Date(), 'YYYYMMDD');
+              // } else if(prop == 'a0134'){
+              //   this.workDate = res.data[prop] ? moment(res.data[prop], 'YYYYMMDD') : moment('1900-01-01', 'YYYYMMDD')
+              // } else if(prop == 'joinPartyDate'){
+              //   this.joinPartyDate = res.data[prop] ? moment(res.data[prop], 'YYYYMMDD') : moment(new Date(), 'YYYYMMDD');
+              // } else if(prop == 'a0111d'){
+              //   this.hjCode = res.data["a0111d"] ?  res.data["a0111d"].split(".") : ['36', '', ''];
+              // }
+              if(prop == 'a0111d'){
+                this.hjCode = res.data[prop] ?  res.data[prop].split(".") : ['36', '', ''];
               }
             }
             
-            this.imgUrl =
-              this.$targetHost + this.personBasicInfo.imgPath.substr(2);
-            this.hjCode = res.data["a0111d"].split(".");
+            // this.imgUrl =
+            //   this.$targetHost + this.personBasicInfo.imgPath.substr(2);
+            this.imgUrl = this.$targetHost + utils.getImageUrl(this.personBasicInfo.imgPath, 2);
+            
             this.birthdayCode = res.data["a0114"].split(".");
             this.workCode = res.data["a0203"].split(".");
           }
@@ -1898,14 +1913,42 @@ export default {
         this.getArchiveTableData(currId);
       } else{
         //添加
-        this.workInitArr.tabledataArr = [];
-        this.eduInitArr.tabledataArr = [];
-        this.familyInitArr.tabledataArr = [];
-        this.rewordInitArr.tabledataArr = [];
-        this.languageInitArr.tabledataArr = [];
-        this.trainerInitArr.tabledataArr = [];
-        this.professionalInitArr.tabledataArr = [];
-        this.archiveInitArr.tabledataArr = [];
+        if(this.workInitArr){
+          //必须判断table列表头等数据已经赋值给initArr：判断一个和判断全部意思一样；
+          this.workInitArr.tabledataArr = [];
+          this.eduInitArr.tabledataArr = [];
+          this.familyInitArr.tabledataArr = [];
+          this.rewordInitArr.tabledataArr = [];
+          this.languageInitArr.tabledataArr = [];
+          this.trainerInitArr.tabledataArr = [];
+          this.professionalInitArr.tabledataArr = [];
+          // this.archiveInitArr.tabledataArr = [];
+          let addInitArchive = [
+            {
+              key: 1,
+              a0002: "",
+              a0003: "",
+              a01000: "",
+              a3801: "19000101",
+              a3802: "无法确认",
+              a3803:{code: '04', name: '其它'},
+              a3807a: "江西省人才流动中心",
+              dc030001: "36000000",
+              dc030003:{code: '0', name: '在库'},
+              dc030004:{code: '02', name: '个人委托'},
+              dc030009: "",
+              dc030010: "19000101",
+              dc030011:{code: '05', name: '其它'},
+              dc030012: "无法确认",
+              dc030013: "",
+              dc38000: "",
+              remarks: "",
+              uCreateDate: "",
+              uCreator: ""
+            }
+          ]
+          this.archiveInitArr.tabledataArr = addInitArchive;
+        }
       }
     },
 
@@ -2252,11 +2295,14 @@ export default {
                   a3803_Code: element.a3803_Code,
                   a0002: element.a0002,
                   dc030003: element.dc030003,
+                  dc030003_Code: element.dc030003_Code,
                   dc030004: element.dc030004,
+                  dc030004_Code: element.dc030004_Code,
                   a3802: element.a3802,
                   dc030009: element.dc030009,
                   dc030010: element.dc030010,
                   dc030011: element.dc030011,
+                  dc030011_Code: element.dc030011_Code,
                   dc030012: element.dc030012,
                   dc030013: element.dc030013
                 });
@@ -2270,14 +2316,14 @@ export default {
                   a3801: element.a3801,
                   a3803: {code: element.a3803_Code, name: element.a3803},
                   a0002: element.a0002,
-                  dc030003: {code: element.dc030003, name: element.dc030003},      //缺code,name
-                  dc030004: {code: element.dc030004, name: element.dc030004},      //缺code,name
+                  dc030003: {code: element.dc030003_Code, name: element.dc030003},      //缺code,name
+                  dc030004: {code: element.dc030004_Code, name: element.dc030004},      //缺code,name
                   a3802: element.a3802,
-                  dc030009: {code: element.dc030009 ? element.dc030009.split('.') : [], name: element.dc030009},      //行政区划区划
+                  dc030009: {code: element.dc030009 ? element.dc030009.split('.') : [], name: this.utils.checkAddressName(element.dc030009)},      //行政区划区划
                   dc030010: element.dc030010,
-                  dc030011: {code: element.dc030011, name: element.dc030011},      //缺code,name
+                  dc030011: {code: element.dc030011_Code, name: element.dc030011},      //缺code,name
                   dc030012: element.dc030012,
-                  dc030013: {code: element.dc030013 ? element.dc030013.split('.') : [], name: element.dc030013}       //行政区划区划
+                  dc030013: {code: element.dc030013 ? element.dc030013.split('.') : [], name: this.utils.checkAddressName(element.dc030013)}       //行政区划区划
                 });
               });
             }
@@ -2365,32 +2411,41 @@ export default {
       return tempName;
     },
 
-    birthdayChange(date, dateString) {
-      //出生日期修改
-      for (let key in this.personBasicInfo) {
-        if (key === "a0107") {
-          this.personBasicInfo[key] = dateString;
-        }
-      }
-    },
+    // birthdayChange(date, dateString) {
+    //   //出生日期修改
+    //   for (let key in this.personBasicInfo) {
+    //     if (key === "a0107") {
+    //       this.personBasicInfo[key] = dateString;
+    //     }
+    //   }
+    // },
 
-    graduateChange(date, dateString) {
-      //最高学历毕业日期修改
-      for (let key in this.personBasicInfo) {
-        if (key === "a0807") {
-          this.personBasicInfo[key] = dateString;
-        }
-      }
-    },
+    // jionPartyDateChange(date, dateString){
+    //   //参加组织时间修改
+    //   for (let key in this.personBasicInfo) {
+    //     if (key === "joinPartyDate") {
+    //       this.personBasicInfo[key] = dateString;
+    //     }
+    //   }
+    // },
 
-    joinWorkChange(date, dateString) {
-      //参加工作年月
-      for (let key in this.personBasicInfo) {
-        if (key === "a0134") {
-          this.personBasicInfo[key] = dateString;
-        }
-      }
-    },
+    // graduateChange(date, dateString) {
+    //   //最高学历毕业日期修改
+    //   for (let key in this.personBasicInfo) {
+    //     if (key === "a0807") {
+    //       this.personBasicInfo[key] = dateString;
+    //     }
+    //   }
+    // },
+
+    // joinWorkChange(date, dateString) {
+    //   //参加工作年月
+    //   for (let key in this.personBasicInfo) {
+    //     if (key === "a0134") {
+    //       this.personBasicInfo[key] = dateString;
+    //     }
+    //   }
+    // },
 
     hujiCodeChange(value) {
       //户籍行政区划
@@ -2403,9 +2458,30 @@ export default {
     },
 
     workCodeChange(value) {
-      //工作地行政区划
+      //工作地点行政区划
       this.personBasicInfo["a0203"] = value.join(".");
     },
+
+    filterOption(input, option){
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    // schoolChange(value){
+    //   //最高学历change---最高学位
+    //   console.log(value);
+    //   for(let prop in this.$refs){
+    //     if(prop == 'reqiuredList7'){
+    //       console.log(this.$refs[prop].$el);
+    //       if(value == '11' || value == '14' || value == '21'){
+    //           this.$refs[prop].$el.disabled = false;
+    //       }else {
+    //         this.$refs[prop].$el.disabled = 'disabled';
+    //       }
+          
+    //     }
+    //   }
+    // },
 
     uploadPhoto(info) {
       //上传照片
@@ -2456,21 +2532,29 @@ export default {
               this.$message.error(tip);
             } else{
               //通过输入的身份证号码--填写出生日期和性别
-              if(Number(val)){
+              if(String(val) !== '111111111111111111' && String(val) !== '111111111111111' && String(val) !== '222222222222222222' && String(val) !== '222222222222222'){
                 let tempGender = 0;
                 if(val.length === 18){
-                  this.birthday = moment(val.substr(6,8), 'YYYY-MM-DD');
+                  // this.birthday = moment(val.substr(6,8), 'YYYYMMDD');
+                  this.$set(this.personBasicInfo, 'a0107', val.substr(6,8));
                   tempGender = Number(val[16])%2 === 0 ? '2':'1';
                 } else if(val.length){
-                  this.birthday = moment(val.substr(6,6), 'YYYY-MM-DD');
+                  // this.birthday = moment(val.substr(6,6), 'YYYYMMDD');
+                  this.$set(this.personBasicInfo, 'a0107', val.substr(6,6));
                   tempGender = Number(val[14])%2 === 0 ? '2':'1';
                 }
                 this.$set(this.personBasicInfo, 'a0104', tempGender)
               } else{
-                this.birthday = moment(new Date(), 'YYYY-MM-DD');
-                this.$set(this.personBasicInfo, 'a0104', '1')
+                // this.birthday = void 0;
+                this.$set(this.personBasicInfo, 'a0107', void 0);
+                if(String(val) === '111111111111111111' || String(val) === '111111111111111'){
+                  this.$set(this.personBasicInfo, 'a0104', '1')
+                } else if(String(val) === '222222222222222222' || String(val) === '222222222222222'){
+                  this.$set(this.personBasicInfo, 'a0104', '2')
+                }
+                
               }
-              if(Number(val)){
+              if(String(val) !== '111111111111111111' && String(val) !== '111111111111111' && String(val) !== '222222222222222222' && String(val) !== '222222222222222'){
                 //通过id验证身份证号码---添加/编辑的分别验证: 18/15个0  不参与验证
                 this.$http.fetchPost('informationPool@checkPerson.action', {
                   a0184: val,
@@ -2498,6 +2582,26 @@ export default {
       }
     },
 
+    resertRequireBorderFun(){
+      /**
+       * 功能：每次新点进来---清空所有状态
+       */
+      //人员基本信息状态---清空
+      let tempResertRefsArr = [];
+
+      for(let prop in this.$refs){
+        if(this.$refs[prop].className != 'basicInfo'){
+          if(this.$refs[prop].$el.dataset['type'] == 'basicInfoRequire'){
+            tempResertRefsArr.push(this.$refs[prop]);    //人员基本信息必填项--数组
+          }
+        }
+      }
+
+      for(let i = 0; i < tempResertRefsArr.length; i ++){
+        tempResertRefsArr[i].$el.style.outline = '';
+      }
+    },
+
     getFinishData() {
       /**
        * 功能：1.查看必填项：如果有必填项为空则标红，且得到为空必填项长度requiredLen；否则必填项全填，requiredLen =0; 2.验证存档编号是否存在
@@ -2517,8 +2621,10 @@ export default {
         }
       }
 
+      // console.log(tempRefsArr);
+
       for(let i = 0; i < tempRefsArr.length; i ++){
-        if(tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
+        if(!tempRefsArr[i].value || tempRefsArr[i].value == '' || tempRefsArr[i].value == 'undefined'){
           tempRefsArr[i].$el.style.outline = '1px solid red';
           document.getElementsByClassName("right_container")[0].scrollTop = 0;
           requiredLen++;
@@ -2598,6 +2704,28 @@ export default {
     },
     
     postOtherData(){
+      if(this.personBasicInfo.companyId){
+        //判断委托单位存档数据是否存在
+        if(this.archiveInitArr.tabledataArr.length > 0 && this.archiveInitArr.tabledataArr[0].dc030004.name != '单位委托'){
+          this.$message.error('档案接转数据:存档性质只能为单位委托');
+          this.$emit('OperateStatusFun', false);
+        } else{
+          //可以提交
+          this.finallyPostData();
+        }
+      } else{
+        if(this.archiveInitArr.tabledataArr.length > 0 && this.archiveInitArr.tabledataArr[0].dc030004.name == '单位委托'){
+          this.$message.error('档案接转数据:存档性质不能为单位委托');
+          this.$emit('OperateStatusFun', false);
+        } else{
+          //可以提交
+          this.finallyPostData();
+        }
+      }
+    },
+
+    finallyPostData(){
+      //最终提交数据
       let tempBasicInfo = this.personBasicInfo;
       let tempFamilyDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.familyInitArr.tabledataArr)));
       let tempEduDataArr = this.transferNewDataArrFun(JSON.parse(JSON.stringify(this.eduInitArr.tabledataArr)));
@@ -2621,7 +2749,7 @@ export default {
         tempRewordDataArr,
         tempLanguageDataArr,
         tempProfessDataArr,
-        tempArchiveDataArr)
+        tempArchiveDataArr);
       tempBasicInfo.dataArr = encodeURI(JSON.stringify(postdataArr));
       this.$http.fetchPost("informationPool@personInfoAdd.action",tempBasicInfo)
         .then(res => {
@@ -2720,7 +2848,6 @@ export default {
           this.getBasicInfo(this.currRowDataId);
           this.getPersonOtherInfo(this.currRowDataId);
         }
-        this.getColumnDataFun(newVal);
       }
     },
     currRowDataId: {
@@ -2733,6 +2860,7 @@ export default {
         } else {
           //没有id值：添加操作
           this.personBasicInfo = {...this.addInitPersonBasicInfo};
+          this.getPersonOtherInfo(null);
         }
       }
     },
@@ -2766,16 +2894,18 @@ export default {
       handler(newVal) {
         if(this.operateStatusVal === 1){
           this.personBasicInfo = {...this.addInitPersonBasicInfo};
-          this.birthday = moment(new Date(), 'YYYY-MM-DD');
-          this.graduateDate = moment(new Date(), 'YYYY-MM-DD');
-          this.workDate = moment(new Date(), 'YYYY-MM-DD');
+          // this.birthday = moment(new Date(), 'YYYYMMDD');
+          // this.graduateDate = null;   //最高学历毕业日期
+          // this.workDate = moment('1900-01-01', 'YYYYMMDD');
           this.imgUrl = '';
+          this.getPersonOtherInfo(null);
         } else{
           this.getBasicInfo(this.currRowDataId);
           this.getPersonOtherInfo(this.currRowDataId);
         }
         this.$nextTick(function(){
           document.getElementsByClassName("right_container")[0].scrollTop = 0;
+          this.resertRequireBorderFun();
         })
       }
     },
@@ -2896,6 +3026,7 @@ export default {
 .info_view{
   color: #7F7F7F;
 }
+
 
 </style>
 

@@ -299,9 +299,9 @@ export default {
                         Object.assign(element,{
                             key:element.e01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            e0112:element.e0112 === "1" ? "待接收" : "已接收",
+                            e0112:element.e0112 === "1" ? "待接收" : (element.e0112 === "0" ? "已接收" : ''),
                             e0109:element.e0109 === "1" ? "待移交" : "已移交",
-                            isInware:element.isInware === "2" ? "已转出" : "在库", 
+                            isInware:utils.isInwareStatusFun(element.archiveStatus, element.isInware),
                         });
                     });
                 }else{
@@ -350,9 +350,9 @@ export default {
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
-
+        this.$store.dispatch("getinfoTableCheckData", []);
         const _this = this;
-
+        
         // 初始化数据
         // this.getTableData(null,1,10);
 

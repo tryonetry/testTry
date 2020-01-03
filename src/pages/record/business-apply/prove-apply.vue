@@ -363,6 +363,8 @@ export default {
 
             this.$http.fetchPost('archPrintProof@archPrintProofApproval.action',{
                 archiveId:this.currentData.archiveId,
+                applyName: this.currentData.applyName,
+                applyIdNum: this.currentData.applyIdNum,
                 applyId:this.currentData.id,
                 approvalState: String(state),
                 approvalRemark:this.reviewResult,
@@ -440,9 +442,6 @@ export default {
     }
     .titleSlot>p{
         margin-right: 40px;
-    }
-    .titleSlot>span{
-        color:#2d8cf0;
     }
     .content{
         height: 100%;

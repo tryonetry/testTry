@@ -4,7 +4,7 @@
   <div class="outer">
     <TableView :initArrData="initArr" @searchTable="getTableData" ref="updateTable" :totalCount="tableTotalNum" :loading="tableLoading">
         <div slot="tableAction" slot-scope="slotPropsData">
-          <a href="javascrit:;" @click="editOperate(slotPropsData.currRowdata)" class="primaryBtnColor">编辑</a>
+          <a href="javascript:;" @click="editOperate(slotPropsData.currRowdata)" class="primaryBtnColor">编辑</a>
         </div>
     </TableView>
 
@@ -370,9 +370,6 @@ export default {
   }
   .titleSlot>p{
     margin-right: 40px;
-  }
-  .titleSlot>span{
-    color:#2d8cf0;
   }
   .insertContainer{
     width: 100%;

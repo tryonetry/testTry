@@ -86,6 +86,7 @@ const tableUrls = [
 import FormHeader from "@/components/formHeader";
 import ShowBasicInfo from '@/components/showBasicInfo';
 import TableView from "@/components/tableView";
+import utils from '../../../utils/util';
 export default {
     name:"QueryService",
     //import引入的组件需要注入到对象中才能使用
@@ -268,6 +269,7 @@ export default {
                 treeflag: false,
                 tableCheck: false,
                 superimposeWidth:true,
+                isNoTitle: true,  //表格上--标题不显示
                 columnsArr:[
                     {
                         title: "序号",
@@ -275,48 +277,85 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "委托存档单位编号",
                         dataIndex: "companyNumber",
                         key: "companyNumber",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "委托存档单位名称",
-                        dataIndex: "companyName ",
-                        key: "companyName ",
+                        dataIndex: "companyName",
+                        key: "companyName",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    { 
+                        title: "调转日期", 
+                        dataIndex: "transferDate", 
+                        key: "transferDate",
+                        width:150,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    { 
+                        title: "调转方式", 
+                        dataIndex: "transferType", 
+                        key: "transferType",
+                        width:200,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    { 
+                        title: "原委托存档单位名称", 
+                        dataIndex: "oldCompanyName", 
+                        key: "originDepartName",
+                        width:250,
+                        scopedSlots: { customRender: "cursorTitle" }
+                    },
+                    { 
+                        title: "经办人", 
+                        dataIndex: "changeUser", 
+                        key: "changeUser",
+                        width:200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "委托存档单位统一社会信用代码",
-                        dataIndex: "b0114",
-                        key: "b0114",
-                        width: 250,
-                    },
-                    {
-                        title: "委托存档单位机构类型",
-                        dataIndex: "companyNature",
-                        key: "companyNature",
-                        width: 180,
-                    },
-                    {
-                        title: "委托存档单位所属行业",
-                        dataIndex: "companyManagementRange",
-                        key: "companyManagementRange",
-                        width: 180,
-                    },
-                    {
-                        title: "委托存档单位经济类型",
-                        dataIndex: "economicType",
-                        key: "economicType",
-                        width: 180,
-                    },
-                    {
-                        title: "委托存档单位行政区划",
-                        dataIndex: "areaName",
-                        key: "areaName",
-                    },
+                        title: "备注",
+                        dataIndex: "remarks",
+                        key: "remarks",
+                        scopedSlots: { customRender: "cursorTitle" }
+                    }
+                    // {
+                    //     title: "委托存档单位统一社会信用代码",
+                    //     dataIndex: "b0114",
+                    //     key: "b0114",
+                    //     width: 250,
+                    // },
+                    // {
+                    //     title: "委托存档单位机构类型",
+                    //     dataIndex: "companyNature",
+                    //     key: "companyNature",
+                    //     width: 180,
+                    // },
+                    // {
+                    //     title: "委托存档单位所属行业",
+                    //     dataIndex: "companyManagementRange",
+                    //     key: "companyManagementRange",
+                    //     width: 180,
+                    // },
+                    // {
+                    //     title: "委托存档单位经济类型",
+                    //     dataIndex: "economicType",
+                    //     key: "economicType",
+                    //     width: 180,
+                    // },
+                    // {
+                    //     title: "委托存档单位行政区划",
+                    //     dataIndex: "areaName",
+                    //     key: "areaName",
+                    // },
                 ],
                 tabledataArr:[],
             },
@@ -324,6 +363,7 @@ export default {
                 treeflag: false, 
                 tableCheck: false, 
                 superimposeWidth:true,
+                isNoTitle: true,  //表格上--标题不显示
                 columnsArr:[
                     {
                         title: "序号",
@@ -331,59 +371,69 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "性别",
                         dataIndex: "a0104",
                         key: "a0104",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "公民身份证号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "存档编号",
                         dataIndex: "a0100a",
                         key: "a0100a",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "存档日期",
                         dataIndex: "A3801",
                         key: "A3801",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "原存档单位名称",
                         dataIndex: "A3802",
                         key: "A3802",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "邮寄编号",
                         dataIndex: "confNumber",
                         key: "confNumber",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "经办人",
                         dataIndex: "userName",
                         key: "userName",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "备注",
                         dataIndex: "REMARKS",
                         key: "REMARKS",
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                 ],
                 tabledataArr:[],
@@ -392,6 +442,7 @@ export default {
                 treeflag: false, 
                 tableCheck: false, 
                 superimposeWidth:true,
+                isNoTitle: true,  //表格上--标题不显示
                 columnsArr:[
                     {
                         title: "序号",
@@ -399,53 +450,62 @@ export default {
                         key: "num",
                         fixed: "left",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "姓名",
                         dataIndex: "a0101",
                         key: "a0101",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "性别",
                         dataIndex: "a0104",
                         key: "a0104",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "公民身份证号码/社保卡号",
                         dataIndex: "a0184",
                         key: "a0184",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "存档编号",
                         dataIndex: "a0100a",
                         key: "a0100a",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "转出日期",
                         dataIndex: "DC030010",
                         key: "DC030010",
                         width: 150,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "转往机构",
                         dataIndex: "DC030012",
                         key: "DC030012",
                         width: 250,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "邮寄编号",
                         dataIndex: "confNumberOut",
                         key: "confNumberOut",
                         width: 200,
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
                         title: "经办人",
                         dataIndex: "operatorName",
                         key: "operatorName",
+                        scopedSlots: { customRender: "cursorTitle" }
                     },
                 ],
                 tabledataArr:[],
@@ -544,7 +604,7 @@ export default {
                         Object.assign(element,{
                             key:element.a01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
+                            isInware:utils.isInwareStatusFun(element.archiveStatus, element.isInware),
                         });
                     });
                 }else{
@@ -582,6 +642,7 @@ export default {
                         Object.assign(element,{
                             key:element.A01000,
                             num: (pageNum - 1) * limitNum + index + 1,
+                            transferType: element.transferType == '1' ? '单位转单位' : ( element.transferType == '2' ? '单位转个人' : '个人转单位')  
                         });
                     });
                 }else{

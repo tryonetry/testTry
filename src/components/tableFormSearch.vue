@@ -37,9 +37,10 @@
           :minlength ="item.minlength || String(item.minlength) === '0' ? item.minlength : false"
           @blur="inputBlur(item,index)"
           v-model="item.val"
-          :disabled = "item.disabled ? item.disabled : false"
+          :disabled="item.disabled ? item.disabled : false"
           @change="listeningChange"
           class='inputClearContainer'
+          @pressEnter="enterSearchFun"
         >
           <!-- 后缀图标 -->
           <!-- <a-icon class='inputClear' v-if="item.val || String(item.val) === '0'" slot="suffix" type="close-circle" @click="emptyInput(item)" /> -->
@@ -117,6 +118,8 @@
           @blur="commonRequiredBlur(item,index)"
           :fieldNames="{label:'name',value:'code',children:'children'}"
           :disabled = "item.disabled ? item.disabled : false"
+          :showSearch='true'
+          changeOnSelect
           allowClear
         />
         
@@ -256,6 +259,7 @@ export default {
         }
       },
       operateIsLimit: null,  //查询操作是否被限制：无条件不能查询--true；不限制：有无条件都可查询--false 
+      uploadFileList: [],  //图片上传--列表
     };
   },
   watch:{
@@ -300,7 +304,25 @@ export default {
     searchForm(event) {
       //console.log(this.operateIsLimit);
       event.preventDefault();
+      this.formData.formInputs.forEach(element => {
+        if(element.val){
+          if(element.type == 'text'){
+            element.val = element.val.trim();   //input---去除空格
+          }
+        }
+      });
       this.$emit("searchForm", this.formData.formInputs, this.operateIsLimit);   
+    },
+
+    //table--form--input--enter事件
+    enterSearchFun(event){
+      if(this.formData && this.formData.formBtns){
+        this.formData.formBtns.forEach(element => {
+          if(element.title == '查询'){
+            this.operate(event, element, element.operate);
+          }
+        });
+      }
     },
 
     //监听input值得变化
@@ -309,7 +331,9 @@ export default {
       let newCondition = {};
       newData.forEach(element => {
         if (element.val) {
-          newCondition[element.name] = element.val;
+          if(element.type == 'text'){
+            newCondition[element.name] = element.val.trim();   //去除空格
+          }
         } else {
           newCondition[element.name] = "";
         }
@@ -458,9 +482,9 @@ export default {
                   // 特殊处理项 name : companyId -> recordInfo 且关联项为 companyNum
                   else if(
                     (itemData.name === 'transferCompanyId' || 
-                    itemData.name === 'companyId') && 
+                    itemData.name === 'companyId' ||  itemData.name === 'dwmc') && 
                     (input.name === 'transferCompanyNum' || 
-                    input.name === 'companyNum') && 
+                    input.name === 'companyNum' || input.name === 'dwbh') && 
                     resultObj.name === 'val'
                   ){
                     _this.formData.formInputs[index][resultObj.name] = void 0;
@@ -474,9 +498,9 @@ export default {
                   // 特殊项处理 name : companyNum -> recordInfo 且关联项为 companyId
                   else if(
                     (itemData.name === 'companyNum' ||
-                    itemData.name === 'transferCompanyNum') && 
+                    itemData.name === 'transferCompanyNum' || itemData.name === 'dwbh') && 
                     (input.name === 'companyId' || 
-                    input.name === 'transferCompanyId') && 
+                    input.name === 'transferCompanyId' || input.name === 'dwmc') && 
                     resultObj.name === 'val'
                   ){
                     // 将输入的值 匹配下拉框
@@ -691,15 +715,14 @@ export default {
 
                   // 特殊处理 record-info 页面的单独操作 -> recordInfoIdCard
                   else if(resultObj && resultObj.operate === 'recordInfoIdCard'){
-                    if(input.status === 'success'){
-                      _this.formData.formInputs[index]['tip'] = '* 请输入正确的身份证号';
-                      _this.$http.fetchPost('personalArch@checkRepeat.action',{a0184:resultObj.data})
-                          .then(res => {
-                            if(Number(res.code) === 0){
-                              //弹出确认退档操作
-                              if(res.isInware === '2' && res.archiveStatus === '7'){
-                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
-                                _this.$set(_this.formData.formInputs[index],'status','error');
+                   
+                    _this.formData.formInputs[index]['tip'] = '* 请输入正确的身份证号';
+                    _this.$http.fetchPost('personalArch@checkRepeat.action',{a0184:resultObj.data})
+                        .then(res => {
+                          if(Number(res.code) === 0){
+                            //弹出确认退档操作   --判断personId
+                            if(res.personId){
+                                _this.formData.formInputs[index][resultObj.name] = '';
                                 _this.$confirm({
                                   title: '是否进行退档操作 ?',
                                   content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
@@ -722,19 +745,50 @@ export default {
                                   },
                                   onCancel() {},
                                 })
-                              }else{
-                                _this.formData.formInputs[index][resultObj.name] = '';
-                                _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
-                                _this.$set(_this.formData.formInputs[index],'status','error');
-                              }
-                            }else{
-                              //
+                            } else{
+                              _this.formData.formInputs[index][resultObj.name] = '';
+                              _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+                              _this.$set(_this.formData.formInputs[index],'status','error');
+                              _this.$message.warning('姓名：' + res.a0101 + '；身份证号：' + res.a0184 + '；机构名称：' + res.orgName + '；  此用户已存在！')
                             }
-                          })
-                          .catch(err => {
-                            _this.$message.error('抱歉,网络出错了,请重试')
-                          })
-                    }
+
+
+                            // if(res.isInware === '2' && res.archiveStatus === '7'){
+                            //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+                            //   _this.$set(_this.formData.formInputs[index],'status','error');
+                            //   _this.$confirm({
+                            //     title: '是否进行退档操作 ?',
+                            //     content: '由于您的档案已转出,点击确定可进行退档操作,进行退档操作后可前往信息变更页面修改信息.',
+                            //     onOk() {
+                            //       _this.$http.fetchPost('personalArch@sendBackArch.action',{personId:res.personId})
+                            //         .then(res => {
+                            //           if(Number(res.code) === 0){
+                            //             _this.formData.formInputs[index][resultObj.name] = '';
+                            //             _this.$set(_this.formData.formInputs[index],'status',void 0);
+                            //             _this.$message.success('退档操作成功,可前往信息变更页查询信息');
+                            //           }else{
+                            //             // _this.formData.formInputs[index][resultObj.name] = '';
+                            //             _this.$message.error('退档操作失败,请稍后重试');
+                            //             return false;
+                            //           }
+                            //         })
+                            //         .catch(err => {
+                            //           _this.$message.error('抱歉,网络出错了,请稍后重试')
+                            //         })
+                            //     },
+                            //     onCancel() {},
+                            //   })
+                            // }else{
+                            //   _this.formData.formInputs[index][resultObj.name] = '';
+                            //   _this.formData.formInputs[index]['tip'] = '* 抱歉,此公民身份号码/社保卡号重复';
+                            //   _this.$set(_this.formData.formInputs[index],'status','error');
+                            // }
+                          }
+                        })
+                        .catch(err => {
+                          _this.$message.error('抱歉,网络出错了,请重试')
+                        })
+                    
                   }
 
                   //waLayerCodeToOrderNo 根据选择的层号拿顺序
@@ -778,30 +832,30 @@ export default {
                     })
                   }
 
-                 //expectReturnDate 根据materialId即：a10000检索当前输入材料名称是否重复
-                 else if(input.type && resultObj && resultObj.operate === 'expectReturnDate'){
-                   if(resultObj['materialId']){
-                     _this.$http.fetchPost('materialBorrow@checkExpectReturnDate.action', {
-                       expectReturnDate: resultObj['data'],
-                       materialId: resultObj['materialId']
-                     }).then(res => {
-                       if(Number(res.code) === 0){
-                         //此材料可借出
-                         _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
-                       } else if(Number(res.code) === 5){
-                         //此材料已借出
-                        _this.formData.formInputs[index][resultObj.name] = void 0;
-                        _this.formData.formInputs[index]['status'] = 'error';
-                        _this.formData.formInputs[index]['tip'] = '此材料已借出，请勿重复借出！';
-                       } else{
-                         //异常
-                         _this.$message.error('抱歉，验证失败，请刷新后重试！')
-                       }
-                     }).catch(error => {
-                       _this.$message.error('抱歉，网络异常！')
-                     })
-                   }
-                 }
+                  //expectReturnDate 根据materialId即：a10000检索当前输入材料名称是否重复
+                  else if(input.type && resultObj && resultObj.operate === 'expectReturnDate'){
+                    if(resultObj['materialId']){
+                      _this.$http.fetchPost('materialBorrow@checkExpectReturnDate.action', {
+                        expectReturnDate: resultObj['data'],
+                        materialId: resultObj['materialId']
+                      }).then(res => {
+                        if(Number(res.code) === 0){
+                          //此材料可借出
+                          _this.formData.formInputs[index][resultObj.name] = resultObj.data ? resultObj.data : void 0;
+                        } else if(Number(res.code) === 5){
+                          //此材料已借出
+                          _this.formData.formInputs[index][resultObj.name] = void 0;
+                          _this.formData.formInputs[index]['status'] = 'error';
+                          _this.formData.formInputs[index]['tip'] = '此材料已借出，请勿重复借出！';
+                        } else{
+                          //异常
+                          _this.$message.error('抱歉，验证失败，请刷新后重试！')
+                        }
+                      }).catch(error => {
+                        _this.$message.error('抱歉，网络异常！')
+                      })
+                    }
+                  }
 
                   // 其他项
                   else if(!resultObj.operate){
@@ -932,7 +986,8 @@ export default {
       } else if (info.file.status === 'error') {
         this.$message.error(`${info.file.name} 上传失败.`);
       }
-    }
+    },
+
   }
 };
 </script>

@@ -5,7 +5,12 @@
       <OtherTree :treeDataObj="treeDataObj" @accepttreeNode="accepttreeNodeFun"></OtherTree>
     </div>
     <div class="rightContainer">
-      <TableView :initArrData="initArr" :totalCount="tableTotalNum" :loading="tableLoading" @searchTable="getTableData">
+      <TableView
+        :initArrData="initArr"
+        :totalCount="tableTotalNum"
+        :loading="tableLoading"
+        @searchTable="getTableData"
+      >
         <!-- tableFormSearch里添加其他按钮 -->
         <span slot="formAction">
           <a-button class="buttonOperate" type="primary" @click="operateFun({}, 1)">添加</a-button>
@@ -13,11 +18,7 @@
 
         <!-- table操作列：操作按钮[备注：列的链接（slot='nameLink'）和图片参考['img']] -->
         <div slot="tableAction" slot-scope="slotPropsData">
-          <a
-            href="javascript:;"
-            @click="operateFun(slotPropsData.currRowdata, 3)"
-            data-type="编辑"
-          >编辑</a>
+          <a href="javascript:;" @click="operateFun(slotPropsData.currRowdata, 3)" data-type="编辑">编辑</a>
           <a-popconfirm
             title="确定删除吗?"
             okText="确定"
@@ -72,7 +73,7 @@ export default {
     return {
       utils,
       tableTotalNum: 0, //总页数：默认为0
-      tableLoading: false,  //table loading
+      tableLoading: false, //table loading
       // tableView传值方式
       initArr: {
         treeflag: false, //左侧tree是否存在
@@ -116,7 +117,12 @@ export default {
 
           // form btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' },
+            {
+              title: "查询",
+              htmltype: "submit",
+              operate: "searchForm",
+              isLimit: "no"
+            },
             { title: "重置", htmltype: "button", operate: "resetForm" }
           ]
         },
@@ -306,7 +312,7 @@ export default {
           }
         ]
       },
-      currentRowData: null,  //当前行数据
+      currentRowData: null //当前行数据
     };
   },
 
@@ -339,9 +345,18 @@ export default {
           limit: limitNum,
           whdCode: !condition || !condition.whdCode ? "" : condition.whdCode,
           whdName: !condition || !condition.whdName ? "" : condition.whdName,
-          whId: !condition || !condition.whId ? (this.selectTreeNode && this.selectTreeNode['pId'] ? this.selectTreeNode['pId'] : '001') : condition.whId,
+          whId:
+            !condition || !condition.whId
+              ? this.selectTreeNode && this.selectTreeNode["pId"]
+                ? this.selectTreeNode["pId"]
+                : "001"
+              : condition.whId,
           whAreaName:
-            !condition || !condition.whAreaName ? (this.selectTreeNode && this.selectTreeNode['title'] ? this.selectTreeNode['title'] : '') : condition.whAreaName
+            !condition || !condition.whAreaName
+              ? this.selectTreeNode && this.selectTreeNode["title"]
+                ? this.selectTreeNode["title"]
+                : ""
+              : condition.whAreaName
         })
         .then(res => {
           if (Number(res.code) === 0) {
@@ -350,8 +365,8 @@ export default {
             this.initArr.tabledataArr = [];
             tempTableData.forEach((element, index) => {
               this.initArr.tabledataArr.push({
-                key: element.whdId,  //本身id值
-                whId: element.whId,  //对应的分区的id值
+                key: element.whdId, //本身id值
+                whId: element.whId, //对应的分区的id值
                 num: (pageNum - 1) * limitNum + index + 1,
                 whdCode: element.whdCode,
                 whdName: element.whdName,
@@ -363,12 +378,14 @@ export default {
                 freeCapacity: element.whdTotalNum - element.whdNowNum
               });
             });
-          } else{
-            this.$message.error('抱歉，获取数据失败，请刷新后重试！');
+          } else {
+            this.$message.error("抱歉，获取数据失败，请刷新后重试！");
           }
-        }).catch(error => {
-          this.$message.error('抱歉，网络异常！');
-        }).finally(end => {
+        })
+        .catch(error => {
+          this.$message.error("抱歉，网络异常！");
+        })
+        .finally(end => {
           this.tableLoading = false;
         });
     },
@@ -464,9 +481,6 @@ export default {
           whdGridNum: "",
           whdDesc: ""
         };
-        this.roomShelfForm.formInputs.forEach(el => {
-          el.status = '';
-        });
         if (this.selectTreeNode) {
           if (this.selectTreeNode.pId.length > 10) {
             this.visible = true;
@@ -483,8 +497,11 @@ export default {
         this.visible = true;
         initData = data;
         this.currentId = data["key"];
-        this.currWhId = data['whId'];
+        this.currWhId = data["whId"];
       }
+      this.roomShelfForm.formInputs.forEach(el => {
+        el.status = "";
+      });
       this.roomShelfForm = this.utils.getNewFormSearch(
         initData,
         this.roomShelfForm
@@ -495,23 +512,27 @@ export default {
     },
     handleOk() {
       let formDataObj = this.$refs.shelfForm.getFormData();
-      let currObjData = this.utils.transferFormToObj(
-        formDataObj['resultData']
-      );
-      if(formDataObj['notRequiredHasDataRight'] && formDataObj['requiredFiledsRight']){
+      let currObjData = this.utils.transferFormToObj(formDataObj["resultData"]);
+      if (
+        formDataObj["notRequiredHasDataRight"] &&
+        formDataObj["requiredFiledsRight"]
+      ) {
         if (this.operateStatus == 1) {
           //添加
-          currObjData = Object.assign({}, currObjData, {'whId': this.selectTreeNode['pId'], 'whdArea': parseInt(this.selectTreeNode['title'])})
+          currObjData = Object.assign({}, currObjData, {
+            whId: this.selectTreeNode["pId"],
+            whdArea: parseInt(this.selectTreeNode["title"])
+          });
           this.$http
             .fetchPost("wareHouse@insertWareHouseDetail.action", currObjData)
             .then(res => {
               if (Number(res.code) === 0) {
                 this.$message.success("添加成功！");
-                this.getTableData(this.tempCondition, 1,10);
+                this.getTableData(this.tempCondition, 1, 10);
                 this.visible = false;
                 this.confirmLoading = false;
-              } else if(Number(res.code) === 2){
-                this.$message.warning('同一分区下密集架名称和编号不能重复！');
+              } else if (Number(res.code) === 2) {
+                this.$message.warning("同一分区下密集架名称和编号不能重复！");
               } else {
                 this.$message.error("添加失败！");
               }
@@ -521,14 +542,17 @@ export default {
             });
         } else {
           //编辑
-          currObjData = Object.assign({}, currObjData, { 'whdId': this.currentId, 'whId': this.currWhId });
+          currObjData = Object.assign({}, currObjData, {
+            whdId: this.currentId,
+            whId: this.currWhId
+          });
           // console.log(currObjData);
           this.$http
             .fetchPost("wareHouse@editWareHouseDetail.action", currObjData)
             .then(res => {
               if (Number(res.code) === 0) {
                 this.$message.success("编辑成功！");
-                this.getTableData(this.tempCondition, 1,10);
+                this.getTableData(this.tempCondition, 1, 10);
                 setTimeout(() => {
                   this.visible = false;
                   this.confirmLoading = false;
@@ -601,7 +625,7 @@ export default {
   /* -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
   padding: 10px 12px;
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 .rightContainer {
   width: 86%;

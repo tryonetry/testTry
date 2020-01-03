@@ -74,6 +74,7 @@ export default {
         bordered: true, //table--边框
         noPagination: true,  //table--无分页
         superimposeWidth: true,
+        isNoTitle: true,  //表格上--标题不显示
         formData: {
           formInputs: [],
           formBtns: []

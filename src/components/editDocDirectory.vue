@@ -39,7 +39,7 @@
         </div>
 
         <!-- 右侧操作当前的档案目录类型 -->
-        <div class="right">
+        <div :class="['right',  {'isRightNoShow': isRightNoShow}]">
             <!-- msg -->
             <div class="bundleContainer">
                 <MsgTip :msgTip="msgTip" :msgIndex="msgIndex" :watcherState="watcherState"></MsgTip>
@@ -49,7 +49,8 @@
                 <ul>
                     <li>序 号</li>
                     <li>材料名称<i class="required">*</i></li>
-                    <li>材料生成日期<i class="required">*</i></li>
+                    <!-- <li>材料生成日期<i class="required">*</i></li> -->
+                    <li>材料生成日期</li>
                     <li>页 数</li>
                     <li>备 注</li>
                     <li>操 作</li>
@@ -138,6 +139,7 @@ export default {
             currentFileList:[],
             // 当前条数据正确
             currentRowRight:true,
+            isRightNoShow: false,
         };
     },
 
@@ -187,6 +189,12 @@ export default {
         // change index
         indexChange(index){
             this.currentIndex = index;
+            console.log(index);
+            if(index == 3 || index == 12){
+               this.isRightNoShow = true;
+            } else{
+                this.isRightNoShow = false;
+            }
         },
 
         // 重组列表
@@ -262,7 +270,29 @@ export default {
         },
         // 删除材料
         deleteMaterial(index){
-            this.listDirectory[this.currentIndex].dataArr.splice(index,1);
+            let tempDel = this.listDirectory[this.currentIndex].dataArr[index];  //当前删除--数据
+            
+            if(tempDel.e01z100){
+               //若e01z100存在---从后台库里删除
+                this.$http.fetchPost('digitalArchives@deleteCatalog.action', {
+                    e01z100: tempDel.e01z100
+                }).then(res => {
+                    if(Number(res.code) === 0){
+                        this.$message.success('删除成功！');
+                        this.listDirectory[this.currentIndex].dataArr.splice(index,1);  //表格数据删除
+                    } else{
+                        this.$message.warning('抱歉，删除失败，请联系后台处理！');
+                    }
+                }).catch(err => {
+                    this.$message.error('网络异常，请刷新后重试！');
+                })
+            } else{
+                //若e01z100不存在---直接从表格数据删除
+                this.listDirectory[this.currentIndex].dataArr.splice(index,1);  //表格数据删除
+                this.$message.success('删除成功！');
+            }
+            
+            
         },
         // 不可选择时间
         disabledEndDate(current){
@@ -358,9 +388,10 @@ export default {
             let isRight = true;
             if(!data.e01z111a && String(data.e01z111a) !== '0'){
                 isRight = false;
-            }else if(!data.e01z117a){
-                isRight = false;
             }
+            // else if(!data.e01z117a){
+            //     isRight = false;
+            // }
             return isRight;
         },
 
@@ -467,7 +498,8 @@ export default {
     width: 20%;
     box-sizing: border-box;
     /* padding: 20px; */
-    border-right: 1px solid #e8e8e8;
+    border-right: 3px solid #e8e8e8;
+    overflow: auto;
 }
 .left>ul>li{
     width: 100%;
@@ -475,7 +507,9 @@ export default {
     height: 50px;
     line-height: 50px;
     cursor: pointer;
-    text-align: center;
+    text-align: left;
+    white-space: nowrap;
+    padding: 0 20px;
     /* border-bottom: 1px solid #e8e8e8; */
 }
 .left .activeli{
@@ -591,6 +625,10 @@ export default {
 }
 .titleSlot p span{
     margin-left: 5px;
-    color: #2d8cf0;
+    /* color: #2d8cf0; */
+}
+
+.isRightNoShow{
+    display: none;
 }
 </style>

@@ -23,7 +23,7 @@
 <script>
 import TableView from "@/components/tableView";
 import OtherTree from "@/components/otherTree";
-import utils from '../../../utils/util';
+import utils from "../../../utils/util";
 export default {
   name: "LogAnalysis",
   //import引入的组件需要注入到对象中才能使用
@@ -107,13 +107,18 @@ export default {
               name: "startDate-endDate",
               val: void 0,
               postname: "startDate-endDate",
-              status: "",
+              status: ""
             }
           ],
 
           // form btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' },
+            {
+              title: "查询",
+              htmltype: "submit",
+              operate: "searchForm",
+              isLimit: "no"
+            },
             { title: "重置", htmltype: "button", operate: "resetForm" }
           ]
         },
@@ -192,8 +197,8 @@ export default {
         isChecked: false,
         dataArr: []
       },
-      tempTreeNode: '',  //左侧tree--临时选择
-      tempCondition: null,  //临时--table---condition
+      tempTreeNode: "", //左侧tree--临时选择
+      tempCondition: null //临时--table---condition
     };
   },
 
@@ -226,11 +231,11 @@ export default {
           limit: limitNum,
           moduleId: this.tempTreeNode,
           startDate:
-            !condition || !condition.startDate ? '' : condition.startDate,
-          endDate: !condition || !condition.endDate ? '' : condition.endDate,
-          creator: !condition || !condition.creator ? '' : condition.creator,
-          status: !condition || !condition.status ? '' : condition.status,
-          ip: !condition || !condition.ip ? '' : condition.ip
+            !condition || !condition.startDate ? "" : condition.startDate,
+          endDate: !condition || !condition.endDate ? "" : condition.endDate,
+          creator: !condition || !condition.creator ? "" : condition.creator,
+          status: !condition || !condition.status ? "" : condition.status,
+          ip: !condition || !condition.ip ? "" : condition.ip
         })
         .then(res => {
           if (Number(res.code) === 0) {
@@ -248,9 +253,9 @@ export default {
                 content: element.content,
                 creator: element.creator,
                 createDate: element.createDate,
-                status: element.status === '1' ? '成功' : '异常',
+                status: element.status === "1" ? "成功" : "异常",
                 creatorOrgId: element.creatorOrgId,
-                ip: element.ip,
+                ip: element.ip
               });
             });
           } else {
@@ -310,7 +315,9 @@ export default {
         })
         .then(res => {
           if (Number(res.code) === 0) {
-            this.treeDataObj.dataArr = this.getNewTreeData(utils.one2MultiDimensional("0",res.data));
+            this.treeDataObj.dataArr = this.getNewTreeData(
+              utils.one2MultiDimensional("0", res.data)
+            );
             this.getTableData(null, this.tempPageSize, 10);
           } else {
             this.$message.error("抱歉，获取数据失败，请刷新后重试！");
@@ -340,7 +347,7 @@ export default {
     },
     accepttreeNodeFun(data) {
       // console.log(data);
-      this.tempTreeNode = data['key'];
+      this.tempTreeNode = data["key"];
       this.getTableData(this.tempCondition, this.tempPageSize, 10);
     }
   },
@@ -382,7 +389,8 @@ export default {
   min-width: 170px;
   height: 100%;
   float: left;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px 12px;
 }
 .rightTable {

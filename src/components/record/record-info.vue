@@ -14,7 +14,11 @@
 function UnitNatureToCompanyShow(val){
   // 单位:01 
   if(val === '01'){
-    return [{name:'isHide',data:false}]
+    return [
+      {name:'isHide',data:false},
+      {name: 'required', data: true},
+      {name: 'disabled', data: false}
+    ]
   }else{
     return [{name:'isHide',data:true}]
   }
@@ -26,10 +30,10 @@ function idcardToBirthday(idNum){
     return  [{name: 'val', data: '' }];
   }
   if(idNum.length === 18){
-    return [{name: 'val', data: idNum =='000000000000000000' ? moment(new Date()).format('YYYY-MM-DD') : idNum.substr(6,8) }];
+    return [{name: 'val', data: idNum =='111111111111111111' ||  idNum =='222222222222222222'? moment(new Date()).format('YYYY-MM-DD') : idNum.substr(6,8) }];
   }else if(idNum.length === 15){
     // console.log('19'+idNum.substr(6,6))
-    return [{name: 'val', data: idNum =='000000000000000' ? moment(new Date()).format('YYYY-MM-DD') : '19'+idNum.substr(6,6) }];
+    return [{name: 'val', data: idNum =='111111111111111' || idNum =='222222222222222' ? moment(new Date()).format('YYYY-MM-DD') : '19'+idNum.substr(6,6) }];
   }
   return  [{name: 'val', data: '' }];
 }
@@ -102,6 +106,49 @@ function companyNumToName(numVal){
   }
 }
 
+//来档方式  To 邮寄编号
+function sourceToConfNumber(wayVal){
+   if(String(wayVal) === '1' || String(wayVal) === '2'){
+     return [
+       {name:'disabled',data:false},
+       {name: 'required', data: true}
+     ]
+   } else{
+     return [
+       {name:'disabled',data:true},
+       {name: 'val', data: void 0},
+       {name: 'required', data: false},
+       {name:'status',data:void 0},
+     ]
+   }
+}
+
+//学历 To  学位
+function schoolToDegree(val){
+  // console.log(val);
+  if(String(val) === '11' || String(val) === '14' || String(val) === '21'){
+    return [
+      {name:'disabled',data:false}
+    ]
+  } else{
+     return [
+      {name:'disabled',data:true},
+      {name: 'val', data: void 0},
+      {name:'status',data:void 0},
+    ]
+  }
+}
+
+//学历 To 最高学历毕业日期， 最高学历毕业院校
+function schoolToGraduate(val){
+  if(String(val) === '90'){
+    return [{name: 'required', data: false}, {name: 'status', data: ''}]
+  } else{
+    return [{name: 'required', data: true}]
+  }
+}
+
+
 import moment from "moment";
 import TableFromSearch from "../tableFormSearch";
 export default {
@@ -154,7 +201,9 @@ export default {
                 postname: "source",
                 tip:'* 请选择来档方式',
                 children: [],
-                status: ""
+                status: "",
+                connectTo:['confNumber'], //关联邮寄编号 --- 机要/快递：邮寄编号可填；其他不可填
+                connectToFun:[sourceToConfNumber], 
               },
               {
                 title: "邮寄编号",
@@ -187,7 +236,22 @@ export default {
                 disabled:true,
                 status: ""
               },
-
+              {
+                title: "启用库房",
+                otherType: "select",
+                required: true,
+                placeholder: "请选择启用库房",
+                name: "hasWare",
+                key: "hasWare",
+                val: void 0,
+                postname: "hasWare",
+                tip:'* 请选择启用库房',
+                children: [
+                  {itemCode: '1', itemName:'停用'},
+                  {itemCode: '0', itemName:'启用'},
+                ],
+                status: "",
+              },
               // 分割标题
               {
                 title: "登记信息",
@@ -211,7 +275,7 @@ export default {
               {
                 title: "公民身份号码",
                 type: "text",
-                required: true,
+                required: false,
                 placeholder: "请输入公民身份号码/社保卡号",
                 key: "a0184",
                 name: "a0184",
@@ -228,7 +292,7 @@ export default {
               {
                 title: "出生日期",
                 otherType: "date",
-                required: true,
+                required: false,
                 placeholder: "请选择出生日期",
                 key: "a0107",
                 name: "a0107",
@@ -274,7 +338,7 @@ export default {
               {
                 title: "性别",
                 otherType: "select",
-                required: true,
+                required: false,
                 placeholder: "请选择性别",
                 tip: "* 请选择性别",
                 name: "a0104",
@@ -312,6 +376,22 @@ export default {
                 status: ""
               },
               {
+                title: "参加组织时间",
+                otherType: "date",
+                required: false,
+                placeholder: "请选择参加组织时间",
+                key: "joinPartyDate",
+                name: "joinPartyDate",
+                val: void 0,
+                postname: "joinPartyDate",
+                maxlength: 20,
+                minlength: 0,
+                reg: "",
+                tip: "* 请选择参加组织时间",
+                disabled:false,
+                status: ""
+              },
+              {
                 title: "婚姻状况",
                 otherType: "searchSelect",
                 required: false,
@@ -334,10 +414,10 @@ export default {
                 children: []
               },
               {
-                title: "参加工作年月",
-                otherType: "month",
+                title: "参加工作日期",
+                otherType: "date",
                 required: false,
-                placeholder: "请选择参加工作年月",
+                placeholder: "请选择参加工作日期",
                 key: "a0134",
                 name: "a0134",
                 val: void 0,
@@ -345,7 +425,7 @@ export default {
                 maxlength: 20,
                 minlength: 0,
                 reg: "",
-                tip: "* 请选择参加工作年月",
+                tip: "* 请选择参加工作日期",
                 status: ""
               },
               {
@@ -364,7 +444,7 @@ export default {
               {
                 title: "手机号码",
                 type: "text",
-                required: true,
+                required: false,
                 placeholder: "请输入手机号码",
                 key: "a3707C",
                 name: "a3707C",
@@ -424,7 +504,7 @@ export default {
               {
                 title: "现居住地址",
                 type: "text",
-                required: true,
+                required: false,
                 placeholder: "请输入现居住地址",
                 key: "a3711",
                 name: "a3711",
@@ -521,7 +601,7 @@ export default {
               {
                 title: "转入原因",
                 otherType: "searchSelect",
-                required: false,
+                required: true,
                 placeholder: "请选择转入原因",
                 key: "inComeReason",
                 name: "inComeReason",
@@ -567,7 +647,7 @@ export default {
               {
                 title: "原存档单位名称",
                 type:'text',
-                required: false,
+                required: true,
                 placeholder: "请输入原存档单位名称",
                 key: "oldArchiveUnit",
                 name: "oldArchiveUnit",
@@ -582,7 +662,7 @@ export default {
               {
                 title: "原存档单位行政区划",
                 otherType: "addressSelect",
-                required: false,
+                required: true,
                 placeholder: "请选择原存档单位行政区划",
                 key: "oldArchiveUnitArea",
                 name: "oldArchiveUnitArea",
@@ -641,7 +721,9 @@ export default {
                 val: void 0,
                 postname: "a0834",
                 children: [],
-                status: ""
+                status: "",
+                connectTo: ['a0914', 'a0807', 'a0888'],
+                connectToFun: [schoolToDegree, schoolToGraduate, schoolToGraduate]
               },
               {
                 title: "最高学位",
@@ -654,7 +736,8 @@ export default {
                 val: void 0,
                 postname: "a0914",
                 children: [],
-                status: ""
+                status: "",
+                disabled: ''
               },
               {
                 title: "最高学历毕业日期",
@@ -718,8 +801,10 @@ export default {
           },
           companyList:null,
           //hasDataDisabledOptions: [], //disabled--禁止输入项
-          personDisabledOptions:['a0101','a0184','source','confNumber','companyId','companyNum','personType'],  //个人--信息变更--disabled项
+          personDisabledOptions:['a0101','a0184','confNumber','companyId','companyNum'],  //个人--信息变更--身份证号存在时--disabled项
+          personDisabledNoIdcardOptions:['a0101','confNumber','companyId','companyNum'],  //个人--信息变更--身份证号不存在时--disabled项
           departWorkDisabled: ['personType', 'a0101', 'a0184', 'companyNum', 'companyId', 'confNumber', 'source'], //单位--信息变更--disabled项
+          departWorkNoIdcardDisabled: ['personType', 'a0101', 'companyNum', 'companyId', 'confNumber', 'source'], //单位--信息变更--disabled项
           departWorkOperateDisabled: ['personType', 'a0100A' ], //单位---职工录入--disabled
     };
   },
@@ -753,9 +838,17 @@ export default {
         if(newVal && newVal.a01000){
           this.insertData(newVal,true)
           if(this.disabledFlag == '1'){
-            this.disableSomeOption(this.personDisabledOptions);
+            if(newVal.a0184){
+              this.disableSomeOption(this.personDisabledOptions);
+            } else{
+              this.disableSomeOption(this.personDisabledNoIdcardOptions);
+            }
           } else if(this.disabledFlag == '2'){
-            this.disableSomeOption(this.departWorkDisabled);
+            if(newVal.a0184){
+              this.disableSomeOption(this.departWorkDisabled);
+            } else{
+              this.disableSomeOption(this.departWorkNoIdcardDisabled);
+            }
           } else if(this.disabledFlag == '3'){
             this.disableSomeOption(this.departWorkOperateDisabled);
           }
@@ -842,19 +935,29 @@ export default {
     // 清空数据及状态
     clearDataAndStatus(){
       this.formData.formInputs.forEach((item,index)=>{
-        
         if(!item.disabled){
           Object.assign(item,{
             val:void 0,
             status:"",
-            isHide:false
+            isHide:false,
+            disabled:item.disabled,
           })
         }else{
           Object.assign(item,{
-            status:""
+            status:"",
+            disabled:item.disabled,
           })
         }
         
+        if(item.name === 'hasWare'){
+          //判断是否有库房
+          if(JSON.parse(sessionStorage.getItem('loginData')).loginUser['hasWare'] === '0'){
+            item.isHide = false;
+            item.val = '0';
+          } else{
+            item.isHide = true;
+          }
+        }
       })
     },
 
@@ -867,6 +970,7 @@ export default {
             if(!Data[key]){
               item.val = void 0;
             }else if(item.otherType && (item.otherType === 'date' || item.otherType === 'month' || item.otherType === 'daterange')){
+              // console.log(Data[key])
               item.val = moment(Data[key]);
             }else if(item.otherType && item.otherType === 'addressSelect'){
               item.val = Data[key].split('.')
@@ -923,14 +1027,21 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    const {currentPersonData,personDisabledOptions,departWorkDisabled,departWorkOperateDisabled,disableSomeOption,insertData,currentEnterprice, disabledFlag} = this;
+    const {currentPersonData,personDisabledOptions, personDisabledNoIdcardOptions, departWorkDisabled, departWorkNoIdcardDisabled, departWorkOperateDisabled,disableSomeOption,insertData,currentEnterprice, disabledFlag} = this;
 
     if((currentPersonData && currentPersonData.a01000) || (currentEnterprice && currentEnterprice.id)){
-      // disableSomeOption(hasDataDisabledOptions);
       if(disabledFlag == '1'){
-        disableSomeOption(personDisabledOptions);
+        if(currentPersonData.a0184){
+          disableSomeOption(personDisabledOptions);
+        } else{
+          disableSomeOption(personDisabledNoIdcardOptions);
+        }
       } else if(disabledFlag == '2'){
-        disableSomeOption(departWorkDisabled);
+        if(currentPersonData.a0184){
+          disableSomeOption(departWorkDisabled);
+        } else{
+          disableSomeOption(departWorkNoIdcardDisabled);
+        }
       } else if(disabledFlag == '3'){
         disableSomeOption(departWorkOperateDisabled);
       }
@@ -938,6 +1049,13 @@ export default {
       insertData(currentEnterprice);
     }
     
+    //政治面貌默认
+    this.formData.formInputs.forEach(element => {
+      if(element.name === 'a0141'){
+        element.val = '13'
+      }
+    });
+
     // 获取公司名称
     this.$http.fetchGet('personalArch@getCompanyList.action',{})
       .then(res => {

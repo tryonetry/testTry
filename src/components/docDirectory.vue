@@ -84,7 +84,7 @@ export default {
             }).then((res)=>{
                 if(Number(res.code) === 0){
                     _this.treeData = _this.getTreeData(res.data);
-                    // console.log(_this.treeData)
+                    console.log(_this.treeData)
                     _this.defaultExpandedKeys.push(_this.treeData[0].key);
                     _this.expandedKeys.push(_this.treeData[0].key);
                 }else{
@@ -110,7 +110,10 @@ export default {
                     if(item.name && item.id){
                         item.title = item.name;
                         item.key = item.id;
-                        if(deep >= 2){
+                        // if(deep >= 2){
+                        //     item.isLeaf = true;
+                        // }
+                        if(item.children.length == 0 ){
                             item.isLeaf = true;
                         }
                         // 如果当前为最后一个遍历的值
@@ -158,12 +161,14 @@ export default {
 
                             _this.initParamsObj.tempFilePath = tempItemPath + '.cadremultip'
 
-                            let tempNameArr = [];
+                            let tempNameArr = [], tempPrintArr = [];
                             res.data.forEach((item, index) => {
                                 let tempItemArr = item.split('/');
                                 tempNameArr.push(tempItemArr[tempItemArr.length - 1])
+                                tempPrintArr.push(index);
                             });
                             _this.initParamsObj.nameArr = [...tempNameArr];
+                            _this.initParamsObj.aPrintIndexs = [...tempPrintArr];  //可打印的下标数组
                             // console.log(_this.initParamsObj);
                             try{
                             //调用iframe中的方法
@@ -183,13 +188,17 @@ export default {
                                 },1000);
                             }
                             _this.currentList = res.data;
-                            _this.currentList.forEach((item)=>{
-                                item.imgData = _this.$targetHost+item.filePath.substr(2);
-                                item.name = item.fileName;
-                                item.onChange = false;
-                            });
+                            // _this.currentList.forEach((item)=>{
+                            //     item.imgData = _this.$targetHost+item.filePath.substr(2);
+                            //     item.name = item.fileName;
+                            //     item.onChange = false;
+                            // });
                         } else{
-                            this.$message.warning('暂无数据！');
+                            // this.$message.warning('暂无数据！');
+                            _this.initParamsObj.nameArr = [];
+                            _this.initParamsObj.aPrintIndexs = [];
+                            _this.initParamsObj.tempFilePath = '';
+                            _this.$refs.iframe.contentWindow.initReader(_this.initParamsObj);
                         }
                     }else{
                         _this.$message.error('抱歉，获取数据失败，请刷新后重试！');
@@ -212,6 +221,9 @@ export default {
                 this.currentList = [];
                 this.selectedKeys = [];
                 this.expandedKeys = [];
+                this.initParamsObj.nameArr = [];
+                this.initParamsObj.tempFilePath = '';
+                this.initParamsObj.aPrintIndexs = [];
             },
            deep:true,//深度监听
         }
@@ -223,11 +235,15 @@ export default {
     .checkImgContainer,
     .outer{
         min-height: 600px;
-        max-height: 600px;
+        /* max-height: 600px; */
         display: flex;
         position: relative;
         margin-top: 0;
     }
+    .outer{
+        height: 100%;
+    }
+
     .bundleContainer{
         width: 100%;
     }

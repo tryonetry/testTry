@@ -147,7 +147,7 @@ export default {
               placeholder: "请选择档案状态",
               key: "archiveStatus",
               name: "archiveStatus",
-              val: void 0,
+              val: '0',
               children: [
                 {
                   itemCode: "0",
@@ -223,7 +223,7 @@ export default {
           ],
           // form btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm" },
+            { title: "查询", htmltype: "submit", operate: "searchForm", isOperateLimit: 'no' },
             { title: "重置", htmltype: "button", operate: "resetForm" }
           ]
         },
@@ -341,7 +341,7 @@ export default {
           {
             title: "分区",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择分区",
             key: "whdArea",
             name: "whdArea",
@@ -354,7 +354,7 @@ export default {
           {
             title: "密集架",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择密集架",
             key: "whdCode",   //换对应：whdCode
             name: "whdCode",
@@ -367,7 +367,7 @@ export default {
           {
             title: "列号",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择列号",
             key: "waColumnCode",
             name: "waColumnCode",
@@ -378,7 +378,7 @@ export default {
           {
             title: "层号",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择层号",
             key: "waLayerCode",
             name: "waLayerCode",
@@ -455,7 +455,7 @@ export default {
           {
             title: "分区",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择分区",
             key: "whdArea",
             name: "whdArea",
@@ -468,7 +468,7 @@ export default {
           {
             title: "密集架",
             otherType: "searchSelect",
-            required: false,
+            required: true,
             placeholder: "请选择密集架",
             key: "whdCode",
             name: "whdCode",
@@ -579,7 +579,7 @@ export default {
           page: pageNum,
           limit: limitNum,
           a0100A: (!condition || !condition.a0100A) ? "" : condition.a0100A,
-          archiveStatus: (!condition || !condition.archiveStatus) ? "" : condition.archiveStatus,
+          archiveStatus: (!condition || !condition.archiveStatus) ? "0" : condition.archiveStatus,
           a0184: (!condition || !condition.a0184) ? "" : condition.a0184,
           a0101: (!condition || !condition.a0101) ? "" : condition.a0101,
           archivesIdentity: (!condition || !condition.archivesIdentity) ? "" : condition.archivesIdentity,
@@ -598,7 +598,7 @@ export default {
                 a0100a: element.a0100a,
                 a0101: element.a0101,
                 a0184: element.a0184,
-                a0104: element.a0104 == "1" ? "男" : "女",
+                a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
                 archivesIdentity: element.archivesIdentity == "1" ? "干部" : "工人",
                 shelvesNo: !element.shelvesNo ? "" : (element.shelvesNo.split("-")[0] + "区" + element.shelvesNo.split("-")[1] +  "排" + element.shelvesNo.split("-")[2] + "号"),
                 inwareOperatorName: element.inwareOperatorName,
@@ -951,8 +951,9 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    //this.getTableData(null, 1, 10);
+    this.getTableData(null, 1, 10);
     this.getOtherInfo();
+    this.$store.dispatch("getinfoTableCheckData", []);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）

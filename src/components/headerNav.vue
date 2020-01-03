@@ -183,7 +183,7 @@
         </a-menu>
       </a-layout-sider>
       <!-- 内容栏 -->
-      <a-layout :style="isHasNavPath !== '/analysis' && isHasNavPath !== '/report' ? 'padding: 0 5px 24px' : ''">
+      <a-layout :style="isHasNavPath !== '/analysis' && isHasNavPath !== '/report' ? 'padding: 0 5px 5px 5px' : ''">
         <div class="navHeader">
           <a-icon
             class="trigger"
@@ -193,7 +193,7 @@
           />
           <!-- 面包屑 -->
           <!-- v-if="currentMainIndex !== 2 && currentMainIndex !== 3" -->
-          <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;background: #fff;" v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'">
+          <a-breadcrumb style="padding: 0 12px;height: 40px;line-height: 40px;" v-if="isHasNavPath !== '/analysis' && isHasNavPath !== '/report'">
             <a-breadcrumb-item>{{this.$route.meta.title}}</a-breadcrumb-item>
             <a-breadcrumb-item v-for="(item, index) in breadcrumb" :key="index">{{item.name}}</a-breadcrumb-item>
           </a-breadcrumb>
@@ -349,6 +349,7 @@ export default {
         el.title = el.name;
         el.key = el.id;
         el.value = el.id;
+        el.user_photo = el.b0114;
         el.isLeaf = el.isParent === "false" && el.key.length > 10 ? true:null;
         delete el.name;
         delete el.id;
@@ -747,7 +748,7 @@ export default {
   flex: 1;
 }
 .header .right{
-  padding: 0 40px;
+  padding: 0 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -838,7 +839,8 @@ export default {
 
 .navHeader{
     display: flex;
-    background: rgb(255, 255, 255);
+    /* background: rgb(255, 255, 255); */
+    background: #e2fdf3;
     align-items: center;
     box-sizing: border-box;
     padding-left: 15px;

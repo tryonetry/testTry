@@ -22,7 +22,12 @@
             <a-button class="buttonOperate" type="primary" @click="generateDataFun">生成数据</a-button>
           </span>
           <div slot="tableAction" slot-scope="slotPropsData">
-            <a :href="slotPropsData.currRowdata.filePath" download="arch.idb" data-type="下载" class="primaryBtnColor">下载</a>
+            <a
+              :href= "slotPropsData.currRowdata.filePath"
+              download="arch.idb"
+              data-type="下载"
+              class="primaryBtnColor"
+            >下载</a>
             <a-popconfirm
               title="确定删除吗?"
               okText="确定"
@@ -131,6 +136,7 @@ export default {
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check
         superimposeWidth: true, //
+        isNoTitle: true,  //表格上--标题不显示
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -233,7 +239,7 @@ export default {
       isReadData: false, //生成数据--读取数据
       isWriteDate: false, //生成数据--写入数据
       isFileSize: false, //生成数据--文件大小,
-      tempPageSize: 1,  //table--pageSize
+      tempPageSize: 1 //table--pageSize
     };
   },
 
@@ -258,7 +264,7 @@ export default {
        * 参数：condition:form查询结果：{}
        *         */
       this.tableLoading = true;
-      this.tempPageSize = pageNum
+      this.tempPageSize = pageNum;
       this.$http
         .fetchPost("padFilePackage@findPadFileAll.action", {
           page: pageNum,
@@ -280,7 +286,7 @@ export default {
                 fileSize: element.fileSize,
                 createDate: element.createDate,
                 messageRemark: element.messageRemark,
-                filePath: element.filePath
+                filePath: this.$targetHost +  element.filePath.substring(2)
               });
             });
           } else {
@@ -315,7 +321,7 @@ export default {
        * 功能：根据ant-design-vue格式重组tree数据:替换原来的id为key; name为title
        */
       dataArr.forEach(el => {
-        if(el.id === '01'){
+        if (el.id === "01") {
           el.disabled = true;
         }
         el.title = el.name;
@@ -342,7 +348,7 @@ export default {
        * 参数：data: 当前tree--check数据；
        */
       this.acceptTreeNode = data.filter(item => {
-        if(item !== '01'){
+        if (item !== "01") {
           return item;
         }
       });
@@ -362,7 +368,7 @@ export default {
           this.visible = true;
           this.$http
             .fetchPost("padFilePackage@doCreateInitData.action", {
-              ids: treeNodeStr,
+              ids: treeNodeStr + ',',
               passWord: tempCondition.passWord,
               remark: tempCondition.remark
             })
@@ -415,7 +421,7 @@ export default {
               _this.isFileSize = true;
               clearInterval(timer);
               _this.visible = false;
-              _this.$message.success('生成数据成功！');
+              _this.$message.success("生成数据成功！");
               _this.getTableData(null, _this.tempPageSize, 10);
             }
           })
@@ -447,7 +453,7 @@ export default {
         .catch(err => {
           this.$message.error("抱歉，网络异常！");
         });
-    },
+    }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -488,7 +494,8 @@ export default {
   min-width: 170px;
   height: 100%;
   float: left;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px 12px;
 }
 .rightTable {

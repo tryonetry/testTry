@@ -23,7 +23,7 @@
             <a
                 href="javascript:;"
                 @click="previewEdit(slotPropsData.currRowdata)"
-            >预览编辑</a>
+            >编辑</a>
             <a-popconfirm
                 title="确定删除吗?"
                 okText="确定"
@@ -41,8 +41,8 @@
             centered
             :visible="editVisiable"
             @cancel="handleCancel"
-            :width="'50%'"
-            style="height:50%;overflow: hidden;"
+            :width="'80%'"
+            style="height:70%;overflow: hidden;"
             :maskClosable='false'
         >
             <template slot="footer">
@@ -101,34 +101,79 @@
 
             <!-- 打印模板 -->
             <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
-                <div slot="printContent" class="printContent">
-                    <p><span class="redSpan redUL" style="width:200px;display:inline-block;">{{currRow && currRow.ycdjg}}</span><span class="redSpan">:</span></p>
-                    <p class="indent">现在你处的<span class="redSpan">{{currRow && currRow.name}}</span>同志（身份证号:<span class="redSpan">{{currRow && currRow.idNum}}</span>），要求（委托存档/调出档案），经研究请按下列第（<input type="text" v-model="printData.selectOption" style="width:100px;"/>）项办理。</p>
-                    <p class="indent">一、如同意调出，请将该同志人事档案、现实表现等材料通过机要转递寄来。档案需装订成册、有完整档案目录，请附档案转递通知单。</p>
-                    <p class="indent">二、同意调入，请办理调动手续，于<input type="text" v-model="printData.year" style="width:80px;"/>年<input type="text" v-model="printData.month" style="width:40px;"/>月<input type="text" v-model="printData.day" style="width:40px;"/>日前介绍到我中心报到。</p>
-                    <p class="indent">三、经研究同意调出档案，你处能否接收，请复函。</p>
-                    <p class="indent">四、经研究，暂不同意调出档案，特此函告。</p>
-                    <p class="indent">五、</p>
-                    <div class="bottom">
-                        <div class="bottomRight">
-                            <p>{{nowData}}</p>
+                <div slot="printContent" style="color: #000" class="printContent">
+                    <p style="font-size: 21px;"><span class="redSpan redUL" style="display:inline-block;padding: 0 10px 0 0;">{{currRow && currRow.ycdjg}}</span><span class="redSpan printConFontWeight" style="padding: 0px;font-size: 25px;">:</span></p>
+                    <p class="indent" style="margin-bottom: 0;font-size: 22px"><span class="redSpan redUL" style="padding: 0 10px 0 0;">{{currRow && currRow.name}}</span>同志（身份证号:<span class="redSpan redUL printConNumFontFamily" style="padding: 0 10px 0 0;margin-left: 10px;">{{currRow && currRow.idNum}}</span>），已申请委托我单位管理档案。根据中组部、人社部等五部门《关于进一步加强流动人员人事档案管理服务工作的通知》（人社部发〔<span class="printConNumFontFamily">2014</span>〕<span class="printConNumFontFamily">90</span>号）和人社部办公厅《关于简化优化流动人员人事档案管理服务的通知》（人社厅发〔<span class="printConNumFontFamily">2016</span>〕<span class="printConNumFontFamily">75</span>号）文件规定，如同意，请将其人事档案通过机要渠道转递至我单位。</p>
+                    <p class="indent" style="margin: 0;font-size:22px;"><span class="printConFontWeight" style="font-size:22px;">注：</span><span class="indent" style="font-size:22px;"><span class="printConNumFontFamily">1.</span>转来的档案需装订成册、有完整档案目录。</span></p>
+                    <p class="indent" style="margin-top: 0;"><span style="margin-left: 40px;font-size:22px;"><span class="printConNumFontFamily">2.</span>请附档案转递通知单。</span></p>
+                    <div v-html="nowData" style="display:flex; justify-content: flex-end;margin-right:35px;margin-top: 20px;">
+
+                    </div>
+
+                    <!-- 二维码 -->
+                    <div class="currErweima">
+                        <div style="width:120px;height:100px;">
+                            <img :src="erweimaPath" alt="二维码" style="width: 100px;height:100px;"/>
                         </div>
-                        <div class="commonFont clear" style="margin-bottom:20px;font-size:16px;">
-                            <p>档案寄往：江西省人才流动中心（代理服务部收）</p>
-                            <p>地&nbsp;&nbsp;址：南昌市二七北路266号</p>
-                            <p>邮&nbsp;&nbsp;编：330046</p>
-                            <p>电&nbsp;&nbsp;话：0791-86371944</p>
-                            <p>到档查询：http://news.jxrcw.com/rsdl/ddxx.asp</p>
+                        <div style="display: flex;flex-direction: column;justify-content: space-between;font-weight: bold;font-size: 21px">
+                            <div>机要地址：<span v-html="loginData['orgAddress']"></span></div>
+                            <div>邮<span style="margin-left:41px;">编：<span class="printConNumFontFamily">{{loginData.orgPostalCode}}</span></span></div>
+                            <div>电<span style="margin-left:41px;">话：<span class="printConNumFontFamily">{{loginData.orgPhone}}</span></span></div>
+
                         </div>
-                        <div class="otherDashCont">
-                            <p style="font-size:14px;font-weight:bold;text-align:center">请沿此线剪下，将线下部分贴于档案背面，否则不予接收，谢谢配合！</p>
-                            <div class="bottomRight">
-                                <span class="redSpan" style="font-size:22px;font-weight:bold;">NO: {{fileNum}}</span>
-                            </div>
-                            <div class="dashCont clear">
-                                <p>档案人姓名: <span class="redSpan">{{currRow && currRow.name}}</span></p>
-                                <p>{{nowData}}</p>
-                            </div>
+                        
+                    </div>
+                    <div class="otherDashCont">
+                        <p style="font-size:14px;font-weight:bold;text-align:center">请沿此线剪下，将线下部分贴于档案正面，便于我们接收，谢谢！</p>
+                        <!-- <div class="bottomRight">
+                            <span class="redSpan" style="font-size:22px;font-weight:bold;">NO: {{fileNum}}</span>
+                        </div> -->
+                        <div style="font-size: 30px;font-weight: bold;margin-bottom: 15px;margin-top:20px;font-weight: bold;">
+                            <p style="letter-spacing: 2px;font-family: '仿宋';" v-html="loginData['orgAddress']"></p>
+                            <p style="font-family: '仿宋';">{{firstTitle}}<span style="margin-left: 20px;font-family: '仿宋';">代理服务部收</span></p>
+                        </div>
+                        <div class="dashCont clear">
+                            <p>档案人姓名: <span class="redSpan printConFontWeight redUL" style="padding:0 10px 0 0;margin-left:10px;">{{currRow && currRow.name}}</span></p>
+                            <!-- <p>{{nowData}}</p> -->
+                            <p>调档函编号：<span class="redSpan redUL printConFontWeight printConNumFontFamily" style="padding:0 10px 0 0;margin-left:5px;">{{fileNum}}</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="false" slot="printContentDispatch" style="color: #000" class="printContent">
+                    <p style="font-size: 21px;"><span class="redSpan redUL" style="display:inline-block;padding: 0 10px 0 0;">{{currRow && currRow.ycdjg}}</span><span class="redSpan printConFontWeight" style="padding: 0px;font-size: 25px;">:</span></p>
+                    <p class="indent" style="margin-bottom: 0;font-size: 22px">兹有贵单位<span class="redSpan redUL" style="padding: 0 10px 0 0;">{{currRow && currRow.name}}</span>（身份证号:<span class="redSpan redUL printConNumFontFamily" style="padding: 0 10px 0 0;margin-left: 10px;">{{currRow && currRow.idNum}}</span>），已被聘为江西省人力资源有限公司派遣员工，并签订劳动合同，现特发此函至贵处，拟调该同志的人事档案。请将其人事档案与人事关系于<span class="printConNumFontFamily">2020</span>年<span class="printConNumFontFamily">1</span>月<span class="printConNumFontFamily">19</span>日前通过机要途径转至我中心。为荷。</p>
+
+                    <div v-html="nowData" style="display:flex; justify-content: flex-end;margin-right:35px;margin-top: 20px;">
+
+                    </div>
+
+                    <!-- 二维码 -->
+                    <div class="currErweima">
+                        <div style="width:120px;height:100px;">
+                            <img :src="erweimaPath" alt="二维码" style="width: 100px;height:100px;"/>
+                        </div>
+                        <div style="display: flex;flex-direction: column;justify-content: space-between;font-weight: bold;font-size: 21px">
+                            <div>机要地址：<span v-html="loginData['orgAddress']"></span></div>
+                            <div>邮<span style="margin-left:41px;">编：<span class="printConNumFontFamily">{{loginData.orgPostalCode}}</span></span></div>
+                            <div>电<span style="margin-left:41px;">话：<span class="printConNumFontFamily">{{loginData.orgPhone}}</span></span></div>
+
+                        </div>
+                        
+                    </div>
+                    <div class="otherDashCont">
+                        <p style="font-size:14px;font-weight:bold;text-align:center">请沿此线剪下，将线下部分贴于档案正面，便于我们接收，谢谢！</p>
+                        <!-- <div class="bottomRight">
+                            <span class="redSpan" style="font-size:22px;font-weight:bold;">NO: {{fileNum}}</span>
+                        </div> -->
+                        <div style="font-size: 30px;font-weight: bold;margin-bottom: 55px;margin-top:35px;font-weight: bold;">
+                            <p style="letter-spacing: 2px;font-family: '仿宋';" v-html="loginData['orgAddress']"></p>
+                            <p style="font-family: '仿宋';">{{firstTitle}}<span style="margin-left: 20px;font-family: '仿宋';">档案室收</span></p>
+                        </div>
+                        <div class="dashCont clear">
+                            <p>档案人姓名: <span class="redSpan printConFontWeight redUL" style="padding:0 10px 0 0;margin-left:10px;">{{currRow && currRow.name}}</span></p>
+                            <!-- <p>{{nowData}}</p> -->
+                            <p>调档函编号：<span class="redSpan redUL printConFontWeight printConNumFontFamily" style="padding:0 10px 0 0;margin-left:5px;">{{fileNum}}</span></p>
+                            <p>单位：<span class="redSpan redUL printConFontWeight printConNumFontFamily" style="padding:0 10px 0 0;margin-left:5px;">调档函编号</span></p>
                         </div>
                     </div>
                 </div>
@@ -140,7 +185,7 @@
 </template>
 
 <script>
-
+import utils from "../../utils/util.js";
 // 委托单位名称 To 委托单位编号
 function companyNameToNum(codeVal){
   // console.log(codeVal)
@@ -184,7 +229,7 @@ export default {
 
     data() {
         return {
-                            
+            loginData: JSON.parse(sessionStorage.getItem('loginData'))['loginUser'],                
             tableTotalNum: 0,   //总页数：默认为0
             tempCondition:null,
             tableLoading:false,
@@ -299,13 +344,6 @@ export default {
                         scopedSlots: { customRender: "cursorTitle" }
                     },
                     {
-                        title: "人才函字",
-                        dataIndex: "wrchz",
-                        key: "wrchz",
-                        width: 150,
-                        scopedSlots: { customRender: "cursorTitle" }
-                    },
-                    {
                         title: "原存档机构",
                         dataIndex: "ycdjg",
                         key: "ycdjg",
@@ -382,7 +420,7 @@ export default {
                         reg: '',
                         tip: '* 请输入姓名',
                         status: '',
-                        colWidth:[24,24],
+                        colWidth:[12,24],
                     },
                     {
                         title: '公民身份号码/社保卡号',
@@ -398,7 +436,88 @@ export default {
                         reg: 'testid',
                         tip: '* 请输入正确格式的公民身份号码/社保卡号',
                         status: '',
-                        colWidth:[24,24],
+                        colWidth:[12,24],
+                    },
+                    {
+                        title: '联系电话',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入联系电话",
+                        key: "dabh",
+                        name: "dabh",
+                        val: void 0,
+                        postname: "dabh",
+                        maxlength: 11,
+                        minlength: 11,
+                        reg: 'testMobile',
+                        tip: '* 请输入正确格式的联系电话',
+                        status: '',
+                        colWidth:[12,24],
+                    },
+                    {
+                        title: '开具日期',
+                        otherType: "date",
+                        required: false,
+                        disabled:true,
+                        placeholder: "请选择开具日期",
+                        key: "kjDate",
+                        name: "kjDate",
+                        val: moment(new Date()),
+                        postname: "kjDate",
+                        reg: '',
+                        tip: '* 请选择开具日期',
+                        status: '',
+                        colWidth:[12,24],
+                    },
+
+                    {
+                        title: '委托存档单位编号',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入委托存档单位编号",
+                        key: "dwbh",
+                        name: "dwbh",
+                        val: void 0,
+                        maxlength: 20,
+                        minlength: 0,
+                        reg: '',
+                        tip: '',
+                        postname:'dwbh',
+                        status: '',
+                        colWidth:[12,24],
+                        connectTo:['dwmc'], //关联到委托单位名称
+                        connectToFun:[companyNumToName], 
+                    },
+                    {
+                        title: '委托存档单位名称',
+                        otherType: 'searchSelect',
+                        required: false,
+                        placeholder: "请选择委托存档单位名称",
+                        key: 'dwmc',
+                        name: 'dwmc',
+                        val: void 0,
+                        children: [],
+                        status: '',
+                        colWidth:[12,24],
+                        connectTo:['dwbh'], //关联到委托单位编号
+                        connectToFun:[companyNameToNum],
+                    },
+                    
+                    {
+                        title: '工作单位名称',
+                        type: "text",
+                        required: false,
+                        placeholder: "请输入工作单位名称",
+                        key: "fzdw",
+                        name: "fzdw",
+                        val: void 0,
+                        postname: "fzdw",
+                        maxlength: 50,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入工作单位名称',
+                        status: '',
+                        colWidth:[12,24],
                     },
                     {
                         title: '原存档单位名称',
@@ -414,7 +533,22 @@ export default {
                         reg: '',
                         tip: '* 请输入原存档单位名称',
                         status: '',
-                        colWidth:[24,24],
+                        colWidth:[12,24],
+                    },
+                    {
+                        title: '转递原因',
+                        otherType: "textarea",
+                        required: false,
+                        placeholder: "请输入转递原因",
+                        key: "zdyy",
+                        name: "zdyy",
+                        val: void 0,
+                        postname: "zdyy",
+                        maxlength: 200,
+                        minlength: 0,
+                        reg: '',
+                        tip: '* 请输入转递原因',
+                        status: '',
                     },
                 ]
             },
@@ -473,7 +607,7 @@ export default {
                         title: '开具日期',
                         otherType: "date",
                         required: false,
-                        disabled:true,
+                        // disabled:true,
                         placeholder: "请选择开具日期",
                         key: "kjDate",
                         name: "kjDate",
@@ -588,14 +722,14 @@ export default {
             editModal:{
                 defaultCon: {
                     labelCol: {
-                        sm: { span: 6 },
-                        xl: { span: 6 },
-                        xxl: { span: 6 }
+                        sm: { span: 8 },
+                        xl: { span: 8 },
+                        xxl: { span: 8 }
                     },
                     wrapperCol: {
-                        sm: { span: 18 },
-                        xl: { span: 18 },
-                        xxl: { span: 18 }
+                        sm: { span: 16 },
+                        xl: { span: 16 },
+                        xxl: { span: 16 }
                     }
                 },
             },
@@ -627,8 +761,8 @@ export default {
             },
 
             fileNum:'',
-            firstTitle:'江西省人才流动中心',
-            secondTitle:'调(档)函',
+            firstTitle: JSON.parse(sessionStorage.getItem('loginData')).loginUser['orgName'],
+            secondTitle:'调档函',
             nowData:moment(new Date()).format("YYYY年MM月DD日"),
             printLoading:false,
             printData:{
@@ -637,6 +771,8 @@ export default {
                 month:"",
                 day:"",
             },
+            erweimaPath: '',  //二维码路径
+            printCount: 0,
         };
     },
 
@@ -677,9 +813,14 @@ export default {
             this.$http.fetchPost('businessLetter@getBusinessLetterList.action',{
                 page: pageNum,
                 limit: limitNum,
+                orgName: JSON.parse(sessionStorage.getItem('loginData')).loginUser['orgName'],
                 ...condition
             }).then((res)=>{
                 if(Number(res.code) === 0){
+                    // this.erweimaPath = this.$targetHost + 'weixin/111.jpg';
+                    let tempPathArr =  res.savePath.split('/');
+                    this.erweimaPath = this.$targetHost + tempPathArr[tempPathArr.length-2] + '/' + tempPathArr[tempPathArr.length -1];
+                    
                     this.tableTotalNum = res.count;
                     this.initArr.tabledataArr = res.data;
                     this.initArr.tabledataArr.forEach((element, index) => {
@@ -717,18 +858,25 @@ export default {
                     Object.assign(item,{children:tempCompanylist})
                 }
             });
+            
+            this.editFormData.formInputs.forEach(item => {
+                if(item.name === 'dwmc'){
+                    Object.assign(item,{children:tempCompanylist})
+                }
+            });
         },
         
         // 预览编辑
         previewEdit(currRowdata){
             this.editVisiable = true;
             this.currRow = currRowdata;
-            this.editFormData.formInputs.forEach(item => {
-                Object.assign(item,{
-                    val:currRowdata[item.name],
-                    status:void 0,
-                })
-            })
+            this.editFormData = utils.getNewFormSearch(currRowdata, this.editFormData)
+            // this.editFormData.formInputs.forEach(item => {
+            //     Object.assign(item,{
+            //         val:currRowdata[item.name],
+            //         status:void 0,
+            //     })
+            // })
         },
 
         // click 新增
@@ -793,7 +941,12 @@ export default {
             let result = this.$refs.addForm.getFormData();
             if(result.isRight){
                 this.saveAddLoading = true;
-                this.$http.fetchPost('businessLetter@insertBusinessLetter.action',{...result.postObj,dwmc:result.postObj.companyId+','+result.postObj.companyNum})
+                this.$http.fetchPost('businessLetter@insertBusinessLetter.action',{
+                    ...result.postObj,
+                    // dwmc:result.postObj.companyId+','+result.postObj.companyNum
+                    dwmc: result.postObj.companyId,   //名称
+                    dwbh: result.postObj.companyNum   //编号
+                })
                 .then(res => {
                     // console.log(res);
                     if(Number(res.code) === 0){
@@ -873,13 +1026,20 @@ export default {
 
         // 打印
         print(){
-            this.$refs.print.printFun();
-            
+            if(this.printCount === 0){
+                this.$refs.print.printFun();
+                this.printCount ++;
+            } else{
+                this.$refs.print.printOtherFun();
+            }
         },
     },
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
+        
+        this.nowData = this.commonFun.toNumberFontFamily(this.nowData, 'printConNumFontFamily'); // 日期中数字字体设置
+        this.loginData['orgAddress'] = this.commonFun.toNumberFontFamily(this.loginData['orgAddress'], 'printConNumFontFamily'); 
         // this.getTableData(null,1,10);
     },
 
@@ -907,6 +1067,7 @@ export default {
 </script>
 
 <style scoped>
+
 .editModalForm,.addModalForm{
     padding-top: 10px;
     height: 100%;
@@ -918,14 +1079,20 @@ export default {
 .titleSlot>p{
     margin-right: 40px;
 }
-.titleSlot>span{
-    color:#2d8cf0;
-}
 .otherDashCont{
     border-top: 2px dashed #333333;
 }
 .dashCont{
     display: flex;
     justify-content: space-between;
+    /* font-weight: bold; */
 }
+
+.currErweima{
+    margin: 60px 0;
+    display: flex;
+    justify-content: flex-start; 
+    width: 100%;
+}
+
 </style>

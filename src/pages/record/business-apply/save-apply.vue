@@ -443,9 +443,6 @@ export default {
     .titleSlot>p{
         margin-right: 40px;
     }
-    .titleSlot>span{
-        color:#2d8cf0;
-    }
     .content{
         height: 100%;
         overflow-y: auto;

@@ -654,9 +654,6 @@ export default {
 .titleSlot>p{
   margin-right: 40px;
 }
-.titleSlot>span{
-  color:#2d8cf0;
-}
 .tabPane{
   height: 100%;
   overflow: auto;

@@ -26,7 +26,7 @@
       >
         <div class="modalInnerContainer">
           <!-- 打印模板 -->
-          <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+          <TemplateOfPrint :fileNum="fileNum" :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print" :isNoWatermark='true'>
               <div slot="printContent" class="printContent">
                 <p class="indent">
                   今收到<span class="redSpan">{{currRow && currRow.perName}}</span>同志（档案管理编号：<span class="noFontColorSpan">{{currRow && currRow.archNumber}}</span>)<span class="redSpan">{{currRow && currRow.materialNames}}</span>等材料，共（<span class="redSpan">{{currRow && currRow.materialNums}}</span>）份（套）
@@ -284,9 +284,10 @@ export default {
         signName: ''
       },
       fileNum: '',  //打印---文件编号
-      firstTitle: '江西省人才流动中心', //打印--大标题
+      firstTitle: JSON.parse(sessionStorage.getItem('loginData')).loginUser['orgName'], //打印--大标题
       secondTitle: '回执',  //打印---小标题
       nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
+      printCount: 0,
     };
   },
 
@@ -349,7 +350,7 @@ export default {
               e0108a: element.e0108a,
               e0112: element.e0112,
               e0112Name: element.e0112 === '0' ? '已接收' : '待接收',
-              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '已出库'),
+              isInware: utils.isInwareStatusFun(element.archiveStatus, element.isInware),
             })
           });
         } else{
@@ -489,13 +490,19 @@ export default {
       /***
        * 功能：打印操作
        */
-      this.$refs.print.printFun();
+      if(this.printCount === 0){
+          this.$refs.print.printFun();
+          this.printCount ++;
+      } else{
+          this.$refs.print.printOtherFun();
+      }
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getAgentOptions();
+    this.$store.dispatch("getinfoTableCheckData", []);
     //this.getTableData(null, 1, 10);
     let dpiArr = this.utils.js_getDPI();
     this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);

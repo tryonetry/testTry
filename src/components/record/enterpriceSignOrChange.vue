@@ -10,6 +10,25 @@
       </a-row>
       
     </TableFromSearch>
+
+    <!-- 提示编号模态框 -->
+    <div class="addModal">
+      <a-modal
+        centered
+        title="提示信息"
+        :visible="visible"
+        :width="'500px'"
+        @cancel="messageCancel"
+        style="height:300px;overflow: hidden;"
+        :maskClosable='false'
+        :footer="null"
+      >
+        <div class="detailMessage">
+          <p>委托存档单位名称： {{tempPostName}}</p>
+          <p>委托存档单位编号： {{tempPostNum}}</p>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
@@ -30,21 +49,6 @@ export default {
       departInfoArr: {
         formInputs: [
           {
-            title: "委托存档单位编号",
-            type: "text",
-            required: true,
-            placeholder: "请输入委托存档单位编号",
-            key: "companyNumber",
-            name: "companyNumber",
-            val: void 0,
-            postname: "companyNumber",
-            maxlength: 20,
-            minlength: 0,
-            reg: 'testNumAndChar',
-            tip: '* 请输入正确的委托存档单位编号',
-            status: '',
-          },
-          {
             title: "委托存档单位名称",
             type: "text",
             required: true,
@@ -57,6 +61,21 @@ export default {
             minlength: 0,
             reg: '',
             tip: '* 请输入委托存档单位名称',
+            status: '',
+          },
+          {
+            title: "委托存档单位统一社会信用代码",
+            type: "text",
+            required: true,
+            placeholder: "请输入以数字开头的18位数字或数字与大写字母组合",
+            key: "businessLicense",
+            name: "businessLicense",
+            val: "",
+            postname: "businessLicense",
+            maxlength: 40,
+            minlength: 0,
+            reg: 'testNumAndChar',
+            tip: '* 请输入委托存档单位统一社会信用代码',
             status: '',
           },
           {
@@ -271,18 +290,18 @@ export default {
             status: '',
           },
           {
-            title: "委托存档单位统一社会信用代码",
+            title: "委托存档单位编号",
             type: "text",
-            required: true,
-            placeholder: "请输入以数字开头的18位数字或数字与大写字母组合",
-            key: "businessLicense",
-            name: "businessLicense",
-            val: "",
-            postname: "businessLicense",
+            required: false,
+            placeholder: "此项自动生成",
+            key: "companyNumber",
+            name: "companyNumber",
+            val: void 0,
+            postname: "companyNumber",
             maxlength: 40,
             minlength: 0,
-            reg: 'testNumAndChar',
-            tip: '* 请输入委托存档单位统一社会信用代码',
+            reg: '',
+            tip: '',
             status: '',
           },
           {
@@ -332,7 +351,9 @@ export default {
       btnTitle:'提交',
       tempEnterPriceData:{},
       hasEnterPriceData:false,
-      
+      visible: false,
+      tempPostName: '',  //当前提交的单位名称
+      tempPostNum: '',  //当前后台自动生成返回的存档编号
     };
   },
 
@@ -400,6 +421,11 @@ export default {
                 if(Number(res.code) === 0){
                   _this.$message.success('提交成功');
                   _this.resetFormBtn();
+                  if(_this.btnTitle === '提交'){
+                    _this.visible = true;
+                    _this.tempPostName = res.companyName;  //返回的单位名称
+                    _this.tempPostNum = res.companyNum;  // 返回的单位存档编号
+                  }
                 }else{
                   _this.$message.error('提交失败,请稍后重试');
                 }
@@ -473,7 +499,13 @@ export default {
           Object.assign(item,{
             val:this.moment(new Date()),
           })
-        }else{
+        }else if(item.name === 'companyNumber'){
+          Object.assign(item,{
+            val:void 0,
+            status:void 0,
+            disabled:true,
+          })
+        } else{
           Object.assign(item,{
             val:void 0,
             status:void 0,
@@ -525,6 +557,10 @@ export default {
           if(item.name === 'industryNature') item.children = Data.belongIndustryList;
       })
     },
+
+    messageCancel(){
+      this.visible = false;
+    }
 
   },
 

@@ -245,7 +245,7 @@ export default {
               key: element.ao01000,
               a0100a: element.a0100a,
               a0101: element.a0101,
-              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
               a0184: element.a0184,
               ao0102: element.ao0102 === '1' ? '档案查询' : '档案转出',
               ao0103: element.ao0103, 

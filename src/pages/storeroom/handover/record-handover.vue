@@ -26,7 +26,7 @@
       >
         <div class="modalInnerContainer">
           <!-- 打印模板 -->
-          <TemplateOfPrint :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print">
+          <TemplateOfPrint :firstTitle="firstTitle" :secondTitle="secondTitle" ref="print" :isNoWatermark='true'>
               <div slot="printContent" class="printContent">
                 <a-table :columns="printTableColumns" :dataSource="printTableData" bordered :pagination="false"></a-table>
                 <div class="bottom">
@@ -252,7 +252,7 @@ export default {
       confirmLoading: false, //确认加载状态 默认为false
       modalWidth: '',  //modal的宽度
 
-      firstTitle: '江西省人才流动中心', //打印--大标题
+      firstTitle: JSON.parse(sessionStorage.getItem('loginData')).loginUser['orgName'], //打印--大标题
       secondTitle: '档案交接清单',  //打印---小标题
       nowData:moment(new Date()).format("YYYY年MM月DD日"),  //打印--日期
       printTableColumns: [
@@ -359,7 +359,7 @@ export default {
               e0106a: element.e0106a,
               e0112: element.e0112,
               e0112Name: element.e0112 === '0' ? '已接收' : '待接收',
-              isInware:element.isInware === "2" ? "已转出" : (element.isInware === "0" ?"在库" : '借出'),
+              isInware: utils.isInwareStatusFun(element.archiveStatus, element.isInware),
             })
           });
         } else{
@@ -484,6 +484,7 @@ export default {
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
     this.getAgentOptions();
+    this.$store.dispatch("getinfoTableCheckData", []);
     //this.getTableData(null, 1, 10);
     let dpiArr = this.utils.js_getDPI();
     this.modalWidth = Math.ceil(dpiArr[0] * 8.27 * 1.2 + 300);

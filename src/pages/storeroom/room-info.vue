@@ -251,17 +251,17 @@ export default {
             status: ""
           },
           {
-            title: "分区数",
+            title: "分区总数",
             type: "text",
             required: true,
-            placeholder: "请输入分区数",
+            placeholder: "请输入分区总数",
             key: "whAreaNum",
             name: "whAreaNum",
             val: void 0,
             maxlength: 20,
             minlength: 0,
             reg: "",
-            tip: "请输入分区数",
+            tip: "请输入分区总数",
             postname: "whAreaNum",
             status: ""
           },
@@ -400,14 +400,15 @@ export default {
           whManagerPhone: "",
           whDesc: ""
         };
-        this.roomInfoForm.formInputs.forEach(item => {
-          item.status = '';
-        })
       } else {
         //编辑操作
         initData = data;
         this.currentId = data["key"];
       }
+      this.roomInfoForm.formInputs.forEach(item => {
+        item.status = '';
+      })
+
       this.roomInfoForm = this.utils.getNewFormSearch(
         initData,
         this.roomInfoForm

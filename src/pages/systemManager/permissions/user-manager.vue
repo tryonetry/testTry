@@ -386,13 +386,14 @@ export default {
       }).then(res => {
         let result = this.$refs.addForm.getFormData();
         if(result.isRight){
+          let tempUserPhoto = this.filterTreeDataFun(result.postObj.orgId, this.treeData);
           if(Number(res.code) === 2 && result.isRight){
             // 验证通过
             if(!this.currUserData){
-
               // 添加
               this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
                 ...result.postObj,
+                userPhoto: tempUserPhoto
               }).then(res => {
 
                 if(Number(res.code) === 0){
@@ -412,6 +413,7 @@ export default {
               this.$http.fetchPost("user@InserOrUpdateSysUser.action",{
                 ...result.postObj,
                 userId:this.currUserData.userId,
+                userPhoto: tempUserPhoto
               }).then(res => {
                 // console.log(res);
                 if(Number(res.code) === 0){
@@ -436,6 +438,25 @@ export default {
         
       });
       
+    },
+
+
+    filterTreeDataFun(currOrgId, treeDataArr){
+      /**
+       * 功能：根据当前选择的所属机构，在tree里查找对应的user_photo
+       * 参数：currOrgId:当前选择所属机构id值；  treeDataArr：tree数据
+       */
+      for(let i = 0; i < treeDataArr.length; i++){
+        if(treeDataArr[i].key === currOrgId){
+          return treeDataArr[i].user_photo ? treeDataArr[i].user_photo : '000000';
+        } 
+        if(treeDataArr[i].children && treeDataArr[i].children.length > 0){
+          let findResult =  this.filterTreeDataFun(currOrgId, treeDataArr[i].children);
+          if(findResult){
+            return findResult;
+          }
+        }
+      }
     },
 
     // 关闭
@@ -570,8 +591,5 @@ export default {
   }
   .titleSlot>p{
     margin-right: 40px;
-  }
-  .titleSlot>span{
-    color:#2d8cf0;
   }
 </style>

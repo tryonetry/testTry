@@ -9,6 +9,25 @@
         </a-col>
       </a-row>
     </RecordInfo>
+
+    <!-- 提示姓名和存档编号模态框 -->
+    <div class="addModal">
+      <a-modal
+        centered
+        title="提示信息"
+        :visible="visible"
+        :width="'500px'"
+        @cancel="handleCancel"
+        style="height:300px;overflow: hidden;"
+        :maskClosable='false'
+        :footer="null"
+      >
+        <div class="detailMessage">
+          <p>姓名：{{tempPostName}}</p>
+          <p>存档编号： {{tempPostArchiveNum}}</p>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 
@@ -29,6 +48,9 @@ export default {
   data() {
     return {
       confirmLoading:false,
+      visible: false,
+      tempPostName: '',  //当前提交的姓名
+      tempPostArchiveNum: '', //当前提交的存档编号
     };
   },
 
@@ -62,6 +84,9 @@ export default {
           if(Number(res.code) === 0){
             _this.$message.success('提交成功');
             _this.$refs.accountInfoForm.clearDataAndStatus();
+            _this.visible = true;
+            _this.tempPostName = res.a0101;
+            _this.tempPostArchiveNum = res.a0100A;
           }else{
             _this.$message.warning('抱歉,提交失败,请重试');
           }
@@ -73,6 +98,9 @@ export default {
           _this.confirmLoading = false;
         })
       }
+    },
+    handleCancel(){
+      this.visible = false;
     },
     acceptEditParams(){
       /***
@@ -113,4 +141,5 @@ export default {
   overflow-y:auto;
   padding-bottom: 40px;
 }
+
 </style>

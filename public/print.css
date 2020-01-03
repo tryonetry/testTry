@@ -1,0 +1,27 @@
+#printPage{
+    padding: 20px 30px;
+    box-sizing: border-box;
+}
+/* 文件号 */
+.fileNumContainer{
+    overflow: hidden;
+}
+.fileNumContainer > p{
+    float: right;
+    color: red;
+    font-weight: bold;
+    font-size: 22px;
+    margin-bottom: 40px;
+}
+/* 一级标题 和  二级标题 */
+.bigTitle>h1,.bigTitle>h2{
+    text-align: center;
+    /* font-weight: bold; */
+}
+.bigTitle>h1{
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+.bigTitle>h2{
+    font-size: 34px;
+}

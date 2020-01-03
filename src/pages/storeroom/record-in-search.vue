@@ -299,10 +299,10 @@ export default {
               num: (pageNum - 1) * limitNum + index + 1,
               key: element.waId,    //唯一的id值； 现在由于垃圾数据影响会报错key值重复
               a0101: element.a0101,
-              a0104: element.a0104 == "1" ? "男" : "女",
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
               a0184: element.a0184,
               archivesIdentity: element.archivesIdentity ? (element.archivesIdentity == "1" ? "干部" : "工人") : '',
-              shelvesNo: (element.whdArea ? element.whdArea : '') + '区' + (element.waColumnCode ? element.waColumnCode : '')  + (element.waLayerCode ? element.waLayerCode : '') + '排' + (element.orderNo ? element.orderNo : '') + '号',
+              shelvesNo: (element.whdArea ? element.whdArea : '') + '区' + (element.waColumnCode ? element.waColumnCode : '') + '列' + (element.waLayerCode ? element.waLayerCode : '') + '层' + (element.orderNo ? element.orderNo : '') + '号',
               inwareOperatorName: element.inwareOperatorName,
               archHandover: element.archHandover,
               inwareDate: element.inwareDate,

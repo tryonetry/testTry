@@ -13,6 +13,7 @@
     "echarts": "^4.2.1",
     "es6-promise": "^4.2.6",
     "print-js": "^1.0.61",
+    "v-viewer": "^1.5.1",
     "vue": "^2.6.6",
     "vue-amap": "^0.5.10",
     "vue-awesome-swiper": "^3.1.3",

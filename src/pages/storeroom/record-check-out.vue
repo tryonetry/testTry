@@ -147,7 +147,7 @@ export default {
               key: "outwareType",
               name: "outwareType",
               postname: "outwareType",
-              val: void 0,
+              val: 'transferout',
               children: [
                 {
                   itemCode: "transferout",
@@ -423,7 +423,7 @@ export default {
               key: element.id,
               a0100a: element.a0100a,
               a0101: element.a0101,
-              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : '未知的性别')),
+              a0104: element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
               a0184: element.a0184,
               shelvesNo: element.shelvesNo,
               applyName: element.applyName,
@@ -547,7 +547,8 @@ export default {
 
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
-    //this.getTableData(null, 1, 10);
+    this.getTableData(null, 1, 10);
+    this.$store.dispatch("getinfoTableCheckData", []);
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）

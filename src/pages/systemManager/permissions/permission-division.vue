@@ -33,8 +33,8 @@
     centered 
     :visible="divisionVisiable"
     @cancel="handleCancel"
-    width="50%"
-    style="height:60%;overflow: hidden;"
+    width="70%"
+    style="height:80%;overflow: hidden;"
     :maskClosable='false'
   >
     <div slot="title" class="titleSlot">
@@ -160,6 +160,7 @@ export default {
         otherTreeFlag:true,
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check
+        isNoTitle: true,  //表格上--标题不显示
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -216,6 +217,7 @@ export default {
         tableCheck: true, //table是否可以check
         noPagination:true,
         superimposeWidth:true,
+        isNoTitle: true,  //表格上--标题不显示
         selectedRowKeys:[], // 默认选择项
         //table的表头
         columnsArr: [
@@ -918,7 +920,8 @@ export default {
     min-width: 215px;
     height: 100%;
     float: left;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
     padding: 10px 12px;
 }
 .rightTable{
@@ -949,8 +952,5 @@ export default {
 }
 .titleSlot>p{
   margin-right: 40px;
-}
-.titleSlot>span{
-  color:#2d8cf0;
 }
 </style>

@@ -127,6 +127,7 @@ export default {
        * 功能：tree的点击函数，并且把当前点击node传送给父组件
        * 参数：selectedKeys：key(当前点击的treeNode)
        */
+      
       this.dataList.forEach(item => {
         if (item.key == selectedKeys) {
           this.selectTreeValue = item;

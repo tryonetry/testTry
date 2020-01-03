@@ -5,15 +5,16 @@
       <OrganTree @sendTreeValue="acceptTreeValue"></OrganTree>
     </div>
     <div :class="treeFlag ? 'viewContent' : 'noviewContent'">
-
+      <FormHeader :formTitle="'查询条件'" v-if="!isNoTitle"></FormHeader>
       <!-- 搜索框上方的内容 -->
       <slot name="underSearchCont"></slot>
-
+      
       <!-- table 搜索框 -->
       <TableFromSearch :formDataArr="formData" @searchForm="searchFormFun" @bundleChange="bundleChangeFun" :layout="layout" :tableBodyRize="tableBodyRize">
         <slot name="formAction"></slot>
       </TableFromSearch>
 
+      <FormHeader :formTitle="'查询结果'" v-if="!isNoTitle"></FormHeader>
       <div class="tableCon" v-if="!isHasNotTable" ref="tableCon">
         
         <!-- checkbox -->
@@ -190,12 +191,14 @@ import moment from 'moment';
 import { isMoment } from 'moment';
 import { setTimeout } from 'timers';
 import utils from '../utils/util';
+import FormHeader from '@/components/formHeader'
 
 export default {
   name: "TableView",
   components: {
     OrganTree,
     TableFromSearch,
+    FormHeader,
   },
   props: ["initArrData", "totalCount","filterTableCheck","loading","layout","initHeight"],
   data() {
@@ -205,6 +208,7 @@ export default {
       treeFlag: Boolean, //左侧树是否存在
       otherTreeFlag:Boolean, // 其他树
       isHasNotTable: Boolean, //table是否存在： true：不存在， false：存在
+      isNoTitle: Boolean,  //在tableview---查询条件、查询结果标题是否存在：true：不存在；false--存在
       columns: [], //table表头
       tabledata: [], //table数据
       tablecheck: Boolean, //table是否可以选择
@@ -232,6 +236,7 @@ export default {
           this.bordered = newVal.bordered ? newVal.bordered : false;
           this.isEditAndAdd = newVal.isEditAndAdd ? newVal.isEditAndAdd : false;
           this.superimposeWidth = newVal.superimposeWidth ? newVal.superimposeWidth : false;
+          this.isNoTitle = newVal.isNoTitle ? newVal.isNoTitle : false;
           this.editableCol = newVal.editableCol;
           this.formData = newVal.formData;
           this.columns = newVal.columnsArr;
@@ -246,6 +251,7 @@ export default {
 
           this.selectedRowKeys = newVal.selectedRowKeys ? newVal.selectedRowKeys : [];
           // 单元格宽度溢出处理
+
           this.$nextTick(function(){
             
             let theadWidthArr = [];
@@ -283,7 +289,6 @@ export default {
             });
 
           });
-
         }
       }
     },
@@ -594,7 +599,7 @@ export default {
   min-width: 170px;
   height: 100%;
   float: left;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px 12px;
 }
 
@@ -602,7 +607,7 @@ export default {
 .noviewContent {
   height: 100%;
   float: right;
-  padding: 10px 20px;
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
   overflow: auto;
@@ -615,6 +620,7 @@ export default {
 
 .noviewContent {
   width: 100%;
+  overflow: hidden;
 }
 .tableLink {
   color: #2d8cf0;

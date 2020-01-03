@@ -79,6 +79,7 @@
 
 <script>
 import TableView from "@/components/tableView";
+import utils from '../../../utils/util';
 export default {
     name:"MaterialTransfer",
     //import引入的组件需要注入到对象中才能使用
@@ -216,7 +217,7 @@ export default {
                         title: "接收日期",
                         dataIndex: "auCreateDate",
                         key: "auCreateDate",
-                        width: 150,
+                        width: 170,
                         fixed: "left",
                         scopedSlots: { customRender: "cursorTitle" }
                     },
@@ -416,7 +417,7 @@ export default {
                 tableCheck: false,
                 noPagination:true, // 分页是否不显示
                 bordered:true, // 表格 border 是否显示
-                 
+                isNoTitle: true, 
                 formData:{},
                 editableCol:[
                     'e0105_editSelectInput',
@@ -524,6 +525,11 @@ export default {
         splitDirectoryData(data){
             if(!data) return;
             this.initArr2.columnsArr[0].itemChildren = data.catalog;
+            this.initArr2.columnsArr[0].itemChildren.forEach(element => {
+                if(element.itemCode  == '4' || element.itemCode == '9'){
+                    Object.assign(element, {isdisabled: true})
+                }
+            });
         },
 
         // 过滤 table 不可选择项
@@ -559,9 +565,9 @@ export default {
                         Object.assign(element,{
                             key:element.e01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            e0112:element.e0112 === "1" ? "待接收" : "已接收",
+                            e0112:element.e0112 === "1" ? "待接收" :  (element.e0112 === "0" ? "已接收" : ''),
                             e0109:element.e0109 === "1" ? "待移交" : "已移交",
-                            isInware:element.isInware === "2" ? "已转出" : "在库", 
+                            isInware:utils.isInwareStatusFun(element.archiveStatus, element.isInware),
                         });
                     });
                 }else{
@@ -628,7 +634,7 @@ export default {
                         Object.assign(element,{
                             key:element.a01000,
                             num: (pageNum - 1) * limitNum + index + 1,
-                            a0104:element.a0104 === '1' ? '男' : element.a0104 === '2' ? '女' : element.a0104 === '0' ? '未知的性别' : element.a0104 === '9' ? '未说明性别' : '',
+                            a0104:element.a0104 === '1' ? '男' : (element.a0104 === '2' ? '女' : (element.a0104 === '9' ? '未说明的性别' : (element.a0104 === '0' ? '未知的性别' : ''))),
                         });
                     });
                 }else{
@@ -693,7 +699,9 @@ export default {
                         this.$message.success("添加成功");
                         this.getTableData(this.tempCondition,this.currentPage,10)
                         this.handleCancel1();
-                    }else{
+                    }else if(Number(res.code) === 2){
+                        this.$message.warning(res.msg);
+                    } else {
                         this.$message.warning("添加失败,请重试");
                     }
                 }).catch(err => {
@@ -711,6 +719,7 @@ export default {
 
     //生命周期 - 创建完成（可以访问当前this实例）
     created() {
+        this.$store.dispatch("getinfoTableCheckData", []);
         const _this = this;
 
         // 初始化数据

@@ -16,12 +16,13 @@
     <div class="modal directoryModal">
       <a-modal
         centered 
-        class="editModal"
+        class="editModal archiveMenuModal"
         :visible="directoryModalState"
         @cancel="handleCancel"
-        :width ="1200"
+        :width ="'90%'"
         :footer='null'
         :maskClosable='false'
+        style="height: 90%;"
       >
         <!-- slot title -->
         <div slot="title" class="titleSlot">
@@ -44,7 +45,7 @@
         cancelText="取消"
         @ok="editHandleOk"
         @cancel="handleCancel"
-        :width ="1200"
+        :width ="'80%'"
         :maskClosable='false'
       >
         <!-- slot title -->
@@ -106,11 +107,12 @@ export default {
               key: "organ",
               name: 'organ',
               children:[],
+              required: true,
             }
           ],
           // btns
           formBtns: [
-            { title: "查询", htmltype: "submit", operate: "searchForm" }
+            { title: "查询", htmltype: "submit", operate: "searchForm", isLimit: 'no' }
           ]
         },
         columnsArr: [
@@ -288,8 +290,5 @@ export default {
   }
   .titleSlot>p{
     margin-right: 40px;
-  }
-  .titleSlot>span{
-    color:#2d8cf0;
   }
 </style>

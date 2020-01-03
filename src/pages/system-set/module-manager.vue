@@ -43,6 +43,7 @@ export default {
         treeflag: false, //左侧tree是否存在
         tableCheck: false, //table是否可以check
         superimposeWidth: true, //
+        isNoTitle: true,  //表格上--标题不显示
         // formInputs 传值方式
         formData: {
           //forminputs data
@@ -308,7 +309,8 @@ export default {
   min-width: 170px;
   height: 100%;
   float: left;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); */
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
   padding: 10px 12px;
 }
 .rightTable {
